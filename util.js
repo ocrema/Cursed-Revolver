@@ -59,5 +59,9 @@ const getDistance = (p1, p2) => {
 };
 
 const newCollider = (w, h, x, y) => { 
-    return {weight: w, height: h, x_offset: x, y_offset: y}; 
+    return {width: w, height: h, x_offset: x, y_offset: y}; 
 };
+
+const canSee = (A,B) => {
+    return (getDistance(A,B) < A.visualRadius + B.radius);
+}
