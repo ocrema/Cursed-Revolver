@@ -1,4 +1,6 @@
-class Background extends Entity {
+import { Entity } from "./Entities.js";
+
+export class Background extends Entity {
   constructor() {
     super();
     this.scale = 2;
@@ -17,7 +19,7 @@ class Background extends Entity {
   }
 
   update() {
-    this.updateAnimation(gameEngine.clockTick);
+    this.updateAnimation(GAME_ENGINE.clockTick);
   }
 
   draw(ctx) {
