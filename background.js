@@ -18,7 +18,6 @@ class Background extends Entity {
 
   update() {
     this.updateAnimation(gameEngine.clockTick);
-    
   }
 
   draw(ctx) {

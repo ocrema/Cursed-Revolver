@@ -2,7 +2,6 @@ class Player extends Actor {
   constructor() {
     super();
     this.scale = 1.5;
-    this.collider = new newCollider(0, 0, 231, 190);
 
     // Add animations for the player
     this.addAnimation(
