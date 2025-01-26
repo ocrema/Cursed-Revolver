@@ -1,7 +1,8 @@
-class Player extends Entity {
+class Player extends Actor {
   constructor() {
     super();
-    this.scale = 2;
+    this.scale = 1.5;
+    this.collider = new newCollider(0, 0, 231, 190);
 
     // Add animations for the player
     this.addAnimation(
@@ -22,6 +23,15 @@ class Player extends Entity {
       0.1 // Frame duration (faster for running)
     );
 
+    this.addAnimation(
+      "jump",
+      ASSET_MANAGER.getAsset("./assets/player/Jump.png"),
+      231, // Frame width
+      190, // Frame height
+      8, // Frame count
+      0.1 // Frame duration (faster for running)
+    );
+
     this.speed = 500; // Movement speed
     this.isMoving = false; // Whether the player is moving
 
@@ -29,7 +39,10 @@ class Player extends Entity {
     this.setAnimation("idle");
   }
 
+  jump() {}
+
   update() {
+    //super.applyGravity(1);
     this.isMoving = false;
 
     // Movement logic
@@ -52,7 +65,15 @@ class Player extends Entity {
       this.isMoving = true;
     }
 
-    // Switch animations based on movement state
+    if (gameEngine.keys[" "]) {
+      this.jump();
+      this.setAnimation("jump");
+    }
+
+    if (!this.isGrounded) {
+      //this.setAnimation("jump");
+    }
+
     if (this.isMoving) {
       this.setAnimation("run");
     } else {

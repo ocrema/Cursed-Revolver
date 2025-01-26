@@ -133,6 +133,23 @@ class Actor extends Entity {
     this.isActor = true;
     this.recieved_attacks = [];
     this.effects = [];
+    this.velocityY = 0; // Vertical velocity
+    this.gravityForce = 1000; // Gravity force
+    this.grounded = false; // Whether the actor is on the ground
+  }
+
+  // Since actor classes might need more functionalities, we can add them here
+  // Gravity, attacks, etc
+  update() {}
+
+  applyGravity(gravityAmount) {
+    if (!this.grounded) {
+      // Apply gravity to vertical velocity
+      this.velocityY += this.gravity * gameEngine.clockTick;
+
+      // Update position based on velocity
+      this.y += this.velocityY * gameEngine.clockTick;
+    }
   }
 
   queueAttack(data) {
@@ -140,14 +157,35 @@ class Actor extends Entity {
   }
 }
 
-class Map extends Entity {
+class GameMap extends Entity {
   constructor() {
     super();
     this.isMap = true;
     this.entities = [];
+    this.floorY = 400; // Y-coordinate of the floor
   }
 
-  load() {}
+  update() {
+    for (let entity of this.entities) {
+      if (!entity.removeFromWorld) {
+        this.applyFloorCollision(entity); // Apply floor collision
+        entity.update(); // Update the entity
+      }
+    }
+  }
+
+  draw(ctx) {
+    // Draw the visible floor as a rectangle
+    ctx.save();
+    ctx.fillStyle = "red"; // Floor color
+    ctx.fillRect(-1000, 450, 2000, 20); // Floor rectangle
+    ctx.restore();
+
+    // Draw all map entities
+    for (let entity of this.entities) {
+      entity.draw(ctx);
+    }
+  }
 
   close() {
     for (let i = 0; i < this.entities.length; i++) {
