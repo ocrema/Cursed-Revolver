@@ -6,6 +6,7 @@ import { GameMap } from "../Entities/Entities.js";
 export class GameLogicController extends Entity {
   constructor() {
     super();
+    // Assigns game engine from window game engine singleton
     this.GAME_ENGINE = window.GameEngine;
     this.entityOrder = -1;
     this.state = 0;

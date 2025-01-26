@@ -1,9 +1,9 @@
 import { Actor } from "./Entities.js";
-import { AssetManager } from "../Core/AssetManager.js";
 
 export class Player extends Actor {
   constructor() {
     super();
+    // Assigns asset manager from window asset manager singleton 
     this.assetManager = window.ASSET_MANAGER;
     this.scale = 1.5;
 

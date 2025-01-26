@@ -2,6 +2,7 @@ import { GameEngine } from "./Core/GameEngine.js";
 import { AssetManager } from "./Core/AssetManager.js";
 import { GameLogicController } from "./Core/GameLogicController.js";
 
+// Singleton instances
 const GAME_ENGINE = new GameEngine();
 
 const ASSET_MANAGER = new AssetManager();

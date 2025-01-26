@@ -1,5 +1,6 @@
 export class AssetManager {
   constructor() {
+    // if there isnt a singleton instance of the AssetManager, create one
     if (!window.ASSET_MANAGER) {
       window.ASSET_MANAGER = this; // Singleton instance
     }

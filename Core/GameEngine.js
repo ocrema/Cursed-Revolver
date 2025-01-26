@@ -2,6 +2,7 @@ import { Timer } from "../Utils/timer.js";
 
 export class GameEngine {
   constructor(options) {
+    // if the instance already exists, return it
     if (!window.GAME_ENGINE) {
       window.GAME_ENGINE = this; // Singleton instance
     }
