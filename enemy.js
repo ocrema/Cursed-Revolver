@@ -7,12 +7,17 @@ class Cactus extends Actor {
         this.width = 50;
         this.height = 50;
 
+        this.centerX = this.x + (this.width / 2);
+        this.centerY = this.y + (this.height / 2);
+
         this.dead = false;
         this.collided = false;
         this.health = 50;
 
         this.visualRadius = 100; // pixels away from body
         this.colliders = [];
+
+        this.attack = new Thorn(this.centerX, this.centerY, );
     }
 
     update() {
@@ -25,7 +30,13 @@ class Cactus extends Actor {
                     console.log("collide");
                 } 
                 if (canSee(that, entity)) {
+                    // shoot a thorn at player
                     console.log("seen");
+
+                    var playerX = entity.x + (entity.colliders[0].width / 2);
+                    var playerY = entity.y + (entity.colliders[0].hieght / 2);
+                    
+                    
                 }
             }
         })
@@ -35,8 +46,6 @@ class Cactus extends Actor {
         ctx.fillStyle = "blue";
         ctx.fillRect(this.x , this.y, this.width, this.height);
 
-        let centerX = this.x + (this.width / 2);
-        let centerY = this.y + (this.height / 2);
         ctx.strokeStyle = "red";
 
         // rectangle with sprite in center
@@ -50,9 +59,5 @@ class Cactus extends Actor {
 
     takeDamage() {
 
-    }
-
-    shootThorn(target) {
-        
     }
 }
