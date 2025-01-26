@@ -1,41 +1,85 @@
 class Player extends Actor {
-    constructor() {
-        super();        
+  constructor() {
+    super();
+    this.scale = 1.5;
 
-        this.width = 50;
-        this.height = 50;
+    // Add animations for the player
+    this.addAnimation(
+      "idle",
+      ASSET_MANAGER.getAsset("./assets/player/Idle.png"),
+      231, // Frame width
+      190, // Frame height
+      6, // Frame count
+      0.25 // Frame duration (slower for idle)
+    );
 
-        this.radius = 50;
+    this.addAnimation(
+      "run",
+      ASSET_MANAGER.getAsset("./assets/player/Run.png"),
+      231, // Frame width
+      190, // Frame height
+      8, // Frame count
+      0.1 // Frame duration (faster for running)
+    );
 
-        this.health = 200;
+    this.addAnimation(
+      "jump",
+      ASSET_MANAGER.getAsset("./assets/player/Jump.png"),
+      231, // Frame width
+      190, // Frame height
+      8, // Frame count
+      0.1 // Frame duration (faster for running)
+    );
 
-        this.colliders = [];
+    this.speed = 500; // Movement speed
+    this.isMoving = false; // Whether the player is moving
+
+    // Start with the idle animation
+    this.setAnimation("idle");
+  }
+
+  jump() {}
+
+  update() {
+    //super.applyGravity(1);
+    this.isMoving = false;
+
+    // Movement logic
+    if (gameEngine.keys["a"]) {
+      this.x -= this.speed * gameEngine.clockTick;
+      this.isMoving = true;
+      this.flip = true;
+    }
+    if (gameEngine.keys["d"]) {
+      this.x += this.speed * gameEngine.clockTick;
+      this.isMoving = true;
+      this.flip = false;
+    }
+    if (gameEngine.keys["w"]) {
+      this.y -= this.speed * gameEngine.clockTick;
+      this.isMoving = true;
+    }
+    if (gameEngine.keys["s"]) {
+      this.y += this.speed * gameEngine.clockTick;
+      this.isMoving = true;
     }
 
-    update() {
-        this.colliders = [];
-        this.colliders.push(newCollider(50, 50, 25, 25));
-        if (gameEngine.keys['a']) {
-            this.x -= 500 * gameEngine.clockTick;
-            // console.log("x: " + this.x);
-        }
-        if (gameEngine.keys['d']) {
-            this.x += 500 * gameEngine.clockTick;
-            // console.log("x: " + this.x);
-        }
-        if (gameEngine.keys['w']) {
-            this.y -= 500 * gameEngine.clockTick;
-            // console.log("y: " + this.y);
-        }
-        if (gameEngine.keys['s']) {
-            this.y += 500 * gameEngine.clockTick;
-            // console.log("y: " + this.y);
-        }
+    if (gameEngine.keys[" "]) {
+      this.jump();
+      this.setAnimation("jump");
     }
 
-
-    draw(ctx) {
-        ctx.fillStyle = "red";
-        ctx.fillRect(this.x, this.y, this.width, this.height);
+    if (!this.isGrounded) {
+      //this.setAnimation("jump");
     }
+
+    if (this.isMoving) {
+      this.setAnimation("run");
+    } else {
+      this.setAnimation("idle");
+    }
+
+    // Update the active animation
+    this.updateAnimation(gameEngine.clockTick);
+  }
 }
