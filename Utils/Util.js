@@ -54,10 +54,20 @@ window.requestAnimFrame = (() => {
  * @param {Number} p1, p2 Two objects with x and y coordinates
  * @returns Distance between the two points
  */
-const getDistance = (p1, p2) => {
+export const getDistance = (p1, p2) => {
     return Math.sqrt(Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2));
 };
 
 export const newCollider = (w, h, x, y) => { 
     return {width: w, height: h, x_offset: x, y_offset: y}; 
 };
+
+export const canSee = (A,B) => {
+    var avgCenter = B.colliders[0].width;
+    for (let i = 0; i < B.colliders.length; i++) {
+        avgCenter += B.colliders[i].width;
+    }
+
+    avgCenter = avgCenter / B.colliders.length;
+    return (getDistance(A,B) < A.visualRadius + avgCenter);
+}

@@ -38,6 +38,15 @@ export class Player extends Actor {
       0.1 // Frame duration (faster for running)
     );
 
+    this.addAnimation(
+      "dead",
+      this.assetManager.getAsset("./assets/player/Death.png"),
+      231, // Frame width
+      190, // Frame height
+      7, // Frame count
+      0.1 // Frame duration (faster for running)
+    );
+
     this.speed = 500; // Movement speed
     this.isMoving = false; // Whether the player is moving
 
@@ -47,6 +56,7 @@ export class Player extends Actor {
 
     this.colliders = [];
     this.colliders.push(Util.newCollider(100, 100, 0,0));
+    this.health = 200;
     
   }
 
@@ -93,8 +103,22 @@ export class Player extends Actor {
       this.setAnimation("idle");
     }
 
+    // process each attack
+
+    this.recieved_attacks.forEach(attack => {
+      console.log("ouch! i took " + attack.damage + " damage");
+      this.health -= attack.damage;
+    });
+    this.recieved_attacks = [];
+
+    if (this.health <= 0) {
+      // this.setAnimation("dead");
+      console.log("i died");
+    }
+
     // Update the active animation
     this.updateAnimation(GAME_ENGINE.clockTick);
+
   }
 
 
