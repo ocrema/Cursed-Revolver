@@ -1,3 +1,0 @@
-class Camera extends Entity {
-    
-}

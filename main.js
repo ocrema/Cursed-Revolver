@@ -1,4 +1,9 @@
-const gameEngine = new GameEngine();
+import { GameEngine } from "./Core/GameEngine.js";
+import { AssetManager } from "./Core/AssetManager.js";
+import { GameLogicController } from "./Core/GameLogicController.js";
+
+// Singleton instances
+const GAME_ENGINE = new GameEngine();
 
 const ASSET_MANAGER = new AssetManager();
 
@@ -16,9 +21,9 @@ ASSET_MANAGER.downloadAll(() => {
   const canvas = document.getElementById("gameWorld");
   const ctx = canvas.getContext("2d");
 
-  gameEngine.init(ctx);
+  GAME_ENGINE.init(ctx);
 
-	gameEngine.addEntity(new GameLogicController());
+  GAME_ENGINE.addEntity(new GameLogicController());
 
-  gameEngine.start();
+  GAME_ENGINE.start();
 });
