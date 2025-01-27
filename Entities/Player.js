@@ -1,4 +1,5 @@
 import { Actor } from "./Entities.js";
+import * as Util from "../Utils/Util.js";
 
 export class Player extends Actor {
   constructor() {
@@ -40,13 +41,20 @@ export class Player extends Actor {
 
     // Start with the idle animation
     this.setAnimation("idle");
+
+
+    this.colliders = [];
+    this.colliders.push(Util.newCollider(100, 100, 0,0));
+    
   }
 
   jump() {}
 
   update() {
+    //console.log(this.colliders);
     //super.applyGravity(1);
     this.isMoving = false;
+    //console.log(this.x + " " + this.y);
 
     // Movement logic
     if (GAME_ENGINE.keys["a"]) {
@@ -86,4 +94,6 @@ export class Player extends Actor {
     // Update the active animation
     this.updateAnimation(GAME_ENGINE.clockTick);
   }
+
+
 }

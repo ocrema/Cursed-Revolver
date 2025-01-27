@@ -11,6 +11,8 @@ export class Entity {
     this.scale = 1; // Scale factor for drawing the sprite
   }
 
+  update() {}
+
   addAnimation(
     name,
     spritesheet,
@@ -166,15 +168,18 @@ export class GameMap extends Entity {
   }
 
   update() {
+    
     for (let entity of this.entities) {
       if (!entity.removeFromWorld) {
         this.applyFloorCollision(entity); // Apply floor collision
         entity.update(); // Update the entity
       }
     }
+      
   }
 
   draw(ctx) {
+    
     // Draw the visible floor as a rectangle
     ctx.save();
     ctx.fillStyle = "red"; // Floor color
@@ -185,6 +190,7 @@ export class GameMap extends Entity {
     for (let entity of this.entities) {
       entity.draw(ctx);
     }
+      
   }
 
   close() {

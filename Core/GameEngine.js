@@ -1,4 +1,5 @@
 import { Timer } from "../Utils/timer.js";
+import { Camera } from "../Core/Camera.js";
 
 export class GameEngine {
   constructor(options) {
@@ -27,7 +28,9 @@ export class GameEngine {
     this.width = 2000;
     this.height = 1000;
 
-    this.camera = null;
+    this.camera = new Camera();
+    this.addEntity(this.camera);
+    this.debug_colliders = true;
     return window.GAME_ENGINE;
   }
 
@@ -154,9 +157,26 @@ export class GameEngine {
       this.width,
       this.height
     );
-
+    
     for (let i = 0; i < this.entities.length; i++) {
       this.entities[i].draw(this.ctx);
+    }
+    
+    if (this.debug_colliders) {
+      this.ctx.lineWidth = 4;
+      this.ctx.strokeStyle = "green";
+      for (let e of this.entities) {
+        if (e.colliders) {
+          for (let c of e.colliders) {
+            this.ctx.strokeRect(
+              e.x - this.camera.x + c.x_offset - c.width / 2,
+              e.y - this.camera.y + c.y_offset - c.width / 2,
+              c.width,
+              c.height
+            );
+          }
+        }
+      }
     }
   }
 
