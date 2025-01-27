@@ -4,7 +4,7 @@ export class Background extends Entity {
   constructor() {
     super();
     this.scale = 2;
-    this.entityOrder = -1;
+    this.entityOrder = -10;
 
     this.addAnimation(
       "background",

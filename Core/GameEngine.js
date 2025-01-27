@@ -127,26 +127,12 @@ export class GameEngine {
 
     let start = 0;
     let end = this.entities.length - 1;
-    const entityOrder = entity.entity_order;
-
-    while (start <= end) {
-      const mid = start + ((end - start) >>> 1);
-
-      if (this.entities[mid].entity_order == entityOrder) {
-        // Found the exact position
-        start = mid;
-        break;
-      }
-
-      if (this.entities[mid].entity_order < entityOrder) {
-        start = mid + 1;
-      } else {
-        end = mid - 1;
-      }
-    }
-
+    const entityOrder = entity.entityOrder;
+    let i = 0;
+    while (i < this.entities.length && this.entities[i].entityOrder < entityOrder) i++;
+  
     // Insert the entity at the determined index
-    this.entities.splice(start, 0, entity);
+    this.entities.splice(i, 0, entity);
   }
 
   draw() {
@@ -159,6 +145,7 @@ export class GameEngine {
     );
     
     for (let i = 0; i < this.entities.length; i++) {
+      //console.log(this.entities);
       this.entities[i].draw(this.ctx);
     }
     

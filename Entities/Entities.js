@@ -165,16 +165,10 @@ export class GameMap extends Entity {
     this.isMap = true;
     this.entities = [];
     this.floorY = 400; // Y-coordinate of the floor
+    this.entityOrder = -1;
   }
 
   update() {
-    
-    for (let entity of this.entities) {
-      if (!entity.removeFromWorld) {
-        this.applyFloorCollision(entity); // Apply floor collision
-        entity.update(); // Update the entity
-      }
-    }
       
   }
 
@@ -185,11 +179,6 @@ export class GameMap extends Entity {
     ctx.fillStyle = "red"; // Floor color
     ctx.fillRect(-1000, 450, 2000, 20); // Floor rectangle
     ctx.restore();
-
-    // Draw all map entities
-    for (let entity of this.entities) {
-      entity.draw(ctx);
-    }
       
   }
 
