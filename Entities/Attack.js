@@ -17,7 +17,7 @@ export class Thorn extends Entity {
         // distance the thorn has travelled
         this.travelled = 0;
         this.maxRange = 300;
-        this.speed = 1;
+        this.speed = 4;
         this.data = { damage: 20};
         this.removeFromWorld = false;
         this.colliders = [];
@@ -53,7 +53,7 @@ export class Thorn extends Entity {
         // use x/y to update distance travelled 
         this.travelled = Util.getDistance(this, this.start);
 
-        // check if colliding with player --> if yes, undeploy, remove collider box, deal damage
+        // check if colliding with player --> if yes, remove, deal damage
         var that = this;
         GAME_ENGINE.entities.forEach(function (entity) { // cycles through every entity 
                     if (entity instanceof Player) {
