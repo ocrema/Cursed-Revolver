@@ -19,7 +19,6 @@ ASSET_MANAGER.downloadAll(() => {
   gameEngine.init(ctx);
 
 	gameEngine.addEntity(new GameLogicController());
-	gameEngine.addEntity(new Cactus());
 
   gameEngine.start();
 });

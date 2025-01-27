@@ -9,8 +9,11 @@ class GameLogicController extends Entity {
     if (this.state == 0) {
       this.state = 1;
       gameEngine.addEntity(new Player());
+      gameEngine.addEntity(new Cactus());
       gameEngine.addEntity(new Background());
       gameEngine.addEntity(new GameMap());
+
+      console.log(gameEngine.entities);
     }
   }
 }
