@@ -27,8 +27,9 @@ export class Cactus extends Actor {
 
         this.dead = false;
         this.health = 50;
-        this.thorn = new Thorn(this.x, this.y, this.x, this.y, false);
-        this.visualRadius = 200; // pixels away from body
+        this.visualRadius = 200; // pixels away from center
+        this.fireRate = 1; // max time before attack
+        this.elapsedTime = 0; // time since attack
         this.colliders = [];
 
         // taken from player class
@@ -36,6 +37,7 @@ export class Cactus extends Actor {
     }
 
     update() {
+        this.elapsedTime += GAME_ENGINE.clockTick;
         this.colliders = [];
         this.colliders.push(Util.newCollider(this.width, this.height, 0, -50));
 
@@ -49,24 +51,13 @@ export class Cactus extends Actor {
                 } 
 
                 // cactus sees player
-                if (Util.canSee(that, entity)) {
-                    // if thorn not deployed
-                    if (!that.thorn.deployed) {
-                        // shoot thorn and give target info
-                        that.thorn.deployed = true;
-                        that.thorn.targetX = entity.x;
-                        that.thorn.targetY = entity.y;
-                    }
-
+                if (Util.canSee(that, entity) && that.elapsedTime > that.fireRate) {
                     // this.setAnimation("attack");
-                    
+                    that.elapsedTime = 0;
+                    GAME_ENGINE.addEntity(new Thorn(that.x, that.y, entity)); 
                 }
             }
         })
-
-        if (this.thorn.deployed) {
-            this.thorn.update();
-        }
     }
 
 }
