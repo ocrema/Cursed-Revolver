@@ -12,8 +12,6 @@ export class Thorn extends Entity {
         this.width = 16;
         this.height = 16;
 
-        
-
         // distance the thorn has travelled
         this.travelled = 0;
         this.maxRange = 300;
