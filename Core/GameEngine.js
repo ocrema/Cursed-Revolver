@@ -150,14 +150,15 @@ export class GameEngine {
     }
     
     if (this.debug_colliders) {
-      this.ctx.lineWidth = 4;
+      this.ctx.lineWidth = 5;
       this.ctx.strokeStyle = "green";
       for (let e of this.entities) {
         if (e.colliders) {
           for (let c of e.colliders) {
+            console.log(e.x - this.camera.x + c.x_offset - c.width / 2)
             this.ctx.strokeRect(
               e.x - this.camera.x + c.x_offset - c.width / 2,
-              e.y - this.camera.y + c.y_offset - c.width / 2,
+              e.y - this.camera.y + c.y_offset - c.height / 2,
               c.width,
               c.height
             );

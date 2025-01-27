@@ -23,5 +23,6 @@ export class Camera extends Entity {
             this.x = this.player.x;
             this.y = this.player.y;
         }
+            
     }
 }

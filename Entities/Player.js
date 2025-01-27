@@ -46,8 +46,12 @@ export class Player extends Actor {
 
 
     this.colliders = [];
-    this.colliders.push(Util.newCollider(100, 100, 0,0));
+    this.colliders.push(Util.newCollider(120, 120, 0,0));
     
+
+    this.x_velocity = 0;
+    this.y_velocity = 0;
+    this.isGrounded = 0; // values above 0 indicate that the player is grounded, so the player can still jump for a little bit after falling off a platform 
   }
 
   jump() {}
@@ -58,34 +62,51 @@ export class Player extends Actor {
     this.isMoving = false;
     //console.log(this.x + " " + this.y);
 
+    this.y_velocity = Math.min(this.y_velocity + GAME_ENGINE.clockTick * 3000, 10000);
+    this.x_velocity = 0;
     // Movement logic
     if (GAME_ENGINE.keys["a"]) {
-      this.x -= this.speed * GAME_ENGINE.clockTick;
+      this.x_velocity -= this.speed;
       this.isMoving = true;
       this.flip = true;
     }
     if (GAME_ENGINE.keys["d"]) {
-      this.x += this.speed * GAME_ENGINE.clockTick;
+      this.x_velocity += this.speed;
       this.isMoving = true;
       this.flip = false;
     }
-    if (GAME_ENGINE.keys["w"]) {
-      this.y -= this.speed * GAME_ENGINE.clockTick;
-      this.isMoving = true;
-    }
-    if (GAME_ENGINE.keys["s"]) {
-      this.y += this.speed * GAME_ENGINE.clockTick;
-      this.isMoving = true;
-    }
 
-    if (GAME_ENGINE.keys[" "]) {
-      this.jump();
+    this.isGrounded = Math.max(this.isGrounded - GAME_ENGINE.clockTick, 0);
+
+    if (GAME_ENGINE.keys[" "] && this.isGrounded > 0) {
+      this.isGrounded = 0;
+      this.y_velocity = -1500; // Jumping velocity
       this.setAnimation("jump");
     }
+  
 
-    if (!this.isGrounded) {
-      //this.setAnimation("jump");
+    this.x += this.x_velocity * GAME_ENGINE.clockTick;
+    for (let e of GAME_ENGINE.entities) {
+      if (e.isPlayer) continue;
+      if (this.colliding(e)) {
+        this.x -= this.x_velocity * GAME_ENGINE.clockTick;
+        this.x_velocity = 0;
+        break;
+      }
     }
+
+    this.y += this.y_velocity * GAME_ENGINE.clockTick;
+    for (let e of GAME_ENGINE.entities) {
+      if (e.isPlayer) continue;
+      if (this.colliding(e)) {
+        this.y -= this.y_velocity * GAME_ENGINE.clockTick;
+        if (this.y_velocity > 0) this.isGrounded = .2;
+        this.y_velocity = 0;
+        break;
+      }
+    }
+    
+
 
     if (this.isMoving) {
       this.setAnimation("run");
