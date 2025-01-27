@@ -1,61 +1,72 @@
-class Cactus extends Actor {
+import { Actor } from "./Entities.js";
+import { Player } from "./Player.js";
+import { Thorn } from "./Attack.js";
+import * as Util from "../Utils/Util.js";
+
+export class Cactus extends Actor {
     constructor() {
-        super();        
+        super();
+        
+        this.assetManager = window.ASSET_MANAGER;
 
-        this.x = 100;
-        this.y = 100;
-        this.width = 50;
-        this.height = 50;
+        this.addAnimation(
+            "placeholder",
+            this.assetManager.getAsset("./assets/cactus/cactus.png"),
+            320, // Frame width
+            320, // Frame height
+            1, // Frame count
+            0.25 // Frame duration (slower for idle)
+        );
 
-        this.centerX = this.x + (this.width / 2);
-        this.centerY = this.y + (this.height / 2);
+        this.setAnimation("placeholder");
+
+        this.width = 160;
+        this.height = 250;
+        this.x = 500 + this.width / 2;
+        this.y = 0 + this.height / 2;
 
         this.dead = false;
-        this.collided = false;
         this.health = 50;
-
-        this.visualRadius = 100; // pixels away from body
+        this.thorn = new Thorn(this.x, this.y, this.x, this.y, false);
+        this.visualRadius = 200; // pixels away from body
         this.colliders = [];
+
+        // taken from player class
+        this.cameraSpeed = 500;
     }
 
     update() {
         this.colliders = [];
-        this.colliders.push(newCollider(50, 50, 25, 25));
+        this.colliders.push(Util.newCollider(this.width, this.height, 0, -50));
+
         var that = this;
 
-        gameEngine.entities.forEach(function (entity) { // cycles through every entity 
+        GAME_ENGINE.entities.forEach(function (entity) { // cycles through every entity 
             if (entity instanceof Player) {
                 if (entity.colliders && that.colliding(entity)) {
+                    // player interacts with cactus
                     console.log("collide");
                 } 
-                if (canSee(that, entity)) {
-                    // shoot a thorn at player
-                    console.log("seen");
 
-                    var playerX = entity.x + (entity.colliders[0].width / 2);
-                    var playerY = entity.y + (entity.colliders[0].hieght / 2);
+                // cactus sees player
+                if (Util.canSee(that, entity)) {
+                    // if thorn not deployed
+                    if (!that.thorn.deployed) {
+                        // shoot thorn and give target info
+                        that.thorn.deployed = true;
+                        that.thorn.targetX = entity.x;
+                        that.thorn.targetY = entity.y;
+                    }
+
+                    // this.setAnimation("attack");
                     
-
                 }
             }
         })
+
+        if (this.thorn.deployed) {
+            this.thorn.update();
+        }
     }
 
-    draw(ctx) {
-        ctx.fillStyle = "blue";
-        ctx.fillRect(this.x , this.y, this.width, this.height);
-
-        ctx.strokeStyle = "red";
-
-        // rectangle with sprite in center
-        ctx.strokeRect(this.centerX - ((this.width / 2) + this.visualRadius), 
-        this.centerY - ((this.height / 2) + this.visualRadius), 
-        this.width + (this.visualRadius * 2), 
-        this.height + (this.visualRadius * 2));
-        
-        // circle with sprite in center, radius is range / 2 + max out of width/height
-        ctx.beginPath();
-        ctx.arc(this.centerX, this.centerY, this.visualRadius + Math.max(this.width, this.height), 0, 2 * Math.PI);
-        ctx.stroke();
-    }
 }

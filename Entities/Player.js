@@ -47,6 +47,7 @@ export class Player extends Actor {
 
     this.colliders = [];
     this.colliders.push(Util.newCollider(100, 100, 0,0));
+    this.health = 200;
     
   }
 

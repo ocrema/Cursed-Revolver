@@ -61,3 +61,13 @@ const getDistance = (p1, p2) => {
 export const newCollider = (w, h, x, y) => { 
     return {width: w, height: h, x_offset: x, y_offset: y}; 
 };
+
+export const canSee = (A,B) => {
+    var avgCenter = B.colliders[0].width;
+    for (let i = 0; i < B.colliders.length; i++) {
+        avgCenter += B.colliders[i].width;
+    }
+
+    avgCenter = avgCenter / B.colliders.length;
+    return (getDistance(A,B) < A.visualRadius + avgCenter);
+}

@@ -1,6 +1,6 @@
 import { Entity } from "../Entities/Entities.js";
 import { Player } from "../Entities/Player.js";
-import { Cactus } from "../Enemy/Enemy.js";
+import { Cactus } from "../Entities/Enemy.js";
 import { Background } from "../Entities/Background.js";
 import { GameMap } from "../Entities/Entities.js";
 
