@@ -59,7 +59,7 @@ export class Entity {
     if (!spritesheet) return;
 
     ctx.save(); // Save the current transformation state
-
+    ctx.translate(-GAME_ENGINE.camera.x, -GAME_ENGINE.camera.y);
     // Apply horizontal flipping and scaling
     if (this.flip) {
       ctx.scale(-1, 1);
@@ -177,7 +177,7 @@ export class GameMap extends Entity {
     // Draw the visible floor as a rectangle
     ctx.save();
     ctx.fillStyle = "red"; // Floor color
-    ctx.fillRect(-1000, 450, 2000, 20); // Floor rectangle
+    ctx.fillRect(-1000 - GAME_ENGINE.camera.x, 450 - GAME_ENGINE.camera.y, 2000, 20); // Floor rectangle
     ctx.restore();
       
   }

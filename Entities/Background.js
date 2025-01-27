@@ -33,6 +33,8 @@ export class Background extends Entity {
 
     ctx.save(); // Save the current transformation state
 
+    ctx.translate(-GAME_ENGINE.camera.x/3, -GAME_ENGINE.camera.y/6);
+
     // Scale the canvas
     ctx.scale(this.scale, this.scale);
 

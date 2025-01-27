@@ -8,6 +8,8 @@ export class Player extends Actor {
     this.assetManager = window.ASSET_MANAGER;
     this.scale = 1.5;
 
+    this.isPlayer = true;
+
     // Add animations for the player
     this.addAnimation(
       "idle",
