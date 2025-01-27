@@ -11,6 +11,8 @@ export class Entity {
     this.scale = 1; // Scale factor for drawing the sprite
   }
 
+  update() {}
+
   addAnimation(
     name,
     spritesheet,
@@ -57,7 +59,7 @@ export class Entity {
     if (!spritesheet) return;
 
     ctx.save(); // Save the current transformation state
-
+    ctx.translate(-GAME_ENGINE.camera.x, -GAME_ENGINE.camera.y);
     // Apply horizontal flipping and scaling
     if (this.flip) {
       ctx.scale(-1, 1);
@@ -163,28 +165,21 @@ export class GameMap extends Entity {
     this.isMap = true;
     this.entities = [];
     this.floorY = 400; // Y-coordinate of the floor
+    this.entityOrder = -1;
   }
 
   update() {
-    for (let entity of this.entities) {
-      if (!entity.removeFromWorld) {
-        this.applyFloorCollision(entity); // Apply floor collision
-        entity.update(); // Update the entity
-      }
-    }
+      
   }
 
   draw(ctx) {
+    
     // Draw the visible floor as a rectangle
     ctx.save();
     ctx.fillStyle = "red"; // Floor color
-    ctx.fillRect(-1000, 450, 2000, 20); // Floor rectangle
+    ctx.fillRect(-1000 - GAME_ENGINE.camera.x, 450 - GAME_ENGINE.camera.y, 2000, 20); // Floor rectangle
     ctx.restore();
-
-    // Draw all map entities
-    for (let entity of this.entities) {
-      entity.draw(ctx);
-    }
+      
   }
 
   close() {

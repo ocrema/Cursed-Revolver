@@ -4,6 +4,7 @@ export class Background extends Entity {
   constructor() {
     super();
     this.scale = 2;
+    this.entityOrder = -10;
 
     this.addAnimation(
       "background",
@@ -31,6 +32,8 @@ export class Background extends Entity {
     if (!spritesheet) return;
 
     ctx.save(); // Save the current transformation state
+
+    ctx.translate(-GAME_ENGINE.camera.x/3, -GAME_ENGINE.camera.y/6);
 
     // Scale the canvas
     ctx.scale(this.scale, this.scale);
