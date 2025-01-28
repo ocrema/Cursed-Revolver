@@ -10,7 +10,7 @@ export const BACKGROUND_SPRITESHEET = {
 
 // Player Spritesheet Constants
 
-export const PLAYER_SPRITESHEET = { 
+export const PLAYER_SPRITESHEET = {
   IDLE: {
     URL: "./assets/player/Idle.png",
     FRAME_WIDTH: 231,
@@ -29,8 +29,15 @@ export const PLAYER_SPRITESHEET = {
     URL: "./assets/player/Jump.png",
     FRAME_WIDTH: 231,
     FRAME_HEIGHT: 190,
-    FRAME_COUNT: 8,
-    FRAME_DURATION: 0.1,
+    FRAME_COUNT: 2,
+    FRAME_DURATION: 0.5,
+  },
+  FALL: {
+    URL: "./assets/player/Fall.png",
+    FRAME_WIDTH: 231,
+    FRAME_HEIGHT: 190,
+    FRAME_COUNT: 2,
+    FRAME_DURATION: 0.5,
   },
   DEAD: {
     URL: "./assets/player/Death.png",
@@ -39,11 +46,11 @@ export const PLAYER_SPRITESHEET = {
     FRAME_COUNT: 7,
     FRAME_DURATION: 0.1,
   },
-}
+};
 
 // Enemy Spritesheet Constants
 
-export const ENEMY_SPRITESHEET = { 
+export const ENEMY_SPRITESHEET = {
   IDLE: {
     URL: "./assets/enemy/Idle.png",
     FRAME_WIDTH: 231,
@@ -72,8 +79,5 @@ export const ENEMY_SPRITESHEET = {
     FRAME_COUNT: 7,
     FRAME_DURATION: 0.1,
   },
-} 
-// 
-
-
-
+};
+//

@@ -41,6 +41,15 @@ export class Player extends Actor {
     );
 
     this.addAnimation(
+      "fall",
+      this.assetManager.getAsset(PLAYER_SPRITESHEET.FALL.URL),
+      PLAYER_SPRITESHEET.FALL.FRAME_WIDTH,
+      PLAYER_SPRITESHEET.FALL.FRAME_HEIGHT,
+      PLAYER_SPRITESHEET.FALL.FRAME_COUNT,
+      PLAYER_SPRITESHEET.FALL.FRAME_DURATION
+    );
+
+    this.addAnimation(
       "dead",
       this.assetManager.getAsset(PLAYER_SPRITESHEET.DEAD.URL), // URL for Death animation
       PLAYER_SPRITESHEET.DEAD.FRAME_WIDTH, // Frame width
@@ -57,13 +66,12 @@ export class Player extends Actor {
     this.setAnimation("idle");
 
     this.colliders = [];
-    this.colliders.push(Util.newCollider(100, 100, 0,0));
+    this.colliders.push(Util.newCollider(100, 100, 0, 0));
     this.health = 200;
-    
 
     this.x_velocity = 0;
     this.y_velocity = 0;
-    this.isGrounded = 0; // values above 0 indicate that the player is grounded, so the player can still jump for a little bit after falling off a platform 
+    this.isGrounded = 0; // values above 0 indicate that the player is grounded, so the player can still jump for a little bit after falling off a platform
 
     this.spellCooldown = 0; // temporary
   }
@@ -74,9 +82,13 @@ export class Player extends Actor {
     //console.log(this.colliders);
     //super.applyGravity(1);
     this.isMoving = false;
+    this.isJumping = false;
     //console.log(this.x + " " + this.y);
 
-    this.y_velocity = Math.min(this.y_velocity + GAME_ENGINE.clockTick * 3000, 10000);
+    this.y_velocity = Math.min(
+      this.y_velocity + GAME_ENGINE.clockTick * 3000,
+      10000
+    );
     this.x_velocity = 0;
     // Movement logic
     if (GAME_ENGINE.keys["a"]) {
@@ -96,8 +108,8 @@ export class Player extends Actor {
       this.isGrounded = 0;
       this.y_velocity = -1500; // Jumping velocity
       this.setAnimation("jump");
+      this.isJumping = true;
     }
-  
 
     this.x += this.x_velocity * GAME_ENGINE.clockTick;
     for (let e of GAME_ENGINE.entities) {
@@ -114,33 +126,44 @@ export class Player extends Actor {
       if (e.isPlayer || e.isAttack) continue;
       if (this.colliding(e)) {
         this.y -= this.y_velocity * GAME_ENGINE.clockTick;
-        if (this.y_velocity > 0) this.isGrounded = .2;
+        if (this.y_velocity > 0) this.isGrounded = 0.2;
         this.y_velocity = 0;
         break;
       }
     }
 
-    this.spellCooldown = Math.max(this.spellCooldown - GAME_ENGINE.clockTick, 0);
-    if (this.spellCooldown <= 0 && GAME_ENGINE.keys['m1']) {
-      this.spellCooldown = .3;
+    this.spellCooldown = Math.max(
+      this.spellCooldown - GAME_ENGINE.clockTick,
+      0
+    );
+    if (this.spellCooldown <= 0 && GAME_ENGINE.keys["m1"]) {
+      this.spellCooldown = 0.3;
       const fireball = new Fireball();
       fireball.x = this.x;
       fireball.y = this.y;
-      fireball.dir = Util.getAngle(this.x - GAME_ENGINE.camera.x, this.y - GAME_ENGINE.camera.y, GAME_ENGINE.mouse.x, GAME_ENGINE.mouse.y);
+      fireball.dir = Util.getAngle(
+        this.x - GAME_ENGINE.camera.x,
+        this.y - GAME_ENGINE.camera.y,
+        GAME_ENGINE.mouse.x,
+        GAME_ENGINE.mouse.y
+      );
       GAME_ENGINE.addEntity(fireball);
     }
 
     for (let a of this.recieved_attacks) {
-
     }
     this.recieved_attacks = [];
-    
 
-
-    if (this.isMoving) {
-      this.setAnimation("run");
+    if (!this.isGrounded) {
+      if (this.y_velocity < 0) {
+        this.setAnimation("jump"); // Jump animation when moving up
+      } else {
+        this.setAnimation("fall"); // Fall animation when moving down
+      }
+    } else if (this.isMoving) {
+      this.setAnimation("run"); // Run animation when grounded and moving
     } else {
-      this.setAnimation("idle");
+      this.setAnimation("idle"); // Idle animation when grounded and not moving
     }
 
     // process each attack
