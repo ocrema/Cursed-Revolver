@@ -4,61 +4,50 @@ import { Cactus } from "../Entities/Enemy.js";
 import { Background } from "../Entities/Background.js";
 import { Map1 } from "../Entities/Map1.js";
 import { HUD } from "../Entities/HUD.js";
-import { PauseMenu } from "../Entities/PauseMenu.js"; // Import the PauseMenu
+import { PauseMenu } from "../Entities/PauseMenu.js";
+
 
 export class GameLogicController extends Entity {
   constructor() {
     super();
-    // Assigns game engine from window game engine singleton
     this.GAME_ENGINE = window.GameEngine;
-    this.entityOrder = -1;
-    this.state = 0;
+    this.entityOrder = -1; // Ensure it updates early in the loop
+    this.state = 0; // Game initialization state
     this.isPaused = false; // Pause state
-    this.pauseMenu = null; // Placeholder for PauseMenu instance
+
+    // Create and add the pause menu
+    this.pauseMenu = new PauseMenu();
+    this.pauseMenu.hide(); // Initially hide the menu
+    this.GAME_ENGINE.addEntity(this.pauseMenu);
+
+    // Register this as the game controller
+    this.GAME_ENGINE.GAME_CONTROLLER = this;
   }
 
   togglePause() {
     this.isPaused = !this.isPaused;
-    if (this.isPaused) {
-      // Pause game updates
-      if (!this.pauseMenu) {
-        this.pauseMenu = new PauseMenu();
-        GAME_ENGINE.addEntity(this.pauseMenu);
-      }
-    } else {
-      // Resume game updates
-      GAME_ENGINE.entities = GAME_ENGINE.entities.filter(
-        (entity) => !(entity instanceof PauseMenu)
-      );
-      this.pauseMenu = null;
-    }
+    this.pauseMenu.setVisibility(this.isPaused);
   }
 
   update() {
-    // Handle game initialization
+    // Initialize the game
     if (this.state === 0) {
       this.state = 1;
-      this.map = new Map1();
-      GAME_ENGINE.addEntity(this.map);
-      this.map.load();
-      GAME_ENGINE.addEntity(new HUD());
+      const map = new Map1();
+      this.GAME_ENGINE.addEntity(map);
+      map.load();
+      this.GAME_ENGINE.addEntity(new HUD());
     }
 
-    // Toggle pause menu when 'Escape' is pressed
-    if (GAME_ENGINE.keys["Escape"]) {
+    // Toggle pause menu
+    if (this.GAME_ENGINE.keys["Escape"]) {
       this.togglePause();
-      GAME_ENGINE.keys["Escape"] = false; // Prevent repeat toggling
+      this.GAME_ENGINE.keys["Escape"] = false; // Prevent repeated toggling
     }
 
-    // Skip game logic updates when paused
-    if (this.isPaused) {
-      return; // Stop updating game logic while paused
-    }
+    // Skip updates when the game is paused
+    if (this.isPaused) return;
 
-    // Normal game logic updates (e.g., player actions, enemy movements)
-    // Add any additional logic here if needed
+    // Add additional game logic here
   }
 }
-
-
-

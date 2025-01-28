@@ -4,6 +4,7 @@ import { GameLogicController } from "./Core/GameLogicController.js";
 
 // Singleton instances
 export const GAME_ENGINE = new GameEngine();
+window.GameEngine = GAME_ENGINE; // Assign to global window object
 
 const ASSET_MANAGER = new AssetManager();
 

@@ -1,5 +1,7 @@
 import { Timer } from "../Utils/timer.js";
 import { Camera } from "../Core/Camera.js";
+import { PauseMenu } from "../Entities/PauseMenu.js"; // Adjust path if necessary
+
 
 export class GameEngine {
   constructor(options) {
@@ -9,23 +11,18 @@ export class GameEngine {
     }
 
     this.ctx = null; // Canvas context
-
-    // Entities and input management
     this.entities = [];
     this.keys = {};
     this.mouse = { x: 0, y: 0 };
-
-    // Options
     this.options = options || { debugging: false };
-
-    // Canvas scaling and dimensions
     this.width = 2000;
     this.height = 1000;
-
-    // Camera and debugging
     this.camera = new Camera();
     this.addEntity(this.camera);
     this.debug_colliders = true;
+
+    // Reference to GameLogicController
+    this.GAME_CONTROLLER = null;
 
     return window.GAME_ENGINE;
   }
@@ -68,74 +65,28 @@ export class GameEngine {
   }
 
   startInput() {
-    const getXandY = (e) => ({
-      x:
-        (e.clientX - this.ctx.canvas.getBoundingClientRect().left) /
-          this.x_scale -
-        this.width / 2,
-      y:
-        (e.clientY - this.ctx.canvas.getBoundingClientRect().top) /
-          this.y_scale -
-        this.height / 2,
+    this.ctx.canvas.addEventListener("keydown", (event) => {
+      this.keys[event.key] = true;
+      console.log(`Key down: ${event.key}`); // Debugging input
+    });
+
+    this.ctx.canvas.addEventListener("keyup", (event) => {
+      this.keys[event.key] = false;
+      console.log(`Key up: ${event.key}`); // Debugging input
     });
 
     this.ctx.canvas.addEventListener("mousemove", (e) => {
-      if (this.options.debugging) {
-        console.log("MOUSE_MOVE", getXandY(e));
-      }
-      this.mouse = getXandY(e);
-    });
-
-    this.ctx.canvas.addEventListener("click", (e) => {
-      if (this.options.debugging) {
-        console.log("CLICK", getXandY(e));
-      }
-      this.click = getXandY(e);
-    });
-
-    this.ctx.canvas.addEventListener("wheel", (e) => {
-      if (this.options.debugging) {
-        console.log("WHEEL", getXandY(e), e.wheelDelta);
-      }
-      e.preventDefault(); // Prevent scrolling
-      this.wheel = e;
-    });
-
-    this.ctx.canvas.addEventListener("contextmenu", (e) => {
-      if (this.options.debugging) {
-        console.log("RIGHT_CLICK", getXandY(e));
-      }
-      e.preventDefault(); // Prevent context menu
-      this.rightclick = getXandY(e);
-    });
-
-    this.ctx.canvas.addEventListener(
-      "keydown",
-      (event) => (this.keys[event.key] = true)
-    );
-    this.ctx.canvas.addEventListener(
-      "keyup",
-      (event) => (this.keys[event.key] = false)
-    );
-
-    const getMouseButton = (event) => {
-      if (event.button == 0) return 1;
-      if (event.button == 2) return 2;
-      else return -1;
-    };
-
-    this.ctx.canvas.addEventListener("mousedown", (event) => {
-      const button = getMouseButton(event);
-      if (button != -1) {
-        this.keys["m" + button] = true;
-      }
-    });
-
-    this.ctx.canvas.addEventListener("mouseup", (event) => {
-      const button = getMouseButton(event);
-      if (button != -1) {
-        this.keys["m" + button] = false;
-      }
+      const getXandY = {
+        x:
+          (e.clientX - this.ctx.canvas.getBoundingClientRect().left) /
+            this.x_scale -
+          this.width / 2,
+        y:
+          (e.clientY - this.ctx.canvas.getBoundingClientRect().top) /
+            this.y_scale -
+          this.height / 2,
+      };
+      this.mouse = getXandY;
     });
   }
 
@@ -183,19 +134,20 @@ export class GameEngine {
   }
 
   update() {
-    const entitiesCount = this.entities.length;
-
-    for (let i = 0; i < entitiesCount; i++) {
-      const entity = this.entities[i];
-
-      // Skip invalid entities
-      if (!entity || typeof entity.update !== "function") {
-        console.warn("Skipped invalid entity during update:", entity);
-        continue;
+    // If the game is paused, update only the PauseMenu entity
+    if (this.GAME_CONTROLLER && this.GAME_CONTROLLER.isPaused) {
+      for (let entity of this.entities) {
+        if (entity instanceof PauseMenu && entity.isVisible) {
+          console.log("Updating PauseMenu"); // Debug PauseMenu updates
+          entity.update(); // Ensure PauseMenu processes input
+        }
       }
+      return; // Skip updates for all other entities
+    }
 
-      // Update valid entities
-      if (!entity.removeFromWorld) {
+    // Normal update logic when not paused
+    for (let entity of this.entities) {
+      if (entity && typeof entity.update === "function" && !entity.removeFromWorld) {
         entity.update();
       }
     }
@@ -215,6 +167,7 @@ export class GameEngine {
     this.draw();
   }
 }
+
 
 
 // KV Le was here :)
