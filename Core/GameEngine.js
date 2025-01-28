@@ -1,4 +1,4 @@
-import { Timer } from "../Utils/timer.js";
+import { Timer } from "../Utils/Timer.js";
 import { Camera } from "../Core/Camera.js";
 
 export class GameEngine {
