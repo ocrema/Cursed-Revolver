@@ -39,7 +39,7 @@ export class Cactus extends Actor {
     update() {
         this.elapsedTime += GAME_ENGINE.clockTick;
         this.colliders = [];
-        this.colliders.push(Util.newCollider(this.width, this.height, 0, -50));
+        this.colliders.push(Util.newCollider(this.width, this.height, 0, 0));
 
         var that = this;
 
