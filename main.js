@@ -14,12 +14,15 @@ ASSET_MANAGER.queueDownload("./assets/player/Idle.png");
 ASSET_MANAGER.queueDownload("./assets/player/Run.png");
 ASSET_MANAGER.queueDownload("./assets/player/Jump.png");
 ASSET_MANAGER.queueDownload("./assets/player/Death.png");
+ASSET_MANAGER.queueDownload("./assets/player/Fall.png");
 
+// Enemy
 ASSET_MANAGER.queueDownload("./assets/cactus/cactus.png");
 
+// Enemy Attack
 ASSET_MANAGER.queueDownload("./assets/thorn/thorn.png");
 
-//Background
+// Background
 ASSET_MANAGER.queueDownload("./assets/background/background.png");
 
 ASSET_MANAGER.downloadAll(() => {
