@@ -3,36 +3,30 @@ import { Camera } from "../Core/Camera.js";
 
 export class GameEngine {
   constructor(options) {
-    // if the instance already exists, return it
+    // Singleton instance
     if (!window.GAME_ENGINE) {
-      window.GAME_ENGINE = this; // Singleton instance
+      window.GAME_ENGINE = this;
     }
-    // What you will use to draw
-    // Documentation: https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D
-    this.ctx = null;
 
-    // Everything that will be updated and drawn each frame
+    this.ctx = null; // Canvas context
+
+    // Entities and input management
     this.entities = [];
-
-    // Information on the input
-    this.click = null;
-    this.mouse = null;
-    this.wheel = null;
     this.keys = {};
+    this.mouse = { x: 0, y: 0 };
 
-    // Options and the Details
-    this.options = options || {
-      debugging: false,
-    };
+    // Options
+    this.options = options || { debugging: false };
 
-    this.mouse = {x: 0, y: 0};
-
+    // Canvas scaling and dimensions
     this.width = 2000;
     this.height = 1000;
 
+    // Camera and debugging
     this.camera = new Camera();
     this.addEntity(this.camera);
     this.debug_colliders = true;
+
     return window.GAME_ENGINE;
   }
 
@@ -59,6 +53,7 @@ export class GameEngine {
       ctx.scale(this.x_scale, this.y_scale);
       ctx.translate(this.width / 2, this.height / 2);
     };
+
     window.addEventListener("resize", resize);
     resize();
   }
@@ -102,7 +97,7 @@ export class GameEngine {
       if (this.options.debugging) {
         console.log("WHEEL", getXandY(e), e.wheelDelta);
       }
-      e.preventDefault(); // Prevent Scrolling
+      e.preventDefault(); // Prevent scrolling
       this.wheel = e;
     });
 
@@ -110,7 +105,7 @@ export class GameEngine {
       if (this.options.debugging) {
         console.log("RIGHT_CLICK", getXandY(e));
       }
-      e.preventDefault(); // Prevent Context Menu
+      e.preventDefault(); // Prevent context menu
       this.rightclick = getXandY(e);
     });
 
@@ -129,55 +124,46 @@ export class GameEngine {
       else return -1;
     };
 
-    this.ctx.canvas.addEventListener(
-      'mousedown',
-      (event) => {
-        const button = getMouseButton(event);
-        if (button != -1) {
-          this.keys['m' + button] = true;
-        }
+    this.ctx.canvas.addEventListener("mousedown", (event) => {
+      const button = getMouseButton(event);
+      if (button != -1) {
+        this.keys["m" + button] = true;
       }
-    );
+    });
 
-    this.ctx.canvas.addEventListener(
-      'mouseup',
-      (event) => {
-        const button = getMouseButton(event);
-        if (button != -1) {
-          this.keys['m' + button] = false;
-        }
+    this.ctx.canvas.addEventListener("mouseup", (event) => {
+      const button = getMouseButton(event);
+      if (button != -1) {
+        this.keys["m" + button] = false;
       }
-    );
+    });
   }
 
   addEntity(entity) {
-    //this.entities.push(entity);
+    if (!entity || typeof entity.update !== "function" || typeof entity.draw !== "function") {
+      console.warn("Invalid entity added to GameEngine:", entity);
+      return;
+    }
 
-    let start = 0;
-    let end = this.entities.length - 1;
-    const entityOrder = entity.entityOrder;
+    const entityOrder = entity.entityOrder || 0; // Default entity order
     let i = 0;
     while (i < this.entities.length && this.entities[i].entityOrder < entityOrder) i++;
-  
+
     // Insert the entity at the determined index
     this.entities.splice(i, 0, entity);
   }
 
   draw() {
-    // Clear the whole canvas with transparent color (rgba(0, 0, 0, 0))
-    this.ctx.fillStyle = 'black';
-    this.ctx.fillRect(
-      -this.width / 2,
-      -this.height / 2,
-      this.width,
-      this.height
-    );
-    
+    // Clear the canvas
+    this.ctx.fillStyle = "black";
+    this.ctx.fillRect(-this.width / 2, -this.height / 2, this.width, this.height);
+
+    // Draw each entity
     for (let i = 0; i < this.entities.length; i++) {
-      //console.log(this.entities);
       this.entities[i].draw(this.ctx);
     }
-    
+
+    // Debugging: Draw colliders
     if (this.debug_colliders) {
       this.ctx.lineWidth = 5;
       this.ctx.strokeStyle = "green";
@@ -197,18 +183,27 @@ export class GameEngine {
   }
 
   update() {
-    let entitiesCount = this.entities.length;
+    const entitiesCount = this.entities.length;
 
     for (let i = 0; i < entitiesCount; i++) {
-      let entity = this.entities[i];
+      const entity = this.entities[i];
 
+      // Skip invalid entities
+      if (!entity || typeof entity.update !== "function") {
+        console.warn("Skipped invalid entity during update:", entity);
+        continue;
+      }
+
+      // Update valid entities
       if (!entity.removeFromWorld) {
         entity.update();
       }
     }
 
+    // Remove entities marked for removal
     for (let i = this.entities.length - 1; i >= 0; --i) {
-      if (this.entities[i].removeFromWorld) {
+      const entity = this.entities[i];
+      if (entity && entity.removeFromWorld) {
         this.entities.splice(i, 1);
       }
     }
@@ -220,5 +215,6 @@ export class GameEngine {
     this.draw();
   }
 }
+
 
 // KV Le was here :)
