@@ -25,6 +25,8 @@ export class GameEngine {
       debugging: false,
     };
 
+    this.mouse = {x: 0, y: 0};
+
     this.width = 2000;
     this.height = 1000;
 
@@ -120,6 +122,32 @@ export class GameEngine {
       "keyup",
       (event) => (this.keys[event.key] = false)
     );
+
+    const getMouseButton = (event) => {
+      if (event.button == 0) return 1;
+      if (event.button == 2) return 2;
+      else return -1;
+    };
+
+    this.ctx.canvas.addEventListener(
+      'mousedown',
+      (event) => {
+        const button = getMouseButton(event);
+        if (button != -1) {
+          this.keys['m' + button] = true;
+        }
+      }
+    );
+
+    this.ctx.canvas.addEventListener(
+      'mouseup',
+      (event) => {
+        const button = getMouseButton(event);
+        if (button != -1) {
+          this.keys['m' + button] = false;
+        }
+      }
+    );
   }
 
   addEntity(entity) {
@@ -137,7 +165,8 @@ export class GameEngine {
 
   draw() {
     // Clear the whole canvas with transparent color (rgba(0, 0, 0, 0))
-    this.ctx.clearRect(
+    this.ctx.fillStyle = 'black';
+    this.ctx.fillRect(
       -this.width / 2,
       -this.height / 2,
       this.width,
@@ -155,7 +184,6 @@ export class GameEngine {
       for (let e of this.entities) {
         if (e.colliders) {
           for (let c of e.colliders) {
-            console.log(e.x - this.camera.x + c.x_offset - c.width / 2)
             this.ctx.strokeRect(
               e.x - this.camera.x + c.x_offset - c.width / 2,
               e.y - this.camera.y + c.y_offset - c.height / 2,

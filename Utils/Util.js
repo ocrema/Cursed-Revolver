@@ -54,9 +54,13 @@ window.requestAnimFrame = (() => {
  * @param {Number} p1, p2 Two objects with x and y coordinates
  * @returns Distance between the two points
  */
-const getDistance = (p1, p2) => {
+export const getDistance = (p1, p2) => {
     return Math.sqrt(Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2));
 };
+
+export const getAngle = (x1, y1, x2, y2) => {
+    return Math.atan2(y2 - y1, x2 - x1);
+}
 
 export const newCollider = (w, h, x, y) => { 
     return {width: w, height: h, x_offset: x, y_offset: y}; 

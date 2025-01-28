@@ -20,8 +20,8 @@ export class Camera extends Entity {
         }
 
         if (this.player) {
-            this.x = this.player.x;
-            this.y = this.player.y;
+            this.x += (this.player.x - this.x) * Math.min(5 * GAME_ENGINE.clockTick, 1);
+            this.y += (this.player.y - this.y) * Math.min(5 * GAME_ENGINE.clockTick, 1);
         }
             
     }

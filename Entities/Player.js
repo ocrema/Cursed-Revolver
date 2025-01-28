@@ -1,5 +1,6 @@
 import { Actor } from "./Entities.js";
 import * as Util from "../Utils/Util.js";
+import { Fireball } from "./Spells.js";
 
 export class Player extends Actor {
   constructor() {
@@ -52,6 +53,8 @@ export class Player extends Actor {
     this.x_velocity = 0;
     this.y_velocity = 0;
     this.isGrounded = 0; // values above 0 indicate that the player is grounded, so the player can still jump for a little bit after falling off a platform 
+
+    this.spellCooldown = 0; // temporary
   }
 
   jump() {}
@@ -87,7 +90,7 @@ export class Player extends Actor {
 
     this.x += this.x_velocity * GAME_ENGINE.clockTick;
     for (let e of GAME_ENGINE.entities) {
-      if (e.isPlayer) continue;
+      if (e.isPlayer || e.isAttack) continue;
       if (this.colliding(e)) {
         this.x -= this.x_velocity * GAME_ENGINE.clockTick;
         this.x_velocity = 0;
@@ -97,7 +100,7 @@ export class Player extends Actor {
 
     this.y += this.y_velocity * GAME_ENGINE.clockTick;
     for (let e of GAME_ENGINE.entities) {
-      if (e.isPlayer) continue;
+      if (e.isPlayer || e.isAttack) continue;
       if (this.colliding(e)) {
         this.y -= this.y_velocity * GAME_ENGINE.clockTick;
         if (this.y_velocity > 0) this.isGrounded = .2;
@@ -105,6 +108,21 @@ export class Player extends Actor {
         break;
       }
     }
+
+    this.spellCooldown = Math.max(this.spellCooldown - GAME_ENGINE.clockTick, 0);
+    if (this.spellCooldown <= 0 && GAME_ENGINE.keys['m1']) {
+      this.spellCooldown = .3;
+      const fireball = new Fireball();
+      fireball.x = this.x;
+      fireball.y = this.y;
+      fireball.dir = Util.getAngle(this.x - GAME_ENGINE.camera.x, this.y - GAME_ENGINE.camera.y, GAME_ENGINE.mouse.x, GAME_ENGINE.mouse.y);
+      GAME_ENGINE.addEntity(fireball);
+    }
+
+    for (let a of this.recieved_attacks) {
+
+    }
+    this.recieved_attacks = [];
     
 
 
@@ -116,6 +134,7 @@ export class Player extends Actor {
 
     // Update the active animation
     this.updateAnimation(GAME_ENGINE.clockTick);
+
   }
 
 

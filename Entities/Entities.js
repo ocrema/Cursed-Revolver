@@ -1,3 +1,5 @@
+import { newCollider } from "../Utils/Util.js";
+
 export class Entity {
   constructor() {
     this.x = 0;
@@ -163,28 +165,25 @@ export class GameMap extends Entity {
   constructor() {
     super();
     this.isMap = true;
-    this.entities = [];
-    this.floorY = 400; // Y-coordinate of the floor
-    this.entityOrder = -1;
   }
 
   update() {
       
   }
 
-  draw(ctx) {
-    
-    // Draw the visible floor as a rectangle
-    ctx.save();
-    ctx.fillStyle = "red"; // Floor color
-    ctx.fillRect(-1000 - GAME_ENGINE.camera.x, 450 - GAME_ENGINE.camera.y, 2000, 20); // Floor rectangle
-    ctx.restore();
-      
-  }
+}
 
-  close() {
-    for (let i = 0; i < this.entities.length; i++) {
-      this.entities[i].removeFromWorld = true;
-    }
+export class Platform extends Entity {
+  constructor(x, y, width, height) {
+    super();
+    this.x = x;
+    this.y = y;
+    this.width = width;
+    this.height = height;
+    this.colliders = [newCollider(width, height, 0, 0)]
+  }
+  draw(ctx) {
+    ctx.fillStyle = "lightgray";
+    ctx.fillRect(this.x - this.width/2 - GAME_ENGINE.camera.x, this.y - this.height/2 - GAME_ENGINE.camera.y, this.width, this.height);
   }
 }
