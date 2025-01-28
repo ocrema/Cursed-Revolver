@@ -2,7 +2,7 @@ import { Entity } from "../Entities/Entities.js";
 import { Player } from "../Entities/Player.js";
 import { Cactus } from "../Entities/Enemy.js";
 import { Background } from "../Entities/Background.js";
-import { GameMap } from "../Entities/Entities.js";
+import { Map1 } from "../Entities/Map1.js";
 
 export class GameLogicController extends Entity {
   constructor() {
@@ -16,10 +16,10 @@ export class GameLogicController extends Entity {
   update() {
     if (this.state == 0) {
       this.state = 1;
-      GAME_ENGINE.addEntity(new Player());
-      GAME_ENGINE.addEntity(new Cactus());
-      GAME_ENGINE.addEntity(new Background());
-      GAME_ENGINE.addEntity(new GameMap());
+      this.map = new Map1();
+      GAME_ENGINE.addEntity(this.map);
+      this.map.load();
+      
     }
   }
 }

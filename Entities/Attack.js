@@ -12,6 +12,8 @@ export class Thorn extends Entity {
         this.width = 16;
         this.height = 16;
 
+        this.isAttack = true;
+
         
 
         // distance the thorn has travelled
