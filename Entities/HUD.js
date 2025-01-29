@@ -5,9 +5,9 @@ export class HUD extends Entity {
   constructor() {
     super();
     this.entityOrder = 9999;
-    this.healthBarWidth = 200; // Width of the health bar
-    this.healthBarHeight = 20; // Height of the health bar
-    this.healthBarMargin = 20; // Margin from the top-left corner
+    this.healthBarWidthRatio = 0.2; // 20% of canvas width
+    this.healthBarHeightRatio = 0.02; // 2% of canvas height
+    this.healthBarMarginRatio = 0.02; // 2% of canvas height as margin
     this.debugMode = false; // Debug mode toggle
     this.spells = ["Fireball", "Lightning Bolt", "Water Wave", "Icicle"]; // Example spells
     this.activeSpellIndex = 0; // Current spell index
@@ -18,7 +18,7 @@ export class HUD extends Entity {
   }
 
   update() {
-    // Toggle debug mode when "D" key is pressed
+    // Toggle debug mode when "B" key is pressed
     if (GAME_ENGINE.keys["b"]) {
       this.debugMode = !this.debugMode;
       GAME_ENGINE.keys["b"] = false; // Prevent continuous toggling
@@ -43,9 +43,17 @@ export class HUD extends Entity {
     // Reset any camera transformations (make HUD fixed to screen)
     ctx.setTransform(1, 0, 0, 1, 0, 0);
 
+    // Scale HUD elements dynamically based on canvas size
+    const canvasWidth = ctx.canvas.width;
+    const canvasHeight = ctx.canvas.height;
+
+    const healthBarWidth = canvasWidth * this.healthBarWidthRatio;
+    const healthBarHeight = canvasHeight * this.healthBarHeightRatio;
+    const healthBarMargin = canvasHeight * this.healthBarMarginRatio;
+
     // Coordinates for elements
-    const startX = this.healthBarMargin; // Starting X position
-    const startY = this.healthBarMargin; // Starting Y position
+    const startX = healthBarMargin; // Starting X position
+    const startY = healthBarMargin; // Starting Y position
 
     // Draw health bar
     const player = GAME_ENGINE.entities.find((e) => e.isPlayer);
@@ -54,40 +62,40 @@ export class HUD extends Entity {
 
     // Health Bar Background
     ctx.fillStyle = "red"; // Background (missing health)
-    ctx.fillRect(startX, startY, this.healthBarWidth, this.healthBarHeight);
+    ctx.fillRect(startX, startY, healthBarWidth, healthBarHeight);
 
     // Health Bar Foreground
     ctx.fillStyle = "green"; // Foreground (current health)
     ctx.fillRect(
       startX,
       startY,
-      (currentHealth / maxHealth) * this.healthBarWidth,
-      this.healthBarHeight
+      (currentHealth / maxHealth) * healthBarWidth,
+      healthBarHeight
     );
 
     // Numeric Health Display
     ctx.fillStyle = "white";
-    ctx.font = "14px Arial";
+    ctx.font = `${canvasHeight * 0.015}px Arial`; // Scale font based on screen height
     ctx.fillText(
       `${currentHealth} / ${maxHealth}`,
-      startX + this.healthBarWidth / 2 - 25,
-      startY + 15
+      startX + healthBarWidth / 2 - 25,
+      startY + healthBarHeight * 0.75
     );
 
     // Draw active spell name
-    const spellTextX = startX + this.healthBarWidth + 20; // 20px gap after health bar
+    const spellTextX = startX + healthBarWidth + 20; // 20px gap after health bar
     ctx.fillStyle = "white";
-    ctx.font = "20px Arial";
-    ctx.fillText(`Spell: ${this.spells[this.activeSpellIndex]}`, spellTextX, startY + 15);
+    ctx.font = `${canvasHeight * 0.02}px Arial`; // Scale font dynamically
+    ctx.fillText(`Spell: ${this.spells[this.activeSpellIndex]}`, spellTextX, startY + healthBarHeight);
 
     // Debug Information (if debug mode is enabled)
     if (this.debugMode) {
       const debugTextX = startX;
-      const debugTextY = startY + 40; // Below the health bar
-      const lineSpacing = 20; // Spacing between debug lines
+      const debugTextY = startY + healthBarHeight * 2; // Below the health bar
+      const lineSpacing = canvasHeight * 0.025; // Dynamic spacing between debug lines
 
       ctx.fillStyle = "yellow";
-      ctx.font = "14px Arial";
+      ctx.font = `${canvasHeight * 0.015}px Arial`; // Scale font size
 
       let debugLine = 0;
 
