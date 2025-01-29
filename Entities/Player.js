@@ -15,7 +15,7 @@ export class Player extends Actor {
 
     // Add animations for the player
     this.addAnimation(
-      "idle",
+      PLAYER_SPRITESHEET.IDLE.NAME, // Name of the animation
       this.assetManager.getAsset(PLAYER_SPRITESHEET.IDLE.URL), // URL for Idle animation
       PLAYER_SPRITESHEET.IDLE.FRAME_WIDTH, // Frame width
       PLAYER_SPRITESHEET.IDLE.FRAME_HEIGHT, // Frame height
@@ -24,7 +24,7 @@ export class Player extends Actor {
     );
 
     this.addAnimation(
-      "run",
+      PLAYER_SPRITESHEET.RUN.NAME, // Name of the animation
       this.assetManager.getAsset(PLAYER_SPRITESHEET.RUN.URL), // URL for Run animation
       PLAYER_SPRITESHEET.RUN.FRAME_WIDTH, // Frame width
       PLAYER_SPRITESHEET.RUN.FRAME_HEIGHT, // Frame height
@@ -33,7 +33,7 @@ export class Player extends Actor {
     );
 
     this.addAnimation(
-      "jump",
+      PLAYER_SPRITESHEET.JUMP.NAME, // Name of the animation
       this.assetManager.getAsset(PLAYER_SPRITESHEET.JUMP.URL), // URL for Jump animation
       PLAYER_SPRITESHEET.JUMP.FRAME_WIDTH, // Frame width
       PLAYER_SPRITESHEET.JUMP.FRAME_HEIGHT, // Frame height
@@ -42,7 +42,7 @@ export class Player extends Actor {
     );
 
     this.addAnimation(
-      "fall",
+      PLAYER_SPRITESHEET.FALL.NAME, // Name of the animation
       this.assetManager.getAsset(PLAYER_SPRITESHEET.FALL.URL),
       PLAYER_SPRITESHEET.FALL.FRAME_WIDTH,
       PLAYER_SPRITESHEET.FALL.FRAME_HEIGHT,
@@ -51,7 +51,7 @@ export class Player extends Actor {
     );
 
     this.addAnimation(
-      "dead",
+      PLAYER_SPRITESHEET.DEAD.NAME, // Name of the animation
       this.assetManager.getAsset(PLAYER_SPRITESHEET.DEAD.URL), // URL for Death animation
       PLAYER_SPRITESHEET.DEAD.FRAME_WIDTH, // Frame width
       PLAYER_SPRITESHEET.DEAD.FRAME_HEIGHT, // Frame height
@@ -64,7 +64,7 @@ export class Player extends Actor {
     this.health = 200;
 
     // Start with the idle animation
-    this.setAnimation("idle");
+    this.setAnimation(PLAYER_SPRITESHEET.IDLE.NAME);
 
     this.colliders = [];
     this.colliders.push(
@@ -115,7 +115,7 @@ export class Player extends Actor {
     if (GAME_ENGINE.keys[" "] && this.isGrounded > 0) {
       this.isGrounded = 0;
       this.y_velocity = -1500; // Jumping velocity
-      this.setAnimation("jump");
+      this.setAnimation(PLAYER_SPRITESHEET.JUMP.NAME);
       this.isJumping = true;
     }
 
@@ -192,14 +192,14 @@ export class Player extends Actor {
 
     if (!this.isGrounded) {
       if (this.y_velocity < 0) {
-        this.setAnimation("jump"); // Jump animation when moving up
+        this.setAnimation(PLAYER_SPRITESHEET.JUMP.NAME); // Jump animation when moving up
       } else {
-        this.setAnimation("fall"); // Fall animation when moving down
+        this.setAnimation(PLAYER_SPRITESHEET.FALL.NAME); // Fall animation when moving down
       }
     } else if (this.isMoving) {
-      this.setAnimation("run"); // Run animation when grounded and moving
+      this.setAnimation(PLAYER_SPRITESHEET.RUN.NAME); // Run animation when grounded and moving
     } else {
-      this.setAnimation("idle"); // Idle animation when grounded and not moving
+      this.setAnimation(PLAYER_SPRITESHEET.IDLE.NAME); // Idle animation when grounded and not moving
     }
 
     // process each attack

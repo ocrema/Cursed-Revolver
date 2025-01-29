@@ -17,6 +17,7 @@ export const BACKGROUND_SPRITESHEET = {
 
 export const PLAYER_SPRITESHEET = {
   IDLE: {
+    NAME: "IDLE",
     URL: "./assets/player/Idle.png",
     FRAME_WIDTH: 231,
     FRAME_HEIGHT: 190,
@@ -24,6 +25,7 @@ export const PLAYER_SPRITESHEET = {
     FRAME_DURATION: 0.25,
   },
   RUN: {
+    NAME: "RUN",
     URL: "./assets/player/Run.png",
     FRAME_WIDTH: 231,
     FRAME_HEIGHT: 190,
@@ -31,6 +33,7 @@ export const PLAYER_SPRITESHEET = {
     FRAME_DURATION: 0.1,
   },
   JUMP: {
+    NAME: "JUMP",
     URL: "./assets/player/Jump.png",
     FRAME_WIDTH: 231,
     FRAME_HEIGHT: 190,
@@ -38,6 +41,7 @@ export const PLAYER_SPRITESHEET = {
     FRAME_DURATION: 0.5,
   },
   FALL: {
+    NAME: "FALL",
     URL: "./assets/player/Fall.png",
     FRAME_WIDTH: 231,
     FRAME_HEIGHT: 190,
@@ -45,6 +49,7 @@ export const PLAYER_SPRITESHEET = {
     FRAME_DURATION: 0.5,
   },
   DEAD: {
+    NAME: "DEAD",
     URL: "./assets/player/Death.png",
     FRAME_WIDTH: 231,
     FRAME_HEIGHT: 190,
