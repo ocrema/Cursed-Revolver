@@ -5,45 +5,84 @@ export class HUD extends Entity {
   constructor() {
     super();
     this.entityOrder = 9999;
-    this.healthBarWidthRatio = 0.2; // 20% of canvas width
-    this.healthBarHeightRatio = 0.02; // 2% of canvas height
-    this.healthBarMarginRatio = 0.02; // 2% of canvas height as margin
-    this.debugMode = false; // Debug mode toggle
-    this.spells = ["Fireball", "Lightning Bolt", "Water Wave", "Icicle"]; // Example spells
-    this.activeSpellIndex = 0; // Current spell index
+    this.healthBarWidthRatio = 0.3;
+    this.healthBarHeightRatio = 0.03;
+    this.healthBarMarginRatio = 0.03;
+    this.debugMode = false;
+
+    // Spells and cylinder setup
+    this.spells = [
+      { name: "Fireball", icon: "./assets/ui/spells/fireball.png" },
+      // { name: "Lightning Bolt", icon: "./assets/ui/spells/lightning.png" },
+      // { name: "Water Wave", icon: "./assets/ui/spells/water.png" },
+      // { name: "Icicle", icon: "./assets/ui/spells/icicle.png" },
+      // { name: "Wind Slash", icon: "./assets/ui/spells/wind.png" },
+      // { name: "Earthquake", icon: "./assets/ui/spells/earthquake.png" }
+    ];
+    
+    this.activeSpellIndex = 0;
+
+    // Cylinder animation setup
+    this.cylinderImages = [];
+    for (let i = 2; i <= 10; i++) { 
+      this.cylinderImages.push(`./assets/ui/revolver/cylinder${i}.png`);
+    }
+
+    this.currentCylinderFrame = 0;
+    this.spinning = false;
+    this.spinSpeed = 0.1;
+    this.spinTargetFrame = 0;
   }
 
   colliding() {
-    return false; // HUD does not collide with anything
+    return false;
   }
 
   update() {
-    // Toggle debug mode when "B" key is pressed
+    // Toggle debug mode
     if (GAME_ENGINE.keys["b"]) {
       this.debugMode = !this.debugMode;
-      GAME_ENGINE.keys["b"] = false; // Prevent continuous toggling
+      console.log(`Debug Mode: ${this.debugMode ? "ON" : "OFF"}`);
+      GAME_ENGINE.keys["b"] = false;
     }
 
-    // Update active spell index if needed (scroll wheel simulation)
-    if (GAME_ENGINE.keys["mwheelup"]) {
-      this.activeSpellIndex = (this.activeSpellIndex + 1) % this.spells.length;
-      GAME_ENGINE.keys["mwheelup"] = false;
+    // Spell selection (1-6 keys)
+    for (let i = 1; i <= 1; i++) { //TEMP! change to 6 later
+      if (GAME_ENGINE.keys[i.toString()]) {
+        this.selectSpell(i - 1);
+        GAME_ENGINE.keys[i.toString()] = false;
+      }
     }
-    if (GAME_ENGINE.keys["mwheeldown"]) {
-      this.activeSpellIndex =
-        (this.activeSpellIndex - 1 + this.spells.length) % this.spells.length;
-      GAME_ENGINE.keys["mwheeldown"] = false;
+
+    if (this.spinning) {
+      this.currentCylinderFrame += this.spinSpeed;
+
+      console.log(`Current Cylinder Frame: ${Math.floor(this.currentCylinderFrame)}`);
+      
+      // Ensure looping animation
+      if (this.currentCylinderFrame >= 10) {
+        this.currentCylinderFrame = 0;
+      }
+    
+      // Smoothly stop at the target frame
+      if (Math.abs(this.currentCylinderFrame - this.spinTargetFrame) < this.spinSpeed) {
+        this.currentCylinderFrame = this.spinTargetFrame;
+        this.spinning = false; // Stop spinning
+      }
     }
+    
+  }
+
+  selectSpell(index) {
+    this.activeSpellIndex = index;
+    this.spinTargetFrame = index;
+    this.spinning = true;
   }
 
   draw(ctx) {
-    // Save the current transformation state
     ctx.save();
-
-    // Reset any camera transformations (make HUD fixed to screen)
     ctx.setTransform(1, 0, 0, 1, 0, 0);
 
-    // Scale HUD elements dynamically based on canvas size
     const canvasWidth = ctx.canvas.width;
     const canvasHeight = ctx.canvas.height;
 
@@ -51,81 +90,88 @@ export class HUD extends Entity {
     const healthBarHeight = canvasHeight * this.healthBarHeightRatio;
     const healthBarMargin = canvasHeight * this.healthBarMarginRatio;
 
-    // Coordinates for elements
-    const startX = healthBarMargin; // Starting X position
-    const startY = healthBarMargin; // Starting Y position
+    // Positioning
+    const startX = healthBarMargin;
+    const startY = canvasHeight - healthBarHeight - healthBarMargin;
+    
+    // Scalable Cylinder and Spell Positions
+    const scaleFactor = canvasHeight / 800; // Dynamic scaling based on canvas height
 
-    // Draw health bar
+    const cylinderSize = 120 * scaleFactor; // Scalable size
+    const cylinderX = canvasWidth - cylinderSize - 50 * scaleFactor;
+    const cylinderY = canvasHeight - cylinderSize - 50 * scaleFactor;
+
+    // Move spell name and icon lower
+    const spellTextX = cylinderX - 200 * scaleFactor;
+    const spellTextY = cylinderY + cylinderSize / 1.5;
+
+    // Health Bar
     const player = GAME_ENGINE.entities.find((e) => e.isPlayer);
     const currentHealth = player ? player.health : 0;
-    const maxHealth = 200; // Assume 200 as max health for now
+    const maxHealth = 200;
 
-    // Health Bar Background
-    ctx.fillStyle = "red"; // Background (missing health)
+    ctx.fillStyle = "red";
     ctx.fillRect(startX, startY, healthBarWidth, healthBarHeight);
+    ctx.fillStyle = "green";
+    ctx.fillRect(startX, startY, (currentHealth / maxHealth) * healthBarWidth, healthBarHeight);
 
-    // Health Bar Foreground
-    ctx.fillStyle = "green"; // Foreground (current health)
-    ctx.fillRect(
-      startX,
-      startY,
-      (currentHealth / maxHealth) * healthBarWidth,
-      healthBarHeight
-    );
-
-    // Numeric Health Display
+    // Health Text
     ctx.fillStyle = "white";
-    ctx.font = `${canvasHeight * 0.015}px Arial`; // Scale font based on screen height
-    ctx.fillText(
-      `${currentHealth} / ${maxHealth}`,
-      startX + healthBarWidth / 2 - 25,
-      startY + healthBarHeight * 0.75
-    );
+    ctx.font = `${canvasHeight * 0.03}px Arial`;
+    ctx.fillText(`${currentHealth} / ${maxHealth}`, startX + healthBarWidth / 2 - 25, startY + healthBarHeight * 0.75);
 
-    // Draw active spell name
-    const spellTextX = startX + healthBarWidth + 20; // 20px gap after health bar
-    ctx.fillStyle = "white";
-    ctx.font = `${canvasHeight * 0.02}px Arial`; // Scale font dynamically
-    ctx.fillText(`Spell: ${this.spells[this.activeSpellIndex]}`, spellTextX, startY + healthBarHeight);
-
-    // Debug Information (if debug mode is enabled)
-    if (this.debugMode) {
-      const debugTextX = startX;
-      const debugTextY = startY + healthBarHeight * 2; // Below the health bar
-      const lineSpacing = canvasHeight * 0.025; // Dynamic spacing between debug lines
-
-      ctx.fillStyle = "yellow";
-      ctx.font = `${canvasHeight * 0.015}px Arial`; // Scale font size
-
-      let debugLine = 0;
-
-      // Example debug info
-      ctx.fillText("Debug Mode: ON", debugTextX, debugTextY + debugLine++ * lineSpacing);
-      ctx.fillText(
-        `Player Position: (${Math.floor(player.x)}, ${Math.floor(player.y)})`,
-        debugTextX,
-        debugTextY + debugLine++ * lineSpacing
-      );
-      ctx.fillText(
-        `Player Velocity: (${player.x_velocity.toFixed(2)}, ${player.y_velocity.toFixed(
-          2
-        )})`,
-        debugTextX,
-        debugTextY + debugLine++ * lineSpacing
-      );
-      ctx.fillText(
-        `Active Spell: ${this.spells[this.activeSpellIndex]}`,
-        debugTextX,
-        debugTextY + debugLine++ * lineSpacing
-      );
-      ctx.fillText(
-        `Health: ${currentHealth} / ${maxHealth}`,
-        debugTextX,
-        debugTextY + debugLine++ * lineSpacing
-      );
+    // Spell Text and Icon (Lowered)
+    ctx.fillText(`Spell: ${this.spells[this.activeSpellIndex].name}`, spellTextX, spellTextY);
+    
+    const spellIcon = ASSET_MANAGER.getAsset(this.spells[this.activeSpellIndex].icon);
+    if (spellIcon) {
+      const spellIconSize = 60 * scaleFactor; // Scale dynamically
+      ctx.drawImage(spellIcon, spellTextX - 80 * scaleFactor, spellTextY - 40 * scaleFactor, spellIconSize, spellIconSize);
     }
 
-    // Restore the previous transformation state
+    // Cylinder Image (Scaled)
+    const cylinderImage = ASSET_MANAGER.getAsset(this.cylinderImages[Math.floor(this.currentCylinderFrame)]);
+    
+    if (cylinderImage) {
+      ctx.drawImage(cylinderImage, cylinderX, cylinderY, cylinderSize, cylinderSize);
+    }
+
+    // Debug Mode - Show Info (Top Left)
+    if (this.debugMode) {
+      ctx.fillStyle = "yellow";
+      ctx.font = `${canvasHeight * 0.025}px Arial`;
+
+      const debugTextX = 20;
+      const debugTextY = 40;
+      const lineSpacing = canvasHeight * 0.03;
+      let debugLine = 0;
+
+      ctx.fillText("DEBUG MODE: ON", debugTextX, debugTextY + debugLine++ * lineSpacing);
+
+      if (player) {
+        ctx.fillText(
+          `Player Position: (${Math.floor(player.x)}, ${Math.floor(player.y)})`,
+          debugTextX,
+          debugTextY + debugLine++ * lineSpacing
+        );
+        ctx.fillText(
+          `Player Velocity: (${player.x_velocity.toFixed(2)}, ${player.y_velocity.toFixed(2)})`,
+          debugTextX,
+          debugTextY + debugLine++ * lineSpacing
+        );
+        ctx.fillText(
+          `Active Spell: ${this.spells[this.activeSpellIndex].name}`,
+          debugTextX,
+          debugTextY + debugLine++ * lineSpacing
+        );
+        ctx.fillText(
+          `Health: ${currentHealth} / ${maxHealth}`,
+          debugTextX,
+          debugTextY + debugLine++ * lineSpacing
+        );
+      }
+    }
+
     ctx.restore();
   }
 }

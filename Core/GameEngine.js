@@ -1,7 +1,8 @@
 import { Timer } from "../Utils/timer.js";
 import { Camera } from "../Core/Camera.js";
 import { PauseMenu } from "../Entities/PauseMenu.js"; // Adjust path if necessary
-
+import { MainMenu } from "../Entities/MainMenu.js";
+import { GameLogicController } from "../Core/GameLogicController.js";
 
 export class GameEngine {
   constructor(options) {
@@ -19,12 +20,25 @@ export class GameEngine {
     this.height = 1000;
     this.camera = new Camera();
     this.addEntity(this.camera);
-    this.debug_colliders = true;
+    this.debug_colliders = false;
 
     // Reference to GameLogicController
     this.GAME_CONTROLLER = null;
 
+    this.MAIN_MENU = new MainMenu();
+    this.addEntity(this.MAIN_MENU);
+
     return window.GAME_ENGINE;
+  }
+
+  startGame() {
+    console.log("Starting game...");
+    this.entities = this.entities.filter(entity => !(entity instanceof MainMenu));
+    this.GAME_CONTROLLER = new GameLogicController();
+    this.addEntity(this.GAME_CONTROLLER);
+    //this.update();
+    //this.draw();
+    window.dispatchEvent(new Event("resize"));
   }
 
   init(ctx) {
@@ -134,25 +148,26 @@ export class GameEngine {
   }
 
   update() {
-    // If the game is paused, update only the PauseMenu entity
+    if (this.MAIN_MENU.isVisible) {
+      this.MAIN_MENU.update();
+      return;
+    }
+
     if (this.GAME_CONTROLLER && this.GAME_CONTROLLER.isPaused) {
       for (let entity of this.entities) {
         if (entity instanceof PauseMenu && entity.isVisible) {
-          console.log("Updating PauseMenu"); // Debug PauseMenu updates
-          entity.update(); // Ensure PauseMenu processes input
+          entity.update();
         }
       }
-      return; // Skip updates for all other entities
+      return;
     }
 
-    // Normal update logic when not paused
     for (let entity of this.entities) {
       if (entity && typeof entity.update === "function" && !entity.removeFromWorld) {
         entity.update();
       }
     }
 
-    // Remove entities marked for removal
     for (let i = this.entities.length - 1; i >= 0; --i) {
       const entity = this.entities[i];
       if (entity && entity.removeFromWorld) {

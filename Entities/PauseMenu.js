@@ -82,7 +82,7 @@ export class PauseMenu extends Entity {
     const menuY = centerY - menuHeight / 2;
   
     // Draw menu background image
-    const backgroundImage = ASSET_MANAGER.getAsset("./assets/ui/menuBackground.png");
+    const backgroundImage = ASSET_MANAGER.getAsset("./assets/ui/menu/menuBackground.png");
     if (backgroundImage) {
       ctx.drawImage(backgroundImage, menuX, menuY, menuWidth, menuHeight);
     }
@@ -102,7 +102,7 @@ export class PauseMenu extends Entity {
     const quitY = menuY + 210;
   
     // Draw buttons with PNG images
-    const resumeButton = ASSET_MANAGER.getAsset("./assets/ui/buttonResume.png");
+    const resumeButton = ASSET_MANAGER.getAsset("./assets/ui/menu/buttonResume.png");
     if (resumeButton) {
       if (this.selectedOption === 0) {
         ctx.strokeStyle = "yellow";
@@ -112,7 +112,7 @@ export class PauseMenu extends Entity {
       ctx.drawImage(resumeButton, resumeX, resumeY, buttonWidth, buttonHeight);
     }
   
-    const settingsButton = ASSET_MANAGER.getAsset("./assets/ui/buttonSettings.png");
+    const settingsButton = ASSET_MANAGER.getAsset("./assets/ui/menu/buttonSettings.png");
     if (settingsButton) {
       if (this.selectedOption === 1) {
         ctx.strokeStyle = "yellow";
@@ -122,7 +122,7 @@ export class PauseMenu extends Entity {
       ctx.drawImage(settingsButton, settingsX, settingsY, buttonWidth, buttonHeight);
     }
   
-    const quitButton = ASSET_MANAGER.getAsset("./assets/ui/buttonQuit.png");
+    const quitButton = ASSET_MANAGER.getAsset("./assets/ui/menu/buttonQuit.png");
     if (quitButton) {
       if (this.selectedOption === 2) {
         ctx.strokeStyle = "yellow";
