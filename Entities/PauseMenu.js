@@ -3,9 +3,9 @@ import { Entity } from "./Entities.js";
 export class PauseMenu extends Entity {
   constructor() {
     super();
-    this.entityOrder = 9999999; // Render above all other entities
+    this.entityOrder = 99999999; // Render above all other entities
     this.isVisible = false; // Initially hidden
-    this.menuOptions = ["Resume", "Quit"]; // Menu options
+    this.menuOptions = ["Resume", "Settings", "Quit"]; // Menu options
     this.selectedOption = 0; // Default selected menu option
   }
 
@@ -23,7 +23,10 @@ export class PauseMenu extends Entity {
   }
 
   update() {
-    if (!this.isVisible) return; // Skip updates if not visible
+    if (!this.isVisible) {
+      console.log("PauseMenu is hidden, skipping update");
+      return;
+    }
 
     console.log("PauseMenu is updating");
 
@@ -59,25 +62,82 @@ export class PauseMenu extends Entity {
   }
 
   draw(ctx) {
-    if (!this.isVisible) return; // Skip drawing if not visible
-
+    if (!this.isVisible) {
+      console.log("PauseMenu is hidden, skipping draw");
+      return;
+    }
+  
+    console.log("Drawing PauseMenu");
+  
+    // Calculate the center of the screen
+    const centerX = this.x / 2;
+    const centerY = this.y / 2;
+  
+    // Define menu dimensions (adjust as needed)
+    const menuWidth = 300; // Width of the pause menu
+    const menuHeight = 300; // Height of the pause menu
+  
+    // Calculate the top-left corner of the menu to center it
+    const menuX = centerX - menuWidth / 2;
+    const menuY = centerY - menuHeight / 2;
+  
     // Draw the semi-transparent background
     ctx.save();
     ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
-    ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-
-    // Draw the menu title
-    ctx.fillStyle = "white";
-    ctx.font = "30px Arial";
-    ctx.textAlign = "center";
-    ctx.fillText("Paused", ctx.canvas.width / 2, 200);
-
-    // Draw the menu options
-    this.menuOptions.forEach((option, index) => {
-      ctx.fillStyle = index === this.selectedOption ? "yellow" : "white";
-      ctx.fillText(option, ctx.canvas.width / 2, 250 + index * 40);
-    });
-
+    ctx.fillRect(0, 0, this.x, this.y);
+  
+    // Draw menu background image
+    const backgroundImage = ASSET_MANAGER.getAsset("./assets/ui/menuBackground.png");
+    if (backgroundImage) {
+      ctx.drawImage(backgroundImage, menuX, menuY, menuWidth, menuHeight);
+    }
+  
+    // Button dimensions
+    const buttonWidth = 250;
+    const buttonHeight = 60;
+  
+    // Button Positions
+    const resumeX = centerX - buttonWidth / 2;
+    const resumeY = menuY + 70;
+  
+    const settingsX = centerX - buttonWidth / 2;
+    const settingsY = menuY + 140;
+  
+    const quitX = centerX - buttonWidth / 2;
+    const quitY = menuY + 210;
+  
+    // Draw buttons with PNG images
+    const resumeButton = ASSET_MANAGER.getAsset("./assets/ui/buttonResume.png");
+    if (resumeButton) {
+      if (this.selectedOption === 0) {
+        ctx.strokeStyle = "yellow";
+        ctx.lineWidth = 5;
+        ctx.strokeRect(resumeX - 5, resumeY - 5, buttonWidth + 10, buttonHeight + 10);
+      }
+      ctx.drawImage(resumeButton, resumeX, resumeY, buttonWidth, buttonHeight);
+    }
+  
+    const settingsButton = ASSET_MANAGER.getAsset("./assets/ui/buttonSettings.png");
+    if (settingsButton) {
+      if (this.selectedOption === 1) {
+        ctx.strokeStyle = "yellow";
+        ctx.lineWidth = 5;
+        ctx.strokeRect(settingsX - 5, settingsY - 5, buttonWidth + 10, buttonHeight + 10);
+      }
+      ctx.drawImage(settingsButton, settingsX, settingsY, buttonWidth, buttonHeight);
+    }
+  
+    const quitButton = ASSET_MANAGER.getAsset("./assets/ui/buttonQuit.png");
+    if (quitButton) {
+      if (this.selectedOption === 2) {
+        ctx.strokeStyle = "yellow";
+        ctx.lineWidth = 5;
+        ctx.strokeRect(quitX - 5, quitY - 5, buttonWidth + 10, buttonHeight + 10);
+      }
+      ctx.drawImage(quitButton, quitX, quitY, buttonWidth, buttonHeight);
+    }
+  
     ctx.restore();
-  }
+  }  
+
 }

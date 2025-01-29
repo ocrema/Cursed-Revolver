@@ -23,6 +23,13 @@ ASSET_MANAGER.queueDownload("./assets/thorn/thorn.png");
 //Background
 ASSET_MANAGER.queueDownload("./assets/background/background.png");
 
+// Pause Menu Buttons
+ASSET_MANAGER.queueDownload("./assets/ui/buttonResume.png");
+ASSET_MANAGER.queueDownload("./assets/ui/buttonSettings.png");
+ASSET_MANAGER.queueDownload("./assets/ui/buttonQuit.png");
+
+ASSET_MANAGER.queueDownload("./assets/ui/menuBackground.png");
+
 ASSET_MANAGER.downloadAll(() => {
   const canvas = document.getElementById("gameWorld");
   const ctx = canvas.getContext("2d");
