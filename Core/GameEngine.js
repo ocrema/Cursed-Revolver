@@ -1,39 +1,44 @@
 import { Timer } from "../Utils/Timer.js";
 import { Camera } from "../Core/Camera.js";
+import { PauseMenu } from "../Entities/PauseMenu.js"; // Adjust path if necessary
+import { MainMenu } from "../Entities/MainMenu.js";
+import { GameLogicController } from "../Core/GameLogicController.js";
 
 export class GameEngine {
   constructor(options) {
-    // if the instance already exists, return it
+    // Singleton instance
     if (!window.GAME_ENGINE) {
-      window.GAME_ENGINE = this; // Singleton instance
+      window.GAME_ENGINE = this;
     }
-    // What you will use to draw
-    // Documentation: https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D
-    this.ctx = null;
 
-    // Everything that will be updated and drawn each frame
+    this.ctx = null; // Canvas context
     this.entities = [];
-
-    // Information on the input
-    this.click = null;
-    this.mouse = null;
-    this.wheel = null;
     this.keys = {};
-
-    // Options and the Details
-    this.options = options || {
-      debugging: false,
-    };
-
-    this.mouse = {x: 0, y: 0};
-
+    this.mouse = { x: 0, y: 0 };
+    this.options = options || { debugging: false };
     this.width = 2000;
     this.height = 1000;
-
     this.camera = new Camera();
     this.addEntity(this.camera);
-    this.debug_colliders = true;
+    this.debug_colliders = false;
+
+    // Reference to GameLogicController
+    this.GAME_CONTROLLER = null;
+
+    this.MAIN_MENU = new MainMenu();
+    this.addEntity(this.MAIN_MENU);
+
     return window.GAME_ENGINE;
+  }
+
+  startGame() {
+    console.log("Starting game...");
+    this.entities = this.entities.filter(entity => !(entity instanceof MainMenu));
+    this.GAME_CONTROLLER = new GameLogicController();
+    this.addEntity(this.GAME_CONTROLLER);
+    //this.update();
+    //this.draw();
+    window.dispatchEvent(new Event("resize"));
   }
 
   init(ctx) {
@@ -59,6 +64,7 @@ export class GameEngine {
       ctx.scale(this.x_scale, this.y_scale);
       ctx.translate(this.width / 2, this.height / 2);
     };
+
     window.addEventListener("resize", resize);
     resize();
   }
@@ -73,111 +79,56 @@ export class GameEngine {
   }
 
   startInput() {
-    const getXandY = (e) => ({
-      x:
-        (e.clientX - this.ctx.canvas.getBoundingClientRect().left) /
-          this.x_scale -
-        this.width / 2,
-      y:
-        (e.clientY - this.ctx.canvas.getBoundingClientRect().top) /
-          this.y_scale -
-        this.height / 2,
+    this.ctx.canvas.addEventListener("keydown", (event) => {
+      this.keys[event.key] = true;
+      console.log(`Key down: ${event.key}`); // Debugging input
+    });
+
+    this.ctx.canvas.addEventListener("keyup", (event) => {
+      this.keys[event.key] = false;
+      console.log(`Key up: ${event.key}`); // Debugging input
     });
 
     this.ctx.canvas.addEventListener("mousemove", (e) => {
-      if (this.options.debugging) {
-        console.log("MOUSE_MOVE", getXandY(e));
-      }
-      this.mouse = getXandY(e);
+      const getXandY = {
+        x:
+          (e.clientX - this.ctx.canvas.getBoundingClientRect().left) /
+            this.x_scale -
+          this.width / 2,
+        y:
+          (e.clientY - this.ctx.canvas.getBoundingClientRect().top) /
+            this.y_scale -
+          this.height / 2,
+      };
+      this.mouse = getXandY;
     });
-
-    this.ctx.canvas.addEventListener("click", (e) => {
-      if (this.options.debugging) {
-        console.log("CLICK", getXandY(e));
-      }
-      this.click = getXandY(e);
-    });
-
-    this.ctx.canvas.addEventListener("wheel", (e) => {
-      if (this.options.debugging) {
-        console.log("WHEEL", getXandY(e), e.wheelDelta);
-      }
-      e.preventDefault(); // Prevent Scrolling
-      this.wheel = e;
-    });
-
-    this.ctx.canvas.addEventListener("contextmenu", (e) => {
-      if (this.options.debugging) {
-        console.log("RIGHT_CLICK", getXandY(e));
-      }
-      e.preventDefault(); // Prevent Context Menu
-      this.rightclick = getXandY(e);
-    });
-
-    this.ctx.canvas.addEventListener(
-      "keydown",
-      (event) => (this.keys[event.key] = true)
-    );
-    this.ctx.canvas.addEventListener(
-      "keyup",
-      (event) => (this.keys[event.key] = false)
-    );
-
-    const getMouseButton = (event) => {
-      if (event.button == 0) return 1;
-      if (event.button == 2) return 2;
-      else return -1;
-    };
-
-    this.ctx.canvas.addEventListener(
-      'mousedown',
-      (event) => {
-        const button = getMouseButton(event);
-        if (button != -1) {
-          this.keys['m' + button] = true;
-        }
-      }
-    );
-
-    this.ctx.canvas.addEventListener(
-      'mouseup',
-      (event) => {
-        const button = getMouseButton(event);
-        if (button != -1) {
-          this.keys['m' + button] = false;
-        }
-      }
-    );
   }
 
   addEntity(entity) {
-    //this.entities.push(entity);
+    if (!entity || typeof entity.update !== "function" || typeof entity.draw !== "function") {
+      console.warn("Invalid entity added to GameEngine:", entity);
+      return;
+    }
 
-    let start = 0;
-    let end = this.entities.length - 1;
-    const entityOrder = entity.entityOrder;
+    const entityOrder = entity.entityOrder || 0; // Default entity order
     let i = 0;
     while (i < this.entities.length && this.entities[i].entityOrder < entityOrder) i++;
-  
+
     // Insert the entity at the determined index
     this.entities.splice(i, 0, entity);
   }
 
   draw() {
-    // Clear the whole canvas with transparent color (rgba(0, 0, 0, 0))
-    this.ctx.fillStyle = 'black';
-    this.ctx.fillRect(
-      -this.width / 2,
-      -this.height / 2,
-      this.width,
-      this.height
-    );
-    
+    // Clear the canvas
+    this.ctx.fillStyle = "black";
+    this.ctx.fillRect(-this.width / 2, -this.height / 2, this.width, this.height);
+
+    // Draw each entity
     for (let i = 0; i < this.entities.length; i++) {
-      //console.log(this.entities);
       this.entities[i].draw(this.ctx);
     }
-    
+
+    // Debugging: Draw colliders
     if (this.debug_colliders) {
       this.ctx.lineWidth = 5;
       this.ctx.strokeStyle = "green";
@@ -197,18 +148,29 @@ export class GameEngine {
   }
 
   update() {
-    let entitiesCount = this.entities.length;
+    if (this.MAIN_MENU.isVisible) {
+      this.MAIN_MENU.update();
+      return;
+    }
 
-    for (let i = 0; i < entitiesCount; i++) {
-      let entity = this.entities[i];
+    if (this.GAME_CONTROLLER && this.GAME_CONTROLLER.isPaused) {
+      for (let entity of this.entities) {
+        if (entity instanceof PauseMenu && entity.isVisible) {
+          entity.update();
+        }
+      }
+      return;
+    }
 
-      if (!entity.removeFromWorld) {
+    for (let entity of this.entities) {
+      if (entity && typeof entity.update === "function" && !entity.removeFromWorld) {
         entity.update();
       }
     }
 
     for (let i = this.entities.length - 1; i >= 0; --i) {
-      if (this.entities[i].removeFromWorld) {
+      const entity = this.entities[i];
+      if (entity && entity.removeFromWorld) {
         this.entities.splice(i, 1);
       }
     }
@@ -220,5 +182,7 @@ export class GameEngine {
     this.draw();
   }
 }
+
+
 
 // KV Le was here :)
