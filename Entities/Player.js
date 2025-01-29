@@ -1,5 +1,5 @@
 import { Actor } from "./Entities.js";
-import { PLAYER_SPRITESHEET } from "../Globals/Constants.js";
+import { PLAYER_COLLIDER, PLAYER_SPRITESHEET } from "../Globals/Constants.js";
 import * as Util from "../Utils/Util.js";
 import { Fireball } from "./Spells.js";
 import { Collider } from "./Collider.js";
@@ -66,9 +66,15 @@ export class Player extends Actor {
     // Start with the idle animation
     this.setAnimation("idle");
 
-    //this.colliders = [];
-    //this.colliders.push(Util.newCollider(100, 100, 0, 0));
-    this.collider = new Collider(120, 120);
+    this.colliders = [];
+    this.colliders.push(
+      Util.newCollider(
+        PLAYER_COLLIDER.WIDTH,
+        PLAYER_COLLIDER.HEIGHT,
+        PLAYER_COLLIDER.OFFSET_X,
+        PLAYER_COLLIDER.OFFSET_Y
+      )
+    );
     this.health = 200;
 
     this.x_velocity = 0;

@@ -8,6 +8,11 @@ export const BACKGROUND_SPRITESHEET = {
   FRAME_DURATION: 0.1,
 };
 
+// PLAYER SECTION //
+// All things player related are stored here
+// Spritesheets
+// Collider values
+
 // Player Spritesheet Constants
 
 export const PLAYER_SPRITESHEET = {
@@ -48,6 +53,15 @@ export const PLAYER_SPRITESHEET = {
   },
 };
 
+// Player Collider Constants
+
+export const PLAYER_COLLIDER = {
+  WIDTH: 70,
+  HEIGHT: 130,
+  OFFSET_X: -11,
+  OFFSET_Y: 0,
+};
+
 // Enemy Spritesheet Constants
 
 export const ENEMY_SPRITESHEET = {
@@ -80,4 +94,3 @@ export const ENEMY_SPRITESHEET = {
     FRAME_DURATION: 0.1,
   },
 };
-//
