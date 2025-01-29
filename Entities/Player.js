@@ -51,6 +51,15 @@ export class Player extends Actor {
     );
 
     this.addAnimation(
+      PLAYER_SPRITESHEET.HIT.NAME, // Name of the animation
+      this.assetManager.getAsset(PLAYER_SPRITESHEET.HIT.URL), // URL for Hit animation
+      PLAYER_SPRITESHEET.HIT.FRAME_WIDTH, // Frame width
+      PLAYER_SPRITESHEET.HIT.FRAME_HEIGHT, // Frame height
+      PLAYER_SPRITESHEET.HIT.FRAME_COUNT, // Frame count
+      PLAYER_SPRITESHEET.HIT.FRAME_DURATION // Frame duration (for hit)
+    );
+
+    this.addAnimation(
       PLAYER_SPRITESHEET.DEAD.NAME, // Name of the animation
       this.assetManager.getAsset(PLAYER_SPRITESHEET.DEAD.URL), // URL for Death animation
       PLAYER_SPRITESHEET.DEAD.FRAME_WIDTH, // Frame width
@@ -75,7 +84,7 @@ export class Player extends Actor {
         PLAYER_COLLIDER.OFFSET_Y
       )
     );
-    this.health = 200;
+    this.health = 100;
 
     this.x_velocity = 0;
     this.y_velocity = 0;
@@ -98,6 +107,7 @@ export class Player extends Actor {
       10000
     );
     this.x_velocity = 0;
+
     // Movement logic
     if (GAME_ENGINE.keys["a"]) {
       this.x_velocity -= this.speed;
@@ -110,6 +120,15 @@ export class Player extends Actor {
       this.flip = false;
     }
 
+    // Player Reset Button - this is if the player dies, this resets player health and respawns them.
+    if (GAME_ENGINE.keys["h"]) {
+      this.isDead = false;
+      this.health = 100;
+      this.x = 0;
+      this.y = 0;
+      this.setAnimation(PLAYER_SPRITESHEET.IDLE.NAME);
+    }
+
     this.isGrounded = Math.max(this.isGrounded - GAME_ENGINE.clockTick, 0);
 
     if (GAME_ENGINE.keys[" "] && this.isGrounded > 0) {
@@ -118,6 +137,8 @@ export class Player extends Actor {
       this.setAnimation(PLAYER_SPRITESHEET.JUMP.NAME);
       this.isJumping = true;
     }
+
+    // Player Collision Logic
 
     this.x += this.x_velocity * GAME_ENGINE.clockTick;
     let collisions = [];
@@ -171,6 +192,8 @@ export class Player extends Actor {
       this.y_velocity = 0;
     }
 
+    // Player Spell Cooldown
+
     this.spellCooldown = Math.max(
       this.spellCooldown - GAME_ENGINE.clockTick,
       0
@@ -190,28 +213,56 @@ export class Player extends Actor {
     }
 
 
-    if (!this.isGrounded) {
-      if (this.y_velocity < 0) {
-        this.setAnimation(PLAYER_SPRITESHEET.JUMP.NAME); // Jump animation when moving up
+    // Player State Logic
+    if (!this.isDead) {
+      if (this.hitTimer > 0) {
+        this.hitTimer -= GAME_ENGINE.clockTick;
       } else {
-        this.setAnimation(PLAYER_SPRITESHEET.FALL.NAME); // Fall animation when moving down
+        // Only switch animations if the hit animation is NOT playing
+        if (!this.isGrounded) {
+          if (this.y_velocity < 0) {
+            this.setAnimation(PLAYER_SPRITESHEET.JUMP.NAME);
+          } else {
+            this.setAnimation(PLAYER_SPRITESHEET.FALL.NAME);
+          }
+        } else if (this.isMoving) {
+          this.setAnimation(PLAYER_SPRITESHEET.RUN.NAME);
+        } else {
+          this.setAnimation(PLAYER_SPRITESHEET.IDLE.NAME);
+        }
       }
-    } else if (this.isMoving) {
-      this.setAnimation(PLAYER_SPRITESHEET.RUN.NAME); // Run animation when grounded and moving
     } else {
-      this.setAnimation(PLAYER_SPRITESHEET.IDLE.NAME); // Idle animation when grounded and not moving
+      this.setAnimation(PLAYER_SPRITESHEET.DEAD.NAME, false);
     }
+
+    if (
+      this.recieved_attacks.length > 0 &&
+      this.currentAnimation !== PLAYER_SPRITESHEET.HIT.NAME
+    ) {
+      console.log(
+        "ouch! i took " + this.recieved_attacks[0].damage + " damage"
+      );
+
+      this.setAnimation(PLAYER_SPRITESHEET.HIT.NAME);
+      this.health -= this.recieved_attacks[0].damage;
+
+      this.hitTimer = 0.3;
+    }
+
+    this.recieved_attacks = [];
 
     // process each attack
 
-    this.recieved_attacks.forEach((attack) => {
-      console.log("ouch! i took " + attack.damage + " damage");
-      this.health -= attack.damage;
-    });
-    this.recieved_attacks = [];
+    // this.recieved_attacks.forEach((attack) => {
+    //   console.log("ouch! i took " + attack.damage + " damage");
+    //   this.setAnimation(PLAYER_SPRITESHEET.HIT.NAME);
+    //   this.health -= attack.damage;
+    // });
+    // this.recieved_attacks = [];
 
     if (this.health <= 0) {
-      // this.setAnimation("dead");
+      this.isDead = true;
+      this.setAnimation(PLAYER_SPRITESHEET.DEAD.NAME, false);
       console.log("i died");
     }
 

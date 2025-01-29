@@ -48,13 +48,21 @@ export const PLAYER_SPRITESHEET = {
     FRAME_COUNT: 2,
     FRAME_DURATION: 0.5,
   },
+  HIT: {
+    NAME: "HIT",
+    URL: "./assets/player/Hit.png",
+    FRAME_WIDTH: 231,
+    FRAME_HEIGHT: 190,
+    FRAME_COUNT: 1,
+    FRAME_DURATION: 1,
+  },
   DEAD: {
     NAME: "DEAD",
     URL: "./assets/player/Death.png",
     FRAME_WIDTH: 231,
     FRAME_HEIGHT: 190,
     FRAME_COUNT: 7,
-    FRAME_DURATION: 0.1,
+    FRAME_DURATION: 0.25,
   },
 };
 
