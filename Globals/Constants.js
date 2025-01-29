@@ -22,7 +22,7 @@ export const PLAYER_SPRITESHEET = {
     FRAME_WIDTH: 231,
     FRAME_HEIGHT: 190,
     FRAME_COUNT: 6,
-    FRAME_DURATION: 0.25,
+    FRAME_DURATION: 0.2,
   },
   RUN: {
     NAME: "RUN",
@@ -65,37 +65,4 @@ export const PLAYER_COLLIDER = {
   HEIGHT: 130,
   OFFSET_X: -11,
   OFFSET_Y: 0,
-};
-
-// Enemy Spritesheet Constants
-
-export const ENEMY_SPRITESHEET = {
-  IDLE: {
-    URL: "./assets/enemy/Idle.png",
-    FRAME_WIDTH: 231,
-    FRAME_HEIGHT: 190,
-    FRAME_COUNT: 6,
-    FRAME_DURATION: 0.25,
-  },
-  RUN: {
-    URL: "./assets/enemy/Run.png",
-    FRAME_WIDTH: 231,
-    FRAME_HEIGHT: 190,
-    FRAME_COUNT: 8,
-    FRAME_DURATION: 0.1,
-  },
-  JUMP: {
-    URL: "./assets/enemy/Jump.png",
-    FRAME_WIDTH: 231,
-    FRAME_HEIGHT: 190,
-    FRAME_COUNT: 8,
-    FRAME_DURATION: 0.1,
-  },
-  DEAD: {
-    URL: "./assets/enemy/Death.png",
-    FRAME_WIDTH: 231,
-    FRAME_HEIGHT: 190,
-    FRAME_COUNT: 7,
-    FRAME_DURATION: 0.1,
-  },
 };
