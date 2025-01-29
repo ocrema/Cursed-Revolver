@@ -74,17 +74,12 @@ export class PauseMenu extends Entity {
     const centerY = this.y / 2;
   
     // Define menu dimensions (adjust as needed)
-    const menuWidth = 300; // Width of the pause menu
-    const menuHeight = 300; // Height of the pause menu
+    const menuWidth = 330; // Width of the pause menu
+    const menuHeight = 330; // Height of the pause menu
   
     // Calculate the top-left corner of the menu to center it
     const menuX = centerX - menuWidth / 2;
     const menuY = centerY - menuHeight / 2;
-  
-    // Draw the semi-transparent background
-    ctx.save();
-    ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
-    ctx.fillRect(0, 0, this.x, this.y);
   
     // Draw menu background image
     const backgroundImage = ASSET_MANAGER.getAsset("./assets/ui/menuBackground.png");
