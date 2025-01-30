@@ -84,12 +84,12 @@ export class GameEngine {
 
     this.ctx.canvas.addEventListener("mousemove", (e) => {
       this.mouse = getXandY(e);
-      console.log("Mouse moved:", this.mouse);
+      //console.log("Mouse moved:", this.mouse);
     });
 
     this.ctx.canvas.addEventListener("click", (e) => {
       this.click = getXandY(e);
-      console.log("Mouse clicked at:", this.click);
+      //console.log("Mouse clicked at:", this.click);
     
       // Check if click is inside Main Menu
       if (this.MAIN_MENU.isVisible) {
@@ -109,21 +109,21 @@ export class GameEngine {
     this.ctx.canvas.addEventListener("mousedown", (e) => {
       if (e.button === 0) {
         this.keys["m1"] = true;
-        console.log("Left mouse button pressed");
+        //console.log("Left mouse button pressed");
       }
     });
 
     this.ctx.canvas.addEventListener("mouseup", (e) => {
       if (e.button === 0) {
         this.keys["m1"] = false;
-        console.log("Left mouse button released");
+        //console.log("Left mouse button released");
       }
     });
 
     this.ctx.canvas.addEventListener("wheel", (e) => {
       this.wheel = e;
       e.preventDefault();
-      console.log("Mouse wheel used:", e.deltaY);
+      //console.log("Mouse wheel used:", e.deltaY);
     });
 
     this.ctx.canvas.addEventListener("contextmenu", (e) => {
@@ -131,12 +131,12 @@ export class GameEngine {
     });
 
     document.addEventListener("keydown", (event) => {
-      this.keys[event.key] = true;
-      console.log("Key pressed:", event.key);
+      this.keys[(event.key.length === 1) ? event.key.toLowerCase() : event.key] = true;
+      //console.log("Key pressed:", event.key);
     });
 
     document.addEventListener("keyup", (event) => {
-      this.keys[event.key] = false;
+      this.keys[(event.key.length === 1) ? event.key.toLowerCase() : event.key] = false;
     });
   }
 

@@ -39,7 +39,9 @@ export class Fireball extends Entity {
 
                 for (let e2 of GAME_ENGINE.entities) {
                     if (!e2.isActor) continue;
+                    
                     if (this.colliding(e2)) {
+                        
                         e2.queueAttack({damage: 10, x: this.x, y: this.y, burn: 5, launchMagnitude: 1000});
                     }
                 }

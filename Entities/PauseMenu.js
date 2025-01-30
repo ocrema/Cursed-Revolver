@@ -25,11 +25,11 @@ export class PauseMenu extends Entity {
 
   update() {
     if (!this.isVisible) {
-      console.log("PauseMenu is hidden, skipping update");
+      //console.log("PauseMenu is hidden, skipping update");
       return;
     }
 
-    console.log("PauseMenu is updating");
+    //console.log("PauseMenu is updating");
 
     // Navigate through menu options
     if (GAME_ENGINE.keys["ArrowUp"]) {
@@ -44,7 +44,7 @@ export class PauseMenu extends Entity {
       this.selectedOption =
         (this.selectedOption + 1) % this.menuOptions.length; // Wrap around to the first option
       GAME_ENGINE.keys["ArrowDown"] = false; // Prevent repeated input
-      console.log("ArrowDown pressed, selectedOption:", this.selectedOption);
+      //console.log("ArrowDown pressed, selectedOption:", this.selectedOption);
     }
 
     // Handle menu selection
@@ -56,11 +56,11 @@ export class PauseMenu extends Entity {
 
   draw(ctx) {
     if (!this.isVisible) {
-      console.log("PauseMenu is hidden, skipping draw");
+      //console.log("PauseMenu is hidden, skipping draw");
       return;
     }
   
-    console.log("Drawing PauseMenu");
+    //console.log("Drawing PauseMenu");
   
     // Calculate the center of the screen
     const centerX = this.x / 2;

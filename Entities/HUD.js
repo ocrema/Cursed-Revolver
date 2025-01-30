@@ -42,6 +42,7 @@ export class HUD extends Entity {
     // Toggle debug mode
     if (GAME_ENGINE.keys["b"]) {
       this.debugMode = !this.debugMode;
+      GAME_ENGINE.debug_colliders = this.debugMode;
       console.log(`Debug Mode: ${this.debugMode ? "ON" : "OFF"}`);
       GAME_ENGINE.keys["b"] = false;
     }

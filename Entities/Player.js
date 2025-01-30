@@ -2,6 +2,7 @@ import { Actor } from "./Entities.js";
 import { PLAYER_SPRITESHEET } from "../Globals/Constants.js";
 import * as Util from "../Utils/Util.js";
 import { Fireball } from "./Spells.js";
+import { GAME_ENGINE } from "../main.js";
 
 export class Player extends Actor {
   constructor() {
@@ -137,6 +138,7 @@ export class Player extends Actor {
       0
     );
     if (this.spellCooldown <= 0 && GAME_ENGINE.keys["m1"]) {
+      
       this.spellCooldown = 0.3;
       const fireball = new Fireball();
       fireball.x = this.x;
@@ -150,9 +152,6 @@ export class Player extends Actor {
       GAME_ENGINE.addEntity(fireball);
     }
 
-    for (let a of this.recieved_attacks) {
-    }
-    this.recieved_attacks = [];
 
     if (!this.isGrounded) {
       if (this.y_velocity < 0) {
