@@ -2,7 +2,7 @@ import { Actor } from "./Entities.js";
 import { PLAYER_SPRITESHEET } from "../Globals/Constants.js";
 import * as Util from "../Utils/Util.js";
 import { Fireball } from "./Spells.js";
-import { GAME_ENGINE } from "../main.js";
+import { Collider } from "./Collider.js";
 
 export class Player extends Actor {
   constructor() {
@@ -66,8 +66,9 @@ export class Player extends Actor {
     // Start with the idle animation
     this.setAnimation("idle");
 
-    this.colliders = [];
-    this.colliders.push(Util.newCollider(100, 100, 0, 0));
+    //this.colliders = [];
+    //this.colliders.push(Util.newCollider(100, 100, 0, 0));
+    this.collider = new Collider(120, 120);
     this.health = 200;
 
     this.x_velocity = 0;
@@ -138,7 +139,6 @@ export class Player extends Actor {
       0
     );
     if (this.spellCooldown <= 0 && GAME_ENGINE.keys["m1"]) {
-      
       this.spellCooldown = 0.3;
       const fireball = new Fireball();
       fireball.x = this.x;

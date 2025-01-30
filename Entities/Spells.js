@@ -1,4 +1,5 @@
-import { newCollider } from "../Utils/Util.js";
+
+import { Collider } from "./Collider.js";
 import { Entity } from "./Entities.js";
 
 export class Fireball extends Entity {
@@ -10,7 +11,8 @@ export class Fireball extends Entity {
         this.dir = 0; // in radians
         this.entityOrder = 3;
         this.speed = 1000;
-        this.colliders = [newCollider(50, 50, 0, 0)];
+        //this.colliders = [newCollider(50, 50, 0, 0)];
+        this.collider = new Collider(50,50);
         this.isAttack = true;
         this.experationTimer = 3;
         this.exploded = false;
@@ -34,8 +36,8 @@ export class Fireball extends Entity {
             
             if (this.colliding(e)) {
                 this.exploded = true;
-                this.colliders[0].width = 200;
-                this.colliders[0].height = 200;
+                this.collider.width = 200;
+                this.collider.height = 200;
 
                 for (let e2 of GAME_ENGINE.entities) {
                     if (!e2.isActor) continue;
@@ -45,7 +47,7 @@ export class Fireball extends Entity {
                         e2.queueAttack({damage: 10, x: this.x, y: this.y, burn: 5, launchMagnitude: 1000});
                     }
                 }
-                this.colliders = [];
+                this.collider = null;
                 this.experationTimer = .5;
                 break;
             }

@@ -160,7 +160,7 @@ export class GameEngine {
     for (let i = 0; i < this.entities.length; i++) {
       this.entities[i].draw(this.ctx);
     }
-
+    /*
     if (this.debug_colliders) {
       this.ctx.lineWidth = 5;
       this.ctx.strokeStyle = "green";
@@ -177,6 +177,22 @@ export class GameEngine {
         }
       }
     }
+      */
+    if (this.debug_colliders) {
+      this.ctx.lineWidth = 5;
+      this.ctx.strokeStyle = "limegreen";
+      for (let e of this.entities) {
+        if (e.collider) {
+          this.ctx.strokeRect(
+            e.x - this.camera.x - e.collider.width / 2,
+            e.y - this.camera.y - e.collider.height / 2,
+            e.collider.width,
+            e.collider.height
+          );      
+        }
+      }
+    }
+    
   }
 
   update() {
