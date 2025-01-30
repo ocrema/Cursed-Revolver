@@ -7,14 +7,18 @@ import { GameLogicController } from "../Core/GameLogicController.js";
 export class GameEngine {
   constructor(options) {
     if (!window.GAME_ENGINE) {
-      window.GAME_ENGINE = this;
+      window.GAME_ENGINE = this; // Singleton instance
     }
+    // What you will use to draw
+    // Documentation: https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D
+    this.ctx = null;
 
     this.ctx = null;
     this.entities = [];
     this.options = options || { debugging: false };
     this.width = 2000;
     this.height = 1000;
+
     this.camera = new Camera();
     this.addEntity(this.camera);
     this.debug_colliders = false;
@@ -71,7 +75,6 @@ export class GameEngine {
       ctx.scale(this.x_scale, this.y_scale);
       ctx.translate(this.width / 2, this.height / 2);
     };
-
     window.addEventListener("resize", resize);
     resize();
   }
@@ -138,6 +141,64 @@ export class GameEngine {
     document.addEventListener("keyup", (event) => {
       this.keys[(event.key.length === 1) ? event.key.toLowerCase() : event.key] = false;
     });
+
+    this.ctx.canvas.addEventListener("click", (e) => {
+      if (this.options.debugging) {
+        console.log("CLICK", getXandY(e));
+      }
+      this.click = getXandY(e);
+    });
+
+    this.ctx.canvas.addEventListener("wheel", (e) => {
+      if (this.options.debugging) {
+        console.log("WHEEL", getXandY(e), e.wheelDelta);
+      }
+      e.preventDefault(); // Prevent Scrolling
+      this.wheel = e;
+    });
+
+    this.ctx.canvas.addEventListener("contextmenu", (e) => {
+      if (this.options.debugging) {
+        console.log("RIGHT_CLICK", getXandY(e));
+      }
+      e.preventDefault(); // Prevent Context Menu
+      this.rightclick = getXandY(e);
+    });
+
+    this.ctx.canvas.addEventListener(
+      "keydown",
+      (event) => (this.keys[event.key] = true)
+    );
+    this.ctx.canvas.addEventListener(
+      "keyup",
+      (event) => (this.keys[event.key] = false)
+    );
+
+    const getMouseButton = (event) => {
+      if (event.button == 0) return 1;
+      if (event.button == 2) return 2;
+      else return -1;
+    };
+
+    this.ctx.canvas.addEventListener(
+      'mousedown',
+      (event) => {
+        const button = getMouseButton(event);
+        if (button != -1) {
+          this.keys['m' + button] = true;
+        }
+      }
+    );
+
+    this.ctx.canvas.addEventListener(
+      'mouseup',
+      (event) => {
+        const button = getMouseButton(event);
+        if (button != -1) {
+          this.keys['m' + button] = false;
+        }
+      }
+    );
   }
 
   addEntity(entity) {
@@ -158,6 +219,7 @@ export class GameEngine {
     this.ctx.clearRect(-this.width / 2, -this.height / 2, this.width, this.height);
 
     for (let i = 0; i < this.entities.length; i++) {
+      //console.log(this.entities);
       this.entities[i].draw(this.ctx);
     }
     /*
@@ -196,22 +258,12 @@ export class GameEngine {
   }
 
   update() {
-    if (this.MAIN_MENU.isVisible) {
-      this.MAIN_MENU.update();
-      return;
-    }
+    let entitiesCount = this.entities.length;
 
-    if (this.GAME_CONTROLLER && this.GAME_CONTROLLER.isPaused) {
-      for (let entity of this.entities) {
-        if (entity instanceof PauseMenu && entity.isVisible) {
-          entity.update();
-        }
-      }
-      return;
-    }
+    for (let i = 0; i < entitiesCount; i++) {
+      let entity = this.entities[i];
 
-    for (let entity of this.entities) {
-      if (entity && typeof entity.update === "function" && !entity.removeFromWorld) {
+      if (!entity.removeFromWorld) {
         entity.update();
       }
     }
@@ -229,6 +281,5 @@ export class GameEngine {
     this.draw();
   }
 }
-
 
 // KV Le was here :)
