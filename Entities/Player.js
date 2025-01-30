@@ -114,24 +114,55 @@ export class Player extends Actor {
     }
 
     this.x += this.x_velocity * GAME_ENGINE.clockTick;
+    let collisions = [];
     for (let e of GAME_ENGINE.entities) {
       if (e.isPlayer || e.isAttack) continue;
       if (this.colliding(e)) {
-        this.x -= this.x_velocity * GAME_ENGINE.clockTick;
-        this.x_velocity = 0;
-        break;
+        collisions.push(e);
       }
     }
+    if (collisions.length !== 0) {
+      if (this.x_velocity > 0) {
+        this.x = collisions.reduce(
+          (acc, curr) => Math.min(acc, curr.x - curr.collider.width/2),
+          collisions[0].x - collisions[0].collider.width/2
+        ) - this.collider.width/2;
+      }
+      else {
+        this.x = collisions.reduce(
+          (acc, curr) => Math.max(acc, curr.x + curr.collider.width/2),
+          collisions[0].x + collisions[0].collider.width/2
+        ) + this.collider.width/2;
+      }
+      this.x_velocity = 0;
+    }
+
+
 
     this.y += this.y_velocity * GAME_ENGINE.clockTick;
+    collisions = [];
     for (let e of GAME_ENGINE.entities) {
       if (e.isPlayer || e.isAttack) continue;
       if (this.colliding(e)) {
-        this.y -= this.y_velocity * GAME_ENGINE.clockTick;
-        if (this.y_velocity > 0) this.isGrounded = 0.2;
-        this.y_velocity = 0;
-        break;
+        collisions.push(e);
       }
+    }
+    if (collisions.length !== 0) {
+      if (this.y_velocity > 0) {
+        this.isGrounded = 0.2;
+
+        this.y = collisions.reduce(
+          (acc, curr) => Math.min(acc, curr.y - curr.collider.height/2),
+          collisions[0].y - collisions[0].collider.height/2
+        ) - this.collider.height/2;
+      }
+      else {
+        this.y = collisions.reduce(
+          (acc, curr) => Math.max(acc, curr.y + curr.collider.height/2),
+          collisions[0].y + collisions[0].collider.height/2
+        ) + this.collider.height/2;
+      }
+      this.y_velocity = 0;
     }
 
     this.spellCooldown = Math.max(
