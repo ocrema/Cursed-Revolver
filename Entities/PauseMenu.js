@@ -3,14 +3,15 @@ import { Entity } from "./Entities.js";
 export class PauseMenu extends Entity {
   constructor() {
     super();
-    this.entityOrder = 99999999; // Render above all other entities
-    this.isVisible = false; // Initially hidden
-    this.menuOptions = ["Resume", "Settings", "Quit"]; // Menu options
-    this.selectedOption = 0; // Default selected menu option
+    this.entityOrder = 99999999; 
+    this.isVisible = false; 
+    this.menuOptions = ["Resume", "Settings", "Quit"]; 
+    this.selectedOption = 0; 
   }
 
   setVisibility(visible) {
-    console.log(`Setting PauseMenu visibility to: ${visible}`); // Debug visibility
+   //console.log(`Setting PauseMenu visibility to: ${visible}`);
+
     this.isVisible = visible;
   }
 
@@ -36,7 +37,7 @@ export class PauseMenu extends Entity {
         (this.selectedOption - 1 + this.menuOptions.length) %
         this.menuOptions.length; // Wrap around to the last option
       GAME_ENGINE.keys["ArrowUp"] = false; // Prevent repeated input
-      console.log("ArrowUp pressed, selectedOption:", this.selectedOption);
+      //console.log("ArrowUp pressed, selectedOption:", this.selectedOption);
     }
 
     if (GAME_ENGINE.keys["ArrowDown"]) {
@@ -48,16 +49,8 @@ export class PauseMenu extends Entity {
 
     // Handle menu selection
     if (GAME_ENGINE.keys["Enter"]) {
-      const selectedOption = this.menuOptions[this.selectedOption];
-      if (selectedOption === "Resume") {
-        //GAME_ENGINE.keys["Escape"] = true; // Trigger game resume
-        GAME_ENGINE.GAME_CONTROLLER.togglePause();
-      } else if (selectedOption === "Quit") {
-        console.log("Quit selected");
-        // Add logic for quitting the game (e.g., reload the page or navigate to the main menu)
-        window.location.reload(); // Example: Reload the page to restart
-      }
-      GAME_ENGINE.keys["Enter"] = false; // Prevent repeated input
+      this.executeSelectedOption();
+      GAME_ENGINE.keys["Enter"] = false;
     }
   }
 
@@ -135,4 +128,55 @@ export class PauseMenu extends Entity {
     ctx.restore();
   }  
 
+  handleClick(mouseX, mouseY) {
+    if (!this.isVisible) return;
+  
+    const buttonWidth = 250;
+    const buttonHeight = 60;
+  
+    const centerX = this.x / 2;
+    const centerY = this.y / 2;
+  
+    // Button Positions
+    const resumeX = centerX - buttonWidth / 2;
+    const resumeY = centerY - 95;
+  
+    const settingsX = centerX - buttonWidth / 2;
+    const settingsY = centerY - 25;
+  
+    const quitX = centerX - buttonWidth / 2;
+    const quitY = centerY + 45;
+  
+    // Update selection if clicking on a button
+    if (mouseX >= resumeX && mouseX <= resumeX + buttonWidth &&
+        mouseY >= resumeY && mouseY <= resumeY + buttonHeight) {
+      this.selectedOption = 0; // "Resume" selected
+    }
+  
+    if (mouseX >= settingsX && mouseX <= settingsX + buttonWidth &&
+        mouseY >= settingsY && mouseY <= settingsY + buttonHeight) {
+      this.selectedOption = 1; // "Settings" selected
+    }
+  
+    if (mouseX >= quitX && mouseX <= quitX + buttonWidth &&
+        mouseY >= quitY && mouseY <= quitY + buttonHeight) {
+      this.selectedOption = 2; // "Quit" selected
+    }
+  
+    // Simulate pressing "Enter" after selecting
+    this.executeSelectedOption();
+  }
+  
+  executeSelectedOption() {
+    const selectedOption = this.menuOptions[this.selectedOption];
+  
+    if (selectedOption === "Resume") {
+      GAME_ENGINE.GAME_CONTROLLER.togglePause();
+    } else if (selectedOption === "Settings") {
+      console.log("Settings button clicked (not implemented)");
+    } else if (selectedOption === "Quit") {
+      window.location.reload();
+    }
+  }
+  
 }

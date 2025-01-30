@@ -3,10 +3,10 @@ import { Entity } from "./Entities.js";
 export class MainMenu extends Entity {
   constructor() {
     super();
-    this.entityOrder = 99999999; // Ensures it renders above all entities
-    this.isVisible = true; // Initially visible
-    this.menuOptions = ["Start Game", "Quit"]; // Options for the main menu
-    this.selectedOption = 0; // Default selected option
+    this.entityOrder = 99999999; 
+    this.isVisible = true; 
+    this.menuOptions = ["Start Game", "Quit"]; 
+    this.selectedOption = 0; 
   }
 
   setVisibility(visible) {
@@ -40,17 +40,9 @@ export class MainMenu extends Entity {
       GAME_ENGINE.keys["ArrowDown"] = false;
     }
 
-    // Handle menu selection
+     // Handle menu selection
     if (GAME_ENGINE.keys["Enter"]) {
-      const selectedOption = this.menuOptions[this.selectedOption];
-
-      if (selectedOption === "Start Game") {
-        this.hide();
-        GAME_ENGINE.startGame();
-      } else if (selectedOption === "Quit") {
-        window.location.reload();
-      }
-
+      this.executeSelectedOption();
       GAME_ENGINE.keys["Enter"] = false;
     }
   }
@@ -121,4 +113,48 @@ export class MainMenu extends Entity {
 
     ctx.restore();
   }
+
+  handleClick(mouseX, mouseY) {
+    if (!this.isVisible) return;
+  
+    const buttonWidth = 280;
+    const buttonHeight = 90;
+  
+    const centerX = this.x / 2;
+    const centerY = this.y / 2;
+  
+    const startX = centerX - buttonWidth / 2;
+    const startY = centerY + 230;
+  
+    const quitX = centerX - buttonWidth / 2;
+    const quitY = centerY + 340;
+  
+    // Update selection if clicking on a button
+    if (mouseX >= startX && mouseX <= startX + buttonWidth &&
+        mouseY >= startY && mouseY <= startY + buttonHeight) {
+      this.selectedOption = 0; // "Start Game" is selected
+    }
+  
+    if (mouseX >= quitX && mouseX <= quitX + buttonWidth &&
+        mouseY >= quitY && mouseY <= quitY + buttonHeight) {
+      this.selectedOption = 1; // "Quit" is selected
+    }
+  
+    // Simulate pressing "Enter" after selecting
+    this.executeSelectedOption();
+  }
+
+  executeSelectedOption() {
+    const selectedOption = this.menuOptions[this.selectedOption];
+  
+    if (selectedOption === "Start Game") {
+      this.hide();
+      GAME_ENGINE.startGame();
+    } else if (selectedOption === "Quit") {
+      window.location.reload();
+    }
+  }
+  
+  
+  
 }
