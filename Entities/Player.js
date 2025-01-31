@@ -75,15 +75,7 @@ export class Player extends Actor {
     // Start with the idle animation
     this.setAnimation(PLAYER_SPRITESHEET.IDLE.NAME);
 
-    this.colliders = [];
-    this.colliders.push(
-      Util.newCollider(
-        PLAYER_COLLIDER.WIDTH,
-        PLAYER_COLLIDER.HEIGHT,
-        PLAYER_COLLIDER.OFFSET_X,
-        PLAYER_COLLIDER.OFFSET_Y
-      )
-    );
+    this.collider = new Collider(120, 120);
     this.health = 100;
 
     this.x_velocity = 0;
@@ -150,21 +142,22 @@ export class Player extends Actor {
     }
     if (collisions.length !== 0) {
       if (this.x_velocity > 0) {
-        this.x = collisions.reduce(
-          (acc, curr) => Math.min(acc, curr.x - curr.collider.width/2),
-          collisions[0].x - collisions[0].collider.width/2
-        ) - this.collider.width/2;
-      }
-      else {
-        this.x = collisions.reduce(
-          (acc, curr) => Math.max(acc, curr.x + curr.collider.width/2),
-          collisions[0].x + collisions[0].collider.width/2
-        ) + this.collider.width/2;
+        this.x =
+          collisions.reduce(
+            (acc, curr) => Math.min(acc, curr.x - curr.collider.width / 2),
+            collisions[0].x - collisions[0].collider.width / 2
+          ) -
+          this.collider.width / 2;
+      } else {
+        this.x =
+          collisions.reduce(
+            (acc, curr) => Math.max(acc, curr.x + curr.collider.width / 2),
+            collisions[0].x + collisions[0].collider.width / 2
+          ) +
+          this.collider.width / 2;
       }
       this.x_velocity = 0;
     }
-
-
 
     this.y += this.y_velocity * GAME_ENGINE.clockTick;
     collisions = [];
@@ -178,16 +171,19 @@ export class Player extends Actor {
       if (this.y_velocity > 0) {
         this.isGrounded = 0.2;
 
-        this.y = collisions.reduce(
-          (acc, curr) => Math.min(acc, curr.y - curr.collider.height/2),
-          collisions[0].y - collisions[0].collider.height/2
-        ) - this.collider.height/2;
-      }
-      else {
-        this.y = collisions.reduce(
-          (acc, curr) => Math.max(acc, curr.y + curr.collider.height/2),
-          collisions[0].y + collisions[0].collider.height/2
-        ) + this.collider.height/2;
+        this.y =
+          collisions.reduce(
+            (acc, curr) => Math.min(acc, curr.y - curr.collider.height / 2),
+            collisions[0].y - collisions[0].collider.height / 2
+          ) -
+          this.collider.height / 2;
+      } else {
+        this.y =
+          collisions.reduce(
+            (acc, curr) => Math.max(acc, curr.y + curr.collider.height / 2),
+            collisions[0].y + collisions[0].collider.height / 2
+          ) +
+          this.collider.height / 2;
       }
       this.y_velocity = 0;
     }
@@ -211,7 +207,6 @@ export class Player extends Actor {
       );
       GAME_ENGINE.addEntity(fireball);
     }
-
 
     // Player State Logic
     if (!this.isDead) {
