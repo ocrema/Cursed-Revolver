@@ -35,7 +35,7 @@ ASSET_MANAGER.downloadAll(() => {
 
   GAME_ENGINE.init(ctx);
 
-  //GAME_ENGINE.addEntity(new GameLogicController());
+  GAME_ENGINE.addEntity(new GameLogicController());
 
   GAME_ENGINE.start();
 });
