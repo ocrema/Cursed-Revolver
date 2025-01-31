@@ -40,6 +40,22 @@ export const PLAYER_SPRITESHEET = {
     FRAME_COUNT: 2,
     FRAME_DURATION: 0.5,
   },
+  ATTACK1: {
+    NAME: "ATTACK1",
+    URL: "./assets/player/Attack1.png",
+    FRAME_WIDTH: 231,
+    FRAME_HEIGHT: 190,
+    FRAME_COUNT: 8,
+    FRAME_DURATION: 0.075,
+  },
+  ATTACK2: {
+    NAME: "ATTACK2",
+    URL: "./assets/player/Attack2.png",
+    FRAME_WIDTH: 231,
+    FRAME_HEIGHT: 190,
+    FRAME_COUNT: 8,
+    FRAME_DURATION: 0.075,
+  },
   FALL: {
     NAME: "FALL",
     URL: "./assets/player/Fall.png",
