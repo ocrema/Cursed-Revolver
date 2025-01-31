@@ -32,7 +32,7 @@ export class Entity {
     };
   }
 
-  setAnimation(name, loopOverride = null) {
+  setAnimation(name, loopOverride = true) {
     if (this.currentAnimation !== name) {
       this.currentAnimation = name;
       this.currentFrame = 0;
@@ -40,8 +40,7 @@ export class Entity {
 
       // This allows us to assign whether the animation should loop or not.
       // Put this in because death animation shouldnt loop, and we can dynamically assign if future animations should loop or not as well.
-      this.currentLoop =
-        loopOverride !== null ? loopOverride : this.animations[name].loop;
+      this.currentLoop = loopOverride;
     }
   }
 
@@ -102,28 +101,33 @@ export class Entity {
   colliding(other) {
     if (!this.collider || !other.collider) return false;
 
-    return this.collider.colliding(this.x, this.y, other.collider, other.x, other.y);
+    return this.collider.colliding(
+      this.x,
+      this.y,
+      other.collider,
+      other.x,
+      other.y
+    );
   }
 
   /**
    * moves this entity so that it is against the other entities' collider border in the x direction
-   * @param {*} other 
+   * @param {*} other
    */
   moveAgainstX(other) {
     if (this.x < other.x)
-      this.x = other.x - other.collider.width/2 - this.collider.width/2;
-    else
-      this.x = other.x + other.collider.width/2 + this.collider.width/2;
+      this.x = other.x - other.collider.width / 2 - this.collider.width / 2;
+    else this.x = other.x + other.collider.width / 2 + this.collider.width / 2;
   }
   /**
    * moves this entity so that it is against the other entities' collider border in the y direction
-   * @param {*} other 
+   * @param {*} other
    */
   moveAgainstY(other) {
     if (this.y < other.y)
-      this.y = other.y - other.collider.height/2 - this.collider.height/2;
+      this.y = other.y - other.collider.height / 2 - this.collider.height / 2;
     else
-      this.y = other.y + other.collider.height/2 + this.collider.height/2;
+      this.y = other.y + other.collider.height / 2 + this.collider.height / 2;
   }
 }
 
