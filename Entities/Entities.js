@@ -32,11 +32,15 @@ export class Entity {
     };
   }
 
-  setAnimation(name) {
+  setAnimation(name, loopOverride = true) {
     if (this.currentAnimation !== name) {
       this.currentAnimation = name;
       this.currentFrame = 0;
       this.elapsedTime = 0;
+
+      // This allows us to assign whether the animation should loop or not.
+      // Put this in because death animation shouldnt loop, and we can dynamically assign if future animations should loop or not as well.
+      this.currentLoop = loopOverride;
     }
   }
 
@@ -48,7 +52,14 @@ export class Entity {
 
     if (this.elapsedTime > animation.frameDuration) {
       this.elapsedTime -= animation.frameDuration;
-      this.currentFrame = (this.currentFrame + 1) % animation.frameCount;
+
+      if (this.currentLoop) {
+        this.currentFrame = (this.currentFrame + 1) % animation.frameCount;
+      } else {
+        if (this.currentFrame < animation.frameCount - 1) {
+          this.currentFrame++;
+        }
+      }
     }
   }
 
@@ -90,28 +101,33 @@ export class Entity {
   colliding(other) {
     if (!this.collider || !other.collider) return false;
 
-    return this.collider.colliding(this.x, this.y, other.collider, other.x, other.y);
+    return this.collider.colliding(
+      this.x,
+      this.y,
+      other.collider,
+      other.x,
+      other.y
+    );
   }
 
   /**
    * moves this entity so that it is against the other entities' collider border in the x direction
-   * @param {*} other 
+   * @param {*} other
    */
   moveAgainstX(other) {
     if (this.x < other.x)
-      this.x = other.x - other.collider.width/2 - this.collider.width/2;
-    else
-      this.x = other.x + other.collider.width/2 + this.collider.width/2;
+      this.x = other.x - other.collider.width / 2 - this.collider.width / 2;
+    else this.x = other.x + other.collider.width / 2 + this.collider.width / 2;
   }
   /**
    * moves this entity so that it is against the other entities' collider border in the y direction
-   * @param {*} other 
+   * @param {*} other
    */
   moveAgainstY(other) {
     if (this.y < other.y)
-      this.y = other.y - other.collider.height/2 - this.collider.height/2;
+      this.y = other.y - other.collider.height / 2 - this.collider.height / 2;
     else
-      this.y = other.y + other.collider.height/2 + this.collider.height/2;
+      this.y = other.y + other.collider.height / 2 + this.collider.height / 2;
   }
 }
 
@@ -151,10 +167,7 @@ export class GameMap extends Entity {
     this.isMap = true;
   }
 
-  update() {
-      
-  }
-
+  update() {}
 }
 
 export class Platform extends Entity {
@@ -169,6 +182,11 @@ export class Platform extends Entity {
   }
   draw(ctx) {
     ctx.fillStyle = "lightgray";
-    ctx.fillRect(this.x - this.width/2 - GAME_ENGINE.camera.x, this.y - this.height/2 - GAME_ENGINE.camera.y, this.width, this.height);
+    ctx.fillRect(
+      this.x - this.width / 2 - GAME_ENGINE.camera.x,
+      this.y - this.height / 2 - GAME_ENGINE.camera.y,
+      this.width,
+      this.height
+    );
   }
 }
