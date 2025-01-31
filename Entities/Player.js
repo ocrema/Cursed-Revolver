@@ -4,6 +4,7 @@ import * as Util from "../Utils/Util.js";
 import { Fireball } from "./Spells.js";
 import { Collider } from "./Collider.js";
 import { GAME_ENGINE } from "../main.js";
+import { Camera } from "../Core/Camera.js";
 
 export class Player extends Actor {
   constructor() {
