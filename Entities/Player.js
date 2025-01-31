@@ -3,6 +3,7 @@ import { PLAYER_COLLIDER, PLAYER_SPRITESHEET } from "../Globals/Constants.js";
 import * as Util from "../Utils/Util.js";
 import { Fireball } from "./Spells.js";
 import { Collider } from "./Collider.js";
+import { GAME_ENGINE } from "../main.js";
 
 export class Player extends Actor {
   constructor() {
@@ -13,9 +14,8 @@ export class Player extends Actor {
 
     this.isPlayer = true;
 
-    // switches between attack animations for the player 
+    // switches between attack animations for the player
     this.attackState = 1;
-
 
     // Add animations for the player
     this.addAnimation(
@@ -210,7 +210,7 @@ export class Player extends Actor {
       this.y_velocity = 0;
     }
 
-    // Player Spell Cooldown
+    // Player Attack Logic
 
     this.spellCooldown = Math.max(
       this.spellCooldown - GAME_ENGINE.clockTick,
@@ -219,6 +219,10 @@ export class Player extends Actor {
 
     if (this.spellCooldown <= 0 && GAME_ENGINE.keys["m1"]) {
       this.spellCooldown = 0.3;
+
+      // Calculate direction to mouse
+      const mouseX = GAME_ENGINE.mouse.x + GAME_ENGINE.camera.x;
+      this.flip = mouseX < this.x; // Flip player based on mouse position
 
       if (this.attackState === 1) {
         this.setAnimation(PLAYER_SPRITESHEET.ATTACK1.NAME, false);
