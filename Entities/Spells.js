@@ -1,6 +1,8 @@
 
 import { Collider } from "./Collider.js";
 import { Entity } from "./Entities.js";
+import * as Util from "../Utils/Util.js";
+import { GAME_ENGINE } from "../main.js";
 
 export class Fireball extends Entity {
 
@@ -65,4 +67,73 @@ export class Fireball extends Entity {
             ctx.fillRect(this.x - 25 - GAME_ENGINE.camera.x, this.y - 25 - GAME_ENGINE.camera.y, 50, 50);
     }
 
+}
+
+
+export class ChainLightning extends Entity {
+    constructor(caster, dir) {
+        super();
+        this.dir = dir; // in radians
+        this.entityOrder = 3;
+        this.isAttack = true;
+        this.experationTimer = 1;
+        this.chains = 4;
+        this.firstBolt = true;
+        this.maxChainLength = 1000;
+        this.maxShotAngle = Math.PI / 3;
+        this.targets = [caster];
+    }
+
+    update() {
+        if (this.struck) {
+            this.experationTimer -= GAME_ENGINE.clockTick;
+            if (this.experationTimer <= 0) this.removeFromWorld = true;
+            return;
+        }
+
+        let enemies = GAME_ENGINE.entities.filter((e) => (e.isEnemy));
+
+        let source = this.targets[0];
+        let target = null;
+        let targetIndex = null;
+
+        while (source !== null && enemies.length !== 0 && this.chains >= 1) {
+
+            for (let i = 0; i < enemies.length; i++) {
+                if (this.firstBolt && Util.diffBetweenAngles(Util.getAngle(source, enemies[i]), this.dir) > this.maxShotAngle) continue;
+                if (Util.getDistance(source, enemies[i]) > this.maxChainLength) continue;
+                if (target === null || Util.getDistance(source, enemies[i]) < Util.getDistance(source, target)) {
+                    target = enemies[i];
+                    targetIndex = i;
+                }
+            }
+
+            if (target !== null) {
+                this.targets.push(target);
+                enemies.splice(targetIndex, 1);
+            }
+
+            this.chains--;
+            this.firstBolt = false;
+            source = target;
+            target = null;
+        }
+
+        console.log(this.targets);
+
+        this.struck = true;
+    }
+
+    draw(ctx) {
+        if (!this.struck || this.targets.length <= 1) return;
+
+        ctx.strokeStyle = "yellow";
+        ctx.lineWidth = 15;
+        ctx.beginPath();
+        ctx.moveTo(this.targets[0].x - GAME_ENGINE.camera.x, this.targets[0].y - GAME_ENGINE.camera.y);
+        for (let i = 1; i < this.targets.length; i++) {
+            ctx.lineTo(this.targets[i].x - GAME_ENGINE.camera.x, this.targets[i].y - GAME_ENGINE.camera.y);
+        }
+        ctx.stroke();
+    }
 }

@@ -1,5 +1,5 @@
 /** Global Parameters Object */
-const params = { };
+const params = {};
 
 /**
  * @param {Number} n
@@ -58,8 +58,12 @@ export const getDistance = (p1, p2) => {
     return Math.sqrt(Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2));
 };
 
-export const getAngle = (x1, y1, x2, y2) => {
-    return Math.atan2(y2 - y1, x2 - x1);
+export const getAngle = (p1, p2) => {
+    return Math.atan2(p2.y - p1.y, p2.x - p1.x);
+}
+
+export const diffBetweenAngles = (a, b) => {
+    return Math.PI - Math.abs(Math.abs(a - b) - Math.PI); 
 }
 /*
 export const newCollider = (w, h, x, y) => { 
