@@ -61,7 +61,7 @@ export const getDistance = (p1, p2) => {
 export const getAngle = (x1, y1, x2, y2) => {
     return Math.atan2(y2 - y1, x2 - x1);
 }
-
+/*
 export const newCollider = (w, h, x, y) => { 
     return {width: w, height: h, x_offset: x, y_offset: y}; 
 };
@@ -75,3 +75,4 @@ export const canSee = (A,B) => {
     avgCenter = avgCenter / B.colliders.length;
     return (getDistance(A,B) < A.visualRadius + avgCenter);
 }
+    */

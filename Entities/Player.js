@@ -2,7 +2,7 @@ import { Actor } from "./Entities.js";
 import { PLAYER_SPRITESHEET } from "../Globals/Constants.js";
 import * as Util from "../Utils/Util.js";
 import { Fireball } from "./Spells.js";
-import { GAME_ENGINE } from "../main.js";
+import { Collider } from "./Collider.js";
 
 export class Player extends Actor {
   constructor() {
@@ -66,8 +66,9 @@ export class Player extends Actor {
     // Start with the idle animation
     this.setAnimation("idle");
 
-    this.colliders = [];
-    this.colliders.push(Util.newCollider(100, 100, 0, 0));
+    //this.colliders = [];
+    //this.colliders.push(Util.newCollider(100, 100, 0, 0));
+    this.collider = new Collider(120, 120);
     this.health = 200;
 
     this.x_velocity = 0;
@@ -113,24 +114,55 @@ export class Player extends Actor {
     }
 
     this.x += this.x_velocity * GAME_ENGINE.clockTick;
+    let collisions = [];
     for (let e of GAME_ENGINE.entities) {
       if (e.isPlayer || e.isAttack) continue;
       if (this.colliding(e)) {
-        this.x -= this.x_velocity * GAME_ENGINE.clockTick;
-        this.x_velocity = 0;
-        break;
+        collisions.push(e);
       }
     }
+    if (collisions.length !== 0) {
+      if (this.x_velocity > 0) {
+        this.x = collisions.reduce(
+          (acc, curr) => Math.min(acc, curr.x - curr.collider.width/2),
+          collisions[0].x - collisions[0].collider.width/2
+        ) - this.collider.width/2;
+      }
+      else {
+        this.x = collisions.reduce(
+          (acc, curr) => Math.max(acc, curr.x + curr.collider.width/2),
+          collisions[0].x + collisions[0].collider.width/2
+        ) + this.collider.width/2;
+      }
+      this.x_velocity = 0;
+    }
+
+
 
     this.y += this.y_velocity * GAME_ENGINE.clockTick;
+    collisions = [];
     for (let e of GAME_ENGINE.entities) {
       if (e.isPlayer || e.isAttack) continue;
       if (this.colliding(e)) {
-        this.y -= this.y_velocity * GAME_ENGINE.clockTick;
-        if (this.y_velocity > 0) this.isGrounded = 0.2;
-        this.y_velocity = 0;
-        break;
+        collisions.push(e);
       }
+    }
+    if (collisions.length !== 0) {
+      if (this.y_velocity > 0) {
+        this.isGrounded = 0.2;
+
+        this.y = collisions.reduce(
+          (acc, curr) => Math.min(acc, curr.y - curr.collider.height/2),
+          collisions[0].y - collisions[0].collider.height/2
+        ) - this.collider.height/2;
+      }
+      else {
+        this.y = collisions.reduce(
+          (acc, curr) => Math.max(acc, curr.y + curr.collider.height/2),
+          collisions[0].y + collisions[0].collider.height/2
+        ) + this.collider.height/2;
+      }
+      this.y_velocity = 0;
     }
 
     this.spellCooldown = Math.max(
@@ -138,7 +170,6 @@ export class Player extends Actor {
       0
     );
     if (this.spellCooldown <= 0 && GAME_ENGINE.keys["m1"]) {
-      
       this.spellCooldown = 0.3;
       const fireball = new Fireball();
       fireball.x = this.x;

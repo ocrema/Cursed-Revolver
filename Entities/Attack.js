@@ -1,6 +1,7 @@
 import { Entity } from "./Entities.js";
 import { Player } from "./Player.js";
 import * as Util from "../Utils/Util.js";
+import { Collider } from "./Collider.js";
 
 export class Thorn extends Entity {
     constructor (x, y, target) {
@@ -22,7 +23,8 @@ export class Thorn extends Entity {
         this.speed = 4;
         this.data = { damage: 20};
         this.removeFromWorld = false;
-        this.colliders = [];
+        //this.colliders = [];
+        this.collider = new Collider(this.width, this.height);
 
         var distance = Util.getDistance(this, target);
         this.velocity = { x:(this.target.x - this.x) / distance * this.speed, 
@@ -41,7 +43,6 @@ export class Thorn extends Entity {
     }
 
     update() {
-        this.colliders = [];
         // if distance is too big --> remove
         if (this.travelled > this.maxRange) {
             this.removeFromWorld = true;
@@ -50,8 +51,7 @@ export class Thorn extends Entity {
         // update x/y using velocity
         this.x += this.velocity.x;
         this.y += this.velocity.y;
-        this.colliders.push(Util.newCollider(this.width, this.height, 0, 0));
-
+        
         // use x/y to update distance travelled 
         this.travelled = Util.getDistance(this, this.start);
 
@@ -59,7 +59,7 @@ export class Thorn extends Entity {
         var that = this;
         GAME_ENGINE.entities.forEach(function (entity) { // cycles through every entity 
                     if (entity instanceof Player) {
-                        if (entity.colliders && that.colliding(entity)) {
+                        if (that.colliding(entity)) {
                             // thorn hits player
                             that.removeFromWorld = true;
                             entity.queueAttack(that.data);

@@ -1,4 +1,4 @@
-import { newCollider } from "../Utils/Util.js";
+import { Collider } from "./Collider.js";
 
 export class Entity {
   constructor() {
@@ -88,46 +88,30 @@ export class Entity {
   }
 
   colliding(other) {
-    /*
-     * entities with collision will have a collection of bounding boxes
-     * each bounding box has width, height, x_offset, y_offset
-     * returns true if any boxes are colliding, false otherwise
-     */
+    if (!this.collider || !other.collider) return false;
 
-    if (!(this.colliders && other.colliders)) return false;
+    return this.collider.colliding(this.x, this.y, other.collider, other.x, other.y);
+  }
 
-    for (let i = 0; i < this.colliders.length; i++) {
-      for (let j = 0; j < other.colliders.length; j++) {
-        const box1 = this.colliders[i];
-        const box2 = other.colliders[j];
-        const b1w = box1.width;
-        const b1h = box1.height;
-        const b2w = box2.width;
-        const b2h = box2.height;
-        const b1x = box1.x_offset + this.x;
-        const b1y = box1.y_offset + this.y;
-        const b2x = box2.x_offset + other.x;
-        const b2y = box2.y_offset + other.y;
-        const b1left = b1x - b1w / 2;
-        const b1top = b1y - b1h / 2;
-        const b1right = b1x + b1w / 2;
-        const b1bottom = b1y + b1h / 2;
-        const b2left = b2x - b2w / 2;
-        const b2top = b2y - b2h / 2;
-        const b2right = b2x + b2w / 2;
-        const b2bottom = b2y + b2h / 2;
-        // just a couple of constants
-
-        if (
-          b1right > b2left &&
-          b1left < b2right &&
-          b1top < b2bottom &&
-          b1bottom > b2top
-        )
-          return true;
-      }
-    }
-    return false;
+  /**
+   * moves this entity so that it is against the other entities' collider border in the x direction
+   * @param {*} other 
+   */
+  moveAgainstX(other) {
+    if (this.x < other.x)
+      this.x = other.x - other.collider.width/2 - this.collider.width/2;
+    else
+      this.x = other.x + other.collider.width/2 + this.collider.width/2;
+  }
+  /**
+   * moves this entity so that it is against the other entities' collider border in the y direction
+   * @param {*} other 
+   */
+  moveAgainstY(other) {
+    if (this.y < other.y)
+      this.y = other.y - other.collider.height/2 - this.collider.height/2;
+    else
+      this.y = other.y + other.collider.height/2 + this.collider.height/2;
   }
 }
 
@@ -180,7 +164,8 @@ export class Platform extends Entity {
     this.y = y;
     this.width = width;
     this.height = height;
-    this.colliders = [newCollider(width, height, 0, 0)]
+    //this.colliders = [newCollider(width, height, 0, 0)]
+    this.collider = new Collider(width, height);
   }
   draw(ctx) {
     ctx.fillStyle = "lightgray";
