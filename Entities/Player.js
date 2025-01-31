@@ -3,6 +3,8 @@ import { PLAYER_COLLIDER, PLAYER_SPRITESHEET } from "../Globals/Constants.js";
 import * as Util from "../Utils/Util.js";
 import { Fireball, ChainLightning } from "./Spells.js";
 import { Collider } from "./Collider.js";
+import { GAME_ENGINE } from "../main.js";
+import { Camera } from "../Core/Camera.js";
 
 export class Player extends Actor {
   constructor() {
@@ -12,6 +14,9 @@ export class Player extends Actor {
     this.scale = 1.5;
 
     this.isPlayer = true;
+
+    // switches between attack animations for the player
+    this.attackState = 1;
 
     // Add animations for the player
     this.addAnimation(
@@ -30,6 +35,24 @@ export class Player extends Actor {
       PLAYER_SPRITESHEET.RUN.FRAME_HEIGHT, // Frame height
       PLAYER_SPRITESHEET.RUN.FRAME_COUNT, // Frame count
       PLAYER_SPRITESHEET.RUN.FRAME_DURATION // Frame duration (faster for running)
+    );
+
+    this.addAnimation(
+      PLAYER_SPRITESHEET.ATTACK1.NAME, // Name of the animation
+      this.assetManager.getAsset(PLAYER_SPRITESHEET.ATTACK1.URL), // URL for Attack 1 animation
+      PLAYER_SPRITESHEET.ATTACK1.FRAME_WIDTH, // Frame width
+      PLAYER_SPRITESHEET.ATTACK1.FRAME_HEIGHT, // Frame height
+      PLAYER_SPRITESHEET.ATTACK1.FRAME_COUNT, // Frame count
+      PLAYER_SPRITESHEET.ATTACK1.FRAME_DURATION // Frame duration (faster for attacking)
+    );
+
+    this.addAnimation(
+      PLAYER_SPRITESHEET.ATTACK2.NAME, // Name of the animation
+      this.assetManager.getAsset(PLAYER_SPRITESHEET.ATTACK2.URL), // URL for Attack 2 animation
+      PLAYER_SPRITESHEET.ATTACK2.FRAME_WIDTH, // Frame width
+      PLAYER_SPRITESHEET.ATTACK2.FRAME_HEIGHT, // Frame height
+      PLAYER_SPRITESHEET.ATTACK2.FRAME_COUNT, // Frame count
+      PLAYER_SPRITESHEET.ATTACK2.FRAME_DURATION // Frame duration (faster for attacking)
     );
 
     this.addAnimation(
@@ -191,7 +214,7 @@ export class Player extends Actor {
       this.y_velocity = 0;
     }
 
-    // Player Spell Cooldown
+    // Player Attack Logic
 
     for (let i = 0; i < this.spellCooldowns.length; i++) {
       this.spellCooldowns[i] = Math.max(
@@ -244,6 +267,11 @@ export class Player extends Actor {
     if (!this.isDead) {
       if (this.hitTimer > 0) {
         this.hitTimer -= GAME_ENGINE.clockTick;
+      } else if (
+        this.currentAnimation === PLAYER_SPRITESHEET.ATTACK1.NAME ||
+        this.currentAnimation === PLAYER_SPRITESHEET.ATTACK2.NAME
+      ) {
+        // Do nothing, let the attack animation play out
       } else {
         // Only switch animations if the hit animation is NOT playing
         if (!this.isGrounded) {
@@ -295,5 +323,16 @@ export class Player extends Actor {
 
     // Update the active animation
     this.updateAnimation(GAME_ENGINE.clockTick);
+  }
+
+  onAnimationComplete() {
+    // Check if the current animation is the attack animation
+    if (
+      this.currentAnimation === PLAYER_SPRITESHEET.ATTACK1.NAME ||
+      this.currentAnimation === PLAYER_SPRITESHEET.ATTACK2.NAME
+    ) {
+      // Switch back to the idle animation after the attack animation completes
+      this.setAnimation(PLAYER_SPRITESHEET.IDLE.NAME);
+    }
   }
 }
