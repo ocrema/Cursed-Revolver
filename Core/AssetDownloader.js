@@ -21,6 +21,8 @@ export class AssetDownloader {
 
   downloadEnemyAssets() {
     this.assetManager.queueDownload("./assets/cactus/cactus.png");
+
+    this.assetManager.queueDownload("./assets/spider/Walk.png");
   }
 
   downloadEnemyAttackAssets() {

@@ -15,8 +15,6 @@ export class Thorn extends Entity {
 
         this.isAttack = true;
 
-        
-
         // distance the thorn has travelled
         this.travelled = 0;
         this.maxRange = 300;
@@ -59,12 +57,27 @@ export class Thorn extends Entity {
         var that = this;
         GAME_ENGINE.entities.forEach(function (entity) { // cycles through every entity 
                     if (entity instanceof Player) {
-                        if (that.colliding(entity)) {
+                        if (entity.collider && that.colliding(entity)) {
                             // thorn hits player
                             that.removeFromWorld = true;
                             entity.queueAttack(that.data);
                         }
                     }
                 })
+    }
+}
+
+export class Jaw extends Entity {
+    constructor (x, y, spider) {
+        super();
+        Object.assign(this, { x, y, spider});
+
+        this.collider = new Collider(100, 95);
+        this.elapsedTime = 0;
+    }
+
+    update() {
+        this.x = this.spider.x;
+        this.y = this.spider.y;
     }
 }
