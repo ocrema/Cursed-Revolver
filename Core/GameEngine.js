@@ -1,9 +1,11 @@
 import { Timer } from "../Utils/Timer.js";
 import { Camera } from "../Core/Camera.js";
+import { PauseMenu } from "../Entities/PauseMenu.js";
+import { MainMenu } from "../Entities/MainMenu.js";
+import { GameLogicController } from "../Core/GameLogicController.js";
 
 export class GameEngine {
   constructor(options) {
-    // if the instance already exists, return it
     if (!window.GAME_ENGINE) {
       window.GAME_ENGINE = this; // Singleton instance
     }
@@ -11,29 +13,43 @@ export class GameEngine {
     // Documentation: https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D
     this.ctx = null;
 
-    // Everything that will be updated and drawn each frame
+    this.ctx = null;
     this.entities = [];
-
-    // Information on the input
-    this.click = null;
-    this.mouse = null;
-    this.wheel = null;
-    this.keys = {};
-
-    // Options and the Details
-    this.options = options || {
-      debugging: false,
-    };
-
-    this.mouse = {x: 0, y: 0};
-
+    this.options = options || { debugging: false };
     this.width = 2000;
     this.height = 1000;
 
     this.camera = new Camera();
     this.addEntity(this.camera);
-    this.debug_colliders = true;
+    this.debug_colliders = false;
+
+    this.click = null;
+    this.mouse = { x: 0, y: 0 };
+    this.wheel = null;
+    this.keys = {};
+
+    this.GAME_CONTROLLER = null;
+    this.MAIN_MENU = new MainMenu();
+    this.addEntity(this.MAIN_MENU);
+
     return window.GAME_ENGINE;
+  }
+
+  startGame() {
+    console.log("Starting game...");
+    this.entities = this.entities.filter(entity => !(entity instanceof MainMenu));
+    this.GAME_CONTROLLER = new GameLogicController();
+    this.addEntity(this.GAME_CONTROLLER);
+    window.dispatchEvent(new Event("resize"));
+  }
+
+  start() {
+    this.running = true;
+    const gameLoop = () => {
+      this.loop();
+      requestAnimFrame(gameLoop, this.ctx.canvas);
+    };
+    gameLoop();
   }
 
   init(ctx) {
@@ -63,32 +79,67 @@ export class GameEngine {
     resize();
   }
 
-  start() {
-    this.running = true;
-    const gameLoop = () => {
-      this.loop();
-      requestAnimFrame(gameLoop, this.ctx.canvas);
-    };
-    gameLoop();
-  }
-
   startInput() {
     const getXandY = (e) => ({
-      x:
-        (e.clientX - this.ctx.canvas.getBoundingClientRect().left) /
-          this.x_scale -
-        this.width / 2,
-      y:
-        (e.clientY - this.ctx.canvas.getBoundingClientRect().top) /
-          this.y_scale -
-        this.height / 2,
+      x: (e.clientX - this.ctx.canvas.getBoundingClientRect().left) / this.x_scale - this.width / 2,
+      y: (e.clientY - this.ctx.canvas.getBoundingClientRect().top) / this.y_scale - this.height / 2,
     });
 
     this.ctx.canvas.addEventListener("mousemove", (e) => {
-      if (this.options.debugging) {
-        console.log("MOUSE_MOVE", getXandY(e));
-      }
       this.mouse = getXandY(e);
+      //console.log("Mouse moved:", this.mouse);
+    });
+
+    this.ctx.canvas.addEventListener("click", (e) => {
+      this.click = getXandY(e);
+      //console.log("Mouse clicked at:", this.click);
+    
+      // Check if click is inside Main Menu
+      if (this.MAIN_MENU.isVisible) {
+        this.MAIN_MENU.handleClick(this.click.x, this.click.y);
+      }
+    
+      // Check if click is inside Pause Menu
+      if (this.GAME_CONTROLLER && this.GAME_CONTROLLER.isPaused) {
+        for (let entity of this.entities) {
+          if (entity instanceof PauseMenu && entity.isVisible) {
+            entity.handleClick(this.click.x, this.click.y);
+          }
+        }
+      }
+    });    
+
+    this.ctx.canvas.addEventListener("mousedown", (e) => {
+      if (e.button === 0) {
+        this.keys["m1"] = true;
+        //console.log("Left mouse button pressed");
+      }
+    });
+
+    this.ctx.canvas.addEventListener("mouseup", (e) => {
+      if (e.button === 0) {
+        this.keys["m1"] = false;
+        //console.log("Left mouse button released");
+      }
+    });
+
+    this.ctx.canvas.addEventListener("wheel", (e) => {
+      this.wheel = e;
+      e.preventDefault();
+      //console.log("Mouse wheel used:", e.deltaY);
+    });
+
+    this.ctx.canvas.addEventListener("contextmenu", (e) => {
+      e.preventDefault();
+    });
+
+    document.addEventListener("keydown", (event) => {
+      this.keys[(event.key.length === 1) ? event.key.toLowerCase() : event.key] = true;
+      //console.log("Key pressed:", event.key);
+    });
+
+    document.addEventListener("keyup", (event) => {
+      this.keys[(event.key.length === 1) ? event.key.toLowerCase() : event.key] = false;
     });
 
     this.ctx.canvas.addEventListener("click", (e) => {
@@ -151,28 +202,22 @@ export class GameEngine {
   }
 
   addEntity(entity) {
-    //this.entities.push(entity);
+    if (!entity || typeof entity.update !== "function" || typeof entity.draw !== "function") {
+      console.warn("Invalid entity added:", entity);
+      return;
+    }
 
-    let start = 0;
-    let end = this.entities.length - 1;
-    const entityOrder = entity.entityOrder;
+    const entityOrder = entity.entityOrder || 0;
     let i = 0;
     while (i < this.entities.length && this.entities[i].entityOrder < entityOrder) i++;
-  
-    // Insert the entity at the determined index
+
     this.entities.splice(i, 0, entity);
+    console.log("Entity added:", entity.constructor.name, "Total entities:", this.entities.length);
   }
 
   draw() {
-    // Clear the whole canvas with transparent color (rgba(0, 0, 0, 0))
-    this.ctx.fillStyle = 'black';
-    this.ctx.fillRect(
-      -this.width / 2,
-      -this.height / 2,
-      this.width,
-      this.height
-    );
-    
+    this.ctx.clearRect(-this.width / 2, -this.height / 2, this.width, this.height);
+
     for (let i = 0; i < this.entities.length; i++) {
       //console.log(this.entities);
       this.entities[i].draw(this.ctx);
@@ -224,7 +269,7 @@ export class GameEngine {
     }
 
     for (let i = this.entities.length - 1; i >= 0; --i) {
-      if (this.entities[i].removeFromWorld) {
+      if (this.entities[i] && this.entities[i].removeFromWorld) {
         this.entities.splice(i, 1);
       }
     }

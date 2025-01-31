@@ -212,9 +212,6 @@ export class Player extends Actor {
       GAME_ENGINE.addEntity(fireball);
     }
 
-    for (let a of this.recieved_attacks) {
-    }
-    //this.recieved_attacks = [];
 
     // Player State Logic
     if (!this.isDead) {
