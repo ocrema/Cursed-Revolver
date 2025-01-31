@@ -32,7 +32,7 @@ export class Entity {
     };
   }
 
-  setAnimation(name, loopOverride = true) {
+  setAnimation(name, loopAnimation = true) {
     if (this.currentAnimation !== name) {
       this.currentAnimation = name;
       this.currentFrame = 0;
@@ -40,7 +40,7 @@ export class Entity {
 
       // This allows us to assign whether the animation should loop or not.
       // Put this in because death animation shouldnt loop, and we can dynamically assign if future animations should loop or not as well.
-      this.currentLoop = loopOverride;
+      this.currentLoop = loopAnimation;
     }
   }
 
@@ -58,6 +58,8 @@ export class Entity {
       } else {
         if (this.currentFrame < animation.frameCount - 1) {
           this.currentFrame++;
+        } else { 
+          this.onAnimationComplete(); // Call the callback function when the animation completes
         }
       }
     }

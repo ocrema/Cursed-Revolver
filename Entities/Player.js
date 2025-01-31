@@ -13,6 +13,10 @@ export class Player extends Actor {
 
     this.isPlayer = true;
 
+    // switches between attack animations for the player 
+    this.attackState = 1;
+
+
     // Add animations for the player
     this.addAnimation(
       PLAYER_SPRITESHEET.IDLE.NAME, // Name of the animation
@@ -30,6 +34,24 @@ export class Player extends Actor {
       PLAYER_SPRITESHEET.RUN.FRAME_HEIGHT, // Frame height
       PLAYER_SPRITESHEET.RUN.FRAME_COUNT, // Frame count
       PLAYER_SPRITESHEET.RUN.FRAME_DURATION // Frame duration (faster for running)
+    );
+
+    this.addAnimation(
+      PLAYER_SPRITESHEET.ATTACK1.NAME, // Name of the animation
+      this.assetManager.getAsset(PLAYER_SPRITESHEET.ATTACK1.URL), // URL for Attack 1 animation
+      PLAYER_SPRITESHEET.ATTACK1.FRAME_WIDTH, // Frame width
+      PLAYER_SPRITESHEET.ATTACK1.FRAME_HEIGHT, // Frame height
+      PLAYER_SPRITESHEET.ATTACK1.FRAME_COUNT, // Frame count
+      PLAYER_SPRITESHEET.ATTACK1.FRAME_DURATION // Frame duration (faster for attacking)
+    );
+
+    this.addAnimation(
+      PLAYER_SPRITESHEET.ATTACK2.NAME, // Name of the animation
+      this.assetManager.getAsset(PLAYER_SPRITESHEET.ATTACK2.URL), // URL for Attack 2 animation
+      PLAYER_SPRITESHEET.ATTACK2.FRAME_WIDTH, // Frame width
+      PLAYER_SPRITESHEET.ATTACK2.FRAME_HEIGHT, // Frame height
+      PLAYER_SPRITESHEET.ATTACK2.FRAME_COUNT, // Frame count
+      PLAYER_SPRITESHEET.ATTACK2.FRAME_DURATION // Frame duration (faster for attacking)
     );
 
     this.addAnimation(
@@ -194,8 +216,18 @@ export class Player extends Actor {
       this.spellCooldown - GAME_ENGINE.clockTick,
       0
     );
+
     if (this.spellCooldown <= 0 && GAME_ENGINE.keys["m1"]) {
       this.spellCooldown = 0.3;
+
+      if (this.attackState === 1) {
+        this.setAnimation(PLAYER_SPRITESHEET.ATTACK1.NAME, false);
+        this.attackState = 2;
+      } else {
+        this.setAnimation(PLAYER_SPRITESHEET.ATTACK2.NAME, false);
+        this.attackState = 1;
+      }
+
       const fireball = new Fireball();
       fireball.x = this.x;
       fireball.y = this.y;
@@ -212,6 +244,11 @@ export class Player extends Actor {
     if (!this.isDead) {
       if (this.hitTimer > 0) {
         this.hitTimer -= GAME_ENGINE.clockTick;
+      } else if (
+        this.currentAnimation === PLAYER_SPRITESHEET.ATTACK1.NAME ||
+        this.currentAnimation === PLAYER_SPRITESHEET.ATTACK2.NAME
+      ) {
+        // Do nothing, let the attack animation play out
       } else {
         // Only switch animations if the hit animation is NOT playing
         if (!this.isGrounded) {
@@ -263,5 +300,16 @@ export class Player extends Actor {
 
     // Update the active animation
     this.updateAnimation(GAME_ENGINE.clockTick);
+  }
+
+  onAnimationComplete() {
+    // Check if the current animation is the attack animation
+    if (
+      this.currentAnimation === PLAYER_SPRITESHEET.ATTACK1.NAME ||
+      this.currentAnimation === PLAYER_SPRITESHEET.ATTACK2.NAME
+    ) {
+      // Switch back to the idle animation after the attack animation completes
+      this.setAnimation(PLAYER_SPRITESHEET.IDLE.NAME);
+    }
   }
 }

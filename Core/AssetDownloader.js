@@ -1,4 +1,4 @@
-export class AssetDownloader { 
+export class AssetDownloader {
   constructor(assetManager) {
     this.assetManager = assetManager;
   }
@@ -10,13 +10,15 @@ export class AssetDownloader {
     this.downloadBackgroundAssets();
   }
 
-  downloadPlayerAssets() { 
+  downloadPlayerAssets() {
     this.assetManager.queueDownload("./assets/player/Idle.png");
     this.assetManager.queueDownload("./assets/player/Run.png");
     this.assetManager.queueDownload("./assets/player/Jump.png");
     this.assetManager.queueDownload("./assets/player/Death.png");
     this.assetManager.queueDownload("./assets/player/Fall.png");
     this.assetManager.queueDownload("./assets/player/Hit.png");
+    this.assetManager.queueDownload("./assets/player/Attack1.png");
+    this.assetManager.queueDownload("./assets/player/Attack2.png");
   }
 
   downloadEnemyAssets() {
