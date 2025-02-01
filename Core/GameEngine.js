@@ -219,6 +219,12 @@ export class GameEngine {
             e.collider.width,
             e.collider.height
           );
+          this.ctx.strokeRect(
+            e.x - this.camera.x - 2,
+            e.y - this.camera.y - 2,
+            4,
+            4
+          )
         }
       }
     }
