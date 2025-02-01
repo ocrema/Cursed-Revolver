@@ -1,12 +1,10 @@
 import { Entity } from "./Entities.js";
 import { Collider } from "./Collider.js";
 import { GROUND_SPRITESHEET } from "../Globals/Constants.js";
-
 /**
- * Represents a platform entity in the game.
- * Platforms have two layers:
- * - A top layer (grass, stone top, etc.).
- * - A base layer (dirt, underground, etc.).
+ * Represents a platform with a two-layer tile system (top & base).
+ * - Top layer (e.g., grass, stone top) uses a different tile.
+ * - Base layers (e.g., dirt, underground) use another tile.
  */
 export class Platform extends Entity {
   /**
@@ -17,14 +15,14 @@ export class Platform extends Entity {
    * @param {number} height - The total height of the platform (scaled per tile).
    * @param {number} [scale=1] - The scaling factor for the platform's tile size.
    */
-  constructor(x, y, width, height, scale = 0.25) {
+  constructor(x, y, width, height, scale = 1) {
     super();
     this.x = x;
     this.y = y;
     this.width = width; // Number of tiles horizontally
     this.height = height; // Number of tiles vertically
     this.scale = scale; // Scaling factor for the platform
-    this.tileSize = 64 * this.scale; // Adjust tile size based on scale
+    this.tileSize = 42 * this.scale; // New tile size based on extracted tile
 
     // Create a collider that matches the drawn area of the platform
     this.collider = new Collider(
@@ -37,41 +35,45 @@ export class Platform extends Entity {
 
   /**
    * Updates the platform's animation (if any).
-   * Platforms are typically static, but this method allows future dynamic behavior.
    */
   update() {
     this.updateAnimation(GAME_ENGINE.clockTick);
   }
 
   /**
-   * Draws the platform on the canvas with two distinct layers.
-   * - Top layer uses `GROUND_TOP` texture.
-   * - Base layers use `GROUND_BASE` texture.
+   * Draws the platform with two distinct layers.
+   * - Top layer uses row 1, column 8 from the tileset.
+   * - Base layers use row 2, column 8 from the tileset.
    * @param {CanvasRenderingContext2D} ctx - The rendering context.
    */
   draw(ctx) {
-    const topSprite = this.assetManager.getAsset(
-      GROUND_SPRITESHEET.GROUND_TOP.URL
+    const tileset = this.assetManager.getAsset(
+      GROUND_SPRITESHEET.GROUND_TILESET.URL
     );
-    const baseSprite = this.assetManager.getAsset(
-      GROUND_SPRITESHEET.GROUND_BOTTOM.URL
-    );
-
-    if (!topSprite || !baseSprite) {
-      console.error("Sprite not loaded for Platform");
+    if (!tileset) {
+      console.error("Tileset not loaded for Platform");
       return;
     }
 
+    // Define the source tile positions
+    const tileWidth = 16;
+    const tileHeight = 17;
+    const topTileX = 112; // Column 8, Row 1
+    const topTileY = 0;
+    const baseTileX = 112; // Column 8, Row 2
+    const baseTileY = 17;
+
     for (let col = 0; col < this.width; col++) {
       for (let row = 0; row < this.height; row++) {
-        const sprite = row === 0 ? topSprite : baseSprite; // Top layer uses grass, others use dirt
+        const sourceX = row === 0 ? topTileX : baseTileX; // Use grass for top row, dirt for others
+        const sourceY = row === 0 ? topTileY : baseTileY;
 
         ctx.drawImage(
-          sprite,
-          0,
-          0,
-          16,
-          16, // Source: original 16x16 tile
+          tileset,
+          sourceX,
+          sourceY,
+          tileWidth,
+          tileHeight, // Source tile
           this.x -
             GAME_ENGINE.camera.x +
             col * this.tileSize -
@@ -80,8 +82,8 @@ export class Platform extends Entity {
             GAME_ENGINE.camera.y +
             row * this.tileSize -
             (this.height * this.tileSize) / 2, // Y position
-          this.tileSize, // Width of each tile (scaled)
-          this.tileSize // Height of each tile (scaled)
+          this.tileSize * 2, // Scaled width
+          this.tileSize * 2 // Scaled height
         );
       }
     }

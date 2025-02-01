@@ -44,8 +44,8 @@ export class Background extends Entity {
     ctx.save(); // Save the current transformation state
 
     // Parallax effect: Background moves at a fraction of the camera movement
-    const parallaxX = this.camera.x * 0.05; // Moves slower than foreground
-    const parallaxY = this.camera.y * 0.0025; // Moves even slower vertically
+    const parallaxX = -this.camera.x * 0.05; // Moves slower than foreground
+    const parallaxY = -this.camera.y * 0.0025; // Moves even slower vertically
 
     ctx.translate(parallaxX, parallaxY);
     ctx.scale(this.scale, this.scale);

@@ -17,7 +17,7 @@ export class Map1 extends GameMap {
     const mainPlatform = new Structure(0,400); 
 
     mainPlatform.addPlatform(0, 0, 200, 10); // Main floor
-    // mainPlatform.addPlatform(-3200, -200, 1, 300); // Left Pillar
+     mainPlatform.addPlatform(5, -50, 5, 10); // Left Pillar
     // mainPlatform.addPlatform(3200, -200, 1, 300); // Right Pillar
 
     // // Floating Platforms (Jumping platforms)

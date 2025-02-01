@@ -100,6 +100,9 @@ export const GROUND_SPRITESHEET = {
   GROUND_BOTTOM: {
     URL: "./assets/map/Tileset/platforms10.png",
   },
+  GROUND_TILESET: {
+    URL: "./assets/map/deserttileset.png",
+  },
 };
 
 // Map Object Constants
