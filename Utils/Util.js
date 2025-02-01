@@ -65,18 +65,3 @@ export const getAngle = (p1, p2) => {
 export const diffBetweenAngles = (a, b) => {
     return Math.PI - Math.abs(Math.abs(a - b) - Math.PI); 
 }
-/*
-export const newCollider = (w, h, x, y) => { 
-    return {width: w, height: h, x_offset: x, y_offset: y}; 
-};
-
-export const canSee = (A,B) => {
-    var avgCenter = B.colliders[0].width;
-    for (let i = 0; i < B.colliders.length; i++) {
-        avgCenter += B.colliders[i].width;
-    }
-
-    avgCenter = avgCenter / B.colliders.length;
-    return (getDistance(A,B) < A.visualRadius + avgCenter);
-}
-    */

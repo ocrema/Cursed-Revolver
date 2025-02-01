@@ -86,7 +86,7 @@ export class ChainLightning extends Entity {
         this.dir = dir; // in radians
         this.entityOrder = 3;
         this.isAttack = true;
-        this.experationTimer = 1;
+        this.experationTimer = .35;
         this.chains = 4;
         this.firstBolt = true;
         this.maxChainLength = 1000;
@@ -97,6 +97,7 @@ export class ChainLightning extends Entity {
     update() {
         if (this.struck) {
             this.experationTimer -= GAME_ENGINE.clockTick;
+            if (this.targets.length > 1) GAME_ENGINE.camera.triggerShake(25);
             if (this.experationTimer <= 0) this.removeFromWorld = true;
             return;
         }
@@ -121,6 +122,7 @@ export class ChainLightning extends Entity {
             if (target !== null) {
                 this.targets.push(target);
                 enemies.splice(targetIndex, 1);
+                target.queueAttack({damage: 10, shock: 5});
             }
 
             this.chains--;
@@ -129,7 +131,6 @@ export class ChainLightning extends Entity {
             target = null;
         }
 
-        console.log(this.targets);
 
         this.struck = true;
     }
@@ -138,11 +139,12 @@ export class ChainLightning extends Entity {
         if (!this.struck || this.targets.length <= 1) return;
 
         ctx.strokeStyle = "yellow";
-        ctx.lineWidth = 15;
+        ctx.lineWidth = Math.random() * 30;
+        let maxOffset = 120;
         ctx.beginPath();
-        ctx.moveTo(this.targets[0].x - GAME_ENGINE.camera.x, this.targets[0].y - GAME_ENGINE.camera.y);
+        ctx.moveTo(this.targets[0].x - GAME_ENGINE.camera.x + Math.random() * maxOffset - maxOffset/2, this.targets[0].y - GAME_ENGINE.camera.y + Math.random() * maxOffset - maxOffset/2);
         for (let i = 1; i < this.targets.length; i++) {
-            ctx.lineTo(this.targets[i].x - GAME_ENGINE.camera.x, this.targets[i].y - GAME_ENGINE.camera.y);
+            ctx.lineTo(this.targets[i].x - GAME_ENGINE.camera.x + Math.random() * maxOffset - maxOffset/2, this.targets[i].y - GAME_ENGINE.camera.y + Math.random() * maxOffset - maxOffset/2);
         }
         ctx.stroke();
     }
