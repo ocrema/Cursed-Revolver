@@ -139,10 +139,14 @@ export class GameEngine {
     });
 
     document.addEventListener("keydown", (event) => {
-      this.keys[
-        event.key.length === 1 ? event.key.toLowerCase() : event.key
-      ] = true;
-      //console.log("Key pressed:", event.key);
+      const key = event.key.length === 1 ? event.key.toLowerCase() : event.key;
+      this.keys[key] = true;
+    
+      if (event.key === "Escape") {
+        console.log("Escape key pressed - Toggling pause menu...");
+        GAME_ENGINE.GAME_CONTROLLER.togglePause();
+        this.keys["Escape"] = false; // Prevent repeated toggling
+      }
     });
 
     document.addEventListener("keyup", (event) => {
