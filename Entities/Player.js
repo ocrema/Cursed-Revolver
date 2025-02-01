@@ -1,7 +1,7 @@
 import { Actor } from "./Entities.js";
 import { PLAYER_COLLIDER, PLAYER_SPRITESHEET } from "../Globals/Constants.js";
 import * as Util from "../Utils/Util.js";
-import { Fireball } from "./Spells.js";
+import { Fireball, ChainLightning } from "./Spells.js";
 import { Collider } from "./Collider.js";
 import { GAME_ENGINE } from "../main.js";
 import { Camera } from "../Core/Camera.js";
@@ -105,10 +105,13 @@ export class Player extends Actor {
     this.y_velocity = 0;
     this.isGrounded = 0; // values above 0 indicate that the player is grounded, so the player can still jump for a little bit after falling off a platform
 
-    this.spellCooldown = 0; // temporary
+    this.selectedSpell = 0;
+    this.spellCooldowns = [0, 0, 0, 0, 0, 0];
+    this.maxSpellCooldown = 1;
+
   }
 
-  jump() {}
+  jump() { }
 
   update() {
     //console.log(this.colliders);
@@ -213,36 +216,51 @@ export class Player extends Actor {
 
     // Player Attack Logic
 
-    this.spellCooldown = Math.max(
-      this.spellCooldown - GAME_ENGINE.clockTick,
-      0
-    );
+    for (let i = 0; i < this.spellCooldowns.length; i++) {
+      this.spellCooldowns[i] = Math.max(
+        this.spellCooldowns[i] - GAME_ENGINE.clockTick,
+        0
+      );
 
-    if (this.spellCooldown <= 0 && GAME_ENGINE.keys["m1"]) {
-      this.spellCooldown = 0.3;
+      if (GAME_ENGINE.keys[(i + 1).toString()]) {
+        this.selectedSpell = i;
+      }
+    }
 
-      // Calculate direction to mouse
-      const mouseX = GAME_ENGINE.mouse.x + GAME_ENGINE.camera.x;
-      this.flip = mouseX < this.x; // Flip player based on mouse position
+    // cast spell
 
-      if (this.attackState === 1) {
-        this.setAnimation(PLAYER_SPRITESHEET.ATTACK1.NAME, false);
-        this.attackState = 2;
-      } else {
-        this.setAnimation(PLAYER_SPRITESHEET.ATTACK2.NAME, false);
-        this.attackState = 1;
+    if (this.spellCooldowns[this.selectedSpell] <= 0 && GAME_ENGINE.keys["m1"]) {
+      this.spellCooldowns[this.selectedSpell] = this.maxSpellCooldown;
+
+      if (this.selectedSpell === 0) {
+        const fireball = new Fireball();
+        fireball.x = this.x;
+        fireball.y = this.y;
+        fireball.dir = Util.getAngle(
+          {
+            x: this.x - GAME_ENGINE.camera.x,
+            y: this.y - GAME_ENGINE.camera.y
+          },
+          {
+            x: GAME_ENGINE.mouse.x,
+            y: GAME_ENGINE.mouse.y
+          }
+        );
+        GAME_ENGINE.addEntity(fireball);
+      }
+      else if (this.selectedSpell === 1) {
+        const chain_lightning = new ChainLightning(this, Util.getAngle(
+          {
+            x: this.x - GAME_ENGINE.camera.x,
+            y: this.y - GAME_ENGINE.camera.y
+          },
+          {
+            x: GAME_ENGINE.mouse.x,
+            y: GAME_ENGINE.mouse.y
+          }));
+          GAME_ENGINE.addEntity(chain_lightning);
       }
 
-      const fireball = new Fireball();
-      fireball.x = this.x;
-      fireball.y = this.y;
-      fireball.dir = Util.getAngle(
-        this.x - GAME_ENGINE.camera.x,
-        this.y - GAME_ENGINE.camera.y,
-        GAME_ENGINE.mouse.x,
-        GAME_ENGINE.mouse.y
-      );
-      GAME_ENGINE.addEntity(fireball);
     }
 
     // Player State Logic
