@@ -1,10 +1,10 @@
 // Background Spritesheet Constants
 
 export const BACKGROUND_SPRITESHEET = {
-  URL: "./assets/background/background.png",
-  FRAME_WIDTH: 800,
-  FRAME_HEIGHT: 336,
-  FRAME_COUNT: 8,
+  URL: "./assets/background/background1.png",
+  FRAME_WIDTH: 640,
+  FRAME_HEIGHT: 400,
+  FRAME_COUNT: 40,
   FRAME_DURATION: 0.1,
 };
 
@@ -93,11 +93,24 @@ export const PLAYER_COLLIDER = {
 
 // Map Ground Constants
 
-export const GROUND_TILE = {
-  NAME: "GROUND",
-  URL: "./assets/map/Tileset/platforms2.png",
-  FRAME_WIDTH: 4,
-  FRAME_HEIGHT: 4,
-  FRAME_COUNT: 1,
-  FRAME_DURATION: 1,
+export const GROUND_SPRITESHEET = {
+  GROUND_TOP: {
+    URL: "./assets/map/Tileset/tileMain2.png",
+  },
+  GROUND_BOTTOM: {
+    URL: "./assets/map/Tileset/platforms10.png",
+  },
+};
+
+// Map Object Constants
+
+export const MAP_TREES_AND_ROCKS = {
+  ROCK1_URL: "./assets/map/props/rocks1.png",
+  ROCK2_URL: "./assets/map/props/rocks2.png",
+  ROCK3_URL: "./assets/map/props/rocks3.png",
+  ROCK4_URL: "./assets/map/props/rocks4.png",
+  ROCK5_URL: "./assets/map/props/rocks5.png",
+  TREE1_URL: "./assets/map/props/tree01.png",
+  TREE2_URL: "./assets/map/props/tree02.png",
+  TREE3_URL: "./assets/map/props/tree03.png",
 };

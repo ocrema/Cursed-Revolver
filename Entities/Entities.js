@@ -1,4 +1,3 @@
-import { GROUND_TILE } from "../Globals/Constants.js";
 import { Collider } from "./Collider.js";
 
 export class Entity {

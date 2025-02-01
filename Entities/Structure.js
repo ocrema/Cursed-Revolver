@@ -51,7 +51,8 @@ export class Structure {
 
       // Scale the collider to match the new platform size
       if (platform.collider) {
-        platform.collider.width = platform.width * platform.tileSize;
+        platform.collider.width =
+          platform.width * platform.tileSize * platform.scale;
         platform.collider.height = platform.height * platform.scale;
       }
     }

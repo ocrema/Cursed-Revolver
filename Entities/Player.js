@@ -12,6 +12,8 @@ export class Player extends Actor {
     // Assigns asset manager from window asset manager singleton
     this.assetManager = window.ASSET_MANAGER;
     this.scale = 1.5;
+    this.x = 0;
+    this.y = 0;
 
     this.isPlayer = true;
 
