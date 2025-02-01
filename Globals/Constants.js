@@ -90,3 +90,14 @@ export const PLAYER_COLLIDER = {
   OFFSET_X: -11,
   OFFSET_Y: 0,
 };
+
+// Map Ground Constants
+
+export const GROUND_TILE = {
+  NAME: "GROUND",
+  URL: "./assets/map/Tileset/platforms2.png",
+  FRAME_WIDTH: 4,
+  FRAME_HEIGHT: 4,
+  FRAME_COUNT: 1,
+  FRAME_DURATION: 1,
+};

@@ -8,6 +8,7 @@ export class AssetDownloader {
     this.downloadEnemyAssets();
     this.downloadEnemyAttackAssets();
     this.downloadBackgroundAssets();
+    this.downloadMapAssets();
   }
 
   downloadPlayerAssets() {
@@ -31,5 +32,9 @@ export class AssetDownloader {
 
   downloadBackgroundAssets() {
     this.assetManager.queueDownload("./assets/background/background.png");
+  }
+
+  downloadMapAssets() {
+    this.assetManager.queueDownload("./assets/map/Tileset/platforms2.png");
   }
 }

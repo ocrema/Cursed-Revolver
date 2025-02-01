@@ -1,3 +1,4 @@
+import { GROUND_TILE } from "../Globals/Constants.js";
 import { Collider } from "./Collider.js";
 
 export class Entity {
@@ -58,7 +59,7 @@ export class Entity {
       } else {
         if (this.currentFrame < animation.frameCount - 1) {
           this.currentFrame++;
-        } else { 
+        } else {
           this.onAnimationComplete(); // Call the callback function when the animation completes
         }
       }
@@ -172,23 +173,4 @@ export class GameMap extends Entity {
   update() {}
 }
 
-export class Platform extends Entity {
-  constructor(x, y, width, height) {
-    super();
-    this.x = x;
-    this.y = y;
-    this.width = width;
-    this.height = height;
-    //this.colliders = [newCollider(width, height, 0, 0)]
-    this.collider = new Collider(width, height);
-  }
-  draw(ctx) {
-    ctx.fillStyle = "lightgray";
-    ctx.fillRect(
-      this.x - this.width / 2 - GAME_ENGINE.camera.x,
-      this.y - this.height / 2 - GAME_ENGINE.camera.y,
-      this.width,
-      this.height
-    );
-  }
-}
+
