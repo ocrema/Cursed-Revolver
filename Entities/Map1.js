@@ -9,7 +9,7 @@ export class Map1 extends GameMap {
         console.log('Loading Map 1');
         GAME_ENGINE.addEntity(new Player());
         GAME_ENGINE.addEntity(new Cactus(-500, 250));
-        GAME_ENGINE.addEntity(new Spider(500, 250));
+        GAME_ENGINE.addEntity(new Spider(550, 250));
         GAME_ENGINE.addEntity(new Background());
         GAME_ENGINE.addEntity(new Platform(0, 400, 2000, 100));
         GAME_ENGINE.addEntity(new Platform(300, 200, 200, 400));

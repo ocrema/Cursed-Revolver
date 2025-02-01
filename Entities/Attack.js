@@ -21,7 +21,6 @@ export class Thorn extends Entity {
         this.speed = 4;
         this.data = { damage: 20};
         this.removeFromWorld = false;
-        //this.colliders = [];
         this.collider = new Collider(this.width, this.height);
 
         var distance = Util.getDistance(this, target);
