@@ -109,6 +109,9 @@ export class Player extends Actor {
     this.spellCooldowns = [0, 0, 0, 0, 0, 0];
     this.maxSpellCooldown = 1;
 
+    this.timeBetweenFootsteps = .4;
+    this.timeSinceLastFootstep = .4;
+
   }
 
   jump() { }
@@ -154,6 +157,7 @@ export class Player extends Actor {
       this.y_velocity = -1500; // Jumping velocity
       this.setAnimation(PLAYER_SPRITESHEET.JUMP.NAME);
       this.isJumping = true;
+      window.ASSET_MANAGER.playAsset("./assets/sfx/jump.ogg");
     }
 
     // Player Collision Logic
@@ -211,6 +215,12 @@ export class Player extends Actor {
           ) +
           this.collider.height / 2;
       }
+
+      if (this.y_velocity > 100) {
+        window.ASSET_MANAGER.playAsset("./assets/sfx/landing.wav");
+      }
+
+
       this.y_velocity = 0;
     }
 
@@ -221,9 +231,11 @@ export class Player extends Actor {
         this.spellCooldowns[i] - GAME_ENGINE.clockTick,
         0
       );
-
-      if (GAME_ENGINE.keys[(i + 1).toString()]) {
+      const key = (i + 1).toString();
+      if (GAME_ENGINE.keys[key]) {
+        GAME_ENGINE.keys[key] = false;
         this.selectedSpell = i;
+        window.ASSET_MANAGER.playAsset("./assets/sfx/click1.ogg");
       }
     }
 
@@ -231,6 +243,7 @@ export class Player extends Actor {
 
     if (this.spellCooldowns[this.selectedSpell] <= 0 && GAME_ENGINE.keys["m1"]) {
       this.spellCooldowns[this.selectedSpell] = this.maxSpellCooldown;
+      window.ASSET_MANAGER.playAsset("./assets/sfx/revolver_shot.ogg");
 
       if (this.selectedSpell === 0) {
         const fireball = new Fireball();
@@ -261,6 +274,15 @@ export class Player extends Actor {
           GAME_ENGINE.addEntity(chain_lightning);
       }
 
+    }
+
+    // footstep sfx
+    if (this.isMoving && this.isGrounded) {
+      this.timeSinceLastFootstep += GAME_ENGINE.clockTick;
+      if (this.timeSinceLastFootstep >= this.timeBetweenFootsteps) {
+        this.timeSinceLastFootstep = 0;
+        window.ASSET_MANAGER.playAsset("./assets/sfx/footstep.wav");
+      }
     }
 
     // Player State Logic

@@ -17,6 +17,7 @@ export class Fireball extends Entity {
     this.isAttack = true;
     this.experationTimer = 3;
     this.exploded = false;
+    window.ASSET_MANAGER.playAsset("./assets/sfx/fireball.wav");
   }
 
   update() {
@@ -54,6 +55,7 @@ export class Fireball extends Entity {
         }
         this.collider = null;
         this.experationTimer = 0.5;
+        window.ASSET_MANAGER.playAsset("./assets/sfx/fireball_impact.wav");
         break;
       }
     }
@@ -92,6 +94,7 @@ export class ChainLightning extends Entity {
         this.maxChainLength = 1000;
         this.maxShotAngle = Math.PI / 3;
         this.targets = [caster];
+        window.ASSET_MANAGER.playAsset("./assets/sfx/lightning.wav");
     }
 
     update() {
