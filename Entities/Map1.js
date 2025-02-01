@@ -2,7 +2,6 @@ import { GameMap } from "./Entities.js";
 import { Player } from "./Player.js";
 import { Background } from "./Background.js";
 import { Cactus } from "./Enemy.js";
-import { Platform } from "./Platform.js";
 import { Structure } from "./Structure.js";
 
 export class Map1 extends GameMap {
