@@ -98,7 +98,7 @@ export class Player extends Actor {
     // Start with the idle animation
     this.setAnimation(PLAYER_SPRITESHEET.IDLE.NAME);
 
-    this.collider = new Collider(120, 120);
+    this.collider = new Collider(60, 100);
     this.health = 100;
 
     this.x_velocity = 0;
