@@ -83,7 +83,7 @@ export class Jaw extends Entity {
         this.elapsedTime += GAME_ENGINE.clockTick;
 
         // remove after duration
-        if (this.elapsedTime > this.attackDuration) {
+        if (this.elapsedTime > this.attackDuration || this.spider.removeFromWorld) {
             this.removeFromWorld = true;
         }
         console.log(this.elapsedTime);

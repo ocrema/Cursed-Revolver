@@ -46,6 +46,16 @@ export class Cactus extends Actor {
                 }
             }
         }
+
+        // apply attack damage
+        for (let attack of this.recieved_attacks) {
+            this.health -= attack.damage;
+        }
+        this.recieved_attacks = [];
+
+        if (this.health <= 0) {
+            this.removeFromWorld = true;
+        }
     }
 
 }
@@ -161,16 +171,24 @@ export class Spider extends Actor {
                 this.velocity.y = 0;
         } 
 
-        // console.log(this.velocity);
-
         // update location
         this.x += this.velocity.x * GAME_ENGINE.clockTick;
         this.y += this.velocity.y * GAME_ENGINE.clockTick; 
         
-        // check for attack
+        // attempt to attack
         if (this.attackCooldown > this.attackRate) {
             this.attackCooldown = 0;
             GAME_ENGINE.addEntity(new Jaw(this));
+        }
+
+        // apply attack damage
+        for (let attack of this.recieved_attacks) {
+            this.health -= attack.damage;
+        }
+        this.recieved_attacks = [];
+
+        if (this.health <= 0) {
+            this.removeFromWorld = true;
         }
     }
 
