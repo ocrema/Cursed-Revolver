@@ -13,7 +13,7 @@ export class Entity {
     this.scale = 1; // Scale factor for drawing the sprite
   }
 
-  update() {}
+  update() { }
 
   addAnimation(
     name,
@@ -58,7 +58,7 @@ export class Entity {
       } else {
         if (this.currentFrame < animation.frameCount - 1) {
           this.currentFrame++;
-        } else { 
+        } else {
           this.onAnimationComplete(); // Call the callback function when the animation completes
         }
       }
@@ -118,8 +118,9 @@ export class Entity {
    */
   moveAgainstX(other) {
     if (this.x < other.x)
-      this.x = other.x - other.collider.width / 2 - this.collider.width / 2;
-    else this.x = other.x + other.collider.width / 2 + this.collider.width / 2;
+      this.x = other.x - other.collider.width / 2 - this.collider.width / 2 + other.collider.x_offset - this.collider.x_offset;
+    else
+      this.x = other.x + other.collider.width / 2 + this.collider.width / 2 - other.collider.x_offset + this.collider.x_offset;
   }
   /**
    * moves this entity so that it is against the other entities' collider border in the y direction
@@ -127,9 +128,9 @@ export class Entity {
    */
   moveAgainstY(other) {
     if (this.y < other.y)
-      this.y = other.y - other.collider.height / 2 - this.collider.height / 2;
+      this.y = other.y - other.collider.height / 2 - this.collider.height / 2 + other.collider.y_offset - this.collider.y_offset;
     else
-      this.y = other.y + other.collider.height / 2 + this.collider.height / 2;
+      this.y = other.y + other.collider.height / 2 + this.collider.height / 2 - other.collider.y_offset + this.collider.y_offset;
   }
 }
 
@@ -146,7 +147,7 @@ export class Actor extends Entity {
 
   // Since actor classes might need more functionalities, we can add them here
   // Gravity, attacks, etc
-  update() {}
+  update() { }
 
   applyGravity(gravityAmount) {
     if (!this.grounded) {
@@ -169,7 +170,7 @@ export class GameMap extends Entity {
     this.isMap = true;
   }
 
-  update() {}
+  update() { }
 }
 
 export class Platform extends Entity {

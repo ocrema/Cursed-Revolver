@@ -142,7 +142,7 @@ export class ChainLightning extends Entity {
         if (!this.struck || this.targets.length <= 1) return;
 
         ctx.strokeStyle = "yellow";
-        ctx.lineWidth = Math.random() * 30;
+        ctx.lineWidth = Math.random() * 20 + 5;
         let maxOffset = 120;
         ctx.beginPath();
         ctx.moveTo(this.targets[0].x - GAME_ENGINE.camera.x + Math.random() * maxOffset - maxOffset/2, this.targets[0].y - GAME_ENGINE.camera.y + Math.random() * maxOffset - maxOffset/2);

@@ -216,7 +216,7 @@ export class Player extends Actor {
           this.collider.height / 2;
       }
 
-      if (this.y_velocity > 100) {
+      if (this.y_velocity > 300) {
         window.ASSET_MANAGER.playAsset("./assets/sfx/landing.wav");
       }
 
@@ -243,7 +243,7 @@ export class Player extends Actor {
 
     if (this.spellCooldowns[this.selectedSpell] <= 0 && GAME_ENGINE.keys["m1"]) {
       this.spellCooldowns[this.selectedSpell] = this.maxSpellCooldown;
-      window.ASSET_MANAGER.playAsset("./assets/sfx/revolver_shot.ogg");
+      window.ASSET_MANAGER.playAsset("./assets/sfx/revolver_shot.ogg", 1);
 
       if (this.selectedSpell === 0) {
         const fireball = new Fireball();

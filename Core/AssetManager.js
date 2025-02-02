@@ -85,14 +85,15 @@ export class AssetManager {
     return this.cache[path];
   }
 
-  playAsset(path) {
+  playAsset(path, volume = .5) {
     let audio = this.cache[path];
     if (audio.currentTime != 0) {
         let bak = audio.cloneNode();
         bak.currentTime = 0;
-        bak.volume = audio.volume;
+        bak.volume = volume;
         bak.play();
     } else {
+        audio.volume = volume;
         audio.currentTime = 0;
         audio.play();
     }
