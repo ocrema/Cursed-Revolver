@@ -151,6 +151,14 @@ export class GameEngine {
         this.GAME_CONTROLLER.togglePause();
         this.keys["Escape"] = false; // Prevent repeated toggling
       }
+
+      if (this.GAME_CONTROLLER.isPaused) {
+        if (event.key === "ArrowUp" || event.key === "ArrowDown" || event.key === "Enter") {
+            this.keys[event.key] = true;
+            this.GAME_CONTROLLER.pauseMenu.update(); // Force Pause Menu update
+        }
+    }
+
     });
 
     document.addEventListener("keyup", (event) => {
@@ -158,6 +166,7 @@ export class GameEngine {
         event.key.length === 1 ? event.key.toLowerCase() : event.key
       ] = false;
     });
+
   }
 
   addEntity(entity) {
@@ -238,18 +247,14 @@ export class GameEngine {
     //  return;
     // }
 
-    if (this.GAME_CONTROLLER && this.GAME_CONTROLLER.isPaused) { //remove for MAIN
-      return; // Prevent game updates while paused
-  }
-
-   // if (this.GAME_CONTROLLER && this.GAME_CONTROLLER.isPaused) { //comment out for MAIN
+   if (this.GAME_CONTROLLER && this.GAME_CONTROLLER.isPaused) { 
       for (let entity of this.entities) {
         if (entity instanceof PauseMenu && entity.isVisible) {
           entity.update();
         }
       }
-   //   return;
-   // }
+      return;
+    }
 
     for (let entity of this.entities) {
       if (
