@@ -138,6 +138,10 @@ export class GameEngine {
       e.preventDefault();
     });
 
+    this.ctx.canvas.addEventListener("blur", (e) => {
+      this.keys = {};
+    });
+
     document.addEventListener("keydown", (event) => {
       this.keys[
         event.key.length === 1 ? event.key.toLowerCase() : event.key
@@ -190,24 +194,7 @@ export class GameEngine {
     for (let i = 0; i < this.entities.length; i++) {
       this.entities[i].draw(this.ctx);
     }
-    /*
-    if (this.debug_colliders) {
-      this.ctx.lineWidth = 5;
-      this.ctx.strokeStyle = "green";
-      for (let e of this.entities) {
-        if (e.colliders) {
-          for (let c of e.colliders) {
-            this.ctx.strokeRect(
-              e.x - this.camera.x + c.x_offset - c.width / 2,
-              e.y - this.camera.y + c.y_offset - c.height / 2,
-              c.width,
-              c.height
-            );
-          }
-        }
-      }
-    }
-      */
+    
     if (this.debug_colliders) {
       this.ctx.lineWidth = 5;
       this.ctx.strokeStyle = "limegreen";
@@ -219,6 +206,12 @@ export class GameEngine {
             e.collider.width,
             e.collider.height
           );
+          this.ctx.strokeRect(
+            e.x - this.camera.x - 2,
+            e.y - this.camera.y - 2,
+            4,
+            4
+          )
         }
       }
     }
@@ -257,7 +250,7 @@ export class GameEngine {
   }
 
   loop() {
-    this.clockTick = this.timer.tick();
+    this.clockTick = Math.min(this.timer.tick(), 1/20);
     this.update();
     this.draw();
   }

@@ -23,29 +23,79 @@ export class AssetManager {
   downloadAll(callback) {
     if (this.downloadQueue.length === 0) setTimeout(callback, 10);
     for (let i = 0; i < this.downloadQueue.length; i++) {
-      const img = new Image();
 
       const path = this.downloadQueue[i];
       console.log(path);
 
-      img.addEventListener("load", () => {
-        console.log("Loaded " + img.src);
-        this.successCount++;
-        if (this.isDone()) callback();
-      });
+      switch (path.substring(path.length - 3)) {
+        case "png":
+        case "jpg":
+          const img = new Image();
 
-      img.addEventListener("error", () => {
-        console.log("Error loading " + img.src);
-        this.errorCount++;
-        if (this.isDone()) callback();
-      });
+          img.addEventListener("load", () => {
+            console.log("Loaded " + img.src);
+            this.successCount++;
+            if (this.isDone()) callback();
+          });
 
-      img.src = path;
-      this.cache[path] = img;
+          img.addEventListener("error", () => {
+            console.log("Error loading " + img.src);
+            this.errorCount++;
+            if (this.isDone()) callback();
+          });
+
+          img.src = path;
+          this.cache[path] = img;
+          break;
+
+        case 'wav':
+        case 'mp3':
+        case 'mp4':
+        case 'ogg':
+          const aud = new Audio();
+          aud.addEventListener("loadeddata", () => {
+            console.log("Loaded " + aud.src);
+            this.successCount++;
+            if (this.isDone()) callback();
+          });
+
+          aud.addEventListener("error", () => {
+            console.log("Error loading " + aud.src);
+            this.errorCount++;
+            if (this.isDone()) callback();
+          });
+
+          aud.addEventListener("ended", () => {
+            aud.pause();
+            aud.currentTime = 0;
+          });
+
+          aud.src = path;
+          aud.load();
+
+          this.cache[path] = aud;
+          break;
+      }
+
+
     }
   }
 
   getAsset(path) {
     return this.cache[path];
   }
+
+  playAsset(path, volume = .5) {
+    let audio = this.cache[path];
+    if (audio.currentTime != 0) {
+        let bak = audio.cloneNode();
+        bak.currentTime = 0;
+        bak.volume = volume;
+        bak.play();
+    } else {
+        audio.volume = volume;
+        audio.currentTime = 0;
+        audio.play();
+    }
+};
 }

@@ -1,7 +1,7 @@
 import { Actor } from "./Entities.js";
 import { PLAYER_COLLIDER, PLAYER_SPRITESHEET } from "../Globals/Constants.js";
 import * as Util from "../Utils/Util.js";
-import { Fireball } from "./Spells.js";
+import { Fireball, ChainLightning } from "./Spells.js";
 import { Collider } from "./Collider.js";
 import { GAME_ENGINE } from "../main.js";
 import { Camera } from "../Core/Camera.js";
@@ -107,10 +107,16 @@ export class Player extends Actor {
     this.y_velocity = 0;
     this.isGrounded = 0; // values above 0 indicate that the player is grounded, so the player can still jump for a little bit after falling off a platform
 
-    this.spellCooldown = 0; // temporary
+    this.selectedSpell = 0;
+    this.spellCooldowns = [0, 0, 0, 0, 0, 0];
+    this.maxSpellCooldown = 1;
+
+    this.timeBetweenFootsteps = .4;
+    this.timeSinceLastFootstep = .4;
+
   }
 
-  jump() {}
+  jump() { }
 
   update() {
     //console.log(this.colliders);
@@ -153,6 +159,7 @@ export class Player extends Actor {
       this.y_velocity = -1500; // Jumping velocity
       this.setAnimation(PLAYER_SPRITESHEET.JUMP.NAME);
       this.isJumping = true;
+      window.ASSET_MANAGER.playAsset("./assets/sfx/jump.ogg");
     }
 
     // Player Collision Logic
@@ -210,41 +217,74 @@ export class Player extends Actor {
           ) +
           this.collider.height / 2;
       }
+
+      if (this.y_velocity > 300) {
+        window.ASSET_MANAGER.playAsset("./assets/sfx/landing.wav");
+      }
+
+
       this.y_velocity = 0;
     }
 
     // Player Attack Logic
 
-    this.spellCooldown = Math.max(
-      this.spellCooldown - GAME_ENGINE.clockTick,
-      0
-    );
+    for (let i = 0; i < this.spellCooldowns.length; i++) {
+      this.spellCooldowns[i] = Math.max(
+        this.spellCooldowns[i] - GAME_ENGINE.clockTick,
+        0
+      );
+      const key = (i + 1).toString();
+      if (GAME_ENGINE.keys[key]) {
+        GAME_ENGINE.keys[key] = false;
+        this.selectedSpell = i;
+        window.ASSET_MANAGER.playAsset("./assets/sfx/click1.ogg");
+      }
+    }
 
-    if (this.spellCooldown <= 0 && GAME_ENGINE.keys["m1"]) {
-      this.spellCooldown = 0.3;
+    // cast spell
 
-      // Calculate direction to mouse
-      const mouseX = GAME_ENGINE.mouse.x + GAME_ENGINE.camera.x;
-      this.flip = mouseX < this.x; // Flip player based on mouse position
+    if (this.spellCooldowns[this.selectedSpell] <= 0 && GAME_ENGINE.keys["m1"]) {
+      this.spellCooldowns[this.selectedSpell] = this.maxSpellCooldown;
+      window.ASSET_MANAGER.playAsset("./assets/sfx/revolver_shot.ogg", 1);
 
-      if (this.attackState === 1) {
-        this.setAnimation(PLAYER_SPRITESHEET.ATTACK1.NAME, false);
-        this.attackState = 2;
-      } else {
-        this.setAnimation(PLAYER_SPRITESHEET.ATTACK2.NAME, false);
-        this.attackState = 1;
+      if (this.selectedSpell === 0) {
+        const fireball = new Fireball();
+        fireball.x = this.x;
+        fireball.y = this.y;
+        fireball.dir = Util.getAngle(
+          {
+            x: this.x - GAME_ENGINE.camera.x,
+            y: this.y - GAME_ENGINE.camera.y
+          },
+          {
+            x: GAME_ENGINE.mouse.x,
+            y: GAME_ENGINE.mouse.y
+          }
+        );
+        GAME_ENGINE.addEntity(fireball);
+      }
+      else if (this.selectedSpell === 1) {
+        const chain_lightning = new ChainLightning(this, Util.getAngle(
+          {
+            x: this.x - GAME_ENGINE.camera.x,
+            y: this.y - GAME_ENGINE.camera.y
+          },
+          {
+            x: GAME_ENGINE.mouse.x,
+            y: GAME_ENGINE.mouse.y
+          }));
+          GAME_ENGINE.addEntity(chain_lightning);
       }
 
-      const fireball = new Fireball();
-      fireball.x = this.x;
-      fireball.y = this.y;
-      fireball.dir = Util.getAngle(
-        this.x - GAME_ENGINE.camera.x,
-        this.y - GAME_ENGINE.camera.y,
-        GAME_ENGINE.mouse.x,
-        GAME_ENGINE.mouse.y
-      );
-      GAME_ENGINE.addEntity(fireball);
+    }
+
+    // footstep sfx
+    if (this.isMoving && this.isGrounded) {
+      this.timeSinceLastFootstep += GAME_ENGINE.clockTick;
+      if (this.timeSinceLastFootstep >= this.timeBetweenFootsteps) {
+        this.timeSinceLastFootstep = 0;
+        window.ASSET_MANAGER.playAsset("./assets/sfx/footstep.wav");
+      }
     }
 
     // Player State Logic

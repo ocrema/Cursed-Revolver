@@ -10,6 +10,7 @@ export class AssetDownloader {
     this.downloadBackgroundAssets();
     this.downloadMapAssets();
     this.downloadMapObjectAssets();
+    this.downloadSFXAssets();
   }
 
   downloadPlayerAssets() {
@@ -52,5 +53,19 @@ export class AssetDownloader {
     this.assetManager.queueDownload("./assets/map/props/tree02.png");
     this.assetManager.queueDownload("./assets/map/props/tree03.png");
     this.assetManager.queueDownload("./assets/map/props/tree04.png");
+  }
+
+  downloadSFXAssets() {
+    this.assetManager.queueDownload("./assets/sfx/click1.ogg");
+    this.assetManager.queueDownload("./assets/sfx/click2.ogg");
+    this.assetManager.queueDownload("./assets/sfx/fireball.wav");
+    this.assetManager.queueDownload("./assets/sfx/fireball_impact.wav");
+    this.assetManager.queueDownload("./assets/sfx/footstep.wav");
+    this.assetManager.queueDownload("./assets/sfx/icicle.wav");
+    this.assetManager.queueDownload("./assets/sfx/icicle_impact.wav");
+    this.assetManager.queueDownload("./assets/sfx/lightning.wav");
+    this.assetManager.queueDownload("./assets/sfx/revolver_shot.ogg");
+    this.assetManager.queueDownload("./assets/sfx/jump.ogg");
+    this.assetManager.queueDownload("./assets/sfx/landing.wav");
   }
 }

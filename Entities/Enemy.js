@@ -36,6 +36,7 @@ export class Cactus extends Actor {
 
         // taken from player class
         this.cameraSpeed = 500;
+        this.isEnemy = true;
     }
 
     update() {
