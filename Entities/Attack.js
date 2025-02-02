@@ -86,7 +86,6 @@ export class Jaw extends Entity {
         if (this.elapsedTime > this.attackDuration || this.spider.removeFromWorld) {
             this.removeFromWorld = true;
         }
-        console.log(this.elapsedTime);
 
         // update location
         this.x = this.spider.x;
