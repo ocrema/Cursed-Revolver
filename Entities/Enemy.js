@@ -67,14 +67,14 @@ export class Spider extends Actor {
         this.setAnimation("walk");
 
         this.health = 100;
-        this.width = 250;
+        this.width = 240;
         this.height = 120;
 
         this.collider = new Collider(this.width, this.height);
         this.proximity = 2; // proximity to wall before climbing or to target before changing locations
 
-        this.speed = 100;
-        this.climbSpeed = 5;
+        this.speed = 250;
+        this.climbSpeed = 3;
         this.target = {x: this.x + 200, y: this.y}; // target location of spider
 
         var distance = Util.getDistance(this, this.target);
@@ -82,11 +82,12 @@ export class Spider extends Actor {
             y:(this.target.y - this.y) / distance * this.speed };
 
         this.attackCooldown = 0;
-        this.attackRate = 2;
+        this.attackRate = 4;
         this.onGround = false;
         this.onWall = false;
         this.visualRadius = 300;
-        this.gravity = 400;
+        this.gravity = 800;
+        this.isEnemy = true;
     }
 
     update() {
@@ -94,10 +95,10 @@ export class Spider extends Actor {
         this.onGround = false;
         this.onWall = false;
 
-        // update velocity
+        // update target
         for (let entity of GAME_ENGINE.entities) {
             if (entity instanceof Player) {
-                this.target = entity;
+                this.target = {x: entity.x, y: entity.y};
             }
         }
 
@@ -126,53 +127,50 @@ export class Spider extends Actor {
                 let collideBottom = thisBottom > eTop && thisTop < eTop && thisRight > eLeft && thisLeft < eRight; // true if top of spider and platform match
                 let collideTop = thisTop > eBottom && thisBottom < eBottom && thisRight > eLeft && thisLeft < eRight;
 
-                // console.log("top: " + collideTop + " bottom: " + collideBottom + " left: " + collideLeft + " right: " + collideRight); 
-                // console.log("one: " + (thisBottom > eTop) + " two: " + (thisTop < eTop));
                 if (collideBottom) {
+                    this.y = entity.y - (entity.height / 2) - (this.height / 2);
+                }
+
+                if ((collideRight && this.velocity.x > 0) || // if colliding wall on right and moving right
+                    (collideLeft && this.velocity.x < 0)) { // if colliding wall on left and moving left
+                        this.velocity.x -= (this.target.x - this.x) / distance * this.speed;
+                        this.target.y = eTop - this.height;
+                        this.onWall = true;
+                }
+
+                if (Math.abs(this.y - (entity.y - (entity.height / 2) - (this.height / 2))) < 2) {
                     this.onGround = true;
-                }
-
-                if (collideRight) {
-                    if (this.velocity.x > 0 ) { // if moving to right
-                        this.velocity.x -= (this.target.x - this.x) / distance * this.speed;
-                        this.onWall = true;
-                    }
-                }
-
-                if (collideLeft) {
-                    if (this.velocity.x < 0) { // if moving to the left
-                        this.velocity.x -= (this.target.x - this.x) / distance * this.speed;
-                        this.onWall = true;
-                    } 
-                    
                 }
             }
         }
 
-        // if spider is on the ground and trying to move down
-        if (this.onGround) {
-            if (this.velocity.y > 0) {
-                this.velocity.y = 0;
-            } 
-        } 
-
-        // if spider is currently on a wall
-        if (this.onWall) {
-            this.velocity.y = (this.target.y - this.y) / distance * this.speed * this.climbSpeed;
-        }
-
         // if spider is floating and moving
-// this is making spider move too slowly
         if (!this.onGround && this.velocity.x !== 0) {
             this.velocity.y += this.gravity;
         }
 
+        // if spider is currently on a wall
+        if (this.onWall) {
+            // climb up wall
+            this.velocity.y = (this.target.y - this.y) / distance * this.speed * this.climbSpeed;
+        }
+
+        // if spider is on the ground and trying to move down
+        if (this.onGround) {
+                this.velocity.y = 0;
+        } 
+
+        // console.log(this.velocity);
+
         // update location
         this.x += this.velocity.x * GAME_ENGINE.clockTick;
-        this.y += this.velocity.y * GAME_ENGINE.clockTick;  
-
-
-
+        this.y += this.velocity.y * GAME_ENGINE.clockTick; 
+        
+        // check for attack
+        if (this.attackCooldown > this.attackRate) {
+            this.attackCooldown = 0;
+            GAME_ENGINE.addEntity(new Jaw(this));
+        }
     }
 
 //     update() {

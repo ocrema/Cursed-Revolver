@@ -67,16 +67,39 @@ export class Thorn extends Entity {
 }
 
 export class Jaw extends Entity {
-    constructor (x, y, spider) {
+    constructor (spider) {
         super();
-        Object.assign(this, { x, y, spider});
+        Object.assign(this, { spider});
 
+        this.x = this.spider.x;
+        this.y = this.spider.y;
         this.collider = new Collider(100, 95);
         this.elapsedTime = 0;
+        this.attackDuration = 1;
+        this.isAttack = true;
     }
 
     update() {
+        this.elapsedTime += GAME_ENGINE.clockTick;
+
+        // remove after duration
+        if (this.elapsedTime > this.attackDuration) {
+            this.removeFromWorld = true;
+        }
+        console.log(this.elapsedTime);
+
+        // update location
         this.x = this.spider.x;
         this.y = this.spider.y;
+
+        for (let entity of GAME_ENGINE.entities) {
+            // if jaw attack collides with player
+            if (entity instanceof Player) {
+                if (this.colliding(entity)) { 
+                    entity.queueAttack( {damage: 20, x: this.x, y: this.y, launchMagnitude: 100} );
+                    this.removeFromWorld = true;
+                }
+            }
+        }
     }
 }
