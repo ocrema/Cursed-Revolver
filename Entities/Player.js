@@ -1,8 +1,10 @@
 import { Actor } from "./Entities.js";
 import { PLAYER_COLLIDER, PLAYER_SPRITESHEET } from "../Globals/Constants.js";
 import * as Util from "../Utils/Util.js";
-import { Fireball } from "./Spells.js";
+import { Fireball, ChainLightning } from "./Spells.js";
 import { Collider } from "./Collider.js";
+import { GAME_ENGINE } from "../main.js";
+import { Camera } from "../Core/Camera.js";
 
 export class Player extends Actor {
   constructor() {
@@ -12,6 +14,9 @@ export class Player extends Actor {
     this.scale = 1.5;
 
     this.isPlayer = true;
+
+    // switches between attack animations for the player
+    this.attackState = 1;
 
     // Add animations for the player
     this.addAnimation(
@@ -30,6 +35,24 @@ export class Player extends Actor {
       PLAYER_SPRITESHEET.RUN.FRAME_HEIGHT, // Frame height
       PLAYER_SPRITESHEET.RUN.FRAME_COUNT, // Frame count
       PLAYER_SPRITESHEET.RUN.FRAME_DURATION // Frame duration (faster for running)
+    );
+
+    this.addAnimation(
+      PLAYER_SPRITESHEET.ATTACK1.NAME, // Name of the animation
+      this.assetManager.getAsset(PLAYER_SPRITESHEET.ATTACK1.URL), // URL for Attack 1 animation
+      PLAYER_SPRITESHEET.ATTACK1.FRAME_WIDTH, // Frame width
+      PLAYER_SPRITESHEET.ATTACK1.FRAME_HEIGHT, // Frame height
+      PLAYER_SPRITESHEET.ATTACK1.FRAME_COUNT, // Frame count
+      PLAYER_SPRITESHEET.ATTACK1.FRAME_DURATION // Frame duration (faster for attacking)
+    );
+
+    this.addAnimation(
+      PLAYER_SPRITESHEET.ATTACK2.NAME, // Name of the animation
+      this.assetManager.getAsset(PLAYER_SPRITESHEET.ATTACK2.URL), // URL for Attack 2 animation
+      PLAYER_SPRITESHEET.ATTACK2.FRAME_WIDTH, // Frame width
+      PLAYER_SPRITESHEET.ATTACK2.FRAME_HEIGHT, // Frame height
+      PLAYER_SPRITESHEET.ATTACK2.FRAME_COUNT, // Frame count
+      PLAYER_SPRITESHEET.ATTACK2.FRAME_DURATION // Frame duration (faster for attacking)
     );
 
     this.addAnimation(
@@ -82,10 +105,16 @@ export class Player extends Actor {
     this.y_velocity = 0;
     this.isGrounded = 0; // values above 0 indicate that the player is grounded, so the player can still jump for a little bit after falling off a platform
 
-    this.spellCooldown = 0; // temporary
+    this.selectedSpell = 0;
+    this.spellCooldowns = [0, 0, 0, 0, 0, 0];
+    this.maxSpellCooldown = 1;
+
+    this.timeBetweenFootsteps = .4;
+    this.timeSinceLastFootstep = .4;
+
   }
 
-  jump() {}
+  jump() { }
 
   update() {
     //console.log(this.colliders);
@@ -128,6 +157,7 @@ export class Player extends Actor {
       this.y_velocity = -1500; // Jumping velocity
       this.setAnimation(PLAYER_SPRITESHEET.JUMP.NAME);
       this.isJumping = true;
+      window.ASSET_MANAGER.playAsset("./assets/sfx/jump.ogg");
     }
 
     // Player Collision Logic
@@ -185,33 +215,85 @@ export class Player extends Actor {
           ) +
           this.collider.height / 2;
       }
+
+      if (this.y_velocity > 300) {
+        window.ASSET_MANAGER.playAsset("./assets/sfx/landing.wav");
+      }
+
+
       this.y_velocity = 0;
     }
 
-    // Player Spell Cooldown
+    // Player Attack Logic
 
-    this.spellCooldown = Math.max(
-      this.spellCooldown - GAME_ENGINE.clockTick,
-      0
-    );
-    if (this.spellCooldown <= 0 && GAME_ENGINE.keys["m1"]) {
-      this.spellCooldown = 0.3;
-      const fireball = new Fireball();
-      fireball.x = this.x;
-      fireball.y = this.y;
-      fireball.dir = Util.getAngle(
-        this.x - GAME_ENGINE.camera.x,
-        this.y - GAME_ENGINE.camera.y,
-        GAME_ENGINE.mouse.x,
-        GAME_ENGINE.mouse.y
+    for (let i = 0; i < this.spellCooldowns.length; i++) {
+      this.spellCooldowns[i] = Math.max(
+        this.spellCooldowns[i] - GAME_ENGINE.clockTick,
+        0
       );
-      GAME_ENGINE.addEntity(fireball);
+      const key = (i + 1).toString();
+      if (GAME_ENGINE.keys[key]) {
+        GAME_ENGINE.keys[key] = false;
+        this.selectedSpell = i;
+        window.ASSET_MANAGER.playAsset("./assets/sfx/click1.ogg");
+      }
+    }
+
+    // cast spell
+
+    if (this.spellCooldowns[this.selectedSpell] <= 0 && GAME_ENGINE.keys["m1"]) {
+      this.spellCooldowns[this.selectedSpell] = this.maxSpellCooldown;
+      window.ASSET_MANAGER.playAsset("./assets/sfx/revolver_shot.ogg", 1);
+
+      if (this.selectedSpell === 0) {
+        const fireball = new Fireball();
+        fireball.x = this.x;
+        fireball.y = this.y;
+        fireball.dir = Util.getAngle(
+          {
+            x: this.x - GAME_ENGINE.camera.x,
+            y: this.y - GAME_ENGINE.camera.y
+          },
+          {
+            x: GAME_ENGINE.mouse.x,
+            y: GAME_ENGINE.mouse.y
+          }
+        );
+        GAME_ENGINE.addEntity(fireball);
+      }
+      else if (this.selectedSpell === 1) {
+        const chain_lightning = new ChainLightning(this, Util.getAngle(
+          {
+            x: this.x - GAME_ENGINE.camera.x,
+            y: this.y - GAME_ENGINE.camera.y
+          },
+          {
+            x: GAME_ENGINE.mouse.x,
+            y: GAME_ENGINE.mouse.y
+          }));
+          GAME_ENGINE.addEntity(chain_lightning);
+      }
+
+    }
+
+    // footstep sfx
+    if (this.isMoving && this.isGrounded) {
+      this.timeSinceLastFootstep += GAME_ENGINE.clockTick;
+      if (this.timeSinceLastFootstep >= this.timeBetweenFootsteps) {
+        this.timeSinceLastFootstep = 0;
+        window.ASSET_MANAGER.playAsset("./assets/sfx/footstep.wav");
+      }
     }
 
     // Player State Logic
     if (!this.isDead) {
       if (this.hitTimer > 0) {
         this.hitTimer -= GAME_ENGINE.clockTick;
+      } else if (
+        this.currentAnimation === PLAYER_SPRITESHEET.ATTACK1.NAME ||
+        this.currentAnimation === PLAYER_SPRITESHEET.ATTACK2.NAME
+      ) {
+        // Do nothing, let the attack animation play out
       } else {
         // Only switch animations if the hit animation is NOT playing
         if (!this.isGrounded) {
@@ -263,5 +345,16 @@ export class Player extends Actor {
 
     // Update the active animation
     this.updateAnimation(GAME_ENGINE.clockTick);
+  }
+
+  onAnimationComplete() {
+    // Check if the current animation is the attack animation
+    if (
+      this.currentAnimation === PLAYER_SPRITESHEET.ATTACK1.NAME ||
+      this.currentAnimation === PLAYER_SPRITESHEET.ATTACK2.NAME
+    ) {
+      // Switch back to the idle animation after the attack animation completes
+      this.setAnimation(PLAYER_SPRITESHEET.IDLE.NAME);
+    }
   }
 }
