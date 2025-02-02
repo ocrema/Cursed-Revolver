@@ -147,7 +147,8 @@ export class GameEngine {
     
       if (event.key === "Escape") {
         console.log("Escape key pressed - Toggling pause menu...");
-        GAME_ENGINE.GAME_CONTROLLER.togglePause();
+        //GAME_ENGINE.GAME_CONTROLLER.togglePause();
+        this.GAME_CONTROLLER.togglePause();
         this.keys["Escape"] = false; // Prevent repeated toggling
       }
     });
