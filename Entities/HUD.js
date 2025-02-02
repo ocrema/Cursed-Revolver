@@ -8,7 +8,11 @@ export class HUD extends Entity {
     this.healthBarWidthRatio = 0.3;
     this.healthBarHeightRatio = 0.03;
     this.healthBarMarginRatio = 0.03;
+    this.enemyHealthBarWidthRatio = 0.1; // Smaller than player's
+    this.enemyHealthBarHeightRatio = 0.02; // Scaled height
     this.debugMode = false;
+
+    
 
     // Spells and cylinder setup
     this.spells = [
@@ -146,6 +150,7 @@ export class HUD extends Entity {
     const spellTextX = cylinderX - 200 * scaleFactor;
     const spellTextY = cylinderY + cylinderSize / 1.5;
 
+    // Draw the player's HUD
     // Health Bar
     const player = GAME_ENGINE.entities.find((e) => e.isPlayer);
     const currentHealth = player ? player.health : 0;
@@ -222,6 +227,9 @@ export class HUD extends Entity {
         );
       }
     }
+
+    //Draw enemy health bars
+    //this.drawEnemyHealthBars(ctx);
 
     ctx.restore();
   }
