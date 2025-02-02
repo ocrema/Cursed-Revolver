@@ -237,6 +237,10 @@ export class GameEngine {
     //  return;
     // }
 
+    if (this.GAME_CONTROLLER && this.GAME_CONTROLLER.isPaused) { //remove for MAIN
+      return; // Prevent game updates while paused
+  }
+
    // if (this.GAME_CONTROLLER && this.GAME_CONTROLLER.isPaused) { //comment out for MAIN
       for (let entity of this.entities) {
         if (entity instanceof PauseMenu && entity.isVisible) {
