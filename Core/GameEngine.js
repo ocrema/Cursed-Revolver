@@ -1,7 +1,7 @@
 import { Timer } from "../Utils/Timer.js";
 import { Camera } from "../Core/Camera.js";
 import { PauseMenu } from "../Entities/PauseMenu.js";
-import { MainMenu } from "../Entities/MainMenu.js";
+//import { MainMenu } from "../Entities/MainMenu.js";
 import { GameLogicController } from "../Core/GameLogicController.js";
 
 export class GameEngine {
@@ -24,18 +24,21 @@ export class GameEngine {
     this.wheel = null;
     this.keys = {};
 
-    this.GAME_CONTROLLER = null;
-    this.MAIN_MENU = new MainMenu();
-    this.addEntity(this.MAIN_MENU);
+    //this.GAME_CONTROLLER = null; //comment out for MAIN
+    //this.MAIN_MENU = new MainMenu(); 
+    //this.addEntity(this.MAIN_MENU);
+
+    this.GAME_CONTROLLER = new GameLogicController(); // delete for MAIN 
+    this.addEntity(this.GAME_CONTROLLER); // delete for MAIN 
 
     return window.GAME_ENGINE;
   }
 
   startGame() {
     console.log("Starting game...");
-    this.entities = this.entities.filter(
-      (entity) => !(entity instanceof MainMenu)
-    );
+    //this.entities = this.entities.filter(  //comment out for MAIN
+    //  (entity) => !(entity instanceof MainMenu)
+    //);
     this.GAME_CONTROLLER = new GameLogicController();
     this.addEntity(this.GAME_CONTROLLER);
     window.dispatchEvent(new Event("resize"));
@@ -97,12 +100,12 @@ export class GameEngine {
 
     this.ctx.canvas.addEventListener("click", (e) => {
       this.click = getXandY(e);
-      //console.log("Mouse clicked at:", this.click);
+      //console.log("Mouse clicked at:", this.click); 
 
       // Check if click is inside Main Menu
-      if (this.MAIN_MENU.isVisible) {
-        this.MAIN_MENU.handleClick(this.click.x, this.click.y);
-      }
+      //if (this.MAIN_MENU.isVisible) { //comment out for MAIN
+      //  this.MAIN_MENU.handleClick(this.click.x, this.click.y);
+      //}
 
       // Check if click is inside Pause Menu
       if (this.GAME_CONTROLLER && this.GAME_CONTROLLER.isPaused) {
@@ -229,19 +232,19 @@ export class GameEngine {
   }
 
   update() {
-    if (this.MAIN_MENU.isVisible) {
-      this.MAIN_MENU.update();
-      return;
-    }
+    //if (this.MAIN_MENU.isVisible) { //comment out for MAIN
+    //  this.MAIN_MENU.update();
+    //  return;
+    // }
 
-    if (this.GAME_CONTROLLER && this.GAME_CONTROLLER.isPaused) {
+   // if (this.GAME_CONTROLLER && this.GAME_CONTROLLER.isPaused) { //comment out for MAIN
       for (let entity of this.entities) {
         if (entity instanceof PauseMenu && entity.isVisible) {
           entity.update();
         }
       }
-      return;
-    }
+   //   return;
+   // }
 
     for (let entity of this.entities) {
       if (
