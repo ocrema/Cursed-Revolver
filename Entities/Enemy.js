@@ -27,6 +27,7 @@ export class Cactus extends Actor {
 
         this.dead = false;
         this.health = 50;
+        this.isEnemy = true;
         this.visualRadius = 200; // pixels away from center
         this.fireRate = 1; // max time before attack
         this.elapsedTime = 0; // time since attack
