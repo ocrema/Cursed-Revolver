@@ -12,26 +12,31 @@ export class HUD extends Entity {
 
     // Spells and cylinder setup
     this.spells = [
-      { name: "Fireball", icon: "./assets/ui/spells/fireball.png" },
-      // { name: "Lightning Bolt", icon: "./assets/ui/spells/lightning.png" },
-      // { name: "Water Wave", icon: "./assets/ui/spells/water.png" },
-      // { name: "Icicle", icon: "./assets/ui/spells/icicle.png" },
-      // { name: "Wind Slash", icon: "./assets/ui/spells/wind.png" },
-      // { name: "Earthquake", icon: "./assets/ui/spells/earthquake.png" }
+      { name: "Fireball", icon: "./assets/ui/spells/fireball.gif" },
+      { name: "Lightning", icon: "./assets/ui/spells/lightning.gif" },
+      { name: "Water Wave", icon: "./assets/ui/spells/water.gif" },
+      { name: "Icicle", icon: "./assets/ui/spells/icicle.gif" },
+      { name: "Vine Ball", icon: "./assets/ui/spells/vine.gif" },
+      { name: "Void Orb", icon: "./assets/ui/spells/void.gif" }
     ];
     
     this.activeSpellIndex = 0;
 
     // Cylinder animation setup
     this.cylinderImages = [];
-    for (let i = 2; i <= 10; i++) { 
+    for (let i = 1; i <= 10; i++) { 
       this.cylinderImages.push(`./assets/ui/revolver/cylinder${i}.png`);
     }
 
-    this.currentCylinderFrame = 0;
+   /*this.currentCylinderFrame = 0;
     this.spinning = false;
     this.spinSpeed = 0.1;
-    this.spinTargetFrame = 0;
+    this.spinTargetFrame = 0;*/
+
+    this.cylinderRotation = 0; // Current rotation (in radians)
+    this.targetRotation = 0; // Target rotation (in radians)
+    this.rotationSpeed = 0; // Speed of rotation (radians per frame)
+    this.rotationTime = 0; // Time remaining for rotation
   }
 
   colliding() {
@@ -47,15 +52,23 @@ export class HUD extends Entity {
       GAME_ENGINE.keys["b"] = false;
     }
 
-    // Spell selection (1-6 keys)
+    /*// Spell selection (1-6 keys)
     for (let i = 1; i <= 1; i++) { //TEMP! change to 6 later
       if (GAME_ENGINE.keys[i.toString()]) {
         this.selectSpell(i - 1);
         GAME_ENGINE.keys[i.toString()] = false;
       }
+    }*/
+
+    // Spell selection (1-6 keys)
+    for (let i = 1; i <= 6; i++) {
+      if (GAME_ENGINE.keys[i.toString()]) {
+        this.rotateCylinder(i - 1, 0.5); // Smoothly switch spells in 0.5s
+        GAME_ENGINE.keys[i.toString()] = false;
+      }
     }
 
-    if (this.spinning) {
+   /* if (this.spinning) {
       this.currentCylinderFrame += this.spinSpeed;
 
       console.log(`Current Cylinder Frame: ${Math.floor(this.currentCylinderFrame)}`);
@@ -70,8 +83,35 @@ export class HUD extends Entity {
         this.currentCylinderFrame = this.spinTargetFrame;
         this.spinning = false; // Stop spinning
       }
+    }*/
+
+      // Smooth rotation logic
+    if (this.rotationTime > 0) {
+      this.cylinderRotation += this.rotationSpeed;
+      this.rotationTime -= GAME_ENGINE.clockTick;
+
+      if (this.rotationTime <= 0) {
+        this.cylinderRotation = this.targetRotation; // Snap to target
+      }
     }
     
+  }
+
+  /**
+   * Rotate the cylinder to a given spell index over a set duration.
+   * @param {number} pos - The index of the spell to rotate to (0-5).
+   * @param {number} time - The duration of the transition (in seconds).
+   */
+  rotateCylinder(pos, time) {
+    const totalSpells = this.spells.length;
+    const degreesPerSpell = 360 / totalSpells; // Each spell on circle
+    const newRotation = (pos * degreesPerSpell * Math.PI) / 180; // degrees to radians
+
+    // Cancel any current animation and start from the current location
+    this.targetRotation = newRotation;
+    this.rotationTime = time;
+    this.rotationSpeed = (this.targetRotation - this.cylinderRotation) / (time / GAME_ENGINE.clockTick);
+    this.activeSpellIndex = pos;
   }
 
   selectSpell(index) {
@@ -131,11 +171,21 @@ export class HUD extends Entity {
     }
 
     // Cylinder Image (Scaled)
-    const cylinderImage = ASSET_MANAGER.getAsset(this.cylinderImages[Math.floor(this.currentCylinderFrame)]);
-    
-    if (cylinderImage) {
+   // const cylinderImage = ASSET_MANAGER.getAsset(this.cylinderImages[Math.floor(this.currentCylinderFrame)]);
+    // Cylinder Image (Rotated)
+    const cylinderImage = ASSET_MANAGER.getAsset(this.cylinderImages[0]);
+
+    /*if (cylinderImage) {
       ctx.drawImage(cylinderImage, cylinderX, cylinderY, cylinderSize, cylinderSize);
-    }
+    }*/
+
+      if (cylinderImage) {
+        ctx.save();
+        ctx.translate(cylinderX + cylinderSize / 2, cylinderY + cylinderSize / 2);
+        ctx.rotate(this.cylinderRotation);
+        ctx.drawImage(cylinderImage, -cylinderSize / 2, -cylinderSize / 2, cylinderSize, cylinderSize);
+        ctx.restore();
+      }
 
     // Debug Mode - Show Info (Top Left)
     if (this.debugMode) {

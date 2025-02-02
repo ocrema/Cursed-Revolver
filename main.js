@@ -42,7 +42,12 @@ ASSET_MANAGER.queueDownload("./assets/ui/menu/desert.jpg");
 
 
 //spells for hud
-ASSET_MANAGER.queueDownload("./assets/ui/spells/fireball.png");
+ASSET_MANAGER.queueDownload("./assets/ui/spells/fireball.gif");
+ASSET_MANAGER.queueDownload("./assets/ui/spells/lightning.gif");
+ASSET_MANAGER.queueDownload("./assets/ui/spells/water.gif");
+ASSET_MANAGER.queueDownload("./assets/ui/spells/icicle.gif");
+ASSET_MANAGER.queueDownload("./assets/ui/spells/vine.gif");
+ASSET_MANAGER.queueDownload("./assets/ui/spells/void.gif");
 
 // Loading Revolver Cylinder Sprites (Cylinder 1 to 10)
 for (let i = 1; i <= 10; i++) {
