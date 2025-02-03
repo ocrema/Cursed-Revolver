@@ -221,11 +221,14 @@ export class Player extends Actor {
 
   
   movement() {
+
+    //gravity
     this.y_velocity = Math.min(
       this.y_velocity + GAME_ENGINE.clockTick * 3000,
       10000
     );
    
+    // air resistence / friction basically
     if (this.x_velocity > 0) {
       this.x_velocity = Math.max(this.x_velocity - GAME_ENGINE.clockTick * (this.isGrounded == .2 ? 9000 : 1000), 0);
     }
@@ -234,12 +237,13 @@ export class Player extends Actor {
     }
 
     if (this.isDashing > 0) {
-
       this.y_velocity = 0;
       this.x_velocity = this.storedDashSpeed;
       this.isDashing -= GAME_ENGINE.clockTick;
       
     }
+
+    // start dashing
     if (GAME_ENGINE.keys["a"] && !GAME_ENGINE.keys["d"] && GAME_ENGINE.keys['Shift'] && this.dashCooldown <= 0) {
       this.storedDashSpeed = Math.min(this.x_velocity, this.dashSpeed * -1);
       this.isDashing = this.dashTime;
@@ -256,6 +260,7 @@ export class Player extends Actor {
     this.isGrounded = Math.max(this.isGrounded - GAME_ENGINE.clockTick, 0);
     this.dashCooldown = Math.max(this.dashCooldown - GAME_ENGINE.clockTick, 0);
 
+    // jump
     if (GAME_ENGINE.keys[" "] && this.isGrounded > 0 && this.isDashing <= 0) {
       this.isGrounded = 0;
       this.y_velocity = -1500; // Jumping velocity
@@ -266,6 +271,7 @@ export class Player extends Actor {
 
     // Movement logic
     
+    // get velocity added from left/right keys (this is not included in the actual velocity so that the movement is more responsive)
     let velFromKeys = 0
     if (GAME_ENGINE.keys["a"] || (this.isDashing > 0 && this.storedDashSpeed < 0)) {
       velFromKeys -= this.speed;
@@ -280,66 +286,51 @@ export class Player extends Actor {
 
     // Player Collision Logic
 
+    // make disired movement in x direction
     this.x += (this.x_velocity + velFromKeys) * GAME_ENGINE.clockTick;
-    let collisions = [];
+
+    // for all of the entities i am colliding with, move the player as far back as i need to to not be colliding with any of them
     for (let e of GAME_ENGINE.entities) {
       if (e.isPlayer || e.isAttack || e.isEnemy) continue;
+      let flag = false;
       if (this.colliding(e)) {
-        collisions.push(e);
+        flag = true;
+        if (this.x_velocity + velFromKeys > 0) {
+          this.x = Math.min(this.x, e.x - e.collider.width/2 - this.collider.width/2);
+        }
+        else {
+          this.x = Math.max(this.x, e.x + e.collider.width/2 + this.collider.width/2);
+        }
       }
-    }
-    if (collisions.length !== 0) {
-      if (this.x_velocity + velFromKeys > 0) {
-        this.x =
-          collisions.reduce(
-            (acc, curr) => Math.min(acc, curr.x - curr.collider.width / 2),
-            collisions[0].x - collisions[0].collider.width / 2
-          ) -
-          this.collider.width / 2;
-      } else {
-        this.x =
-          collisions.reduce(
-            (acc, curr) => Math.max(acc, curr.x + curr.collider.width / 2),
-            collisions[0].x + collisions[0].collider.width / 2
-          ) +
-          this.collider.width / 2;
-      }
-      this.x_velocity = 0;
+      if (flag) this.x_velocity = 0; // if hit something cancel velocity
     }
 
+
+    // make disired movement in y direction
     this.y += this.y_velocity * GAME_ENGINE.clockTick;
-    collisions = [];
+
+    // for all of the entities i am colliding with, move the player as far back as i need to to not be colliding with any of them
     for (let e of GAME_ENGINE.entities) {
       if (e.isPlayer || e.isAttack || e.isEnemy) continue;
+      let flag = false;
       if (this.colliding(e)) {
-        collisions.push(e);
+        flag = true;
+        if (this.y_velocity > 0) {
+          this.isGrounded = 0.2;
+          this.y = Math.min(this.y, e.y - e.collider.height/2 - this.collider.height/2);
+        }
+        else {
+          this.y = Math.max(this.y, e.y + e.collider.height/2 + this.collider.height/2);
+        }
       }
+      if (flag) {
+        if (this.y_velocity > 300) {
+          window.ASSET_MANAGER.playAsset("./assets/sfx/landing.wav");
+        }
+        this.y_velocity = 0; // if hit something cancel velocity
+      } 
     }
-    if (collisions.length !== 0) {
-      if (this.y_velocity > 0) {
-        this.isGrounded = 0.2;
 
-        this.y =
-          collisions.reduce(
-            (acc, curr) => Math.min(acc, curr.y - curr.collider.height / 2),
-            collisions[0].y - collisions[0].collider.height / 2
-          ) -
-          this.collider.height / 2;
-      } else {
-        this.y =
-          collisions.reduce(
-            (acc, curr) => Math.max(acc, curr.y + curr.collider.height / 2),
-            collisions[0].y + collisions[0].collider.height / 2
-          ) +
-          this.collider.height / 2;
-      }
-
-      if (this.y_velocity > 300) {
-        window.ASSET_MANAGER.playAsset("./assets/sfx/landing.wav");
-      }
-
-      this.y_velocity = 0;
-    }
   }
 
   spells() {
