@@ -228,7 +228,7 @@ export class Player extends Actor {
       10000
     );
    
-    // air resistence / friction basically
+    // air resistance / friction basically
     if (this.x_velocity > 0) {
       this.x_velocity = Math.max(this.x_velocity - GAME_ENGINE.clockTick * (this.isGrounded == .2 ? 9000 : 1000), 0);
     }
@@ -240,7 +240,6 @@ export class Player extends Actor {
       this.y_velocity = 0;
       this.x_velocity = this.storedDashSpeed;
       this.isDashing -= GAME_ENGINE.clockTick;
-      
     }
 
     // start dashing
@@ -290,9 +289,9 @@ export class Player extends Actor {
     this.x += (this.x_velocity + velFromKeys) * GAME_ENGINE.clockTick;
 
     // for all of the entities i am colliding with, move the player as far back as i need to to not be colliding with any of them
+    let flag = false;
     for (let e of GAME_ENGINE.entities) {
       if (e.isPlayer || e.isAttack || e.isEnemy) continue;
-      let flag = false;
       if (this.colliding(e)) {
         flag = true;
         if (this.x_velocity + velFromKeys > 0) {
@@ -302,14 +301,15 @@ export class Player extends Actor {
           this.x = Math.max(this.x, e.x + e.collider.width/2 + this.collider.width/2);
         }
       }
-      if (flag) this.x_velocity = 0; // if hit something cancel velocity
     }
+    if (flag) this.x_velocity = 0; // if hit something cancel velocity
 
 
     // make disired movement in y direction
     this.y += this.y_velocity * GAME_ENGINE.clockTick;
 
     // for all of the entities i am colliding with, move the player as far back as i need to to not be colliding with any of them
+    flag = false;
     for (let e of GAME_ENGINE.entities) {
       if (e.isPlayer || e.isAttack || e.isEnemy) continue;
       let flag = false;
@@ -323,13 +323,13 @@ export class Player extends Actor {
           this.y = Math.max(this.y, e.y + e.collider.height/2 + this.collider.height/2);
         }
       }
-      if (flag) {
-        if (this.y_velocity > 300) {
-          window.ASSET_MANAGER.playAsset("./assets/sfx/landing.wav");
-        }
-        this.y_velocity = 0; // if hit something cancel velocity
-      } 
     }
+    if (flag) {
+      if (this.y_velocity > 300) {
+        window.ASSET_MANAGER.playAsset("./assets/sfx/landing.wav");
+      }
+      this.y_velocity = 0; // if hit something cancel velocity
+    } 
 
   }
 
