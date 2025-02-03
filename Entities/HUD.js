@@ -146,6 +146,7 @@ export class HUD extends Entity {
     // Get player health
     const player = GAME_ENGINE.entities.find(e => e.isPlayer);
     let healthRatio = player ? player.health / 200 : 1;
+    let currentHealth =  player.health;
     const maxHealth = 200;
     healthRatio = Math.max(0, healthRatio); 
     const frameIndex = Math.min(totalFrames - 1, Math.max(0, totalFrames - 1 - Math.floor(healthRatio * (totalFrames - 1))));
@@ -184,7 +185,7 @@ export class HUD extends Entity {
       ctx.fillStyle = "yellow";
       ctx.font = `${canvasHeight * 0.025}px Arial`;
 
-      const debugTextX = 20;
+      const debugTextX = 70;
       const debugTextY = 40;
       const lineSpacing = canvasHeight * 0.03;
       let debugLine = 0;
@@ -195,7 +196,7 @@ export class HUD extends Entity {
         ctx.fillText(`Player Position: (${Math.floor(player.x)}, ${Math.floor(player.y)})`, debugTextX, debugTextY + debugLine++ * lineSpacing);
         ctx.fillText(`Player Velocity: (${player.x_velocity.toFixed(2)}, ${player.y_velocity.toFixed(2)})`, debugTextX, debugTextY + debugLine++ * lineSpacing);
         ctx.fillText(`Active Spell: ${this.spells[this.activeSpellIndex].name}`, debugTextX, debugTextY + debugLine++ * lineSpacing);
-        //ctx.fillText(`Health: ${currentHealth} / ${maxHealth}`, debugTextX, debugTextY + debugLine++ * lineSpacing);
+        ctx.fillText(`Health: ${currentHealth} / ${maxHealth}`, debugTextX, debugTextY + debugLine++ * lineSpacing);
       }
     }
     // Draw health bar from sprite sheet
