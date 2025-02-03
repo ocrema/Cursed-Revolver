@@ -1,6 +1,5 @@
 import { GameEngine } from "./Core/GameEngine.js";
 import { AssetManager } from "./Core/AssetManager.js";
-import { GameLogicController } from "./Core/GameLogicController.js";
 import { AssetDownloader } from "./Core/AssetDownloader.js";
 
 // Singleton instances
@@ -10,8 +9,8 @@ window.GameEngine = GAME_ENGINE; // Assign to global window object
 const ASSET_MANAGER = new AssetManager();
 
 const ASSET_DOWNLOADER = new AssetDownloader(ASSET_MANAGER);
-// Loading Sprite Sheets
 
+// Downloads all sprite sheets from asset downloader
 ASSET_DOWNLOADER.downloadAll();
 
 
@@ -21,8 +20,6 @@ ASSET_MANAGER.downloadAll(() => {
   const ctx = canvas.getContext("2d");
 
   GAME_ENGINE.init(ctx);
-
-  //GAME_ENGINE.addEntity(new GameLogicController());
 
   GAME_ENGINE.start();
 });

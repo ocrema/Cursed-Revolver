@@ -1,5 +1,9 @@
 import { Platform } from "./Platform.js";
 
+/**
+ * This is a way to create a structure of platforms that can be moved, scaled, and rotated together.
+ * It is useful for creating complex structures that can be manipulated as a single entity.
+ */
 export class Structure {
   constructor(x, y, scaleX = 1, scaleY = 1) {
     this.x = x; // Structure's base position

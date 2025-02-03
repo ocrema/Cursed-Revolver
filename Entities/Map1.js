@@ -1,5 +1,5 @@
 import { GameMap } from "./Entities.js";
-import { Player } from "./Player.js";
+import { Player } from "./Player/Player.js";
 import { Background } from "./Background.js";
 import { Cactus, Spider } from "./Enemy.js";
 import { Structure } from "./Structure.js";
