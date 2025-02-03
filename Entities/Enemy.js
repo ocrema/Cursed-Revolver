@@ -11,7 +11,7 @@ export class Cactus extends Actor {
     Object.assign(this, { x, y });
     // Animation
     this.assetManager = window.ASSET_MANAGER;
-
+    
     this.addAnimation(
       "placeholder",
       this.assetManager.getAsset("./assets/cactus/cactus.png"),
@@ -27,6 +27,7 @@ export class Cactus extends Actor {
 
     // Health / Attack
     this.health = 50;
+    this.maxHealth = 50; 
     this.fireRate = 1; // max time before attack
     this.elapsedTime = 0; // time since attack
 
@@ -107,6 +108,7 @@ export class Spider extends Actor {
 
     // Health / Attack
     this.health = 100;
+    this.maxHealth = 100; 
     this.attackCooldown = 0;
     this.attackRate = 4;
 
@@ -165,6 +167,7 @@ export class Spider extends Actor {
         entity.collider &&
         this.colliding(entity)
       ) {
+        //console.log("spider colligind"); 
         let thisTop = this.y - this.height / 2;
         let thisBottom = this.y + this.height / 2;
         let thisLeft = this.x - this.width / 2;
@@ -190,6 +193,7 @@ export class Spider extends Actor {
           thisLeft < eRight;
 
         if (collideBottom) {
+          console.log("collide bottom");
           this.y = entity.y - entity.height / 2 - this.height / 2;
           this.onGround = true;
         }
@@ -227,9 +231,10 @@ export class Spider extends Actor {
     }
 
     // if spider is floating and moving
-    else if (!this.onGround && this.velocity.x !== 0) {
-      this.velocity.y += this.gravity;
-    }
+    // else if (!this.onGround && this.velocity.x !== 0) {
+    //   this.velocity.y += this.gravity;
+    // }
+    console.log(this);
 
     // update location
     this.x += this.velocity.x * GAME_ENGINE.clockTick;

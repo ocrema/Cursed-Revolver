@@ -14,7 +14,7 @@ export class Entity {
     this.scale = 1; // Scale factor for drawing the sprite
   }
 
-  update() { }
+  update() {}
 
   addAnimation(
     name,
@@ -68,7 +68,10 @@ export class Entity {
 
   draw(ctx) {
     if (!this.currentAnimation) return;
-
+    
+    if (this.isEnemy) { 
+      this.drawHealthBar(ctx);
+    }
     const animation = this.animations[this.currentAnimation];
     const { spritesheet, frameWidth, frameHeight } = animation;
 
@@ -101,6 +104,59 @@ export class Entity {
     ctx.restore(); // Restore the transformation state
   }
 
+  drawHealthBar(ctx) {
+    if (this.health <= 0) return;
+
+    const healthBarWidth = 200; // Doubled in size
+    const healthBarHeight = 20; // Doubled in size
+    const barOffsetY = this.height / 2 + 40; // Adjusted for new size
+
+    // Convert world position to screen position
+    const screenX = this.x - GAME_ENGINE.camera.x;
+    const screenY = this.y - GAME_ENGINE.camera.y - barOffsetY;
+
+    const healthRatio = Math.max(0, this.health / this.maxHealth);
+
+    ctx.save();
+
+    // Draw background bar (rounded edges)
+    ctx.fillStyle = "black";
+    ctx.beginPath();
+    ctx.roundRect(
+      screenX - healthBarWidth / 2,
+      screenY,
+      healthBarWidth,
+      healthBarHeight,
+      8
+    );
+    ctx.fill();
+
+    // Draw solid health bar (Red when low, Orange when mid, Green when high)
+    ctx.fillStyle =
+      healthRatio > 0.6 ? "green" : healthRatio > 0.3 ? "orange" : "red";
+    ctx.beginPath();
+    ctx.roundRect(
+      screenX - healthBarWidth / 2,
+      screenY,
+      healthBarWidth * healthRatio,
+      healthBarHeight,
+      8
+    );
+    ctx.fill();
+
+    // Draw health text (centered on bar)
+    ctx.fillStyle = "white";
+    ctx.font = `${healthBarHeight * 0.8}px Arial`;
+    ctx.textAlign = "center";
+    ctx.fillText(
+      `${Math.round(this.health)} / ${this.maxHealth}`,
+      screenX,
+      screenY + healthBarHeight - 4
+    );
+
+    ctx.restore();
+  }
+
   colliding(other) {
     if (!this.collider || !other.collider) return false;
 
@@ -119,9 +175,19 @@ export class Entity {
    */
   moveAgainstX(other) {
     if (this.x < other.x)
-      this.x = other.x - other.collider.width / 2 - this.collider.width / 2 + other.collider.x_offset - this.collider.x_offset;
+      this.x =
+        other.x -
+        other.collider.width / 2 -
+        this.collider.width / 2 +
+        other.collider.x_offset -
+        this.collider.x_offset;
     else
-      this.x = other.x + other.collider.width / 2 + this.collider.width / 2 - other.collider.x_offset + this.collider.x_offset;
+      this.x =
+        other.x +
+        other.collider.width / 2 +
+        this.collider.width / 2 -
+        other.collider.x_offset +
+        this.collider.x_offset;
   }
   /**
    * moves this entity so that it is against the other entities' collider border in the y direction
@@ -129,9 +195,19 @@ export class Entity {
    */
   moveAgainstY(other) {
     if (this.y < other.y)
-      this.y = other.y - other.collider.height / 2 - this.collider.height / 2 + other.collider.y_offset - this.collider.y_offset;
+      this.y =
+        other.y -
+        other.collider.height / 2 -
+        this.collider.height / 2 +
+        other.collider.y_offset -
+        this.collider.y_offset;
     else
-      this.y = other.y + other.collider.height / 2 + this.collider.height / 2 - other.collider.y_offset + this.collider.y_offset;
+      this.y =
+        other.y +
+        other.collider.height / 2 +
+        this.collider.height / 2 -
+        other.collider.y_offset +
+        this.collider.y_offset;
   }
 }
 

@@ -3,7 +3,6 @@ import { AssetManager } from "./Core/AssetManager.js";
 import { GameLogicController } from "./Core/GameLogicController.js";
 import { AssetDownloader } from "./Core/AssetDownloader.js";
 
-
 // Singleton instances
 export const GAME_ENGINE = new GameEngine();
 window.GameEngine = GAME_ENGINE; // Assign to global window object
@@ -40,9 +39,20 @@ ASSET_MANAGER.queueDownload("./assets/ui/menu/background_start.png");
 ASSET_MANAGER.queueDownload("./assets/ui/menu/background_start2.png");
 ASSET_MANAGER.queueDownload("./assets/ui/menu/desert.jpg");
 
-
 //spells for hud
-ASSET_MANAGER.queueDownload("./assets/ui/spells/fireball.png");
+ASSET_MANAGER.queueDownload("./assets/ui/spells/fireball.gif");
+ASSET_MANAGER.queueDownload("./assets/ui/spells/lightning.gif");
+ASSET_MANAGER.queueDownload("./assets/ui/spells/water.gif");
+ASSET_MANAGER.queueDownload("./assets/ui/spells/icicle.gif");
+ASSET_MANAGER.queueDownload("./assets/ui/spells/vine.gif");
+ASSET_MANAGER.queueDownload("./assets/ui/spells/void.gif");
+
+//cowboy
+ASSET_MANAGER.queueDownload("./assets/ui/cowboy.png");
+
+//healthbar
+ASSET_MANAGER.queueDownload("./assets/ui/cowboy.png");
+ASSET_MANAGER.queueDownload("./assets/ui/healthbar.png");
 
 // Loading Revolver Cylinder Sprites (Cylinder 1 to 10)
 for (let i = 1; i <= 10; i++) {
