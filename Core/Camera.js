@@ -34,13 +34,14 @@ export class Camera extends Entity {
     }
 
     if (this.player) {
-      // Reduce follow speed for a smooth delay effect
       const followSpeed = 5; // Lower values = slower camera movement
       const lerpFactor = Math.min(followSpeed * GAME_ENGINE.clockTick, 1);
 
-      // Smoothly interpolate the camera towards the player
+      const verticalOffset = -150; // Move the camera 150 pixels upwards
+
+      // Smoothly interpolate the camera towards the player's position + vertical offset
       this.x += (this.player.x - this.x) * lerpFactor;
-      this.y += (this.player.y - this.y) * lerpFactor;
+      this.y += (this.player.y + verticalOffset - this.y) * lerpFactor;
     }
   }
 
