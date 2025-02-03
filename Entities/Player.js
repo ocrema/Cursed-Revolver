@@ -111,12 +111,11 @@ export class Player extends Actor {
     this.spellCooldowns = [0, 0, 0, 0, 0, 0];
     this.maxSpellCooldown = 1;
 
-    this.timeBetweenFootsteps = .4;
-    this.timeSinceLastFootstep = .4;
-
+    this.timeBetweenFootsteps = 0.4;
+    this.timeSinceLastFootstep = 0.4;
   }
 
-  jump() { }
+  jump() {}
 
   update() {
     //console.log(this.colliders);
@@ -222,7 +221,6 @@ export class Player extends Actor {
         window.ASSET_MANAGER.playAsset("./assets/sfx/landing.wav");
       }
 
-
       this.y_velocity = 0;
     }
 
@@ -243,7 +241,21 @@ export class Player extends Actor {
 
     // cast spell
 
-    if (this.spellCooldowns[this.selectedSpell] <= 0 && GAME_ENGINE.keys["m1"]) {
+    if (
+      this.spellCooldowns[this.selectedSpell] <= 0 &&
+      GAME_ENGINE.keys["m1"]
+    ) {
+      // Calculate direction to mouse
+      const mouseX = GAME_ENGINE.mouse.x + GAME_ENGINE.camera.x;
+      this.flip = mouseX < this.x; // Flip player based on mouse position
+      if (this.attackState === 1) {
+        this.setAnimation(PLAYER_SPRITESHEET.ATTACK1.NAME, false);
+        this.attackState = 2;
+      } else {
+        this.setAnimation(PLAYER_SPRITESHEET.ATTACK2.NAME, false);
+        this.attackState = 1;
+      }
+
       this.spellCooldowns[this.selectedSpell] = this.maxSpellCooldown;
       window.ASSET_MANAGER.playAsset("./assets/sfx/revolver_shot.ogg", 1);
 
@@ -254,28 +266,30 @@ export class Player extends Actor {
         fireball.dir = Util.getAngle(
           {
             x: this.x - GAME_ENGINE.camera.x,
-            y: this.y - GAME_ENGINE.camera.y
+            y: this.y - GAME_ENGINE.camera.y,
           },
           {
             x: GAME_ENGINE.mouse.x,
-            y: GAME_ENGINE.mouse.y
+            y: GAME_ENGINE.mouse.y,
           }
         );
         GAME_ENGINE.addEntity(fireball);
+      } else if (this.selectedSpell === 1) {
+        const chain_lightning = new ChainLightning(
+          this,
+          Util.getAngle(
+            {
+              x: this.x - GAME_ENGINE.camera.x,
+              y: this.y - GAME_ENGINE.camera.y,
+            },
+            {
+              x: GAME_ENGINE.mouse.x,
+              y: GAME_ENGINE.mouse.y,
+            }
+          )
+        );
+        GAME_ENGINE.addEntity(chain_lightning);
       }
-      else if (this.selectedSpell === 1) {
-        const chain_lightning = new ChainLightning(this, Util.getAngle(
-          {
-            x: this.x - GAME_ENGINE.camera.x,
-            y: this.y - GAME_ENGINE.camera.y
-          },
-          {
-            x: GAME_ENGINE.mouse.x,
-            y: GAME_ENGINE.mouse.y
-          }));
-          GAME_ENGINE.addEntity(chain_lightning);
-      }
-
     }
 
     // footstep sfx
