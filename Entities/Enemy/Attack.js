@@ -1,8 +1,8 @@
-import { Entity } from "./Entities.js";
-import { Platform } from "./Platform.js";
-import { Player } from "./Player/Player.js";
-import * as Util from "../Utils/Util.js";
-import { Collider } from "./Collider.js";
+import { Entity } from "../Entities.js";
+import { Platform } from "../Map/Platform.js";
+import { Player } from "../Player/Player.js";
+import * as Util from "../../Utils/Util.js";
+import { Collider } from "../Collider.js";
 
 export class Thorn extends Entity {
   constructor(x, y, target) {

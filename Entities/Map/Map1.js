@@ -1,9 +1,9 @@
-import { GameMap } from "./Entities.js";
-import { Player } from "./Player/Player.js";
-import { Background } from "./Map/Background.js";
-import { Cactus, Spider } from "./Enemy.js";
+import { GameMap } from "../Entities.js";
+import { Player } from "../Player/Player.js";
+import { Background } from "./Background.js";
+import { Cactus, Spider } from "../Enemy/Enemy.js";
 import { Structure } from "./Structure.js";
-import { GAME_ENGINE } from "../main.js";
+import { GAME_ENGINE } from "../../main.js";
 import { Platform } from "./Platform.js";
 
 export class Map1 extends GameMap {

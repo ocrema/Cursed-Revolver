@@ -1,5 +1,5 @@
 import { Entity } from "../Entities/Entities.js";
-import { Map1 } from "../Entities/Map1.js";
+import { Map1 } from "../Entities/Map/Map1.js";
 import { HUD } from "../Entities/HUD.js";
 import { PauseMenu } from "../Entities/PauseMenu.js";
 

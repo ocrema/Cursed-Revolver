@@ -1,9 +1,9 @@
-import { Actor } from "./Entities.js";
-import { Platform } from "./Platform.js";
-import { Player } from "./Player/Player.js";
+import { Actor } from "../Entities.js";
+import { Platform } from "../Map/Platform.js";
+import { Player } from "../Player/Player.js";
 import { Thorn, Jaw } from "./Attack.js";
-import * as Util from "../Utils/Util.js";
-import { Collider } from "./Collider.js";
+import * as Util from "../../Utils/Util.js";
+import { Collider } from "../Collider.js";
 
 export class Cactus extends Actor {
   constructor(x, y) {

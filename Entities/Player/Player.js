@@ -1,7 +1,8 @@
 import { Actor } from "../Entities.js";
 import { PLAYER_SPRITESHEET } from "../../Globals/Constants.js";
 import * as Util from "../../Utils/Util.js";
-import { Fireball, ChainLightning } from "../Spells.js";
+import { Fireball } from "../Spells/Fireball.js";
+import { ChainLightning } from "../Spells/ChainLightning.js";
 import { Collider } from "../Collider.js";
 import { GAME_ENGINE } from "../../main.js";
 import { PlayerAnimationLoader } from "./PlayerAnimationLoader.js";
@@ -20,12 +21,11 @@ export class Player extends Actor {
     // switches between attack animations for the player
     this.attackState = 1;
 
-    // Adds all player animations 
+    // Adds all player animations
     this.playerAnimationLoader = new PlayerAnimationLoader(this);
 
     this.playerAnimationLoader.loadPlayerAnimations();
 
-  
     this.speed = 500; // Movement speed
     this.isMoving = false; // Whether the player is moving
     this.health = 200;
