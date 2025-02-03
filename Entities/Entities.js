@@ -1,4 +1,3 @@
-import { Collider } from "./Collider.js";
 import * as Util from "../Utils/Util.js";
 
 export class Entity {
