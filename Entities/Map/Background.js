@@ -1,6 +1,6 @@
-import { Entity } from "./Entities.js";
-import { BACKGROUND_SPRITESHEET } from "../Globals/Constants.js";
-import { Camera } from "../Core/Camera.js";
+import { Entity } from "../Entities.js";
+import { BACKGROUND_SPRITESHEET } from "../../Globals/Constants.js";
+import { Camera } from "../../Core/Camera.js";
 
 export class Background extends Entity {
   constructor() {

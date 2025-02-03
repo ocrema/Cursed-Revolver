@@ -20,12 +20,12 @@ export class Player extends Actor {
     // switches between attack animations for the player
     this.attackState = 1;
 
+    // Adds all player animations 
     this.playerAnimationLoader = new PlayerAnimationLoader(this);
 
     this.playerAnimationLoader.loadPlayerAnimations();
 
-    
-
+  
     this.speed = 500; // Movement speed
     this.isMoving = false; // Whether the player is moving
     this.health = 200;

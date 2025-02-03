@@ -53,6 +53,7 @@ export class Camera extends Entity {
   }
 
   triggerShake(intensity) {
+    //if (!DEBUG_MODE.isActive)
     this.shakeIntensity = intensity;
   }
 }

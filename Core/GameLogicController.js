@@ -1,7 +1,4 @@
 import { Entity } from "../Entities/Entities.js";
-import { Player } from "../Entities/Player/Player.js";
-import { Cactus } from "../Entities/Enemy.js";
-import { Background } from "../Entities/Background.js";
 import { Map1 } from "../Entities/Map1.js";
 import { HUD } from "../Entities/HUD.js";
 import { PauseMenu } from "../Entities/PauseMenu.js";
