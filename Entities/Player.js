@@ -312,7 +312,6 @@ export class Player extends Actor {
     flag = false;
     for (let e of GAME_ENGINE.entities) {
       if (e.isPlayer || e.isAttack || e.isEnemy) continue;
-      let flag = false;
       if (this.colliding(e)) {
         flag = true;
         if (this.y_velocity > 0) {
@@ -325,6 +324,7 @@ export class Player extends Actor {
       }
     }
     if (flag) {
+      console.log(this.y_velocity)
       if (this.y_velocity > 300) {
         window.ASSET_MANAGER.playAsset("./assets/sfx/landing.wav");
       }
@@ -348,7 +348,7 @@ export class Player extends Actor {
         window.ASSET_MANAGER.playAsset("./assets/sfx/click1.ogg");
       }
     }
-
+ 
     // cast spell
 
     if (
