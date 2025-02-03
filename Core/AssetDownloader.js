@@ -39,6 +39,7 @@ export class AssetDownloader {
 
   downloadMapAssets() {
     this.assetManager.queueDownload("./assets/map/Tileset/tileMain2.png");
+    this.assetManager.queueDownload("./assets/map/Tileset/tileMain5.png");
     this.assetManager.queueDownload("./assets/map/Tileset/platforms10.png");
     this.assetManager.queueDownload("./assets/map/deserttileset.png");
   }

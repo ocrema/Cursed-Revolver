@@ -98,7 +98,7 @@ export const GROUND_SPRITESHEET = {
     URL: "./assets/map/Tileset/tileMain2.png",
   },
   GROUND_BOTTOM: {
-    URL: "./assets/map/Tileset/platforms10.png",
+    URL: "./assets/map/Tileset/tileMain5.png",
   },
   GROUND_TILESET: {
     URL: "./assets/map/deserttileset.png",

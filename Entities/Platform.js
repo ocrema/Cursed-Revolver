@@ -1,89 +1,86 @@
 import { Entity } from "./Entities.js";
 import { Collider } from "./Collider.js";
 import { GROUND_SPRITESHEET } from "../Globals/Constants.js";
+
 /**
- * Represents a platform with a two-layer tile system (top & base).
- * - Top layer (e.g., grass, stone top) uses a different tile.
- * - Base layers (e.g., dirt, underground) use another tile.
+ * Represents a platform with separate top and base layers.
+ * - If `rows === 1`, only the top tile is used.
+ * - Otherwise, top uses `GROUND_TOP`, and bottom layers use `GROUND_BOTTOM`.
  */
 export class Platform extends Entity {
   /**
    * Creates a new platform.
    * @param {number} x - The X-coordinate of the platform (centered).
    * @param {number} y - The Y-coordinate of the platform (centered).
-   * @param {number} width - The number of tile units in width.
-   * @param {number} height - The total height of the platform (scaled per tile).
-   * @param {number} [scale=1] - The scaling factor for the platform's tile size.
+   * @param {number} cols - The number of tiles horizontally.
+   * @param {number} rows - The number of tiles vertically.
    */
-  constructor(x, y, width, height, scale = 1) {
+  constructor(x, y, cols, rows) {
     super();
     this.x = x;
     this.y = y;
-    this.width = width; // Number of tiles horizontally
-    this.height = height; // Number of tiles vertically
-    this.scale = scale; // Scaling factor for the platform
-    this.tileSize = 42 * this.scale; // New tile size based on extracted tile
+    this.cols = cols; // Number of tiles horizontally
+    this.rows = rows; // Number of tiles vertically
+    this.tileSize = 64; // Each tile will be scaled to 64x64
 
-    // Create a collider that matches the drawn area of the platform
+    // Fix Collider to Match Drawn Tile Size
     this.collider = new Collider(
-      this.width * this.tileSize, // Collider width matches platform width
-      this.height * this.tileSize // Collider height matches platform height
+      this.cols * this.tileSize, // Correct width
+      this.rows * this.tileSize // Correct height
     );
 
     this.assetManager = window.ASSET_MANAGER;
   }
 
   /**
-   * Updates the platform's animation (if any).
+   * Updates the platform (currently static).
    */
   update() {
     this.updateAnimation(GAME_ENGINE.clockTick);
   }
 
   /**
-   * Draws the platform with two distinct layers.
-   * - Top layer uses row 1, column 8 from the tileset.
-   * - Base layers use row 2, column 8 from the tileset.
+   * Draws the platform with correctly scaled tiles.
+   * - Top layer uses `GROUND_TOP`.
+   * - Base layers use `GROUND_BOTTOM`.
    * @param {CanvasRenderingContext2D} ctx - The rendering context.
    */
   draw(ctx) {
-    const tileset = this.assetManager.getAsset(
-      GROUND_SPRITESHEET.GROUND_TILESET.URL
+    const topTile = this.assetManager.getAsset(
+      GROUND_SPRITESHEET.GROUND_TOP.URL
     );
-    if (!tileset) {
-      console.error("Tileset not loaded for Platform");
+    const baseTile = this.assetManager.getAsset(
+      GROUND_SPRITESHEET.GROUND_BOTTOM.URL
+    );
+
+    if (!topTile || !baseTile) {
+      console.error("Ground tiles not loaded for Platform");
       return;
     }
 
-    // Define the source tile positions
-    const tileWidth = 16;
-    const tileHeight = 17;
-    const topTileX = 112; // Column 8, Row 1
-    const topTileY = 0;
-    const baseTileX = 112; // Column 8, Row 2
-    const baseTileY = 17;
+    ctx.imageSmoothingEnabled = false; // Prevents blurry tiles
 
-    for (let col = 0; col < this.width; col++) {
-      for (let row = 0; row < this.height; row++) {
-        const sourceX = row === 0 ? topTileX : baseTileX; // Use grass for top row, dirt for others
-        const sourceY = row === 0 ? topTileY : baseTileY;
+    for (let col = 0; col < this.cols; col++) {
+      for (let row = 0; row < this.rows; row++) {
+        const isTopRow = row === 0; // First row is grass, others are dirt
+        const tileImage = isTopRow ? topTile : baseTile;
 
         ctx.drawImage(
-          tileset,
-          sourceX,
-          sourceY,
-          tileWidth,
-          tileHeight, // Source tile
+          tileImage,
+          0,
+          0,
+          16,
+          16, // Source tile size (original is 16x16)
           this.x -
             GAME_ENGINE.camera.x +
             col * this.tileSize -
-            (this.width * this.tileSize) / 2, // X position
+            (this.cols * this.tileSize) / 2, // X position
           this.y -
             GAME_ENGINE.camera.y +
             row * this.tileSize -
-            (this.height * this.tileSize) / 2, // Y position
-          this.tileSize * 2, // Scaled width
-          this.tileSize * 2 // Scaled height
+            (this.rows * this.tileSize) / 2, // Y position
+          this.tileSize, // Scaled width (64px)
+          this.tileSize // Scaled height (64px)
         );
       }
     }
