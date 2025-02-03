@@ -15,8 +15,15 @@ export class Map1 extends GameMap {
     GAME_ENGINE.addEntity(new Cactus(-750, 380));
     GAME_ENGINE.addEntity(new Spider(800, 370));
     GAME_ENGINE.addEntity(new Background());
+
+    // Ground
     GAME_ENGINE.addEntity(new Platform(0, 800, 100, 10));
+
+    // Vertical Platform
     GAME_ENGINE.addEntity(new Platform(150, 400, 1, 6));
+
+    // Horizontal Platform
     GAME_ENGINE.addEntity(new Platform(-300, 20, 10, 1));
+    GAME_ENGINE.addEntity(new Platform(600, -160, 10, 1));
   }
 }
