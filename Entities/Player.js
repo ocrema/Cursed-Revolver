@@ -103,7 +103,6 @@ export class Player extends Actor {
     this.setAnimation(PLAYER_SPRITESHEET.IDLE.NAME);
 
     this.collider = new Collider(60, 100);
-    this.health = 100;
 
     this.x_velocity = 0;
     this.y_velocity = 0;
