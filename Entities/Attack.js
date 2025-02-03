@@ -1,4 +1,5 @@
-import { Entity, Platform } from "./Entities.js";
+import { Entity  } from "./Entities.js";
+import { Platform } from "./Platform.js";
 import { Player } from "./Player.js";
 import * as Util from "../Utils/Util.js";
 import { Collider } from "./Collider.js";
