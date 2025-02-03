@@ -1,5 +1,5 @@
 import { Entity } from "../Entities/Entities.js";
-import { GAME_ENGINE } from "../main.js"; // Import GAME_ENGINE
+import { GAME_ENGINE } from "../main.js";
 
 export class HUD extends Entity {
   constructor() {
@@ -8,30 +8,33 @@ export class HUD extends Entity {
     this.healthBarWidthRatio = 0.3;
     this.healthBarHeightRatio = 0.03;
     this.healthBarMarginRatio = 0.03;
+    this.enemyHealthBarWidthRatio = 0.1; // smaller than player's
+    this.enemyHealthBarHeightRatio = 0.02; // scaled height
     this.debugMode = false;
+    this.cowboyImage = "./assets/ui/cowboy.png"; // Cowboy Image
 
     // Spells and cylinder setup
     this.spells = [
-      { name: "Fireball", icon: "./assets/ui/spells/fireball.png" },
-      // { name: "Lightning Bolt", icon: "./assets/ui/spells/lightning.png" },
-      // { name: "Water Wave", icon: "./assets/ui/spells/water.png" },
-      // { name: "Icicle", icon: "./assets/ui/spells/icicle.png" },
-      // { name: "Wind Slash", icon: "./assets/ui/spells/wind.png" },
-      // { name: "Earthquake", icon: "./assets/ui/spells/earthquake.png" }
+      { name: "Fireball", icon: "./assets/ui/spells/fireball.gif" },
+      { name: "Lightning", icon: "./assets/ui/spells/lightning.gif" },
+      { name: "Water Wave", icon: "./assets/ui/spells/water.gif" },
+      { name: "Icicle", icon: "./assets/ui/spells/icicle.gif" },
+      { name: "Vine Ball", icon: "./assets/ui/spells/vine.gif" },
+      { name: "Void Orb", icon: "./assets/ui/spells/void.gif" },
     ];
-    
+
     this.activeSpellIndex = 0;
 
     // Cylinder animation setup
     this.cylinderImages = [];
-    for (let i = 2; i <= 10; i++) { 
+    for (let i = 1; i <= 10; i++) {
       this.cylinderImages.push(`./assets/ui/revolver/cylinder${i}.png`);
     }
 
-    this.currentCylinderFrame = 0;
-    this.spinning = false;
-    this.spinSpeed = 0.1;
-    this.spinTargetFrame = 0;
+    this.cylinderRotation = 0; // Current rotation (in radians)
+    this.targetRotation = 0; // Target rotation (in radians)
+    this.rotationSpeed = 0; // Speed of rotation (radians per frame)
+    this.rotationTime = 0; // Time remaining for rotation
   }
 
   colliding() {
@@ -48,30 +51,41 @@ export class HUD extends Entity {
     }
 
     // Spell selection (1-6 keys)
-    for (let i = 1; i <= 1; i++) { //TEMP! change to 6 later
+    for (let i = 1; i <= 6; i++) {
       if (GAME_ENGINE.keys[i.toString()]) {
-        this.selectSpell(i - 1);
+        this.rotateCylinder(i - 1, 0.5); // Smoothly switch spells in 0.5s
         GAME_ENGINE.keys[i.toString()] = false;
       }
     }
 
-    if (this.spinning) {
-      this.currentCylinderFrame += this.spinSpeed;
+    // Smooth rotation logic
+    if (this.rotationTime > 0) {
+      this.cylinderRotation += this.rotationSpeed;
+      this.rotationTime -= GAME_ENGINE.clockTick;
 
-      console.log(`Current Cylinder Frame: ${Math.floor(this.currentCylinderFrame)}`);
-      
-      // Ensure looping animation
-      if (this.currentCylinderFrame >= 10) {
-        this.currentCylinderFrame = 0;
-      }
-    
-      // Smoothly stop at the target frame
-      if (Math.abs(this.currentCylinderFrame - this.spinTargetFrame) < this.spinSpeed) {
-        this.currentCylinderFrame = this.spinTargetFrame;
-        this.spinning = false; // Stop spinning
+      if (this.rotationTime <= 0) {
+        this.cylinderRotation = this.targetRotation; // Snap to target
       }
     }
-    
+  }
+
+  /**
+   * Rotate the cylinder to a given spell index over a set duration.
+   * @param {number} pos - The index of the spell to rotate to (0-5).
+   * @param {number} time - The duration of the transition (in seconds).
+   */
+  rotateCylinder(pos, time) {
+    const totalSpells = this.spells.length;
+    const degreesPerSpell = 360 / totalSpells; // Each spell on circle
+    const newRotation = (pos * degreesPerSpell * Math.PI) / 180; // degrees to radians
+
+    // Cancel any current animation and start from the current location
+    this.targetRotation = newRotation;
+    this.rotationTime = time;
+    this.rotationSpeed =
+      (this.targetRotation - this.cylinderRotation) /
+      (time / GAME_ENGINE.clockTick);
+    this.activeSpellIndex = pos;
   }
 
   selectSpell(index) {
@@ -87,67 +101,126 @@ export class HUD extends Entity {
     const canvasWidth = ctx.canvas.width;
     const canvasHeight = ctx.canvas.height;
 
+    const healthBarSprite = ASSET_MANAGER.getAsset("./assets/ui/healthbar.png");
+
+    // Health bar dimensions
     const healthBarWidth = canvasWidth * this.healthBarWidthRatio;
     const healthBarHeight = canvasHeight * this.healthBarHeightRatio;
     const healthBarMargin = canvasHeight * this.healthBarMarginRatio;
 
-    // Positioning
-    const startX = healthBarMargin;
-    const startY = canvasHeight - healthBarHeight - healthBarMargin;
-    
-    // Scalable Cylinder and Spell Positions
-    const scaleFactor = canvasHeight / 800; // Dynamic scaling based on canvas height
+    // Cowboy icon (leftmost)
 
-    const cylinderSize = 120 * scaleFactor; // Scalable size
+    const cowboySize = healthBarHeight * 10;
+    const cowboyX = healthBarMargin / 3;
+    const cowboyY = canvasHeight - cowboySize / 1.5;
+
+    // Health bar (next to cowboy)
+    const startX = cowboyX + cowboySize / 1.5;
+    const startY = canvasHeight - healthBarHeight - healthBarMargin;
+
+    // Spell UI scaling
+    const scaleFactor = canvasHeight / 800;
+    const cylinderSize = 120 * scaleFactor;
     const cylinderX = canvasWidth - cylinderSize - 50 * scaleFactor;
     const cylinderY = canvasHeight - cylinderSize - 50 * scaleFactor;
 
-    // Move spell name and icon lower
+    // Spell text and icon positions
     const spellTextX = cylinderX - 200 * scaleFactor;
     const spellTextY = cylinderY + cylinderSize / 1.5;
 
-    // Health Bar
+    // Draw cowboy icon
+    const cowboyImg = ASSET_MANAGER.getAsset(this.cowboyImage);
+    if (cowboyImg) {
+      ctx.drawImage(cowboyImg, cowboyX, cowboyY, cowboySize, cowboySize);
+    }
+
+    // Draw health bar
+    //const player = GAME_ENGINE.entities.find(e => e.isPlayer);
+    //onst currentHealth = player ? player.health : 0;
+    //const maxHealth = 200;
+
+    // Health bar sprite sheet settings
+    const totalFrames = 11; // (100%, 90%, 80%, ..., 0%)
+    const frameWidth = healthBarSprite.width;
+    const frameHeight = healthBarSprite.height / totalFrames; // Each frame is 1/11th of the image
+
+    // Get player health
     const player = GAME_ENGINE.entities.find((e) => e.isPlayer);
-    const currentHealth = player ? player.health : 0;
+    let healthRatio = player ? player.health / 200 : 1;
+    let currentHealth = player.health;
     const maxHealth = 200;
+    healthRatio = Math.max(0, healthRatio);
+    const frameIndex = Math.min(
+      totalFrames - 1,
+      Math.max(0, totalFrames - 1 - Math.floor(healthRatio * (totalFrames - 1)))
+    );
 
-    ctx.fillStyle = "red";
-    ctx.fillRect(startX, startY, healthBarWidth, healthBarHeight);
-    ctx.fillStyle = "green";
-    ctx.fillRect(startX, startY, (currentHealth / maxHealth) * healthBarWidth, healthBarHeight);
+    // Add Health Text above the bar
+    const healthTextOffset = 5; // Move text UP by 15 pixels
+    const healthTextX = startX + healthBarWidth / 2;
+    const healthTextY = startY - healthTextOffset;
 
-    // Health Text
     ctx.fillStyle = "white";
     ctx.font = `${canvasHeight * 0.03}px Arial`;
-    ctx.fillText(`${currentHealth} / ${maxHealth}`, startX + healthBarWidth / 2 - 25, startY + healthBarHeight * 0.75);
+    ctx.textAlign = "center";
+    ctx.fillText(
+      `${Math.round(player.health)} / ${maxHealth}`,
+      healthTextX,
+      healthTextY
+    );
 
-    // Spell Text and Icon (Lowered)
-    ctx.fillText(`Spell: ${this.spells[this.activeSpellIndex].name}`, spellTextX, spellTextY);
-    
-    const spellIcon = ASSET_MANAGER.getAsset(this.spells[this.activeSpellIndex].icon);
+    // Draw spell name and icon
+    ctx.fillText(
+      `Spell: ${this.spells[this.activeSpellIndex].name}`,
+      spellTextX,
+      spellTextY
+    );
+
+    const spellIcon = ASSET_MANAGER.getAsset(
+      this.spells[this.activeSpellIndex].icon
+    );
     if (spellIcon) {
-      const spellIconSize = 60 * scaleFactor; // Scale dynamically
-      ctx.drawImage(spellIcon, spellTextX - 80 * scaleFactor, spellTextY - 40 * scaleFactor, spellIconSize, spellIconSize);
+      const spellIconSize = 60 * scaleFactor;
+      ctx.drawImage(
+        spellIcon,
+        spellTextX + 90 * scaleFactor,
+        spellTextY - 50 * scaleFactor,
+        spellIconSize,
+        spellIconSize
+      );
     }
 
-    // Cylinder Image (Scaled)
-    const cylinderImage = ASSET_MANAGER.getAsset(this.cylinderImages[Math.floor(this.currentCylinderFrame)]);
-    
+    // Draw revolver cylinder (rotating)
+    const cylinderImage = ASSET_MANAGER.getAsset(this.cylinderImages[0]);
     if (cylinderImage) {
-      ctx.drawImage(cylinderImage, cylinderX, cylinderY, cylinderSize, cylinderSize);
+      ctx.save();
+      ctx.translate(cylinderX + cylinderSize / 2, cylinderY + cylinderSize / 2);
+      ctx.rotate(this.cylinderRotation);
+      ctx.drawImage(
+        cylinderImage,
+        -cylinderSize / 2,
+        -cylinderSize / 2,
+        cylinderSize,
+        cylinderSize
+      );
+      ctx.restore();
     }
 
-    // Debug Mode - Show Info (Top Left)
+    // Debug mode UI
     if (this.debugMode) {
       ctx.fillStyle = "yellow";
       ctx.font = `${canvasHeight * 0.025}px Arial`;
 
-      const debugTextX = 20;
+      const debugTextX = 70;
       const debugTextY = 40;
       const lineSpacing = canvasHeight * 0.03;
       let debugLine = 0;
 
-      ctx.fillText("DEBUG MODE: ON", debugTextX, debugTextY + debugLine++ * lineSpacing);
+      ctx.fillText(
+        "DEBUG MODE: ON",
+        debugTextX,
+        debugTextY + debugLine++ * lineSpacing
+      );
 
       if (player) {
         ctx.fillText(
@@ -156,7 +229,9 @@ export class HUD extends Entity {
           debugTextY + debugLine++ * lineSpacing
         );
         ctx.fillText(
-          `Player Velocity: (${player.x_velocity.toFixed(2)}, ${player.y_velocity.toFixed(2)})`,
+          `Player Velocity: (${player.x_velocity.toFixed(
+            2
+          )}, ${player.y_velocity.toFixed(2)})`,
           debugTextX,
           debugTextY + debugLine++ * lineSpacing
         );
@@ -171,6 +246,20 @@ export class HUD extends Entity {
           debugTextY + debugLine++ * lineSpacing
         );
       }
+    }
+    // Draw health bar from sprite sheet
+    if (healthBarSprite) {
+      ctx.drawImage(
+        healthBarSprite,
+        0,
+        frameIndex * frameHeight,
+        frameWidth,
+        frameHeight, // Crop the correct frame
+        startX,
+        startY,
+        healthBarWidth,
+        healthBarHeight // Draw on screen
+      );
     }
 
     ctx.restore();

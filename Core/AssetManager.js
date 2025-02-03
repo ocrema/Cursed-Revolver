@@ -23,11 +23,11 @@ export class AssetManager {
   downloadAll(callback) {
     if (this.downloadQueue.length === 0) setTimeout(callback, 10);
     for (let i = 0; i < this.downloadQueue.length; i++) {
-
       const path = this.downloadQueue[i];
       console.log(path);
 
       switch (path.substring(path.length - 3)) {
+        case "gif":
         case "png":
         case "jpg":
           const img = new Image();
@@ -48,10 +48,10 @@ export class AssetManager {
           this.cache[path] = img;
           break;
 
-        case 'wav':
-        case 'mp3':
-        case 'mp4':
-        case 'ogg':
+        case "wav":
+        case "mp3":
+        case "mp4":
+        case "ogg":
           const aud = new Audio();
           aud.addEventListener("loadeddata", () => {
             console.log("Loaded " + aud.src);
@@ -76,8 +76,6 @@ export class AssetManager {
           this.cache[path] = aud;
           break;
       }
-
-
     }
   }
 
@@ -85,17 +83,18 @@ export class AssetManager {
     return this.cache[path];
   }
 
-  playAsset(path, volume = .5) {
+  playAsset(path, volume = 0.5) {
     let audio = this.cache[path];
+    if (!audio) return;
     if (audio.currentTime != 0) {
-        let bak = audio.cloneNode();
-        bak.currentTime = 0;
-        bak.volume = volume;
-        bak.play();
+      let bak = audio.cloneNode();
+      bak.currentTime = 0;
+      bak.volume = volume;
+      bak.play();
     } else {
-        audio.volume = volume;
-        audio.currentTime = 0;
-        audio.play();
+      audio.volume = volume;
+      audio.currentTime = 0;
+      audio.play();
     }
-};
+  }
 }
