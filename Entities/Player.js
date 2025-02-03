@@ -12,6 +12,8 @@ export class Player extends Actor {
     // Assigns asset manager from window asset manager singleton
     this.assetManager = window.ASSET_MANAGER;
     this.scale = 1.5;
+    this.x = 0;
+    this.y = 0;
 
     this.isPlayer = true;
 
@@ -94,11 +96,13 @@ export class Player extends Actor {
     this.speed = 500; // Movement speed
     this.isMoving = false; // Whether the player is moving
     this.health = 200;
+    this.isLaunchable = true;
+    this.validEffects = {};
 
     // Start with the idle animation
     this.setAnimation(PLAYER_SPRITESHEET.IDLE.NAME);
 
-    this.collider = new Collider(120, 120);
+    this.collider = new Collider(60, 100);
     this.health = 100;
 
     this.x_velocity = 0;
@@ -112,34 +116,18 @@ export class Player extends Actor {
     this.timeBetweenFootsteps = .4;
     this.timeSinceLastFootstep = .4;
 
+    this.isDashing = 0;
+    this.dashTime = .15;
+    this.dashSpeed = 1000;
+    this.storedDashSpeed = 0;
+    this.dashCooldown = 0;
   }
 
-  jump() { }
 
   update() {
-    //console.log(this.colliders);
-    //super.applyGravity(1);
+
     this.isMoving = false;
     this.isJumping = false;
-    //console.log(this.x + " " + this.y);
-
-    this.y_velocity = Math.min(
-      this.y_velocity + GAME_ENGINE.clockTick * 3000,
-      10000
-    );
-    this.x_velocity = 0;
-
-    // Movement logic
-    if (GAME_ENGINE.keys["a"]) {
-      this.x_velocity -= this.speed;
-      this.isMoving = true;
-      this.flip = true;
-    }
-    if (GAME_ENGINE.keys["d"]) {
-      this.x_velocity += this.speed;
-      this.isMoving = true;
-      this.flip = false;
-    }
 
     // Player Reset Button - this is if the player dies, this resets player health and respawns them.
     if (GAME_ENGINE.keys["h"]) {
@@ -150,131 +138,11 @@ export class Player extends Actor {
       this.setAnimation(PLAYER_SPRITESHEET.IDLE.NAME);
     }
 
-    this.isGrounded = Math.max(this.isGrounded - GAME_ENGINE.clockTick, 0);
+    this.movement();
 
-    if (GAME_ENGINE.keys[" "] && this.isGrounded > 0) {
-      this.isGrounded = 0;
-      this.y_velocity = -1500; // Jumping velocity
-      this.setAnimation(PLAYER_SPRITESHEET.JUMP.NAME);
-      this.isJumping = true;
-      window.ASSET_MANAGER.playAsset("./assets/sfx/jump.ogg");
-    }
-
-    // Player Collision Logic
-
-    this.x += this.x_velocity * GAME_ENGINE.clockTick;
-    let collisions = [];
-    for (let e of GAME_ENGINE.entities) {
-      if (e.isPlayer || e.isAttack) continue;
-      if (this.colliding(e)) {
-        collisions.push(e);
-      }
-    }
-    if (collisions.length !== 0) {
-      if (this.x_velocity > 0) {
-        this.x =
-          collisions.reduce(
-            (acc, curr) => Math.min(acc, curr.x - curr.collider.width / 2),
-            collisions[0].x - collisions[0].collider.width / 2
-          ) -
-          this.collider.width / 2;
-      } else {
-        this.x =
-          collisions.reduce(
-            (acc, curr) => Math.max(acc, curr.x + curr.collider.width / 2),
-            collisions[0].x + collisions[0].collider.width / 2
-          ) +
-          this.collider.width / 2;
-      }
-      this.x_velocity = 0;
-    }
-
-    this.y += this.y_velocity * GAME_ENGINE.clockTick;
-    collisions = [];
-    for (let e of GAME_ENGINE.entities) {
-      if (e.isPlayer || e.isAttack) continue;
-      if (this.colliding(e)) {
-        collisions.push(e);
-      }
-    }
-    if (collisions.length !== 0) {
-      if (this.y_velocity > 0) {
-        this.isGrounded = 0.2;
-
-        this.y =
-          collisions.reduce(
-            (acc, curr) => Math.min(acc, curr.y - curr.collider.height / 2),
-            collisions[0].y - collisions[0].collider.height / 2
-          ) -
-          this.collider.height / 2;
-      } else {
-        this.y =
-          collisions.reduce(
-            (acc, curr) => Math.max(acc, curr.y + curr.collider.height / 2),
-            collisions[0].y + collisions[0].collider.height / 2
-          ) +
-          this.collider.height / 2;
-      }
-
-      if (this.y_velocity > 300) {
-        window.ASSET_MANAGER.playAsset("./assets/sfx/landing.wav");
-      }
+    this.spells();
 
 
-      this.y_velocity = 0;
-    }
-
-    // Player Attack Logic
-
-    for (let i = 0; i < this.spellCooldowns.length; i++) {
-      this.spellCooldowns[i] = Math.max(
-        this.spellCooldowns[i] - GAME_ENGINE.clockTick,
-        0
-      );
-      const key = (i + 1).toString();
-      if (GAME_ENGINE.keys[key]) {
-        GAME_ENGINE.keys[key] = false;
-        this.selectedSpell = i;
-        window.ASSET_MANAGER.playAsset("./assets/sfx/click1.ogg");
-      }
-    }
-
-    // cast spell
-
-    if (this.spellCooldowns[this.selectedSpell] <= 0 && GAME_ENGINE.keys["m1"]) {
-      this.spellCooldowns[this.selectedSpell] = this.maxSpellCooldown;
-      window.ASSET_MANAGER.playAsset("./assets/sfx/revolver_shot.ogg", 1);
-
-      if (this.selectedSpell === 0) {
-        const fireball = new Fireball();
-        fireball.x = this.x;
-        fireball.y = this.y;
-        fireball.dir = Util.getAngle(
-          {
-            x: this.x - GAME_ENGINE.camera.x,
-            y: this.y - GAME_ENGINE.camera.y
-          },
-          {
-            x: GAME_ENGINE.mouse.x,
-            y: GAME_ENGINE.mouse.y
-          }
-        );
-        GAME_ENGINE.addEntity(fireball);
-      }
-      else if (this.selectedSpell === 1) {
-        const chain_lightning = new ChainLightning(this, Util.getAngle(
-          {
-            x: this.x - GAME_ENGINE.camera.x,
-            y: this.y - GAME_ENGINE.camera.y
-          },
-          {
-            x: GAME_ENGINE.mouse.x,
-            y: GAME_ENGINE.mouse.y
-          }));
-          GAME_ENGINE.addEntity(chain_lightning);
-      }
-
-    }
 
     // footstep sfx
     if (this.isMoving && this.isGrounded) {
@@ -321,21 +189,14 @@ export class Player extends Actor {
       );
 
       this.setAnimation(PLAYER_SPRITESHEET.HIT.NAME);
-      this.health -= this.recieved_attacks[0].damage;
+      //this.health -= this.recieved_attacks[0].damage;
 
       this.hitTimer = 0.3;
     }
 
-    this.recieved_attacks = [];
+    this.recieveAttacks();
+    this.recieveEffects();
 
-    // process each attack
-
-    // this.recieved_attacks.forEach((attack) => {
-    //   console.log("ouch! i took " + attack.damage + " damage");
-    //   this.setAnimation(PLAYER_SPRITESHEET.HIT.NAME);
-    //   this.health -= attack.damage;
-    // });
-    // this.recieved_attacks = [];
 
     if (this.health <= 0) {
       this.isDead = true;
@@ -357,4 +218,211 @@ export class Player extends Actor {
       this.setAnimation(PLAYER_SPRITESHEET.IDLE.NAME);
     }
   }
+
+  
+  movement() {
+    this.y_velocity = Math.min(
+      this.y_velocity + GAME_ENGINE.clockTick * 3000,
+      10000
+    );
+   
+    if (this.x_velocity > 0) {
+      this.x_velocity = Math.max(this.x_velocity - GAME_ENGINE.clockTick * (this.isGrounded == .2 ? 9000 : 1000), 0);
+    }
+    else {
+      this.x_velocity = Math.min(this.x_velocity + GAME_ENGINE.clockTick * (this.isGrounded == .2 ? 9000 : 1000), 0);
+    }
+
+    if (this.isDashing > 0) {
+
+      this.y_velocity = 0;
+      this.x_velocity = this.storedDashSpeed;
+      this.isDashing -= GAME_ENGINE.clockTick;
+      
+    }
+    if (GAME_ENGINE.keys["a"] && !GAME_ENGINE.keys["d"] && GAME_ENGINE.keys['Shift'] && this.dashCooldown <= 0) {
+      this.storedDashSpeed = Math.min(this.x_velocity, this.dashSpeed * -1);
+      this.isDashing = this.dashTime;
+      this.dashCooldown = .5;
+      window.ASSET_MANAGER.playAsset("./assets/sfx/jump.ogg");
+    }
+    else if (GAME_ENGINE.keys["d"] && !GAME_ENGINE.keys["a"] && GAME_ENGINE.keys['Shift'] && this.dashCooldown <= 0) {
+      this.storedDashSpeed = Math.max(this.x_velocity, this.dashSpeed);
+      this.isDashing = this.dashTime;
+      this.dashCooldown = .5;
+      window.ASSET_MANAGER.playAsset("./assets/sfx/jump.ogg");
+    }
+
+    this.isGrounded = Math.max(this.isGrounded - GAME_ENGINE.clockTick, 0);
+    this.dashCooldown = Math.max(this.dashCooldown - GAME_ENGINE.clockTick, 0);
+
+    if (GAME_ENGINE.keys[" "] && this.isGrounded > 0 && this.isDashing <= 0) {
+      this.isGrounded = 0;
+      this.y_velocity = -1500; // Jumping velocity
+      this.setAnimation(PLAYER_SPRITESHEET.JUMP.NAME);
+      this.isJumping = true;
+      window.ASSET_MANAGER.playAsset("./assets/sfx/jump.ogg");
+    }
+
+    // Movement logic
+    
+    let velFromKeys = 0
+    if (GAME_ENGINE.keys["a"] || (this.isDashing > 0 && this.storedDashSpeed < 0)) {
+      velFromKeys -= this.speed;
+      this.isMoving = true;
+      this.flip = true;
+    }
+    if (GAME_ENGINE.keys["d"] || (this.isDashing > 0 && this.storedDashSpeed > 0)) {
+      velFromKeys += this.speed;
+      this.isMoving = true;
+      this.flip = false;
+    }
+
+    // Player Collision Logic
+
+    this.x += (this.x_velocity + velFromKeys) * GAME_ENGINE.clockTick;
+    let collisions = [];
+    for (let e of GAME_ENGINE.entities) {
+      if (e.isPlayer || e.isAttack || e.isEnemy) continue;
+      if (this.colliding(e)) {
+        collisions.push(e);
+      }
+    }
+    if (collisions.length !== 0) {
+      if (this.x_velocity + velFromKeys > 0) {
+        this.x =
+          collisions.reduce(
+            (acc, curr) => Math.min(acc, curr.x - curr.collider.width / 2),
+            collisions[0].x - collisions[0].collider.width / 2
+          ) -
+          this.collider.width / 2;
+      } else {
+        this.x =
+          collisions.reduce(
+            (acc, curr) => Math.max(acc, curr.x + curr.collider.width / 2),
+            collisions[0].x + collisions[0].collider.width / 2
+          ) +
+          this.collider.width / 2;
+      }
+      this.x_velocity = 0;
+    }
+
+    this.y += this.y_velocity * GAME_ENGINE.clockTick;
+    collisions = [];
+    for (let e of GAME_ENGINE.entities) {
+      if (e.isPlayer || e.isAttack || e.isEnemy) continue;
+      if (this.colliding(e)) {
+        collisions.push(e);
+      }
+    }
+    if (collisions.length !== 0) {
+      if (this.y_velocity > 0) {
+        this.isGrounded = 0.2;
+
+        this.y =
+          collisions.reduce(
+            (acc, curr) => Math.min(acc, curr.y - curr.collider.height / 2),
+            collisions[0].y - collisions[0].collider.height / 2
+          ) -
+          this.collider.height / 2;
+      } else {
+        this.y =
+          collisions.reduce(
+            (acc, curr) => Math.max(acc, curr.y + curr.collider.height / 2),
+            collisions[0].y + collisions[0].collider.height / 2
+          ) +
+          this.collider.height / 2;
+      }
+
+      if (this.y_velocity > 300) {
+        window.ASSET_MANAGER.playAsset("./assets/sfx/landing.wav");
+      }
+
+      this.y_velocity = 0;
+    }
+  }
+
+  spells() {
+    // Player Attack Logic
+
+    for (let i = 0; i < this.spellCooldowns.length; i++) {
+      this.spellCooldowns[i] = Math.max(
+        this.spellCooldowns[i] - GAME_ENGINE.clockTick,
+        0
+      );
+      const key = (i + 1).toString();
+      if (GAME_ENGINE.keys[key]) {
+        GAME_ENGINE.keys[key] = false;
+        this.selectedSpell = i;
+        window.ASSET_MANAGER.playAsset("./assets/sfx/click1.ogg");
+      }
+    }
+
+    // cast spell
+
+    if (
+      this.spellCooldowns[this.selectedSpell] <= 0 &&
+      GAME_ENGINE.keys["m1"]
+    ) {
+      // Calculate direction to mouse
+      const mouseX = GAME_ENGINE.mouse.x + GAME_ENGINE.camera.x;
+      this.flip = mouseX < this.x; // Flip player based on mouse position
+      if (this.attackState === 1) {
+        this.setAnimation(PLAYER_SPRITESHEET.ATTACK1.NAME, false);
+        this.attackState = 2;
+      } else {
+        this.setAnimation(PLAYER_SPRITESHEET.ATTACK2.NAME, false);
+        this.attackState = 1;
+      }
+
+      this.spellCooldowns[this.selectedSpell] = this.maxSpellCooldown;
+      window.ASSET_MANAGER.playAsset("./assets/sfx/revolver_shot.ogg", 1);
+
+      if (this.selectedSpell === 0) {
+        const fireball = new Fireball();
+        fireball.x = this.x;
+        fireball.y = this.y;
+        fireball.dir = Util.getAngle(
+          {
+            x: this.x - GAME_ENGINE.camera.x,
+            y: this.y - GAME_ENGINE.camera.y,
+          },
+          {
+            x: GAME_ENGINE.mouse.x,
+            y: GAME_ENGINE.mouse.y,
+          }
+        );
+        GAME_ENGINE.addEntity(fireball);
+      } else if (this.selectedSpell === 1) {
+        const chain_lightning = new ChainLightning(
+          this,
+          Util.getAngle(
+            {
+              x: this.x - GAME_ENGINE.camera.x,
+              y: this.y - GAME_ENGINE.camera.y,
+            },
+            {
+              x: GAME_ENGINE.mouse.x,
+              y: GAME_ENGINE.mouse.y,
+            }
+          )
+        );
+        GAME_ENGINE.addEntity(chain_lightning);
+      }
+      else if (this.selectedSpell === 1) {
+        const chain_lightning = new ChainLightning(this, Util.getAngle(
+          {
+            x: this.x - GAME_ENGINE.camera.x,
+            y: this.y - GAME_ENGINE.camera.y
+          },
+          {
+            x: GAME_ENGINE.mouse.x,
+            y: GAME_ENGINE.mouse.y
+          }));
+        GAME_ENGINE.addEntity(chain_lightning);
+      }
+
+    }
+  }
+
 }

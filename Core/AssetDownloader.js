@@ -8,6 +8,8 @@ export class AssetDownloader {
     this.downloadEnemyAssets();
     this.downloadEnemyAttackAssets();
     this.downloadBackgroundAssets();
+    this.downloadMapAssets();
+    this.downloadMapObjectAssets();
     this.downloadSFXAssets();
   }
 
@@ -24,6 +26,8 @@ export class AssetDownloader {
 
   downloadEnemyAssets() {
     this.assetManager.queueDownload("./assets/cactus/cactus.png");
+
+    this.assetManager.queueDownload("./assets/spider/Walk.png");
   }
 
   downloadEnemyAttackAssets() {
@@ -32,6 +36,26 @@ export class AssetDownloader {
 
   downloadBackgroundAssets() {
     this.assetManager.queueDownload("./assets/background/background.png");
+    this.assetManager.queueDownload("./assets/background/background1.png");
+  }
+
+  downloadMapAssets() {
+    this.assetManager.queueDownload("./assets/map/Tileset/tileMain2.png");
+    this.assetManager.queueDownload("./assets/map/Tileset/tileMain5.png");
+    this.assetManager.queueDownload("./assets/map/Tileset/platforms10.png");
+    this.assetManager.queueDownload("./assets/map/deserttileset.png");
+  }
+
+  downloadMapObjectAssets() {
+    this.assetManager.queueDownload("./assets/map/props/rocks1.png");
+    this.assetManager.queueDownload("./assets/map/props/rocks2.png");
+    this.assetManager.queueDownload("./assets/map/props/rocks3.png");
+    this.assetManager.queueDownload("./assets/map/props/rocks4.png");
+    this.assetManager.queueDownload("./assets/map/props/rocks5.png");
+    this.assetManager.queueDownload("./assets/map/props/tree01.png");
+    this.assetManager.queueDownload("./assets/map/props/tree02.png");
+    this.assetManager.queueDownload("./assets/map/props/tree03.png");
+    this.assetManager.queueDownload("./assets/map/props/tree04.png");
   }
 
   downloadSFXAssets() {

@@ -1,4 +1,5 @@
 import { Collider } from "./Collider.js";
+import * as Util from "../Utils/Util.js";
 
 export class Entity {
   constructor() {
@@ -143,6 +144,17 @@ export class Actor extends Entity {
     this.velocityY = 0; // Vertical velocity
     this.gravityForce = 1000; // Gravity force
     this.grounded = false; // Whether the actor is on the ground
+    this.health = 100; // Actor's health
+    this.validEffects = {
+      burn: true,
+      shock: true,
+      soaked: true,
+      frozen: true,
+      rooted: true,
+      stun: true,
+      void: true,
+    }
+    this.isLaunchable = false;
   }
 
   // Since actor classes might need more functionalities, we can add them here
@@ -162,6 +174,67 @@ export class Actor extends Entity {
   queueAttack(data) {
     this.recieved_attacks.push(data);
   }
+
+  recieveAttacks() {
+    for (const a of this.recieved_attacks) {
+      for (const [k, v] of Object.entries(a)) {
+        if (k === 'damage') {
+          this.health -= v;
+        }
+        else if (k === 'heal') {
+          this.health += v;
+        }
+        else if (k === 'launchMagnitude' && this.isLaunchable) {
+          const angle = Util.getAngle({x: a.x, y: a.y}, this);
+          this.x_velocity += v * Math.cos(angle);
+          this.y_velocity += v * Math.sin(angle);
+        }
+        else if (k === 'x' || k === 'y') {}
+        else {
+          this.effects[k] = v;
+        }
+      }
+    }
+    this.clearQueuedAttacks();
+  }
+  /**
+   * overwrite if you want addidional behaviors
+   */
+  clearQueuedAttacks() {
+    this.recieved_attacks = []; // Clear the attack queue after processing
+  }
+
+  /**
+   * call within the child class update method on itself
+   * all active effects are applied and timers are reduced
+   * params controls which effects are applied
+   */
+  recieveEffects() {
+    if (this.validEffects.burn && this.effects.burn > 0) {
+      this.health -= 5 * GAME_ENGINE.clockTick;
+      this.effects.burn -= GAME_ENGINE.clockTick;
+    }
+    if (this.validEffects.shock && this.effects.shock > 0) {
+      this.health -= 5 * GAME_ENGINE.clockTick;
+      this.effects.shock -= GAME_ENGINE.clockTick;
+    }
+    if (this.validEffects.soaked && this.effects.soaked > 0) {
+      this.effects.soaked -= GAME_ENGINE.clockTick;
+    }
+    if (this.validEffects.frozen && this.effects.frozen > 0) {
+      this.effects.frozen -= GAME_ENGINE.clockTick;
+    }
+    if (this.validEffects.rooted && this.effects.rooted > 0) {
+      this.effects.rooted -= GAME_ENGINE.clockTick;
+    }
+    if (this.validEffects.stun && this.effects.stun > 0) {
+      this.effects.stun -= GAME_ENGINE.clockTick;
+    }
+    if (this.validEffects.void && this.effects.void > 0) {
+      this.effects.void -= GAME_ENGINE.clockTick;
+    }
+
+  }
 }
 
 export class GameMap extends Entity {
@@ -173,23 +246,4 @@ export class GameMap extends Entity {
   update() { }
 }
 
-export class Platform extends Entity {
-  constructor(x, y, width, height) {
-    super();
-    this.x = x;
-    this.y = y;
-    this.width = width;
-    this.height = height;
-    //this.colliders = [newCollider(width, height, 0, 0)]
-    this.collider = new Collider(width, height);
-  }
-  draw(ctx) {
-    ctx.fillStyle = "lightgray";
-    ctx.fillRect(
-      this.x - this.width / 2 - GAME_ENGINE.camera.x,
-      this.y - this.height / 2 - GAME_ENGINE.camera.y,
-      this.width,
-      this.height
-    );
-  }
-}
+
