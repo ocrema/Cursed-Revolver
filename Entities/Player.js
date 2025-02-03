@@ -281,7 +281,7 @@ export class Player extends Actor {
     this.x += (this.x_velocity + velFromKeys) * GAME_ENGINE.clockTick;
     let collisions = [];
     for (let e of GAME_ENGINE.entities) {
-      if (e.isPlayer || e.isAttack) continue;
+      if (e.isPlayer || e.isAttack || e.isEnemy) continue;
       if (this.colliding(e)) {
         collisions.push(e);
       }
@@ -308,7 +308,7 @@ export class Player extends Actor {
     this.y += this.y_velocity * GAME_ENGINE.clockTick;
     collisions = [];
     for (let e of GAME_ENGINE.entities) {
-      if (e.isPlayer || e.isAttack) continue;
+      if (e.isPlayer || e.isAttack || e.isEnemy) continue;
       if (this.colliding(e)) {
         collisions.push(e);
       }

@@ -1,4 +1,4 @@
-import { Entity } from "./Entities.js";
+import { Entity, Platform } from "./Entities.js";
 import { Player } from "./Player.js";
 import * as Util from "../Utils/Util.js";
 import { Collider } from "./Collider.js";
@@ -15,15 +15,12 @@ export class Thorn extends Entity {
 
         this.isAttack = true;
 
-        
-
         // distance the thorn has travelled
         this.travelled = 0;
         this.maxRange = 300;
         this.speed = 4;
         this.data = { damage: 20};
         this.removeFromWorld = false;
-        //this.colliders = [];
         this.collider = new Collider(this.width, this.height);
 
         var distance = Util.getDistance(this, target);
@@ -56,15 +53,53 @@ export class Thorn extends Entity {
         this.travelled = Util.getDistance(this, this.start);
 
         // check if colliding with player --> if yes, remove, deal damage
-        var that = this;
-        GAME_ENGINE.entities.forEach(function (entity) { // cycles through every entity 
-                    if (entity instanceof Player) {
-                        if (that.colliding(entity)) {
-                            // thorn hits player
-                            that.removeFromWorld = true;
-                            entity.queueAttack(that.data);
-                        }
-                    }
-                })
+        for (let entity of GAME_ENGINE.entities) {
+            if (entity.collider && this.colliding(entity)) {
+                if (entity instanceof Player) {
+                    entity.queueAttack( {damage: 20} );
+                    this.removeFromWorld = true;
+                } else if (entity instanceof Platform) {
+                    this.removeFromWorld = true;
+                }
+                
+            }
+        }
+    }
+}
+
+export class Jaw extends Entity {
+    constructor (spider) {
+        super();
+        Object.assign(this, { spider});
+
+        this.x = this.spider.x;
+        this.y = this.spider.y;
+        this.collider = new Collider(100, 95);
+        this.elapsedTime = 0;
+        this.attackDuration = 1;
+        this.isAttack = true;
+    }
+
+    update() {
+        this.elapsedTime += GAME_ENGINE.clockTick;
+
+        // remove after duration
+        if (this.elapsedTime > this.attackDuration || this.spider.removeFromWorld) {
+            this.removeFromWorld = true;
+        }
+
+        // update location
+        this.x = this.spider.x;
+        this.y = this.spider.y;
+
+        for (let entity of GAME_ENGINE.entities) {
+            // if jaw attack collides with player
+            if (entity instanceof Player) {
+                if (this.colliding(entity)) { 
+                    entity.queueAttack( {damage: 20, x: this.x, y: this.y, launchMagnitude: 100} );
+                    this.removeFromWorld = true;
+                }
+            }
+        }
     }
 }
