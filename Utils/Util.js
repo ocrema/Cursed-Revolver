@@ -1,4 +1,3 @@
-import { Collider } from "../Entities/Collider.js";
 
 /** Global Parameters Object */
 const params = {};
@@ -75,16 +74,5 @@ export const newCollider = (w, h, x, y) => {
     */
 
 export const canSee = (A,B) => {
-    // if distance is short enough
-    if (getDistance(A,B) < A.visualRadius + ((B.collider.width + B.collider.height) / 2)) {
-        // create a small collision box
-        var tempBox = new Collider(1, 1);
-        // calc velocity
-        // force move on velocity until collides with player
-        // if collides with wall
-        // return false
-        // else return true
-        return true
-    }
-    return false;
+    return getDistance(A,B) < A.visualRadius + ((B.collider.width + B.collider.height) / 2)
 }

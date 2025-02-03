@@ -1,4 +1,4 @@
-import { Entity } from "./Entities.js";
+import { Entity, Platform } from "./Entities.js";
 import { Player } from "./Player.js";
 import * as Util from "../Utils/Util.js";
 import { Collider } from "./Collider.js";
@@ -53,16 +53,17 @@ export class Thorn extends Entity {
         this.travelled = Util.getDistance(this, this.start);
 
         // check if colliding with player --> if yes, remove, deal damage
-        var that = this;
-        GAME_ENGINE.entities.forEach(function (entity) { // cycles through every entity 
-                    if (entity instanceof Player) {
-                        if (entity.collider && that.colliding(entity)) {
-                            // thorn hits player
-                            that.removeFromWorld = true;
-                            entity.queueAttack(that.data);
-                        }
-                    }
-                })
+        for (let entity of GAME_ENGINE.entities) {
+            if (entity.collider && this.colliding(entity)) {
+                if (entity instanceof Player) {
+                    entity.queueAttack( {damage: 20} );
+                    this.removeFromWorld = true;
+                } else if (entity instanceof Platform) {
+                    this.removeFromWorld = true;
+                }
+                
+            }
+        }
     }
 }
 
