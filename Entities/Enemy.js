@@ -167,16 +167,16 @@ export class Spider extends Actor {
         entity.collider &&
         this.colliding(entity)
       ) {
-        //console.log("spider colligind"); 
+
         let thisTop = this.y - this.height / 2;
         let thisBottom = this.y + this.height / 2;
         let thisLeft = this.x - this.width / 2;
         let thisRight = this.x + this.width / 2;
 
-        let eTop = entity.y - entity.height / 2;
-        let eBottom = entity.y + entity.height / 2;
-        let eLeft = entity.x - entity.width / 2;
-        let eRight = entity.x + entity.width / 2;
+        let eTop = entity.y - entity.collider.height / 2;
+        let eBottom = entity.y + entity.collider.height / 2;
+        let eLeft = entity.x - entity.collider.width / 2;
+        let eRight = entity.x + entity.collider.width / 2;
 
         let collideRight = thisRight > eLeft && thisLeft < eLeft; // platform is on right of spider
         let collideLeft = thisLeft < eRight && thisRight > eRight; // platform is on the left of spider
@@ -193,8 +193,7 @@ export class Spider extends Actor {
           thisLeft < eRight;
 
         if (collideBottom) {
-          console.log("collide bottom");
-          this.y = entity.y - entity.height / 2 - this.height / 2;
+          this.y = entity.y - entity.collider.height / 2 - this.height / 2;
           this.onGround = true;
         }
 
@@ -209,20 +208,17 @@ export class Spider extends Actor {
           this.onWall = true;
         }
 
-        if (
-          Math.abs(this.y - (entity.y - entity.height / 2 - this.height / 2)) <
-          5
-        ) {
+        if (Math.abs(this.y - (entity.y - entity.collider.height / 2 - this.height / 2)) < 5) {
           this.onGround = true;
         }
+
       }
     }
 
     // if spider is currently on a wall
     if (this.onWall) {
       // climb up wall
-      this.velocity.y =
-        ((this.target.y - this.y) / distance) * this.runSpeed * this.climbSpeed;
+      this.velocity.y = ((this.target.y - this.y) / distance) * this.runSpeed * this.climbSpeed;
     }
 
     // if spider is on the ground and trying to move down
@@ -231,11 +227,10 @@ export class Spider extends Actor {
     }
 
     // if spider is floating and moving
-    // else if (!this.onGround && this.velocity.x !== 0) {
-    //   this.velocity.y += this.gravity;
-    // }
-    console.log(this);
-
+    else if (!this.onGround && this.velocity.x !== 0) {
+      this.velocity.y += this.gravity;
+    }
+    
     // update location
     this.x += this.velocity.x * GAME_ENGINE.clockTick;
     this.y += this.velocity.y * GAME_ENGINE.clockTick;

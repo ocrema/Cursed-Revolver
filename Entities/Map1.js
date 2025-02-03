@@ -13,7 +13,7 @@ export class Map1 extends GameMap {
     GAME_ENGINE.addEntity(new Cactus(500, 380));
     GAME_ENGINE.addEntity(new Cactus(1000, 380));
     GAME_ENGINE.addEntity(new Cactus(-750, 380));
-    //GAME_ENGINE.addEntity(new Spider(800, 15));
+    GAME_ENGINE.addEntity(new Spider(800, 370));
     GAME_ENGINE.addEntity(new Background());
     // Platform Parameters - X, Y, Width, Height
 
