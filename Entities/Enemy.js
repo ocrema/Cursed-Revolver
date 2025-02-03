@@ -34,8 +34,6 @@ export class Cactus extends Actor {
         //this.colliders = [];
         this.collider = new Collider(this.width, this.height);
 
-        this.maxHealth = 50;  // added for health bar logic
-
         // taken from player class
         this.cameraSpeed = 500;
         this.isEnemy = true;
@@ -62,51 +60,7 @@ export class Cactus extends Actor {
                     GAME_ENGINE.addEntity(new Thorn(that.x, that.y, entity)); 
                 }
             }
-        });
-
-        super.update();
+        })
     }
 
-    draw(ctx) {
-        super.draw(ctx); 
-        this.drawHealthBar(ctx); 
-    }
-
-    drawHealthBar(ctx) {
-        if (this.health <= 0) return; 
-    
-        const healthBarWidth = 200; // Doubled in size
-        const healthBarHeight = 20; // Doubled in size
-        const barOffsetY = this.height / 2 + 40; // Adjusted for new size
-    
-        // Convert world position to screen position
-        const screenX = this.x - GAME_ENGINE.camera.x;
-        const screenY = this.y - GAME_ENGINE.camera.y - barOffsetY;
-    
-        const healthRatio = Math.max(0, this.health / this.maxHealth);
-    
-        ctx.save();
-    
-        // Draw background bar (rounded edges)
-        ctx.fillStyle = "black";
-        ctx.beginPath();
-        ctx.roundRect(screenX - healthBarWidth / 2, screenY, healthBarWidth, healthBarHeight, 8);
-        ctx.fill();
-    
-        // Draw solid health bar (Red when low, Orange when mid, Green when high)
-        ctx.fillStyle = healthRatio > 0.6 ? "green" : healthRatio > 0.3 ? "orange" : "red";
-        ctx.beginPath();
-        ctx.roundRect(screenX - healthBarWidth / 2, screenY, healthBarWidth * healthRatio, healthBarHeight, 8);
-        ctx.fill();
-    
-        // Draw health text (centered on bar)
-        ctx.fillStyle = "white";
-        ctx.font = `${healthBarHeight * 0.8}px Arial`;
-        ctx.textAlign = "center";
-        ctx.fillText(`${Math.round(this.health)} / ${this.maxHealth}`, screenX, screenY + healthBarHeight - 4);
-    
-        ctx.restore();
-    }
-    
 }
-
