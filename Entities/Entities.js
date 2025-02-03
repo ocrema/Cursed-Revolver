@@ -195,6 +195,12 @@ export class Actor extends Entity {
         }
       }
     }
+    this.clearQueuedAttacks();
+  }
+  /**
+   * overwrite if you want addidional behaviors
+   */
+  clearQueuedAttacks() {
     this.recieved_attacks = []; // Clear the attack queue after processing
   }
 

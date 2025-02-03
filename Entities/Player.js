@@ -114,9 +114,13 @@ export class Player extends Actor {
     this.timeBetweenFootsteps = .4;
     this.timeSinceLastFootstep = .4;
 
+    this.isDashing = 0;
+    this.dashTime = .15;
+    this.dashSpeed = 1000;
+    this.storedDashSpeed = 0;
+    this.dashCooldown = 0;
   }
 
-  jump() { }
 
   update() {
 
@@ -213,65 +217,13 @@ export class Player extends Actor {
     }
   }
 
-  spells() {
-    // Player Attack Logic
-
-    for (let i = 0; i < this.spellCooldowns.length; i++) {
-      this.spellCooldowns[i] = Math.max(
-        this.spellCooldowns[i] - GAME_ENGINE.clockTick,
-        0
-      );
-      const key = (i + 1).toString();
-      if (GAME_ENGINE.keys[key]) {
-        GAME_ENGINE.keys[key] = false;
-        this.selectedSpell = i;
-        window.ASSET_MANAGER.playAsset("./assets/sfx/click1.ogg");
-      }
-    }
-
-    // cast spell
-
-    if (this.spellCooldowns[this.selectedSpell] <= 0 && GAME_ENGINE.keys["m1"]) {
-      this.spellCooldowns[this.selectedSpell] = this.maxSpellCooldown;
-      window.ASSET_MANAGER.playAsset("./assets/sfx/revolver_shot.ogg", 1);
-
-      if (this.selectedSpell === 0) {
-        const fireball = new Fireball();
-        fireball.x = this.x;
-        fireball.y = this.y;
-        fireball.dir = Util.getAngle(
-          {
-            x: this.x - GAME_ENGINE.camera.x,
-            y: this.y - GAME_ENGINE.camera.y
-          },
-          {
-            x: GAME_ENGINE.mouse.x,
-            y: GAME_ENGINE.mouse.y
-          }
-        );
-        GAME_ENGINE.addEntity(fireball);
-      }
-      else if (this.selectedSpell === 1) {
-        const chain_lightning = new ChainLightning(this, Util.getAngle(
-          {
-            x: this.x - GAME_ENGINE.camera.x,
-            y: this.y - GAME_ENGINE.camera.y
-          },
-          {
-            x: GAME_ENGINE.mouse.x,
-            y: GAME_ENGINE.mouse.y
-          }));
-        GAME_ENGINE.addEntity(chain_lightning);
-      }
-
-    }
-  }
-
+  
   movement() {
     this.y_velocity = Math.min(
       this.y_velocity + GAME_ENGINE.clockTick * 3000,
       10000
     );
+   
     if (this.x_velocity > 0) {
       this.x_velocity = Math.max(this.x_velocity - GAME_ENGINE.clockTick * (this.isGrounded == .2 ? 9000 : 1000), 0);
     }
@@ -279,9 +231,30 @@ export class Player extends Actor {
       this.x_velocity = Math.min(this.x_velocity + GAME_ENGINE.clockTick * (this.isGrounded == .2 ? 9000 : 1000), 0);
     }
 
-    this.isGrounded = Math.max(this.isGrounded - GAME_ENGINE.clockTick, 0);
+    if (this.isDashing > 0) {
 
-    if (GAME_ENGINE.keys[" "] && this.isGrounded > 0) {
+      this.y_velocity = 0;
+      this.x_velocity = this.storedDashSpeed;
+      this.isDashing -= GAME_ENGINE.clockTick;
+      
+    }
+    if (GAME_ENGINE.keys["a"] && !GAME_ENGINE.keys["d"] && GAME_ENGINE.keys['Shift'] && this.dashCooldown <= 0) {
+      this.storedDashSpeed = Math.min(this.x_velocity, this.dashSpeed * -1);
+      this.isDashing = this.dashTime;
+      this.dashCooldown = .5;
+      window.ASSET_MANAGER.playAsset("./assets/sfx/jump.ogg");
+    }
+    else if (GAME_ENGINE.keys["d"] && !GAME_ENGINE.keys["a"] && GAME_ENGINE.keys['Shift'] && this.dashCooldown <= 0) {
+      this.storedDashSpeed = Math.max(this.x_velocity, this.dashSpeed);
+      this.isDashing = this.dashTime;
+      this.dashCooldown = .5;
+      window.ASSET_MANAGER.playAsset("./assets/sfx/jump.ogg");
+    }
+
+    this.isGrounded = Math.max(this.isGrounded - GAME_ENGINE.clockTick, 0);
+    this.dashCooldown = Math.max(this.dashCooldown - GAME_ENGINE.clockTick, 0);
+
+    if (GAME_ENGINE.keys[" "] && this.isGrounded > 0 && this.isDashing <= 0) {
       this.isGrounded = 0;
       this.y_velocity = -1500; // Jumping velocity
       this.setAnimation(PLAYER_SPRITESHEET.JUMP.NAME);
@@ -292,12 +265,12 @@ export class Player extends Actor {
     // Movement logic
     
     let velFromKeys = 0
-    if (GAME_ENGINE.keys["a"]) {
+    if (GAME_ENGINE.keys["a"] || (this.isDashing > 0 && this.storedDashSpeed < 0)) {
       velFromKeys -= this.speed;
       this.isMoving = true;
       this.flip = true;
     }
-    if (GAME_ENGINE.keys["d"]) {
+    if (GAME_ENGINE.keys["d"] || (this.isDashing > 0 && this.storedDashSpeed > 0)) {
       velFromKeys += this.speed;
       this.isMoving = true;
       this.flip = false;
@@ -367,4 +340,59 @@ export class Player extends Actor {
       this.y_velocity = 0;
     }
   }
+
+  spells() {
+    // Player Attack Logic
+
+    for (let i = 0; i < this.spellCooldowns.length; i++) {
+      this.spellCooldowns[i] = Math.max(
+        this.spellCooldowns[i] - GAME_ENGINE.clockTick,
+        0
+      );
+      const key = (i + 1).toString();
+      if (GAME_ENGINE.keys[key]) {
+        GAME_ENGINE.keys[key] = false;
+        this.selectedSpell = i;
+        window.ASSET_MANAGER.playAsset("./assets/sfx/click1.ogg");
+      }
+    }
+
+    // cast spell
+
+    if (this.spellCooldowns[this.selectedSpell] <= 0 && GAME_ENGINE.keys["m1"]) {
+      this.spellCooldowns[this.selectedSpell] = this.maxSpellCooldown;
+      window.ASSET_MANAGER.playAsset("./assets/sfx/revolver_shot.ogg", 1);
+
+      if (this.selectedSpell === 0) {
+        const fireball = new Fireball();
+        fireball.x = this.x;
+        fireball.y = this.y;
+        fireball.dir = Util.getAngle(
+          {
+            x: this.x - GAME_ENGINE.camera.x,
+            y: this.y - GAME_ENGINE.camera.y
+          },
+          {
+            x: GAME_ENGINE.mouse.x,
+            y: GAME_ENGINE.mouse.y
+          }
+        );
+        GAME_ENGINE.addEntity(fireball);
+      }
+      else if (this.selectedSpell === 1) {
+        const chain_lightning = new ChainLightning(this, Util.getAngle(
+          {
+            x: this.x - GAME_ENGINE.camera.x,
+            y: this.y - GAME_ENGINE.camera.y
+          },
+          {
+            x: GAME_ENGINE.mouse.x,
+            y: GAME_ENGINE.mouse.y
+          }));
+        GAME_ENGINE.addEntity(chain_lightning);
+      }
+
+    }
+  }
+
 }
