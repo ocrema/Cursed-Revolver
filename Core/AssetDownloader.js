@@ -12,6 +12,9 @@ export class AssetDownloader {
     // Spells
     this.downloadSpellAssets();
 
+    // Effects
+    this.downloadEffectAssets();
+
     // Map
     this.downloadBackgroundAssets();
     this.downloadMapGroundAssets();
@@ -81,8 +84,16 @@ export class AssetDownloader {
 
   downloadDestructibleObjectAssets() {
     this.assetManager.queueDownload("./assets/objects/barrel.png");
+  }
+
+  // Effects
+
+  downloadEffectAssets() {
     this.assetManager.queueDownload(
       "./assets/effects/explosion/FireballExplosionEffect.png"
+    );
+    this.assetManager.queueDownload(
+      "./assets/effects/explosion/BarrelExplosionEffect.png"
     );
   }
 

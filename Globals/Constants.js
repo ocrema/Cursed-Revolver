@@ -150,4 +150,12 @@ export const EFFECTS_SPRITESHEET = {
     FRAME_COUNT: 8,
     FRAME_DURATION: 0.15,
   },
+  BARREL_EXPLOSION_SPRITESHEET: {
+    NAME: "BARRELEXPLOSION",
+    URL: "./assets/effects/explosion/BarrelExplosionEffect.png",
+    FRAME_WIDTH: 32,
+    FRAME_HEIGHT: 48,
+    FRAME_COUNT: 7,
+    FRAME_DURATION: 0.15,
+  },
 };
