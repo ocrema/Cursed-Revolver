@@ -142,8 +142,8 @@ export const SPELLS_SPRITESHEET = {
 // Effects Constants
 
 export const EFFECTS_SPRITESHEET = {
-  FIREBALL_SPRITESHEET: {
-    NAME: "BARRELEXPLOSION",
+  FIREBALL_EXPLOSION_SPRITESHEET: {
+    NAME: "FIREBALLEXPLOSION",
     URL: "./assets/effects/explosion/FireballExplosionEffect.png",
     FRAME_WIDTH: 48,
     FRAME_HEIGHT: 48,
