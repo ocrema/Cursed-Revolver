@@ -3,7 +3,7 @@ import { Collider } from "../Collider.js";
 import { GAME_ENGINE } from "../../main.js";
 import { EFFECTS_SPRITESHEET } from "../../Globals/Constants.js";
 
-export class ExplosionEffect extends Entity {
+export class BarrelExplosionEffect extends Entity {
   constructor(x, y, scale = 5) {
     super();
     this.isEffect = true;
@@ -16,41 +16,39 @@ export class ExplosionEffect extends Entity {
     // Explosion settings
     this.scale = scale;
     this.damage = 15;
-    this.knockback = 0;
+    this.knockback = 3000;
     this.duration = 0.5;
     this.elapsedTime = 0;
 
     // Load explosion animation
     this.addAnimation(
-      EFFECTS_SPRITESHEET.FIREBALL_EXPLOSION_SPRITESHEET.NAME,
+      EFFECTS_SPRITESHEET.BARREL_EXPLOSION_SPRITESHEET.NAME,
       this.assetManager.getAsset(
-        EFFECTS_SPRITESHEET.FIREBALL_EXPLOSION_SPRITESHEET.URL
+        EFFECTS_SPRITESHEET.BARREL_EXPLOSION_SPRITESHEET.URL
       ),
-      EFFECTS_SPRITESHEET.FIREBALL_EXPLOSION_SPRITESHEET.FRAME_WIDTH,
-      EFFECTS_SPRITESHEET.FIREBALL_EXPLOSION_SPRITESHEET.FRAME_HEIGHT,
-      EFFECTS_SPRITESHEET.FIREBALL_EXPLOSION_SPRITESHEET.FRAME_COUNT,
-      EFFECTS_SPRITESHEET.FIREBALL_EXPLOSION_SPRITESHEET.FRAME_DURATION
+      EFFECTS_SPRITESHEET.BARREL_EXPLOSION_SPRITESHEET.FRAME_WIDTH,
+      EFFECTS_SPRITESHEET.BARREL_EXPLOSION_SPRITESHEET.FRAME_HEIGHT,
+      EFFECTS_SPRITESHEET.BARREL_EXPLOSION_SPRITESHEET.FRAME_COUNT,
+      EFFECTS_SPRITESHEET.BARREL_EXPLOSION_SPRITESHEET.FRAME_DURATION
     );
 
     this.setAnimation(
-      EFFECTS_SPRITESHEET.FIREBALL_EXPLOSION_SPRITESHEET.NAME,
+      EFFECTS_SPRITESHEET.BARREL_EXPLOSION_SPRITESHEET.NAME,
       false
     );
 
-    // since we want some forgiveness with hitboxes we make the hitbox a little bit smaller than the visaul
-    // just here since we want more control over hitbox scaling
-    this.colliderScale = 0.7;
-
+    // Adjust collider to cover explosion area
+    this.colliderScale = 1.2;
     this.collider = new Collider(
-      EFFECTS_SPRITESHEET.FIREBALL_EXPLOSION_SPRITESHEET.FRAME_WIDTH *
+      EFFECTS_SPRITESHEET.BARREL_EXPLOSION_SPRITESHEET.FRAME_WIDTH *
         this.scale *
         this.colliderScale,
-      EFFECTS_SPRITESHEET.FIREBALL_EXPLOSION_SPRITESHEET.FRAME_HEIGHT *
+      EFFECTS_SPRITESHEET.BARREL_EXPLOSION_SPRITESHEET.FRAME_HEIGHT *
         this.scale *
         this.colliderScale
     );
 
-    // Trigger explosion effect
+    // Trigger explosion damage
     this.explode();
   }
 
@@ -67,6 +65,17 @@ export class ExplosionEffect extends Entity {
   explode() {
     // Play explosion sound
     window.ASSET_MANAGER.playAsset("./assets/sfx/explosion.wav");
+
+    for (let e of GAME_ENGINE.entities) {
+      if (e.isActor && this.colliding(e)) {
+        e.queueAttack({
+          damage: this.damage,
+          x: this.x,
+          y: this.y,
+          launchMagnitude: 0,
+        });
+      }
+    }
   }
 
   onAnimationComplete() {
