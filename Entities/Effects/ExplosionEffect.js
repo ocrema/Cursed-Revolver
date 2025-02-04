@@ -10,6 +10,7 @@ export class ExplosionEffect extends Entity {
     this.x = x;
     this.y = y;
     this.entityOrder = 3;
+    this.isAttack = true;
     this.assetManager = window.ASSET_MANAGER;
 
     // Explosion settings
