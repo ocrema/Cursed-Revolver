@@ -8,13 +8,13 @@ export class ExplosionEffect extends Entity {
     super();
     this.x = x;
     this.y = y;
-    this.entityOrder = 3; // Ensure explosion renders above most objects
+    this.entityOrder = 3;
     this.assetManager = window.ASSET_MANAGER;
 
     // Explosion settings
     this.scale = scale;
     this.damage = 15;
-    this.knockback = 2000;
+    this.knockback = 0;
     this.duration = 0.5;
     this.elapsedTime = 0;
 
@@ -27,12 +27,20 @@ export class ExplosionEffect extends Entity {
       EFFECTS_SPRITESHEET.FIREBALL_SPRITESHEET.FRAME_COUNT,
       EFFECTS_SPRITESHEET.FIREBALL_SPRITESHEET.FRAME_DURATION
     );
+
     this.setAnimation(EFFECTS_SPRITESHEET.FIREBALL_SPRITESHEET.NAME, false);
 
-    // Explosion hitbox (radius based on scale)
+    // since we want some forgiveness with hitboxes we make the hitbox a little bit smaller than the visaul
+    // just here since we want more control over hitbox scaling
+    this.colliderScale = 0.7;
+
     this.collider = new Collider(
-      EFFECTS_SPRITESHEET.FIREBALL_SPRITESHEET.FRAME_WIDTH * this.scale,
-      EFFECTS_SPRITESHEET.FIREBALL_SPRITESHEET.FRAME_HEIGHT * this.scale
+      EFFECTS_SPRITESHEET.FIREBALL_SPRITESHEET.FRAME_WIDTH *
+        this.scale *
+        this.colliderScale,
+      EFFECTS_SPRITESHEET.FIREBALL_SPRITESHEET.FRAME_HEIGHT *
+        this.scale *
+        this.colliderScale
     );
 
     // Trigger explosion effect
@@ -52,20 +60,6 @@ export class ExplosionEffect extends Entity {
   explode() {
     // Play explosion sound
     window.ASSET_MANAGER.playAsset("./assets/sfx/explosion.wav");
-
-    // Apply damage & knockback to all nearby actors
-    for (let e of GAME_ENGINE.entities) {
-      if (e.isActor && this.colliding(e)) {
-        const angle = Math.atan2(e.y - this.y, e.x - this.x);
-        e.queueAttack({
-          damage: this.damage,
-          x: this.x,
-          y: this.y,
-          launchMagnitude: this.knockback,
-          launchAngle: angle, // Knockback direction
-        });
-      }
-    }
   }
 
   onAnimationComplete() {
