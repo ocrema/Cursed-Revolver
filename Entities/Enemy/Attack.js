@@ -78,15 +78,15 @@ export class Jaw extends Entity {
     this.y = this.spider.y;
     this.collider = new Collider(100, 95);
     this.elapsedTime = 0;
-    this.attackDuration = 1;
+    this.attackDuration = 2;
     this.isAttack = true;
   }
 
   update() {
     this.elapsedTime += GAME_ENGINE.clockTick;
 
-    // remove after duration
-    if (this.elapsedTime > this.attackDuration || this.spider.removeFromWorld) {
+    // remove if spider is removed
+    if (this.spider.removeFromWorld) {
       this.removeFromWorld = true;
     }
 
@@ -104,6 +104,9 @@ export class Jaw extends Entity {
             y: this.y,
             launchMagnitude: 100,
           });
+          this.spider.attackCooldown = 0
+          this.spider.currentAnimation = "run";
+          this.spider.jaw = null;
           this.removeFromWorld = true;
         }
       }
