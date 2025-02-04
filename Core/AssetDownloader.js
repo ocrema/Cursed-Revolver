@@ -9,6 +9,9 @@ export class AssetDownloader {
     this.downloadEnemyAssets();
     this.downloadEnemyAttackAssets();
 
+    // Spells
+    this.downloadSpellAssets();
+
     // Map
     this.downloadBackgroundAssets();
     this.downloadMapGroundAssets();
@@ -72,9 +75,15 @@ export class AssetDownloader {
     this.assetManager.queueDownload("./assets/map/props/tree04.png");
   }
 
+  downloadSpellAssets() {
+    this.assetManager.queueDownload("./assets/spells/Fireball.png");
+  }
+
   downloadDestructibleObjectAssets() {
     this.assetManager.queueDownload("./assets/objects/barrel.png");
-    this.assetManager.queueDownload("./assets/effects/explosion/Sprites.png");
+    this.assetManager.queueDownload(
+      "./assets/effects/explosion/FireballExplosionEffect.png"
+    );
   }
 
   downloadSFXAssets() {

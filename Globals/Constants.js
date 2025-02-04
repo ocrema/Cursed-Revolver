@@ -126,12 +126,25 @@ export const DESTRUCTIBLE_OBJECTS_SPRITESHEET = {
   },
 };
 
+// Spells Constants
+
+export const SPELLS_SPRITESHEET = {
+  FIREBALL: {
+    NAME: "Fireball",
+    URL: "./assets/spells/Fireball.png",
+    FRAME_WIDTH: 64,
+    FRAME_HEIGHT: 32,
+    FRAME_COUNT: 5,
+    FRAME_DURATION: 0.15,
+  },
+};
+
 // Effects Constants
 
 export const EFFECTS_SPRITESHEET = {
   FIREBALL_SPRITESHEET: {
     NAME: "BARRELEXPLOSION",
-    URL: "./assets/effects/explosion/Sprites.png",
+    URL: "./assets/effects/explosion/FireballExplosionEffect.png",
     FRAME_WIDTH: 48,
     FRAME_HEIGHT: 48,
     FRAME_COUNT: 8,
