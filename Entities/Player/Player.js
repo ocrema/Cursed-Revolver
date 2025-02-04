@@ -6,6 +6,7 @@ import { ChainLightning } from "../Spells/ChainLightning.js";
 import { Collider } from "../Collider.js";
 import { GAME_ENGINE } from "../../main.js";
 import { PlayerAnimationLoader } from "./PlayerAnimationLoader.js";
+import { ExplosionEffect } from "../Effects/ExplosionEffect.js";
 
 export class Player extends Actor {
   constructor() {
@@ -228,7 +229,7 @@ export class Player extends Actor {
     this.x += (this.x_velocity + velFromKeys) * GAME_ENGINE.clockTick;
     let collisions = [];
     for (let e of GAME_ENGINE.entities) {
-      if (e.isPlayer || e.isAttack || e.isEnemy) continue;
+      if (e.isPlayer || e.isAttack || e.isEnemy || e.isEffect) continue;
       if (this.colliding(e)) {
         collisions.push(e);
       }
@@ -255,7 +256,7 @@ export class Player extends Actor {
     this.y += this.y_velocity * GAME_ENGINE.clockTick;
     collisions = [];
     for (let e of GAME_ENGINE.entities) {
-      if (e.isPlayer || e.isAttack || e.isEnemy) continue;
+      if (e.isPlayer || e.isAttack || e.isEnemy || e.isEffect) continue;
       if (this.colliding(e)) {
         collisions.push(e);
       }
