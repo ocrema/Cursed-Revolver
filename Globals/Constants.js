@@ -156,6 +156,6 @@ export const EFFECTS_SPRITESHEET = {
     FRAME_WIDTH: 32,
     FRAME_HEIGHT: 48,
     FRAME_COUNT: 7,
-    FRAME_DURATION: 0.15,
+    FRAME_DURATION: 0.2,
   },
 };
