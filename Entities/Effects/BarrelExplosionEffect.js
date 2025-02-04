@@ -37,8 +37,10 @@ export class BarrelExplosionEffect extends Entity {
       false
     );
 
-    // Adjust collider to cover explosion area
-    this.colliderScale = 1.2;
+    // since we want some forgiveness with hitboxes we make the hitbox a little bit smaller than the visaul
+    // just here since we want more control over hitbox scaling
+    this.colliderScale = 0.9
+
     this.collider = new Collider(
       EFFECTS_SPRITESHEET.BARREL_EXPLOSION_SPRITESHEET.FRAME_WIDTH *
         this.scale *
