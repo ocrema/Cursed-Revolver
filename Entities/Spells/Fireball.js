@@ -3,6 +3,7 @@ import { Entity } from "../Entities.js";
 import * as Util from "../../Utils/Util.js";
 import { GAME_ENGINE } from "../../main.js";
 import { Camera } from "../../Core/Camera.js";
+import { ExplosionEffect } from "../Effects/ExplosionEffect.js";
 
 export class Fireball extends Entity {
   constructor() {
@@ -24,7 +25,7 @@ export class Fireball extends Entity {
       this.experationTimer -= GAME_ENGINE.clockTick;
       if (this.experationTimer <= 0) this.removeFromWorld = true;
       this.camera = Camera.getInstance();
-      this.camera.triggerShake(25);
+      //this.camera.triggerShake(25);
       return;
     }
 
@@ -38,6 +39,9 @@ export class Fireball extends Entity {
         this.exploded = true;
         this.collider.width = 200;
         this.collider.height = 200;
+
+        // Spawn explosion effect at fireball's position
+        GAME_ENGINE.addEntity(new ExplosionEffect(this.x, this.y));
 
         for (let e2 of GAME_ENGINE.entities) {
           if (!e2.isActor) continue;
@@ -64,19 +68,19 @@ export class Fireball extends Entity {
   }
   draw(ctx) {
     ctx.fillStyle = "red";
-    if (this.exploded)
-      ctx.fillRect(
-        this.x - 100 - GAME_ENGINE.camera.x,
-        this.y - 100 - GAME_ENGINE.camera.y,
-        200,
-        200
-      );
-    else
+    if (!this.exploded) {
+      // ctx.fillRect(
+      //   this.x - 100 - GAME_ENGINE.camera.x,
+      //   this.y - 100 - GAME_ENGINE.camera.y,
+      //   200,
+      //   200
+      // );
       ctx.fillRect(
         this.x - 25 - GAME_ENGINE.camera.x,
         this.y - 25 - GAME_ENGINE.camera.y,
         50,
         50
       );
+    }
   }
 }

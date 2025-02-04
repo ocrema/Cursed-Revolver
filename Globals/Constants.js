@@ -117,3 +117,24 @@ export const MAP_TREES_AND_ROCKS = {
   TREE2_URL: "./assets/map/props/tree02.png",
   TREE3_URL: "./assets/map/props/tree03.png",
 };
+
+// Destructible Object Constants
+
+export const DESTRUCTIBLE_OBJECTS_SPRITESHEET = {
+  BARREL: {
+    URL: "./assets/objects/barrel.png",
+  },
+};
+
+// Effects Constants
+
+export const EFFECTS_SPRITESHEET = {
+  FIREBALL_SPRITESHEET: {
+    NAME: "BARRELEXPLOSION",
+    URL: "./assets/effects/explosion/Sprites.png",
+    FRAME_WIDTH: 48,
+    FRAME_HEIGHT: 48,
+    FRAME_COUNT: 8,
+    FRAME_DURATION: 0.1,
+  },
+};
