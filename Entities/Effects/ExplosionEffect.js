@@ -6,6 +6,7 @@ import { EFFECTS_SPRITESHEET } from "../../Globals/Constants.js";
 export class ExplosionEffect extends Entity {
   constructor(x, y, scale = 5) {
     super();
+    this.isEffect = true;
     this.x = x;
     this.y = y;
     this.entityOrder = 3;
