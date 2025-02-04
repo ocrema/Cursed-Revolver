@@ -5,6 +5,7 @@ import { Cactus, Spider } from "../Enemy/Enemy.js";
 import { Structure } from "./Structure.js";
 import { GAME_ENGINE } from "../../main.js";
 import { Platform } from "./Platform.js";
+import { ExplosionEffect} from "../Effects/ExplosionEffect.js";
 
 export class Map1 extends GameMap {
   load() {
@@ -25,5 +26,8 @@ export class Map1 extends GameMap {
     // Horizontal Platform
     GAME_ENGINE.addEntity(new Platform(-300, 20, 10, 1));
     GAME_ENGINE.addEntity(new Platform(600, -160, 10, 1));
+
+    // Destructible Objects
+    //GAME_ENGINE.addEntity(new Barrel(0, 300));
   }
 }

@@ -4,14 +4,22 @@ export class AssetDownloader {
   }
 
   downloadAll() {
+    // Entities
     this.downloadPlayerAssets();
     this.downloadEnemyAssets();
     this.downloadEnemyAttackAssets();
+
+    // Map
     this.downloadBackgroundAssets();
     this.downloadMapGroundAssets();
     this.downloadMapObjectAssets();
-    this.downloadPauseMenuButtons();
+    this.downloadDestructibleObjectAssets();
+
+    // UX
     this.downloadSFXAssets();
+
+    // HUD
+    this.downloadPauseMenuButtons();
     this.downloadHUDSpells();
     this.downloadHUDCowboyIcon();
     this.downloadHealthBarAssets();
@@ -64,6 +72,11 @@ export class AssetDownloader {
     this.assetManager.queueDownload("./assets/map/props/tree04.png");
   }
 
+  downloadDestructibleObjectAssets() {
+    this.assetManager.queueDownload("./assets/objects/barrel.png");
+    this.assetManager.queueDownload("./assets/effects/explosion/Sprites.png");
+  }
+
   downloadSFXAssets() {
     this.assetManager.queueDownload("./assets/sfx/click1.ogg");
     this.assetManager.queueDownload("./assets/sfx/click2.ogg");
@@ -88,6 +101,8 @@ export class AssetDownloader {
     this.assetManager.queueDownload("./assets/ui/menu/background_start2.png");
     this.assetManager.queueDownload("./assets/ui/menu/desert.jpg");
   }
+
+  // HUD Assets
 
   downloadHUDSpells() {
     this.assetManager.queueDownload("./assets/ui/spells/fireball.png");
