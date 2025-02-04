@@ -4,6 +4,7 @@ import { Player } from "../Player/Player.js";
 import { Thorn, Jaw } from "./Attack.js";
 import * as Util from "../../Utils/Util.js";
 import { Collider } from "../Collider.js";
+import { GAME_ENGINE } from "../../main.js";
 
 export class Cactus extends Actor {
   constructor(x, y) {
@@ -103,8 +104,8 @@ export class Spider extends Actor {
     );
 
     this.setAnimation("walk");
-    this.width = 240;
-    this.height = 120;
+    this.width = 150;
+    this.height = 90;
 
     // Health / Attack
     this.health = 100;
@@ -131,14 +132,11 @@ export class Spider extends Actor {
 
     // Flags
     this.isEnemy = true;
-    this.onGround = false;
-    this.onWall = false;
   }
 
   update() {
     this.attackCooldown += GAME_ENGINE.clockTick;
-    this.onGround = false;
-    this.onWall = false;
+
 
     // update target
     for (let entity of GAME_ENGINE.entities) {
@@ -151,13 +149,17 @@ export class Spider extends Actor {
           this.setAnimation("aggresive");
         }
       }
-    }
+    }  
+    console.log(this.velocity);
+    // update location
+    this.x += this.velocity.x * GAME_ENGINE.clockTick;
+    this.y += this.velocity.y * GAME_ENGINE.clockTick;
 
     // update velocity
     var distance = Util.getDistance(this, this.target);
     this.velocity = {
       x: ((this.target.x - this.x) / distance) * this.runSpeed,
-      y: 0,
+      y: this.gravity,
     };
 
     // apply changes to velocity
@@ -167,7 +169,7 @@ export class Spider extends Actor {
         entity.collider &&
         this.colliding(entity)
       ) {
-        //console.log("spider colligind");
+
         let thisTop = this.y - this.height / 2;
         let thisBottom = this.y + this.height / 2;
         let thisLeft = this.x - this.width / 2;
@@ -185,55 +187,31 @@ export class Spider extends Actor {
           thisBottom > eTop &&
           thisTop < eTop &&
           thisRight > eLeft &&
-          thisLeft < eRight; // true if top of spider and platform match
+          thisLeft < eRight; 
         let collideTop =
           thisTop > eBottom &&
           thisBottom < eBottom &&
           thisRight > eLeft &&
           thisLeft < eRight;
 
-        if (collideBottom) {
+        if (collideBottom && this.velocity.y > 0) { // if colliding ground and moving down
           this.y = entity.y - entity.collider.height / 2 - this.height / 2;
-          this.onGround = true;
+          this.velocity.y = 0;
         }
 
-        if (
-          !this.onGround &&
-          ((collideRight && this.velocity.x > 0) || // if colliding wall on right and moving right
-            (collideLeft && this.velocity.x < 0))
-        ) {
-          // if colliding wall on left and moving left
+        if (collideLeft || collideRight) {
+          this.target.y = eTop - this.height / 2;
+          this.velocity.y = ((this.target.y - this.y) / distance) * this.runSpeed * this.climbSpeed;
           this.velocity.x = 0;
-          this.target.y = eTop - this.height;
-          this.onWall = true;
+            if (collideRight && this.velocity.x > 0) { // if colliding with wall on right and moving right
+            this.x = entity.x - (entity.collider.width / 2) - (this.width / 2); 
+          } else if (collideLeft && this.velocity.x < 0) { // if colliding with wall on left and moving left
+            this.x = entity.x + (entity.collider.width / 2) + (this.width / 2);
+          }
         }
-
-        if (Math.abs(this.y - (entity.y - entity.collider.height / 2 - this.height / 2)) < 5) {
-          this.onGround = true;
-        }
-
       }
     }
 
-    // if spider is currently on a wall
-    if (this.onWall) {
-      // climb up wall
-      this.velocity.y = ((this.target.y - this.y) / distance) * this.runSpeed * this.climbSpeed;
-    }
-
-    // if spider is on the ground and trying to move down
-    else if (this.onGround) {
-      this.velocity.y = 0;
-    }
-
-    // if spider is floating and moving
-    else if (!this.onGround && this.velocity.x !== 0) {
-      this.velocity.y += this.gravity;
-    }
-    
-    // update location
-    this.x += this.velocity.x * GAME_ENGINE.clockTick;
-    this.y += this.velocity.y * GAME_ENGINE.clockTick;
 
     // flip image according to velocity
     if (this.velocity.x < 0) {
@@ -259,5 +237,9 @@ export class Spider extends Actor {
     if (this.health <= 0) {
       this.removeFromWorld = true;
     }
+  }
+
+  movement() {
+
   }
 }
