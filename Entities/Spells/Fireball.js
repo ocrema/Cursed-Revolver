@@ -69,6 +69,7 @@ export class Fireball extends Entity {
   draw(ctx) {
     ctx.fillStyle = "red";
     if (!this.exploded) {
+      // ares commented this out because he replaced explosion visual 
       // ctx.fillRect(
       //   this.x - 100 - GAME_ENGINE.camera.x,
       //   this.y - 100 - GAME_ENGINE.camera.y,
