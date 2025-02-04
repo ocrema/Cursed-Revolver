@@ -8,9 +8,14 @@ export class AssetDownloader {
     this.downloadEnemyAssets();
     this.downloadEnemyAttackAssets();
     this.downloadBackgroundAssets();
-    this.downloadMapAssets();
+    this.downloadMapGroundAssets();
     this.downloadMapObjectAssets();
+    this.downloadPauseMenuButtons();
     this.downloadSFXAssets();
+    this.downloadHUDSpells();
+    this.downloadHUDCowboyIcon();
+    this.downloadHealthBarAssets();
+    this.downloadRevolverCylinderSprites();
   }
 
   downloadPlayerAssets() {
@@ -39,7 +44,7 @@ export class AssetDownloader {
     this.assetManager.queueDownload("./assets/background/background1.png");
   }
 
-  downloadMapAssets() {
+  downloadMapGroundAssets() {
     this.assetManager.queueDownload("./assets/map/Tileset/tileMain2.png");
     this.assetManager.queueDownload("./assets/map/Tileset/tileMain5.png");
     this.assetManager.queueDownload("./assets/map/Tileset/platforms10.png");
@@ -70,5 +75,40 @@ export class AssetDownloader {
     this.assetManager.queueDownload("./assets/sfx/revolver_shot.ogg");
     this.assetManager.queueDownload("./assets/sfx/jump.ogg");
     this.assetManager.queueDownload("./assets/sfx/landing.wav");
+  }
+
+  downloadPauseMenuButtons() {
+    this.assetManager.queueDownload("./assets/ui/menu/buttonResume.png");
+    this.assetManager.queueDownload("./assets/ui/menu/buttonSettings.png");
+    this.assetManager.queueDownload("./assets/ui/menu/buttonQuit.png");
+    this.assetManager.queueDownload("./assets/ui/menu/buttonStart.png");
+    this.assetManager.queueDownload("./assets/ui/menu/menuBackground.png");
+    this.assetManager.queueDownload("./assets/ui/menu/background_start.png");
+    this.assetManager.queueDownload("./assets/ui/menu/background_start2.png");
+    this.assetManager.queueDownload("./assets/ui/menu/desert.jpg");
+  }
+
+  downloadHUDSpells() {
+    this.assetManager.queueDownload("./assets/ui/spells/fireball.gif");
+    this.assetManager.queueDownload("./assets/ui/spells/lightning.gif");
+    this.assetManager.queueDownload("./assets/ui/spells/water.gif");
+    this.assetManager.queueDownload("./assets/ui/spells/icicle.gif");
+    this.assetManager.queueDownload("./assets/ui/spells/vine.gif");
+    this.assetManager.queueDownload("./assets/ui/spells/void.gif");
+  }
+
+  downloadHUDCowboyIcon() {
+    this.assetManager.queueDownload("./assets/ui/cowboy.png");
+  }
+
+  downloadHealthBarAssets() {
+    this.assetManager.queueDownload("./assets/ui/cowboy.png");
+    this.assetManager.queueDownload("./assets/ui/healthbar.png");
+  }
+
+  downloadRevolverCylinderSprites() {
+    for (let i = 1; i <= 10; i++) {
+      this.assetManager.queueDownload(`./assets/ui/revolver/cylinder${i}.png`);
+    }
   }
 }

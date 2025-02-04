@@ -1,10 +1,11 @@
-import { Actor } from "./Entities.js";
-import { PLAYER_COLLIDER, PLAYER_SPRITESHEET } from "../Globals/Constants.js";
-import * as Util from "../Utils/Util.js";
-import { Fireball, ChainLightning } from "./Spells.js";
-import { Collider } from "./Collider.js";
-import { GAME_ENGINE } from "../main.js";
-import { Camera } from "../Core/Camera.js";
+import { Actor } from "../Entities.js";
+import { PLAYER_SPRITESHEET } from "../../Globals/Constants.js";
+import * as Util from "../../Utils/Util.js";
+import { Fireball } from "../Spells/Fireball.js";
+import { ChainLightning } from "../Spells/ChainLightning.js";
+import { Collider } from "../Collider.js";
+import { GAME_ENGINE } from "../../main.js";
+import { PlayerAnimationLoader } from "./PlayerAnimationLoader.js";
 
 export class Player extends Actor {
   constructor() {
@@ -20,78 +21,10 @@ export class Player extends Actor {
     // switches between attack animations for the player
     this.attackState = 1;
 
-    // Add animations for the player
-    this.addAnimation(
-      PLAYER_SPRITESHEET.IDLE.NAME, // Name of the animation
-      this.assetManager.getAsset(PLAYER_SPRITESHEET.IDLE.URL), // URL for Idle animation
-      PLAYER_SPRITESHEET.IDLE.FRAME_WIDTH, // Frame width
-      PLAYER_SPRITESHEET.IDLE.FRAME_HEIGHT, // Frame height
-      PLAYER_SPRITESHEET.IDLE.FRAME_COUNT, // Frame count
-      PLAYER_SPRITESHEET.IDLE.FRAME_DURATION // Frame duration (slower for idle)
-    );
+    // Adds all player animations
+    this.playerAnimationLoader = new PlayerAnimationLoader(this);
 
-    this.addAnimation(
-      PLAYER_SPRITESHEET.RUN.NAME, // Name of the animation
-      this.assetManager.getAsset(PLAYER_SPRITESHEET.RUN.URL), // URL for Run animation
-      PLAYER_SPRITESHEET.RUN.FRAME_WIDTH, // Frame width
-      PLAYER_SPRITESHEET.RUN.FRAME_HEIGHT, // Frame height
-      PLAYER_SPRITESHEET.RUN.FRAME_COUNT, // Frame count
-      PLAYER_SPRITESHEET.RUN.FRAME_DURATION // Frame duration (faster for running)
-    );
-
-    this.addAnimation(
-      PLAYER_SPRITESHEET.ATTACK1.NAME, // Name of the animation
-      this.assetManager.getAsset(PLAYER_SPRITESHEET.ATTACK1.URL), // URL for Attack 1 animation
-      PLAYER_SPRITESHEET.ATTACK1.FRAME_WIDTH, // Frame width
-      PLAYER_SPRITESHEET.ATTACK1.FRAME_HEIGHT, // Frame height
-      PLAYER_SPRITESHEET.ATTACK1.FRAME_COUNT, // Frame count
-      PLAYER_SPRITESHEET.ATTACK1.FRAME_DURATION // Frame duration (faster for attacking)
-    );
-
-    this.addAnimation(
-      PLAYER_SPRITESHEET.ATTACK2.NAME, // Name of the animation
-      this.assetManager.getAsset(PLAYER_SPRITESHEET.ATTACK2.URL), // URL for Attack 2 animation
-      PLAYER_SPRITESHEET.ATTACK2.FRAME_WIDTH, // Frame width
-      PLAYER_SPRITESHEET.ATTACK2.FRAME_HEIGHT, // Frame height
-      PLAYER_SPRITESHEET.ATTACK2.FRAME_COUNT, // Frame count
-      PLAYER_SPRITESHEET.ATTACK2.FRAME_DURATION // Frame duration (faster for attacking)
-    );
-
-    this.addAnimation(
-      PLAYER_SPRITESHEET.JUMP.NAME, // Name of the animation
-      this.assetManager.getAsset(PLAYER_SPRITESHEET.JUMP.URL), // URL for Jump animation
-      PLAYER_SPRITESHEET.JUMP.FRAME_WIDTH, // Frame width
-      PLAYER_SPRITESHEET.JUMP.FRAME_HEIGHT, // Frame height
-      PLAYER_SPRITESHEET.JUMP.FRAME_COUNT, // Frame count
-      PLAYER_SPRITESHEET.JUMP.FRAME_DURATION // Frame duration (faster for jumping)
-    );
-
-    this.addAnimation(
-      PLAYER_SPRITESHEET.FALL.NAME, // Name of the animation
-      this.assetManager.getAsset(PLAYER_SPRITESHEET.FALL.URL),
-      PLAYER_SPRITESHEET.FALL.FRAME_WIDTH,
-      PLAYER_SPRITESHEET.FALL.FRAME_HEIGHT,
-      PLAYER_SPRITESHEET.FALL.FRAME_COUNT,
-      PLAYER_SPRITESHEET.FALL.FRAME_DURATION
-    );
-
-    this.addAnimation(
-      PLAYER_SPRITESHEET.HIT.NAME, // Name of the animation
-      this.assetManager.getAsset(PLAYER_SPRITESHEET.HIT.URL), // URL for Hit animation
-      PLAYER_SPRITESHEET.HIT.FRAME_WIDTH, // Frame width
-      PLAYER_SPRITESHEET.HIT.FRAME_HEIGHT, // Frame height
-      PLAYER_SPRITESHEET.HIT.FRAME_COUNT, // Frame count
-      PLAYER_SPRITESHEET.HIT.FRAME_DURATION // Frame duration (for hit)
-    );
-
-    this.addAnimation(
-      PLAYER_SPRITESHEET.DEAD.NAME, // Name of the animation
-      this.assetManager.getAsset(PLAYER_SPRITESHEET.DEAD.URL), // URL for Death animation
-      PLAYER_SPRITESHEET.DEAD.FRAME_WIDTH, // Frame width
-      PLAYER_SPRITESHEET.DEAD.FRAME_HEIGHT, // Frame height
-      PLAYER_SPRITESHEET.DEAD.FRAME_COUNT, // Frame count
-      PLAYER_SPRITESHEET.DEAD.FRAME_DURATION // Frame duration (for death)
-    );
+    this.playerAnimationLoader.loadPlayerAnimations();
 
     this.speed = 500; // Movement speed
     this.isMoving = false; // Whether the player is moving
@@ -103,7 +36,6 @@ export class Player extends Actor {
     this.setAnimation(PLAYER_SPRITESHEET.IDLE.NAME);
 
     this.collider = new Collider(60, 100);
-    this.health = 100;
 
     this.x_velocity = 0;
     this.y_velocity = 0;
@@ -113,19 +45,17 @@ export class Player extends Actor {
     this.spellCooldowns = [0, 0, 0, 0, 0, 0];
     this.maxSpellCooldown = 1;
 
-    this.timeBetweenFootsteps = .4;
-    this.timeSinceLastFootstep = .4;
+    this.timeBetweenFootsteps = 0.4;
+    this.timeSinceLastFootstep = 0.4;
 
     this.isDashing = 0;
-    this.dashTime = .15;
+    this.dashTime = 0.15;
     this.dashSpeed = 1000;
     this.storedDashSpeed = 0;
     this.dashCooldown = 0;
   }
 
-
   update() {
-
     this.isMoving = false;
     this.isJumping = false;
 
@@ -141,8 +71,6 @@ export class Player extends Actor {
     this.movement();
 
     this.spells();
-
-
 
     // footstep sfx
     if (this.isMoving && this.isGrounded) {
@@ -189,14 +117,12 @@ export class Player extends Actor {
       );
 
       this.setAnimation(PLAYER_SPRITESHEET.HIT.NAME);
-      //this.health -= this.recieved_attacks[0].damage;
 
       this.hitTimer = 0.3;
     }
 
     this.recieveAttacks();
     this.recieveEffects();
-
 
     if (this.health <= 0) {
       this.isDead = true;
@@ -219,7 +145,6 @@ export class Player extends Actor {
     }
   }
 
-  
   movement() {
 
     //gravity
@@ -230,10 +155,17 @@ export class Player extends Actor {
    
     // air resistance / friction basically
     if (this.x_velocity > 0) {
-      this.x_velocity = Math.max(this.x_velocity - GAME_ENGINE.clockTick * (this.isGrounded == .2 ? 9000 : 1000), 0);
-    }
-    else {
-      this.x_velocity = Math.min(this.x_velocity + GAME_ENGINE.clockTick * (this.isGrounded == .2 ? 9000 : 1000), 0);
+      this.x_velocity = Math.max(
+        this.x_velocity -
+          GAME_ENGINE.clockTick * (this.isGrounded == 0.2 ? 9000 : 1000),
+        0
+      );
+    } else {
+      this.x_velocity = Math.min(
+        this.x_velocity +
+          GAME_ENGINE.clockTick * (this.isGrounded == 0.2 ? 9000 : 1000),
+        0
+      );
     }
 
     if (this.isDashing > 0) {
@@ -241,18 +173,25 @@ export class Player extends Actor {
       this.x_velocity = this.storedDashSpeed;
       this.isDashing -= GAME_ENGINE.clockTick;
     }
-
-    // start dashing
-    if (GAME_ENGINE.keys["a"] && !GAME_ENGINE.keys["d"] && GAME_ENGINE.keys['Shift'] && this.dashCooldown <= 0) {
+    if (
+      GAME_ENGINE.keys["a"] &&
+      !GAME_ENGINE.keys["d"] &&
+      GAME_ENGINE.keys["Shift"] &&
+      this.dashCooldown <= 0
+    ) {
       this.storedDashSpeed = Math.min(this.x_velocity, this.dashSpeed * -1);
       this.isDashing = this.dashTime;
-      this.dashCooldown = .5;
+      this.dashCooldown = 0.5;
       window.ASSET_MANAGER.playAsset("./assets/sfx/jump.ogg");
-    }
-    else if (GAME_ENGINE.keys["d"] && !GAME_ENGINE.keys["a"] && GAME_ENGINE.keys['Shift'] && this.dashCooldown <= 0) {
+    } else if (
+      GAME_ENGINE.keys["d"] &&
+      !GAME_ENGINE.keys["a"] &&
+      GAME_ENGINE.keys["Shift"] &&
+      this.dashCooldown <= 0
+    ) {
       this.storedDashSpeed = Math.max(this.x_velocity, this.dashSpeed);
       this.isDashing = this.dashTime;
-      this.dashCooldown = .5;
+      this.dashCooldown = 0.5;
       window.ASSET_MANAGER.playAsset("./assets/sfx/jump.ogg");
     }
 
@@ -269,15 +208,20 @@ export class Player extends Actor {
     }
 
     // Movement logic
-    
-    // get velocity added from left/right keys (this is not included in the actual velocity so that the movement is more responsive)
-    let velFromKeys = 0
-    if (GAME_ENGINE.keys["a"] || (this.isDashing > 0 && this.storedDashSpeed < 0)) {
+
+    let velFromKeys = 0;
+    if (
+      GAME_ENGINE.keys["a"] ||
+      (this.isDashing > 0 && this.storedDashSpeed < 0)
+    ) {
       velFromKeys -= this.speed;
       this.isMoving = true;
       this.flip = true;
     }
-    if (GAME_ENGINE.keys["d"] || (this.isDashing > 0 && this.storedDashSpeed > 0)) {
+    if (
+      GAME_ENGINE.keys["d"] ||
+      (this.isDashing > 0 && this.storedDashSpeed > 0)
+    ) {
       velFromKeys += this.speed;
       this.isMoving = true;
       this.flip = false;
@@ -399,21 +343,22 @@ export class Player extends Actor {
           )
         );
         GAME_ENGINE.addEntity(chain_lightning);
-      }
-      else if (this.selectedSpell === 1) {
-        const chain_lightning = new ChainLightning(this, Util.getAngle(
-          {
-            x: this.x - GAME_ENGINE.camera.x,
-            y: this.y - GAME_ENGINE.camera.y
-          },
-          {
-            x: GAME_ENGINE.mouse.x,
-            y: GAME_ENGINE.mouse.y
-          }));
+      } else if (this.selectedSpell === 1) {
+        const chain_lightning = new ChainLightning(
+          this,
+          Util.getAngle(
+            {
+              x: this.x - GAME_ENGINE.camera.x,
+              y: this.y - GAME_ENGINE.camera.y,
+            },
+            {
+              x: GAME_ENGINE.mouse.x,
+              y: GAME_ENGINE.mouse.y,
+            }
+          )
+        );
         GAME_ENGINE.addEntity(chain_lightning);
       }
-
     }
   }
-
 }

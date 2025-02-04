@@ -1,6 +1,6 @@
-import { Entity } from "./Entities.js";
-import { Collider } from "./Collider.js";
-import { GROUND_SPRITESHEET } from "../Globals/Constants.js";
+import { Entity } from "../Entities.js";
+import { Collider } from "../Collider.js";
+import { GROUND_SPRITESHEET } from "../../Globals/Constants.js";
 
 /**
  * Represents a platform with separate top and base layers.
