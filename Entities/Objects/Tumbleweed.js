@@ -17,7 +17,7 @@ export class Tumbleweed extends Entity {
     this.rotation = 0; // Rotation angle
     this.rotationSpeed = 0.1; // Speed of rolling rotation
     this.scale = 0.35; // Scale the sprite
-    this.isEnemy = true; 
+    this.isDestructibleObject = true;
     this.isBurning = false; // Track if burning effect is active
 
     // Gravity & Bouncing
