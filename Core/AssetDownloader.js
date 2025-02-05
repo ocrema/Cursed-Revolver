@@ -81,8 +81,11 @@ export class AssetDownloader {
     this.assetManager.queueDownload("./assets/spells/Fireball.png");
   }
 
+  // Objects
+
   downloadDestructibleObjectAssets() {
     this.assetManager.queueDownload("./assets/objects/barrel.png");
+    this.assetManager.queueDownload("./assets/objects/tumbleweed.png");
   }
 
   // Effects

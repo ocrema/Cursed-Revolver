@@ -22,6 +22,7 @@ export class Platform extends Entity {
     this.cols = cols; // Number of tiles horizontally
     this.rows = rows; // Number of tiles vertically
     this.tileSize = 64; // Each tile will be scaled to 64x64
+    this.isGround = true;
 
     // Fix Collider to Match Drawn Tile Size
     this.collider = new Collider(
