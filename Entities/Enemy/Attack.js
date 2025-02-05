@@ -76,7 +76,10 @@ export class Jaw extends Entity {
 
     this.x = this.spider.x;
     this.y = this.spider.y;
-    this.collider = new Collider(100, 95);
+
+    // 0 is left, 1 is right
+    this.facing = this.spider.flip;
+    this.collider = new Collider(20, 95);
     this.elapsedTime = 0;
     this.attackDuration = 2;
     this.isAttack = true;
@@ -84,6 +87,7 @@ export class Jaw extends Entity {
 
   update() {
     this.elapsedTime += GAME_ENGINE.clockTick;
+    this.facing = this.spider.flip;
 
     // remove if spider is removed
     if (this.spider.removeFromWorld) {
@@ -91,7 +95,11 @@ export class Jaw extends Entity {
     }
 
     // update location
-    this.x = this.spider.x;
+    if (this.facing === 0) { // if facing right
+      this.x = this.spider.x - (this.spider.width / 2);
+    } else {
+      this.x = this.spider.x + (this.spider.width / 2)
+    }
     this.y = this.spider.y;
 
     for (let entity of GAME_ENGINE.entities) {
