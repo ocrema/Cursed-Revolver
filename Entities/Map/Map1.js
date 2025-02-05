@@ -13,7 +13,7 @@ export class Map1 extends GameMap {
     GAME_ENGINE.addEntity(new Player());
     GAME_ENGINE.addEntity(new Background());
 
-    // **Enemies** 
+    // Enemies
     GAME_ENGINE.addEntity(new Cactus(500, 80));
     GAME_ENGINE.addEntity(new Cactus(1000, 80));
     GAME_ENGINE.addEntity(new Spider(800, 70));
@@ -21,16 +21,16 @@ export class Map1 extends GameMap {
     GAME_ENGINE.addEntity(new Cactus(-450, 80)); 
 
 
-    // **Main Ground**
+    // Main Ground
     GAME_ENGINE.addEntity(new Platform(0, 500, 100, 10));
 
-    // **Platforms Under Barrels (Now Properly 30px Below Barrels)**
-    GAME_ENGINE.addEntity(new Platform(-600, -200, 7, 1)); // Platform under barrel at -600, -230
-    GAME_ENGINE.addEntity(new Platform(1000, -270, 7, 1)); // Platform under barrel at 1000, -300
-    GAME_ENGINE.addEntity(new Platform(200, -310, 7, 1)); // Platform under barrel at 200, -340
-    GAME_ENGINE.addEntity(new Platform(800, -430, 7, 1)); // Platform under barrel at 800, -460
-    GAME_ENGINE.addEntity(new Platform(-1000, -120, 7, 1)); // Platform under barrel at -1000, -150
-    GAME_ENGINE.addEntity(new Platform(-400, -420, 7, 1)); // Platform under barrel at -400, -450
+    // Platforms Under Barrels
+    GAME_ENGINE.addEntity(new Platform(-600, -200, 7, 1)); 
+    GAME_ENGINE.addEntity(new Platform(1000, -270, 7, 1)); 
+    GAME_ENGINE.addEntity(new Platform(200, -310, 7, 1)); 
+    GAME_ENGINE.addEntity(new Platform(800, -430, 7, 1)); 
+    GAME_ENGINE.addEntity(new Platform(-1000, -120, 7, 1)); 
+    GAME_ENGINE.addEntity(new Platform(-400, -420, 7, 1)); 
 
     // **Destructible Objects (Barrels)**
     GAME_ENGINE.addEntity(new Barrel(-200, 120));
@@ -42,7 +42,7 @@ export class Map1 extends GameMap {
     GAME_ENGINE.addEntity(new Barrel(-1000, -180));
     GAME_ENGINE.addEntity(new Barrel(-400, -480));
 
-    // **Tumbleweeds Rolling in Fun Places**
+    // Tumbleweeds
     GAME_ENGINE.addEntity(new Tumbleweed(-500, -250, "right"));
     GAME_ENGINE.addEntity(new Tumbleweed(500, -250, "left"));
     GAME_ENGINE.addEntity(new Tumbleweed(100, -400, "right")); // Bouncing off a platform

@@ -57,7 +57,7 @@ export class BurningEffect extends Entity {
   spreadFire() {
     for (let e of GAME_ENGINE.entities) {
       if (
-        e.isEnemy &&
+        e.isEnemy && // Spreads only to enemy 
         e !== this.parent && // Don't spread to the parent itself
         e.collider && // Must have a collider
         !e.isBurning && // Must not already be burning
