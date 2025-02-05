@@ -6,7 +6,6 @@ import { ChainLightning } from "../Spells/ChainLightning.js";
 import { Collider } from "../Collider.js";
 import { GAME_ENGINE } from "../../main.js";
 import { PlayerAnimationLoader } from "./PlayerAnimationLoader.js";
-import { ExplosionEffect } from "../Effects/ExplosionEffect.js";
 
 export class Player extends Actor {
   constructor() {
