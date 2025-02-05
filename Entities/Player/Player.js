@@ -12,7 +12,7 @@ export class Player extends Actor {
     super();
     // Assigns asset manager from window asset manager singleton
     this.assetManager = window.ASSET_MANAGER;
-    this.scale = 1.5;
+    this.scale = 1.7;
     this.x = 0;
     this.y = 0;
 
@@ -36,7 +36,7 @@ export class Player extends Actor {
     // Start with the idle animation
     this.setAnimation(PLAYER_SPRITESHEET.IDLE.NAME);
 
-    this.collider = new Collider(60, 100);
+    this.collider = new Collider(70, 110);
 
     this.x_velocity = 0;
     this.y_velocity = 0;
