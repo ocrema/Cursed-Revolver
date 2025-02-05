@@ -124,6 +124,14 @@ export const DESTRUCTIBLE_OBJECTS_SPRITESHEET = {
   BARREL: {
     URL: "./assets/objects/barrel.png",
   },
+  TUMBLEWEED: {
+    NAME: "TUMBLEWEED",
+    URL: "./assets/objects/tumbleweed.png",
+    FRAME_WIDTH: 256,
+    FRAME_HEIGHT: 256,
+    FRAME_COUNT: 4,
+    FRAME_DURATION: 0.1,
+  },
 };
 
 // Spells Constants
