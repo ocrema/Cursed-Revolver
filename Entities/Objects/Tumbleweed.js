@@ -1,15 +1,11 @@
 import { Entity } from "../Entities.js";
 import { Collider } from "../Collider.js";
 import { GAME_ENGINE } from "../../main.js";
+import { BurningEffect } from "../Effects/BurningEffect.js";
 import { DESTRUCTIBLE_OBJECTS_SPRITESHEET } from "../../Globals/Constants.js";
+import { Fireball } from "../Spells/Fireball.js";
 
 export class Tumbleweed extends Entity {
-  /**
-   * Creates a Tumbleweed entity that moves in a given direction.
-   * @param {number} x - Initial x position.
-   * @param {number} y - Initial y position.
-   * @param {string} direction - "left" or "right".
-   */
   constructor(x, y, direction = "right") {
     super();
     this.x = x;
@@ -22,14 +18,15 @@ export class Tumbleweed extends Entity {
     this.rotationSpeed = 0.1; // Speed of rolling rotation
     this.scale = 0.35; // Scale the sprite
     this.isTumbleweed = true;
+    this.isBurning = false; // Track if burning effect is active
 
     // Gravity & Bouncing
     this.y_velocity = 0; // Vertical speed
     this.gravity = 1000; // Gravity acceleration
-    this.bounceFactor = 0.5; // Bounce energy retention (reduced over time)
-    this.minBounce = 200; // Minimum bounce height
-    this.maxBounce = 400; // Maximum bounce height
-    this.bounceDecay = 0.8; // Reduces bounce height after each bounce
+    this.bounceFactor = 0.5;
+    this.minBounce = 200;
+    this.maxBounce = 400;
+    this.bounceDecay = 0.8;
 
     // Load tumbleweed animation
     this.addAnimation(
@@ -57,47 +54,37 @@ export class Tumbleweed extends Entity {
   }
 
   update() {
-    // Apply gravity
     this.y_velocity += this.gravity * GAME_ENGINE.clockTick;
     this.y += this.y_velocity * GAME_ENGINE.clockTick;
 
-    // Apply horizontal movement
     if (this.direction === "right") {
       this.x += this.speed * GAME_ENGINE.clockTick;
     } else {
       this.x -= this.speed * GAME_ENGINE.clockTick;
     }
 
-    // **Rotation Effect**
     this.rotation += (this.speed * GAME_ENGINE.clockTick) / 50;
 
-    // **Ground Collision Check**
     for (let e of GAME_ENGINE.entities) {
       if (e.isGround && this.colliding(e)) {
         this.bounceOffGround(e);
-        break; // Stop checking once ground is found
+        break;
       }
     }
 
-    // Check for fireball collision
     for (let e of GAME_ENGINE.entities) {
-      if (e.isAttack && this.colliding(e)) {
+      // Checks if fireball explosion was the collision temporary check - ares
+      if (e.isFireballEffect && this.colliding(e)) {
         this.onFireballHit(e);
-        e.removeFromWorld = true; // Remove fireball after impact
+        e.removeFromWorld = true;
       }
     }
 
     this.updateAnimation(GAME_ENGINE.clockTick);
   }
 
-  /**
-   * Handles bouncing when colliding with ground.
-   */
   bounceOffGround(ground) {
-    // Adjust Y position to sit correctly on the ground
     this.y = ground.y - ground.collider.height / 2 - this.collider.height / 2;
-
-    // Generate a **randomized bounce height** within the min/max range
     this.y_velocity = -(
       Math.random() * (this.maxBounce - this.minBounce) +
       this.minBounce
@@ -105,11 +92,16 @@ export class Tumbleweed extends Entity {
   }
 
   /**
-   * Placeholder logic for when a fireball hits the tumbleweed.
+   * Handles when the tumbleweed is hit by a fireball.
    */
-  onFireballHit(fireball) {
-    console.log("🔥 Tumbleweed hit by fireball! Placeholder logic here.");
-    // TODO: Implement burning/explosion effect
+  onFireballHit() {
+    if (this.isBurning) return; // Prevent multiple burns
+
+    console.log("🔥 Tumbleweed is now burning!");
+    this.isBurning = true;
+
+    // 60 as y offset to center burning effect
+    GAME_ENGINE.addEntity(new BurningEffect(this, 0, -60));
   }
 
   draw(ctx) {
@@ -118,10 +110,9 @@ export class Tumbleweed extends Entity {
 
     ctx.save();
     ctx.translate(this.x - GAME_ENGINE.camera.x, this.y - GAME_ENGINE.camera.y);
-    ctx.rotate(this.rotation); // Apply rotation
+    ctx.rotate(this.rotation);
     ctx.scale(this.scale, this.scale);
 
-    // Draw sprite with rolling effect
     ctx.drawImage(
       animation.spritesheet,
       this.currentFrame * animation.frameWidth,

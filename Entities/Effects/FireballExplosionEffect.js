@@ -3,7 +3,7 @@ import { Collider } from "../Collider.js";
 import { GAME_ENGINE } from "../../main.js";
 import { EFFECTS_SPRITESHEET } from "../../Globals/Constants.js";
 
-export class ExplosionEffect extends Entity {
+export class FireballExplosionEffect extends Entity {
   constructor(x, y, scale = 5) {
     super();
     this.isEffect = true;
@@ -11,6 +11,7 @@ export class ExplosionEffect extends Entity {
     this.y = y;
     this.entityOrder = 3;
     this.isAttack = true;
+    this.isFireballEffect = true;
     this.assetManager = window.ASSET_MANAGER;
 
     // Explosion settings

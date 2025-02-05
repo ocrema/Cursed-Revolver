@@ -3,7 +3,7 @@ import { Entity } from "../Entities.js";
 import * as Util from "../../Utils/Util.js";
 import { GAME_ENGINE } from "../../main.js";
 import { Camera } from "../../Core/Camera.js";
-import { ExplosionEffect } from "../Effects/ExplosionEffect.js";
+import { FireballExplosionEffect } from "../Effects/FireballExplosionEffect.js";
 import {
   EFFECTS_SPRITESHEET,
   SPELLS_SPRITESHEET,
@@ -76,7 +76,7 @@ export class Fireball extends Entity {
     this.speed = 0;
 
     // Spawn explosion effect
-    GAME_ENGINE.addEntity(new ExplosionEffect(this.x, this.y));
+    GAME_ENGINE.addEntity(new FireballExplosionEffect(this.x, this.y));
 
     // Apply Damage / Effects
     for (let e2 of GAME_ENGINE.entities) {

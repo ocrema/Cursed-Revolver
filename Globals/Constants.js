@@ -166,4 +166,12 @@ export const EFFECTS_SPRITESHEET = {
     FRAME_COUNT: 7,
     FRAME_DURATION: 0.2,
   },
+  BURNING_EFFECT: {
+    NAME: "BURNING",
+    URL: "./assets/effects/burning/BurningEffect.png",
+    FRAME_WIDTH: 24,
+    FRAME_HEIGHT: 32,
+    FRAME_COUNT: 8,
+    FRAME_DURATION: 0.1,
+  },
 };

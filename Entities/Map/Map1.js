@@ -5,7 +5,6 @@ import { Cactus, Spider } from "../Enemy/Enemy.js";
 import { Structure } from "./Structure.js";
 import { GAME_ENGINE } from "../../main.js";
 import { Platform } from "./Platform.js";
-import { ExplosionEffect } from "../Effects/ExplosionEffect.js";
 import { Barrel } from "../Objects/Barrel.js";
 import { Tumbleweed } from "../Objects/Tumbleweed.js";
 
