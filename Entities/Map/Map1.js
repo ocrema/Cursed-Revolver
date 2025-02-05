@@ -33,6 +33,6 @@ export class Map1 extends GameMap {
     GAME_ENGINE.addEntity(new Barrel(1000, 0));
     GAME_ENGINE.addEntity(new Barrel(0, -40));
 
-    GAME_ENGINE.addEntity(new Tumbleweed(0, 0));
+    GAME_ENGINE.addEntity(new Tumbleweed(100, 30, "right"));
   }
 }
