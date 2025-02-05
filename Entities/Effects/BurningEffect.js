@@ -24,6 +24,10 @@ export class BurningEffect extends Entity {
       this.updateVisualScale();
     }
 
+    // Display on parents position
+    this.x = this.parent.x + this.xOffset;
+    this.y = this.parent.y + this.yOffset;
+
     // Load burning animation
     this.addAnimation(
       EFFECTS_SPRITESHEET.BURNING_EFFECT.NAME,
@@ -118,5 +122,24 @@ export class BurningEffect extends Entity {
       frameHeight // Destination Height
     );
     ctx.restore();
+  }
+
+  /**
+   * Logic for spreading fires to other entities.
+   * Currently only considers enemies - ares
+   */
+  spreadFire() {
+    for (let e of GAME_ENGINE.entities) {
+      if (
+        e.isEnemy &&
+        e !== this.parent && // Don't spread to the parent itself
+        e.collider && // Must have a collider
+        !e.isBurning && // Must not already be burning
+        this.parent.colliding(e) // Use parent's collider for fire spread
+      ) {
+        e.isBurning = true;
+        GAME_ENGINE.addEntity(new BurningEffect(e));
+      }
+    }
   }
 }
