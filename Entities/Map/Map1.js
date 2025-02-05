@@ -7,6 +7,7 @@ import { GAME_ENGINE } from "../../main.js";
 import { Platform } from "./Platform.js";
 import { ExplosionEffect } from "../Effects/ExplosionEffect.js";
 import { Barrel } from "../Objects/Barrel.js";
+import { Tumbleweed } from "../Objects/Tumbleweed.js";
 
 export class Map1 extends GameMap {
   load() {
@@ -32,5 +33,7 @@ export class Map1 extends GameMap {
     GAME_ENGINE.addEntity(new Barrel(-300, 20));
     GAME_ENGINE.addEntity(new Barrel(1000, 0));
     GAME_ENGINE.addEntity(new Barrel(0, -40));
+
+    GAME_ENGINE.addEntity(new Tumbleweed(0, 0));
   }
 }
