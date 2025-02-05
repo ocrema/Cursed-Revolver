@@ -71,17 +71,17 @@ export class Platform extends Entity {
           0,
           0,
           16,
-          16, // Source tile size (original is 16x16)
+          16, // Source tile size (16x16)
           this.x -
             GAME_ENGINE.camera.x +
             col * this.tileSize -
-            (this.cols * this.tileSize) / 2, // X position
+            (this.cols * this.tileSize) / 2,
           this.y -
             GAME_ENGINE.camera.y +
             row * this.tileSize -
-            (this.rows * this.tileSize) / 2, // Y position
-          this.tileSize, // Scaled width (64px)
-          this.tileSize // Scaled height (64px)
+            (this.rows * this.tileSize) / 2,
+          this.tileSize,
+          this.tileSize
         );
       }
     }
