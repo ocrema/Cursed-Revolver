@@ -98,6 +98,9 @@ export class AssetDownloader {
     this.assetManager.queueDownload(
       "./assets/effects/explosion/BarrelExplosionEffect.png"
     );
+    this.assetManager.queueDownload(
+      "./assets/effects/burning/BurningEffect.png"
+    );
   }
 
   downloadSFXAssets() {

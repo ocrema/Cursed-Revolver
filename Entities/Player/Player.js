@@ -6,7 +6,6 @@ import { ChainLightning } from "../Spells/ChainLightning.js";
 import { Collider } from "../Collider.js";
 import { GAME_ENGINE } from "../../main.js";
 import { PlayerAnimationLoader } from "./PlayerAnimationLoader.js";
-import { ExplosionEffect } from "../Effects/ExplosionEffect.js";
 
 export class Player extends Actor {
   constructor() {
@@ -44,7 +43,7 @@ export class Player extends Actor {
     this.isGrounded = 0; // values above 0 indicate that the player is grounded, so the player can still jump for a little bit after falling off a platform
 
     this.selectedSpell = 0;
-    this.spellCooldowns = [0, 0, 0, 0,  0];
+    this.spellCooldowns = [0, 0, 0, 0, 0];
     this.maxSpellCooldown = 1;
 
     this.timeBetweenFootsteps = 0.4;
