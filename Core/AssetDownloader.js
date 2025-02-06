@@ -99,6 +99,12 @@ export class AssetDownloader {
 
   downloadHUDCowboyIcon() {
     this.assetManager.queueDownload("./assets/ui/cowboy.png");
+    this.assetManager.queueDownload("./assets/ui/cowboy1.png");
+    this.assetManager.queueDownload("./assets/ui/cowboy2.png");
+    this.assetManager.queueDownload("./assets/ui/cowboy_spell.png");
+    for (let i = 1; i <= 6; i++) {
+      this.assetManager.queueDownload(`./assets/ui/cowboy_spell${i}.png`);
+    }
   }
 
   downloadHealthBarAssets() {

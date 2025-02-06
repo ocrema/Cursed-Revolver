@@ -11,7 +11,35 @@ export class HUD extends Entity {
     this.enemyHealthBarWidthRatio = 0.1; // smaller than player's
     this.enemyHealthBarHeightRatio = 0.02; // scaled height
     this.debugMode = false;
-    this.cowboyImage = "./assets/ui/cowboy.png"; // Cowboy Image
+    //this.cowboyImage = "./assets/ui/cowboy.png"; // Cowboy Image
+
+
+    // 🔹 Cowboy animation setup (Blinking images)
+    this.cowboyImages = [
+      "./assets/ui/cowboy.png",
+      "./assets/ui/cowboy1.png",
+      "./assets/ui/cowboy.png",
+      "./assets/ui/cowboy2.png",
+    ];
+
+    // Spell switching animation setup
+    this.cowboySpellImages = [
+      "./assets/ui/cowboy_spell.png", // Transition start
+      "./assets/ui/cowboy_spell1.png",
+      "./assets/ui/cowboy_spell2.png",
+      "./assets/ui/cowboy_spell3.png",
+      "./assets/ui/cowboy_spell4.png",
+      "./assets/ui/cowboy_spell5.png",
+      "./assets/ui/cowboy_spell6.png",
+      "./assets/ui/cowboy_spell.png", // Transition end
+    ];
+
+    this.cowboyFrameIndex = 0;  // Current frame
+    this.blinkTimer = 0;        // Timer to switch frames
+    this.blinkInterval = 1.0;   // Change every 0.5 seconds
+    this.spellAnimationTimer = 0; // Timer for spell switching animation
+    this.spellAnimationDuration = 1.2; // Duration of spell selection animation
+    this.isSpellSwitching = false; // Flag to check if spell switching animation is playing
 
     // Spells and cylinder setup
     this.spells = [
@@ -24,6 +52,7 @@ export class HUD extends Entity {
     ];
 
     this.activeSpellIndex = 0;
+    this.previousSpellIndex = 0;
 
     // Cylinder animation setup
     this.cylinderImages = [];
@@ -45,6 +74,29 @@ export class HUD extends Entity {
     const player = GAME_ENGINE.entities.find(e => e.isPlayer);
     if (!player) return; //check that player exists
 
+     // Detect Spell Switching
+     if (player.selectedSpell !== this.previousSpellIndex) {
+      this.isSpellSwitching = true;
+      this.spellAnimationTimer = this.spellAnimationDuration; // Start animation timer
+      this.previousSpellIndex = player.selectedSpell; // Update previous spell index
+    }
+
+    // Blinking
+    if (!this.isSpellSwitching) {
+      this.blinkTimer += GAME_ENGINE.clockTick;
+      if (this.blinkTimer >= this.blinkInterval) {
+        this.blinkTimer = 0; // Reset timer
+        this.cowboyFrameIndex = (this.cowboyFrameIndex + 1) % this.cowboyImages.length;
+      }
+    }
+
+    if (this.isSpellSwitching) {
+      this.spellAnimationTimer -= GAME_ENGINE.clockTick;
+      if (this.spellAnimationTimer <= 0) {
+        this.isSpellSwitching = false; // End spell animation
+      }
+    }
+
      // Sync HUD with Player's selected spell
      this.activeSpellIndex = player.selectedSpell;  
      this.rotateCylinder(this.activeSpellIndex, 0.5);
@@ -65,7 +117,6 @@ export class HUD extends Entity {
         GAME_ENGINE.keys[key] = false;
       }
     }
-
 
     // Smooth rotation logic
     if (this.rotationTime > 0) {
@@ -118,10 +169,32 @@ export class HUD extends Entity {
     const healthBarMargin = canvasHeight * this.healthBarMarginRatio;
 
     // Cowboy icon (leftmost)
-
-    const cowboySize = healthBarHeight * 10;
-    const cowboyX = healthBarMargin/3;
+    const cowboySize = healthBarHeight * 15;
+    const cowboyX = - canvasWidth * 0.05; // 1% from the left edge
     const cowboyY = canvasHeight - cowboySize / 1.5 ;
+
+    // // Get the current cowboy frame for blinking effect
+    // const currentCowboyImage = this.cowboyImages[this.cowboyFrameIndex];
+    // const cowboyImg = ASSET_MANAGER.getAsset(currentCowboyImage);
+    
+    // // Draw cowboy (Switches frames every `blinkInterval` seconds)
+    // if (cowboyImg) {
+    //   ctx.drawImage(cowboyImg, cowboyX, cowboyY, cowboySize, cowboySize);
+    // }
+
+    // Determine Cowboy Frame
+    let currentCowboyImage;
+    if (this.isSpellSwitching) {
+      currentCowboyImage = this.cowboySpellImages[this.activeSpellIndex + 1];
+    } else {
+      currentCowboyImage = this.cowboyImages[this.cowboyFrameIndex];
+    }
+
+    // Get Asset and Draw Cowboy
+    const cowboyImg = ASSET_MANAGER.getAsset(currentCowboyImage);
+    if (cowboyImg) {
+      ctx.drawImage(cowboyImg, cowboyX, cowboyY, cowboySize, cowboySize);
+    }
 
     // Health bar (next to cowboy)
     const startX = cowboyX + cowboySize / 1.5;
@@ -129,24 +202,19 @@ export class HUD extends Entity {
 
     // Spell UI scaling
     const scaleFactor = canvasHeight / 800;
-    const cylinderSize = 180 * scaleFactor;
-    const cylinderX = canvasWidth - cylinderSize - 50 * scaleFactor;
-    const cylinderY = canvasHeight - cylinderSize - 50 * scaleFactor;
+    const cylinderSize = 200 * scaleFactor;
+    const cylinderX = canvasWidth - cylinderSize - 25 * scaleFactor;
+    const cylinderY = canvasHeight - cylinderSize - 25 * scaleFactor;
 
     // Spell text and icon positions
     const spellTextX = cylinderX - 180 * scaleFactor;
-    const spellTextY = cylinderY + cylinderSize / 0.9;
+    const spellTextY = cylinderY + cylinderSize / 1.05;
 
     // Draw cowboy icon
-    const cowboyImg = ASSET_MANAGER.getAsset(this.cowboyImage);
-    if (cowboyImg) {
-      ctx.drawImage(cowboyImg, cowboyX, cowboyY, cowboySize, cowboySize);
-    }
-
-    // Draw health bar
-    //const player = GAME_ENGINE.entities.find(e => e.isPlayer);
-    //onst currentHealth = player ? player.health : 0;
-    //const maxHealth = 200;
+    // const cowboyImg = ASSET_MANAGER.getAsset(this.cowboyImage);
+    // if (cowboyImg) {
+    //   ctx.drawImage(cowboyImg, cowboyX, cowboyY, cowboySize, cowboySize);
+    // }
 
     // Health bar sprite sheet settings
     const totalFrames = 11; // (100%, 90%, 80%, ..., 0%)
