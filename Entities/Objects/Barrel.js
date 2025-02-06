@@ -22,7 +22,7 @@ export class Barrel extends Entity {
 
     // Barrel spritesheet settings
     this.barrelSheetWidth = 448;
-    this.barrelSheetHeight = 768;
+    this.barrelSheetHeight = 755;
     this.barrelCols = 7;
     this.barrelRows = 12;
     this.barrelFrameWidth = this.barrelSheetWidth / this.barrelCols;
