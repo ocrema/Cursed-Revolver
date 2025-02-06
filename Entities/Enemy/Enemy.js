@@ -79,42 +79,43 @@ export class Spider extends Actor {
     this.addAnimation(
       "run",
       this.assetManager.getAsset("./assets/spider/Walk.png"),
-      320, // Frame width
-      320, // Frame height
+      64, // Frame width
+      64, // Frame height
       5, // Frame count
-      0.25 // Frame duration (slower for idle)
+      0.5 // Frame duration (slower for idle)
     );
 
     this.addAnimation(
       "roam",
       this.assetManager.getAsset("./assets/spider/Walk.png"),
-      320, // Frame width
-      320, // Frame height
+      64, // Frame width
+      64, // Frame height
       5, // Frame count
-      0.25 // Frame duration (slower for idle)
+      .5 // Frame duration (slower for idle)
     );
 
     this.addAnimation(
-      "aggresive",
+      "aggressive",
       this.assetManager.getAsset("./assets/spider/Walk.png"),
-      320, // Frame width
-      320, // Frame height
+      64, // Frame width
+      64, // Frame height
       5, // Frame count
-      0.25 // Frame duration (slower for idle)
+      0.5 // Frame duration (slower for idle)
     );
 
     this.addAnimation(
       "attack",
       this.assetManager.getAsset("./assets/spider/Walk.png"),
-      320, // Frame width
-      320, // Frame height
+      64, // Frame width
+      64, // Frame height
       5, // Frame count
-      0.25 // Frame duration (slower for idle)
+      0.5 // Frame duration (slower for idle)
     );
 
     this.setAnimation("roam");
-    this.width = 150;
-    this.height = 90;
+    this.width = 60;
+    this.height = 40;
+    this.scale = 3;
 
     // Health / Attack
     this.health = 100;
@@ -160,14 +161,17 @@ export class Spider extends Actor {
     // check LOS on player
     for (let entity of GAME_ENGINE.entities) {
       if (entity instanceof Player && Util.canSee(this, entity)) {
-        if (this.currentAnimation === "aggresive" || this.currentAnimation === "attack") {
+
+        if (this.currentAnimation === "aggressive" || this.currentAnimation === "attack") {
           this.target = { x: entity.x, y: entity.y };
         }
         this.seesPlayer = true;
       }
     }
+
     // updates what state the spider is in and moves target when state changes
     this.setState();
+
     // moves to target, deals with platform collision
     this.movement();
     
@@ -188,6 +192,12 @@ export class Spider extends Actor {
     if (this.health <= 0) {
       this.removeFromWorld = true;
     }
+
+    // debug statement, delete this eventually ^_^
+    if (this.y > 490) {
+      console.log(this);
+    }
+
   }
 
   // cycles through different cases to set animation state 
@@ -211,8 +221,10 @@ export class Spider extends Actor {
     }
 
     // if can see player and can attack
-    if (this.seesPlayer && this.attackCooldown > this.attackRate && this.currentAnimation !== "aggressive") {
-      this.setAnimation("aggresive");
+    if (this.seesPlayer && 
+      this.attackCooldown > this.attackRate && 
+      this.currentAnimation !== "aggressive") {
+      this.setAnimation("aggressive");
       this.speed = this.aggroSpeed;
     }
 
