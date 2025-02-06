@@ -11,10 +11,13 @@ export class HUD extends Entity {
     this.enemyHealthBarWidthRatio = 0.1; // smaller than player's
     this.enemyHealthBarHeightRatio = 0.02; // scaled height
     this.debugMode = false;
-    //this.cowboyImage = "./assets/ui/cowboy.png"; // Cowboy Image
 
+    // Cursor coordinates
+    this.cursorX = 0;
+    this.cursorY = 0;
+     
 
-    // 🔹 Cowboy animation setup (Blinking images)
+    // Cowboy animation setup (Blinking images)
     this.cowboyImages = [
       "./assets/ui/cowboy.png",
       "./assets/ui/cowboy1.png",
@@ -173,15 +176,6 @@ export class HUD extends Entity {
     const cowboyX = - canvasWidth * 0.05; // 1% from the left edge
     const cowboyY = canvasHeight - cowboySize / 1.5 ;
 
-    // // Get the current cowboy frame for blinking effect
-    // const currentCowboyImage = this.cowboyImages[this.cowboyFrameIndex];
-    // const cowboyImg = ASSET_MANAGER.getAsset(currentCowboyImage);
-    
-    // // Draw cowboy (Switches frames every `blinkInterval` seconds)
-    // if (cowboyImg) {
-    //   ctx.drawImage(cowboyImg, cowboyX, cowboyY, cowboySize, cowboySize);
-    // }
-
     // Determine Cowboy Frame
     let currentCowboyImage;
     if (this.isSpellSwitching) {
@@ -209,12 +203,6 @@ export class HUD extends Entity {
     // Spell text and icon positions
     const spellTextX = cylinderX - 180 * scaleFactor;
     const spellTextY = cylinderY + cylinderSize / 1.05;
-
-    // Draw cowboy icon
-    // const cowboyImg = ASSET_MANAGER.getAsset(this.cowboyImage);
-    // if (cowboyImg) {
-    //   ctx.drawImage(cowboyImg, cowboyX, cowboyY, cowboySize, cowboySize);
-    // }
 
     // Health bar sprite sheet settings
     const totalFrames = 11; // (100%, 90%, 80%, ..., 0%)
