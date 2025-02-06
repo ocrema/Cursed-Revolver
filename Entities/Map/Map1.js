@@ -37,7 +37,7 @@ export class Map1 extends GameMap {
     GAME_ENGINE.addEntity(new Barrel(800, 120));
     GAME_ENGINE.addEntity(new Barrel(-600, -280));
     GAME_ENGINE.addEntity(new Barrel(1000, -330));
-    GAME_ENGINE.addEntity(new Barrel(200, -370));
+    GAME_ENGINE.addEntity(new Barrel(110, -400));
     GAME_ENGINE.addEntity(new Barrel(800, -480));
     GAME_ENGINE.addEntity(new Barrel(-1000, -180));
     GAME_ENGINE.addEntity(new Barrel(-400, -480));
