@@ -131,14 +131,20 @@ export class BurningEffect extends Entity {
   spreadFire() {
     for (let e of GAME_ENGINE.entities) {
       if (
-        (e.isEnemy || e.isTumbleweed) && // Spreads to enemies and tumbleweeds
         e !== this.parent && // Don't spread to the parent itself
         e.collider && // Must have a collider
         !e.isBurning && // Must not already be burning
         this.parent.colliding(e) // Use parent's collider for fire spread
       ) {
-        e.isBurning = true;
-        GAME_ENGINE.addEntity(new BurningEffect(e));
+        // Spreads to enemies and tumbleweeds
+        if (e.isEnemy && (!e.effects.burn || e.effects.burn <= 0)) {
+          e.isBurning = true;
+          e.effects.burn = 5; // 5 seconds of burn
+          GAME_ENGINE.addEntity(new BurningEffect(e));
+        } else if (e.isTumbleweed) {
+          e.isBurning = true;
+          GAME_ENGINE.addEntity(new BurningEffect(e));
+        }
       }
     }
   }
