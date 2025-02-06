@@ -50,9 +50,13 @@ export class Player extends Actor {
 
     this.isDashing = 0;
     this.dashTime = 0.15;
-    this.dashSpeed = 1000;
+    this.dashSpeed = 700;
     this.storedDashSpeed = 0;
     this.dashCooldown = 0;
+
+    this.wallGrabState = 0;
+
+    this.jumpCooldown = 0;
   }
 
   update() {
@@ -195,13 +199,23 @@ export class Player extends Actor {
       window.ASSET_MANAGER.playAsset("./assets/sfx/jump.ogg");
     }
 
-    this.isGrounded = Math.max(this.isGrounded - GAME_ENGINE.clockTick, 0);
+    
     this.dashCooldown = Math.max(this.dashCooldown - GAME_ENGINE.clockTick, 0);
+    this.jumpCooldown = Math.max(this.jumpCooldown - GAME_ENGINE.clockTick, 0);
 
     // jump
-    if (GAME_ENGINE.keys[" "] && this.isGrounded > 0 && this.isDashing <= 0) {
+    if (GAME_ENGINE.keys[" "] && this.isGrounded > 0 && this.isDashing <= 0 && this.jumpCooldown <= 0) {
       this.isGrounded = 0;
+      this.jumpCooldown = .4;
       this.y_velocity = -1500; // Jumping velocity
+      this.setAnimation(PLAYER_SPRITESHEET.JUMP.NAME);
+      this.isJumping = true;
+      window.ASSET_MANAGER.playAsset("./assets/sfx/jump.ogg");
+    }
+    else if (GAME_ENGINE.keys[" "] && this.wallGrabState !== 0 && this.isDashing <= 0 && this.jumpCooldown <= 0) {
+      this.jumpCooldown = .4;
+      this.y_velocity = -400;
+      this.x_velocity = -1000 * this.wallGrabState;
       this.setAnimation(PLAYER_SPRITESHEET.JUMP.NAME);
       this.isJumping = true;
       window.ASSET_MANAGER.playAsset("./assets/sfx/jump.ogg");
@@ -233,42 +247,55 @@ export class Player extends Actor {
     this.x += (this.x_velocity + velFromKeys) * GAME_ENGINE.clockTick;
 
     // for all of the entities i am colliding with, move the player as far back as i need to to not be colliding with any of them
-    let flag = false;
+    let hitSomething = false;
     for (let e of GAME_ENGINE.entities) {
       if (e.isPlayer || e.isAttack || e.isEnemy) continue;
       if (this.colliding(e)) {
-        flag = true;
+        hitSomething = true;
         if (this.x_velocity + velFromKeys > 0) {
-          this.x = Math.min(this.x, e.x - e.collider.width/2 - this.collider.width/2);
+          this.x = e.x - e.collider.width/2 - this.collider.width/2;
         }
         else {
-          this.x = Math.max(this.x, e.x + e.collider.width/2 + this.collider.width/2);
+          this.x = e.x + e.collider.width/2 + this.collider.width/2;
         }
       }
     }
-    if (flag) this.x_velocity = 0; // if hit something cancel velocity
+    if (hitSomething) {
+      if (velFromKeys !== 0 && this.isGrounded !== .2) {
+        this.wallGrabState = (velFromKeys > 0) ? 1 : -1;
+        this.y_velocity = Math.min(this.y_velocity, 100);
+      }
+      else {
+        this.wallGrabState = 0;
+      }
+      this.x_velocity = 0;
+
+    } else {
+      this.wallGrabState = 0;
+    }
+
+    this.isGrounded = Math.max(this.isGrounded - GAME_ENGINE.clockTick, 0);
 
 
     // make disired movement in y direction
     this.y += this.y_velocity * GAME_ENGINE.clockTick;
 
     // for all of the entities i am colliding with, move the player as far back as i need to to not be colliding with any of them
-    flag = false;
+    hitSomething = false;
     for (let e of GAME_ENGINE.entities) {
       if (e.isPlayer || e.isAttack || e.isEnemy) continue;
       if (this.colliding(e)) {
-        flag = true;
+        hitSomething = true;
         if (this.y_velocity > 0) {
-          this.isGrounded = 0.2;
-          this.y = Math.min(this.y, e.y - e.collider.height/2 - this.collider.height/2);
+          this.y = e.y - e.collider.height/2 - this.collider.height/2;
         }
         else {
-          this.y = Math.max(this.y, e.y + e.collider.height/2 + this.collider.height/2);
+          this.y = e.y + e.collider.height/2 + this.collider.height/2;
         }
       }
     }
-    if (flag) {
-      console.log(this.y_velocity)
+    if (hitSomething) {
+      if (this.y_velocity > 0) this.isGrounded = 0.2;
       if (this.y_velocity > 300) {
         window.ASSET_MANAGER.playAsset("./assets/sfx/landing.wav");
       }
