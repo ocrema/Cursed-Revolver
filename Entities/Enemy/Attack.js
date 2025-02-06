@@ -95,24 +95,27 @@ export class Jaw extends Entity {
     }
 
     // update location
-    if (this.facing === 0) { // if facing right
-      this.x = this.spider.x - (this.spider.width / 2);
+    if (this.facing === 0) {
+      // if facing right
+      this.x = this.spider.x - this.spider.width / 2;
     } else {
-      this.x = this.spider.x + (this.spider.width / 2)
+      this.x = this.spider.x + this.spider.width / 2;
     }
     this.y = this.spider.y;
 
     for (let entity of GAME_ENGINE.entities) {
-      // if jaw attack collides with player
-      if (entity instanceof Player) {
-        if (this.colliding(entity)) {
+      if (this.colliding(entity)) {
+        // If jaw attack collides with player
+        if (entity instanceof Player) {
           entity.queueAttack({
             damage: 20,
             x: this.x,
             y: this.y,
             launchMagnitude: 100,
           });
-          this.spider.attackCooldown = 0
+
+          // Reset spider attack cooldown when attack hits
+          this.spider.attackCooldown = 0;
           this.spider.currentAnimation = "run";
           this.spider.jaw = null;
           this.removeFromWorld = true;

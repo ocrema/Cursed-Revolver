@@ -160,6 +160,17 @@ export class Spider extends Actor {
     this.onGround = false;
     this.onWall = false;
 
+    // ✅ Make sure explosion doesn’t permanently affect movement
+    if (this.velocity.x === 0 && this.velocity.y === 0) {
+      console.log("🕷 Spider stopped moving unexpectedly, resetting velocity.");
+      this.setState(); // Recalculate movement behavior
+    }
+
+    // ✅ If an explosion impact messed up the target, reset it
+    if (!this.target || Math.abs(this.x - this.target.x) < 5) {
+      this.setState(); // Force new movement target
+    }
+
     // check LOS on player
     for (let entity of GAME_ENGINE.entities) {
       if (entity instanceof Player && Util.canSee(this, entity)) {
@@ -237,17 +248,18 @@ export class Spider extends Actor {
     }
 
     // if can see player, can attack, and is in attack radius
+    // If can see player, can attack, and is in attack radius
     if (
       this.seesPlayer &&
       this.attackCooldown > this.attackRate &&
       Math.abs(this.x - this.target.x) < this.attackRadius
     ) {
-      // change animation and speed
       this.setAnimation("attack");
       this.speed = this.attackSpeed;
 
-      // if no jaw, spawn one in + reset the timer
-      if (!this.jaw) {
+      // If no jaw, spawn one
+      // additional condiiton added by ares which is if it's been removed from the world, spawn new one 
+      if (!this.jaw || this.jaw.removeFromWorld) {
         this.attackCooldown = 0;
         this.jaw = new Jaw(this);
         GAME_ENGINE.addEntity(this.jaw);

@@ -16,9 +16,9 @@ export class Map1 extends GameMap {
     // Enemies
     GAME_ENGINE.addEntity(new Cactus(500, 80));
     GAME_ENGINE.addEntity(new Cactus(1000, 80));
-    GAME_ENGINE.addEntity(new Spider(800, 70));
     GAME_ENGINE.addEntity(new Cactus(450, -650)); 
-    GAME_ENGINE.addEntity(new Cactus(-650, 80)); 
+     GAME_ENGINE.addEntity(new Cactus(-650, 80)); 
+    GAME_ENGINE.addEntity(new Spider(800, 70));
 
 
     // Main Ground
@@ -36,7 +36,7 @@ export class Map1 extends GameMap {
     GAME_ENGINE.addEntity(new Platform(0, 40, 2, 6));
 
     // **Destructible Objects (Barrels)**
-    GAME_ENGINE.addEntity(new Barrel(-200, 120));
+     GAME_ENGINE.addEntity(new Barrel(-200, 120));
     GAME_ENGINE.addEntity(new Barrel(800, 120));
     GAME_ENGINE.addEntity(new Barrel(-600, -280));
     GAME_ENGINE.addEntity(new Barrel(1000, -330));
@@ -46,7 +46,7 @@ export class Map1 extends GameMap {
     GAME_ENGINE.addEntity(new Barrel(-400, -480));
 
     // Tumbleweeds
-    GAME_ENGINE.addEntity(new Tumbleweed(-500, -250, "right"));
+     GAME_ENGINE.addEntity(new Tumbleweed(-500, -250, "right"));
     GAME_ENGINE.addEntity(new Tumbleweed(500, -250, "left"));
     GAME_ENGINE.addEntity(new Tumbleweed(100, -400, "right")); // Bouncing off a platform
   }

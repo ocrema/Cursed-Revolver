@@ -1,6 +1,7 @@
 import { Entity } from "../Entities.js";
 import { GAME_ENGINE } from "../../main.js";
 import { EFFECTS_SPRITESHEET } from "../../Globals/Constants.js";
+import { Spider } from "../Enemy/Enemy.js";
 
 export class BurningEffect extends Entity {
   /**
