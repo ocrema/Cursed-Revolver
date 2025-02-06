@@ -6,7 +6,7 @@ const params = {};
  * @param {Number} n
  * @returns Random Integer Between 0 and n-1
  */
-const randomInt = n => Math.floor(Math.random() * n);
+export const randomInt = n => Math.floor(Math.random() * n);
 
 /**
  * @param {Number} r Red Value
@@ -74,5 +74,5 @@ export const newCollider = (w, h, x, y) => {
     */
 
 export const canSee = (A,B) => {
-    return getDistance(A,B) < A.visualRadius + ((B.collider.width + B.collider.height) / 2)
+    return getDistance(A,B) < A.visualRadius;
 }

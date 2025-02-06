@@ -127,7 +127,7 @@ export class Player extends Actor {
     if (this.health <= 0) {
       this.isDead = true;
       this.setAnimation(PLAYER_SPRITESHEET.DEAD.NAME, false);
-      console.log("i died");
+      // console.log("i died");
     }
 
     // Update the active animation
