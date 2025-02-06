@@ -57,6 +57,9 @@ export class Player extends Actor {
     this.wallGrabState = 0;
 
     this.jumpCooldown = 0;
+
+    this.isGroundSlamming = false;
+    this.groundSlamSpeed = 3000;
   }
 
   update() {
@@ -154,7 +157,7 @@ export class Player extends Actor {
     //gravity
     this.y_velocity = Math.min(
       this.y_velocity + GAME_ENGINE.clockTick * 3000,
-      10000
+      3000
     );
    
     // air resistance / friction basically
@@ -249,7 +252,7 @@ export class Player extends Actor {
     // for all of the entities i am colliding with, move the player as far back as i need to to not be colliding with any of them
     let hitSomething = false;
     for (let e of GAME_ENGINE.entities) {
-      if (e.isPlayer || e.isAttack || e.isEnemy) continue;
+      if (e.isPlayer || e.isAttack || e.isEnemy || this.isGroundSlamming) continue;
       if (this.colliding(e)) {
         hitSomething = true;
         if (this.x_velocity + velFromKeys > 0) {
@@ -274,7 +277,17 @@ export class Player extends Actor {
       this.wallGrabState = 0;
     }
 
+    
+    if (GAME_ENGINE.keys['s'] && this.isGrounded !== .2) {
+      this.isGroundSlamming = true;
+    }
+    if (this.isGroundSlamming) {
+      this.y_velocity = this.groundSlamSpeed;
+    }
+    
     this.isGrounded = Math.max(this.isGrounded - GAME_ENGINE.clockTick, 0);
+
+
 
 
     // make disired movement in y direction
@@ -295,7 +308,13 @@ export class Player extends Actor {
       }
     }
     if (hitSomething) {
-      if (this.y_velocity > 0) this.isGrounded = 0.2;
+      if (this.y_velocity > 0) {
+        this.isGrounded = 0.2;
+        if (this.isGroundSlamming) {
+          this.isGroundSlamming = false;
+
+        }
+      }
       if (this.y_velocity > 300) {
         window.ASSET_MANAGER.playAsset("./assets/sfx/landing.wav");
       }
