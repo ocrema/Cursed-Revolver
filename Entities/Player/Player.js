@@ -159,18 +159,18 @@ export class Player extends Actor {
       this.y_velocity + GAME_ENGINE.clockTick * 3000,
       3000
     );
-   
+
     // air resistance / friction basically
     if (this.x_velocity > 0) {
       this.x_velocity = Math.max(
         this.x_velocity -
-          GAME_ENGINE.clockTick * (this.isGrounded == 0.2 ? 9000 : 1000),
+        GAME_ENGINE.clockTick * (this.isGrounded == 0.2 ? 9000 : 1000),
         0
       );
     } else {
       this.x_velocity = Math.min(
         this.x_velocity +
-          GAME_ENGINE.clockTick * (this.isGrounded == 0.2 ? 9000 : 1000),
+        GAME_ENGINE.clockTick * (this.isGrounded == 0.2 ? 9000 : 1000),
         0
       );
     }
@@ -202,7 +202,7 @@ export class Player extends Actor {
       window.ASSET_MANAGER.playAsset("./assets/sfx/jump.ogg");
     }
 
-    
+
     this.dashCooldown = Math.max(this.dashCooldown - GAME_ENGINE.clockTick, 0);
     this.jumpCooldown = Math.max(this.jumpCooldown - GAME_ENGINE.clockTick, 0);
 
@@ -245,46 +245,52 @@ export class Player extends Actor {
     }
 
     // Player Collision Logic
-
-    // make disired movement in x direction
-    this.x += (this.x_velocity + velFromKeys) * GAME_ENGINE.clockTick;
-
-    // for all of the entities i am colliding with, move the player as far back as i need to to not be colliding with any of them
+    
     let hitSomething = false;
-    for (let e of GAME_ENGINE.entities) {
-      if (e.isPlayer || e.isAttack || e.isEnemy || this.isGroundSlamming) continue;
-      if (this.colliding(e)) {
-        hitSomething = true;
-        if (this.x_velocity + velFromKeys > 0) {
-          this.x = e.x - e.collider.width/2 - this.collider.width/2;
+
+    if (!this.isGroundSlamming) {
+      // make disired movement in x direction
+      this.x += (this.x_velocity + velFromKeys) * GAME_ENGINE.clockTick;
+
+      // for all of the entities i am colliding with, move the player as far back as i need to to not be colliding with any of them
+      
+      for (let e of GAME_ENGINE.entities) {
+        if (e.isPlayer || e.isAttack || e.isEnemy) continue;
+        if (this.colliding(e)) {
+          hitSomething = true;
+          if (this.x_velocity + velFromKeys > 0) {
+            this.x = e.x - e.collider.width / 2 - this.collider.width / 2;
+          }
+          else {
+            this.x = e.x + e.collider.width / 2 + this.collider.width / 2;
+          }
+        }
+      }
+      if (hitSomething) {
+        if (velFromKeys !== 0 && this.isGrounded !== .2) {
+          this.wallGrabState = (velFromKeys > 0) ? 1 : -1;
+          this.y_velocity = Math.min(this.y_velocity, 100);
         }
         else {
-          this.x = e.x + e.collider.width/2 + this.collider.width/2;
+          this.wallGrabState = 0;
         }
-      }
-    }
-    if (hitSomething) {
-      if (velFromKeys !== 0 && this.isGrounded !== .2) {
-        this.wallGrabState = (velFromKeys > 0) ? 1 : -1;
-        this.y_velocity = Math.min(this.y_velocity, 100);
-      }
-      else {
+        this.x_velocity = 0;
+
+      } else {
         this.wallGrabState = 0;
       }
-      this.x_velocity = 0;
 
-    } else {
-      this.wallGrabState = 0;
     }
 
-    
+
     if (GAME_ENGINE.keys['s'] && this.isGrounded !== .2) {
       this.isGroundSlamming = true;
+      this.wallGrabState = 0;
     }
     if (this.isGroundSlamming) {
       this.y_velocity = this.groundSlamSpeed;
     }
-    
+
     this.isGrounded = Math.max(this.isGrounded - GAME_ENGINE.clockTick, 0);
 
 
@@ -300,10 +306,10 @@ export class Player extends Actor {
       if (this.colliding(e)) {
         hitSomething = true;
         if (this.y_velocity > 0) {
-          this.y = e.y - e.collider.height/2 - this.collider.height/2;
+          this.y = e.y - e.collider.height / 2 - this.collider.height / 2;
         }
         else {
-          this.y = e.y + e.collider.height/2 + this.collider.height/2;
+          this.y = e.y + e.collider.height / 2 + this.collider.height / 2;
         }
       }
     }
@@ -319,7 +325,7 @@ export class Player extends Actor {
         window.ASSET_MANAGER.playAsset("./assets/sfx/landing.wav");
       }
       this.y_velocity = 0; // if hit something cancel velocity
-    } 
+    }
 
   }
 
@@ -338,7 +344,7 @@ export class Player extends Actor {
         window.ASSET_MANAGER.playAsset("./assets/sfx/click1.ogg");
       }
     }
- 
+
     // cast spell
 
     if (
