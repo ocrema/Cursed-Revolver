@@ -95,9 +95,9 @@ export class Jaw extends Entity {
     this.y = this.spider.y;
 
     for (let entity of GAME_ENGINE.entities) {
-      // if jaw attack collides with player
-      if (entity instanceof Player) {
-        if (this.colliding(entity)) {
+      if (this.colliding(entity)) {
+        // If jaw attack collides with player
+        if (entity instanceof Player) {
           entity.queueAttack({
             damage: 20,
             x: this.x,

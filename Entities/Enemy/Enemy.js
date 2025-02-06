@@ -219,17 +219,18 @@ export class Spider extends Actor {
     }
 
     // if can see player, can attack, and is in attack radius
+    // If can see player, can attack, and is in attack radius
     if (
       this.seesPlayer &&
       this.attackCooldown > this.attackRate &&
       Math.abs(this.x - this.target.x) < this.attackRadius
     ) {
-      // change animation and speed
       this.setAnimation("attack");
       this.speed = this.attackSpeed;
 
-      // if no jaw, spawn one in + reset the timer
-      if (!this.jaw) {
+      // If no jaw, spawn one
+      // additional condiiton added by ares which is if it's been removed from the world, spawn new one 
+      if (!this.jaw || this.jaw.removeFromWorld) {
         this.attackCooldown = 0;
         this.jaw = new Jaw(this);
         GAME_ENGINE.addEntity(this.jaw);
