@@ -336,61 +336,7 @@ export class Spider extends Actor {
             this.x = entity.x + entity.collider.width / 2 + this.width / 2;
           }
         }
-
-        if (
-          Math.abs(
-            this.y - (entity.y - entity.collider.height / 2 - this.height / 2)
-          ) < 5
-        ) {
-          this.onGround = true;
-        }
       }
-    }
-
-    // if spider is currently on a wall
-    if (this.onWall) {
-      // climb up wall
-      this.velocity.y =
-        ((this.target.y - this.y) / distance) * this.runSpeed * this.climbSpeed;
-    }
-
-    // if spider is on the ground and trying to move down
-    else if (this.onGround) {
-      this.velocity.y = 0;
-    }
-
-    // if spider is floating and moving
-    else if (!this.onGround && this.velocity.x !== 0) {
-      this.velocity.y += this.gravity;
-    }
-
-    // update location
-    this.x += this.velocity.x * GAME_ENGINE.clockTick;
-    this.y += this.velocity.y * GAME_ENGINE.clockTick;
-
-    // flip image according to velocity
-    if (this.velocity.x < 0) {
-      this.flip = 0;
-    } else if (this.velocity.x > 0) {
-      this.flip = 1;
-    }
-
-    // attempt to attack
-    if (this.attackCooldown > this.attackRate) {
-      this.attackCooldown = 0;
-      this.setAnimation("attack");
-      GAME_ENGINE.addEntity(new Jaw(this));
-    }
-
-    // apply attack damage
-    for (let attack of this.recieved_attacks) {
-      this.health -= attack.damage;
-    }
-    this.recieved_attacks = [];
-
-    // if spider loses all health
-    if (this.health <= 0) {
-      this.removeFromWorld = true;
     }
   }
 }
