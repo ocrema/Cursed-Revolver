@@ -8,6 +8,7 @@ export class AssetManager {
     this.errorCount = 0;
     this.cache = [];
     this.downloadQueue = [];
+    this.audioMuted = false; // flag to control audio muting
     return window.ASSET_MANAGER;
   }
 
@@ -84,6 +85,7 @@ export class AssetManager {
   }
 
   playAsset(path, volume = 0.5) {
+    if (this.audioMuted) return;
     let audio = this.cache[path];
     if (!audio) return;
     if (audio.currentTime != 0) {
@@ -96,5 +98,16 @@ export class AssetManager {
       audio.currentTime = 0;
       audio.play();
     }
+  }
+
+  toggleMute(muted) {
+    this.audioMuted = muted; // Set mute flag
+    //stop all currently playing audio
+    Object.values(this.cache).forEach((asset) => {
+      if (asset instanceof Audio) {
+        asset.pause();
+        asset.currentTime = 0; //reset audio position
+      }
+    });
   }
 }

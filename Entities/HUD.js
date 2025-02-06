@@ -67,6 +67,18 @@ export class HUD extends Entity {
     this.targetRotation = 0; // Target rotation (in radians)
     this.rotationSpeed = 0; // Speed of rotation (radians per frame)
     this.rotationTime = 0; // Time remaining for rotation
+  
+    // Cursor coordinates
+    this.cursorX = 0;
+    this.cursorY = 0;
+
+    // Add event listener to track cursor position
+    window.addEventListener("mousemove", (event) => {
+      const canvasRect = GAME_ENGINE.canvas.getBoundingClientRect();
+      this.cursorX = event.clientX - canvasRect.left;
+      this.cursorY = event.clientY - canvasRect.top;
+    });
+
   }
 
   colliding() {
@@ -108,6 +120,8 @@ export class HUD extends Entity {
     if (GAME_ENGINE.keys["b"]) {
       this.debugMode = !this.debugMode;
       GAME_ENGINE.debug_colliders = this.debugMode;
+      //GAME_ENGINE.audioMuted = this.debugMode;// Mute/unmute audio in debug mode
+      ASSET_MANAGER.toggleMute(this.debugMode);
       console.log(`Debug Mode: ${this.debugMode ? "ON" : "OFF"}`);
       GAME_ENGINE.keys["b"] = false;
     }
