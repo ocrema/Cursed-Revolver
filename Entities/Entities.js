@@ -67,8 +67,8 @@ export class Entity {
 
   draw(ctx) {
     if (!this.currentAnimation) return;
-    
-    if (this.isEnemy) { 
+
+    if (this.isEnemy) {
       this.drawHealthBar(ctx);
     }
     const animation = this.animations[this.currentAnimation];
@@ -228,13 +228,13 @@ export class Actor extends Entity {
       rooted: true,
       stun: true,
       void: true,
-    }
+    };
     this.isLaunchable = false;
   }
 
   // Since actor classes might need more functionalities, we can add them here
   // Gravity, attacks, etc
-  update() { }
+  update() {}
 
   applyGravity(gravityAmount) {
     if (!this.grounded) {
@@ -253,19 +253,16 @@ export class Actor extends Entity {
   recieveAttacks() {
     for (const a of this.recieved_attacks) {
       for (const [k, v] of Object.entries(a)) {
-        if (k === 'damage') {
+        if (k === "damage") {
           this.health -= v;
-        }
-        else if (k === 'heal') {
+        } else if (k === "heal") {
           this.health += v;
-        }
-        else if (k === 'launchMagnitude' && this.isLaunchable) {
-          const angle = Util.getAngle({x: a.x, y: a.y}, this);
+        } else if (k === "launchMagnitude" && this.isLaunchable) {
+          const angle = Util.getAngle({ x: a.x, y: a.y }, this);
           this.x_velocity += v * Math.cos(angle);
           this.y_velocity += v * Math.sin(angle);
-        }
-        else if (k === 'x' || k === 'y') {}
-        else {
+        } else if (k === "x" || k === "y") {
+        } else {
           this.effects[k] = v;
         }
       }
@@ -308,7 +305,6 @@ export class Actor extends Entity {
     if (this.validEffects.void && this.effects.void > 0) {
       this.effects.void -= GAME_ENGINE.clockTick;
     }
-
   }
 }
 
@@ -318,7 +314,5 @@ export class GameMap extends Entity {
     this.isMap = true;
   }
 
-  update() { }
+  update() {}
 }
-
-

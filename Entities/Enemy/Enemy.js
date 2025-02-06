@@ -41,6 +41,7 @@ export class Cactus extends Actor {
   }
 
   update() {
+    this.recieveEffects();
     this.elapsedTime += GAME_ENGINE.clockTick;
 
     for (let entity of GAME_ENGINE.entities) {
@@ -137,6 +138,7 @@ export class Spider extends Actor {
 
   update() {
     this.attackCooldown += GAME_ENGINE.clockTick;
+    this.recieveEffects();
     this.onGround = false;
     this.onWall = false;
 
@@ -208,17 +210,21 @@ export class Spider extends Actor {
           this.onWall = true;
         }
 
-        if (Math.abs(this.y - (entity.y - entity.collider.height / 2 - this.height / 2)) < 5) {
+        if (
+          Math.abs(
+            this.y - (entity.y - entity.collider.height / 2 - this.height / 2)
+          ) < 5
+        ) {
           this.onGround = true;
         }
-
       }
     }
 
     // if spider is currently on a wall
     if (this.onWall) {
       // climb up wall
-      this.velocity.y = ((this.target.y - this.y) / distance) * this.runSpeed * this.climbSpeed;
+      this.velocity.y =
+        ((this.target.y - this.y) / distance) * this.runSpeed * this.climbSpeed;
     }
 
     // if spider is on the ground and trying to move down
@@ -230,7 +236,7 @@ export class Spider extends Actor {
     else if (!this.onGround && this.velocity.x !== 0) {
       this.velocity.y += this.gravity;
     }
-    
+
     // update location
     this.x += this.velocity.x * GAME_ENGINE.clockTick;
     this.y += this.velocity.y * GAME_ENGINE.clockTick;
