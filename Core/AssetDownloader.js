@@ -89,12 +89,12 @@ export class AssetDownloader {
   }
 
   downloadHUDSpells() {
-    this.assetManager.queueDownload("./assets/ui/spells/fireball.gif");
-    this.assetManager.queueDownload("./assets/ui/spells/lightning.gif");
-    this.assetManager.queueDownload("./assets/ui/spells/water.gif");
-    this.assetManager.queueDownload("./assets/ui/spells/icicle.gif");
-    this.assetManager.queueDownload("./assets/ui/spells/vine.gif");
-    this.assetManager.queueDownload("./assets/ui/spells/void.gif");
+    this.assetManager.queueDownload("./assets/ui/spells/fireball.png");
+    this.assetManager.queueDownload("./assets/ui/spells/lightning.png");
+    this.assetManager.queueDownload("./assets/ui/spells/water.png");
+    this.assetManager.queueDownload("./assets/ui/spells/icicle.png");
+    this.assetManager.queueDownload("./assets/ui/spells/vine.png");
+    this.assetManager.queueDownload("./assets/ui/spells/void.png");
   }
 
   downloadHUDCowboyIcon() {

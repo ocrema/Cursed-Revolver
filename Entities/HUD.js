@@ -15,12 +15,12 @@ export class HUD extends Entity {
 
     // Spells and cylinder setup
     this.spells = [
-      { name: "Fireball", icon: "./assets/ui/spells/fireball.gif" },
-      { name: "Lightning", icon: "./assets/ui/spells/lightning.gif" },
-      { name: "Water Wave", icon: "./assets/ui/spells/water.gif" },
-      { name: "Icicle", icon: "./assets/ui/spells/icicle.gif" },
-      { name: "Vine Ball", icon: "./assets/ui/spells/vine.gif" },
-      { name: "Void Orb", icon: "./assets/ui/spells/void.gif" },
+      { name: "Fireball", icon: "./assets/ui/spells/fireball.png" },
+      { name: "Lightning", icon: "./assets/ui/spells/lightning.png" },
+      { name: "Water Wave", icon: "./assets/ui/spells/water.png" },
+      { name: "Icicle", icon: "./assets/ui/spells/icicle.png" },
+      { name: "Vine Ball", icon: "./assets/ui/spells/vine.png" },
+      { name: "Void Orb", icon: "./assets/ui/spells/void.png" },
     ];
 
     this.activeSpellIndex = 0;
@@ -42,6 +42,13 @@ export class HUD extends Entity {
   }
 
   update() {
+    const player = GAME_ENGINE.entities.find(e => e.isPlayer);
+    if (!player) return; //check that player exists
+
+     // Sync HUD with Player's selected spell
+     this.activeSpellIndex = player.selectedSpell;  
+     this.rotateCylinder(this.activeSpellIndex, 0.5);
+
     // Toggle debug mode
     if (GAME_ENGINE.keys["b"]) {
       this.debugMode = !this.debugMode;
@@ -52,11 +59,13 @@ export class HUD extends Entity {
 
     // Spell selection (1-6 keys)
     for (let i = 1; i <= 6; i++) {
-      if (GAME_ENGINE.keys[i.toString()]) {
+      const key = `Digit${i}`;
+      if (GAME_ENGINE.keys[key]) {  
         this.rotateCylinder(i - 1, 0.5); // Smoothly switch spells in 0.5s
-        GAME_ENGINE.keys[i.toString()] = false;
+        GAME_ENGINE.keys[key] = false;
       }
     }
+
 
     // Smooth rotation logic
     if (this.rotationTime > 0) {
@@ -111,8 +120,8 @@ export class HUD extends Entity {
     // Cowboy icon (leftmost)
 
     const cowboySize = healthBarHeight * 10;
-    const cowboyX = healthBarMargin / 3;
-    const cowboyY = canvasHeight - cowboySize / 1.5;
+    const cowboyX = healthBarMargin/3;
+    const cowboyY = canvasHeight - cowboySize / 1.5 ;
 
     // Health bar (next to cowboy)
     const startX = cowboyX + cowboySize / 1.5;
@@ -120,13 +129,13 @@ export class HUD extends Entity {
 
     // Spell UI scaling
     const scaleFactor = canvasHeight / 800;
-    const cylinderSize = 120 * scaleFactor;
+    const cylinderSize = 180 * scaleFactor;
     const cylinderX = canvasWidth - cylinderSize - 50 * scaleFactor;
     const cylinderY = canvasHeight - cylinderSize - 50 * scaleFactor;
 
     // Spell text and icon positions
-    const spellTextX = cylinderX - 200 * scaleFactor;
-    const spellTextY = cylinderY + cylinderSize / 1.5;
+    const spellTextX = cylinderX - 180 * scaleFactor;
+    const spellTextY = cylinderY + cylinderSize / 0.9;
 
     // Draw cowboy icon
     const cowboyImg = ASSET_MANAGER.getAsset(this.cowboyImage);

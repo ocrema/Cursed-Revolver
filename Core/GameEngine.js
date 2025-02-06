@@ -79,6 +79,8 @@ export class GameEngine {
   }
 
   startInput() {
+    
+
     const getXandY = (e) => ({
       x:
         (e.clientX - this.ctx.canvas.getBoundingClientRect().left) /
@@ -143,10 +145,23 @@ export class GameEngine {
     });
 
     document.addEventListener("keydown", (event) => {
-      this.keys[
-        event.key.length === 1 ? event.key.toLowerCase() : event.key
-      ] = true;
-      //console.log("Key pressed:", event.key);
+      const key = event.key.length === 1 ? event.key.toLowerCase() : event.key;
+      this.keys[event.key.toLowerCase()] = true;
+    
+      if (event.key === "Escape") {
+        console.log("Escape key pressed - Toggling pause menu...");
+        //GAME_ENGINE.GAME_CONTROLLER.togglePause();
+        this.GAME_CONTROLLER.togglePause();
+        this.keys["Escape"] = false; // Prevent repeated toggling
+      }
+
+      if (this.GAME_CONTROLLER.isPaused) {
+        if (event.key === "ArrowUp" || event.key === "ArrowDown" || event.key === "Enter") {
+            this.keys[event.key.toLowerCase()] = true;
+            this.GAME_CONTROLLER.pauseMenu.update(); // Force Pause Menu update
+        }
+    }
+
     });
 
     document.addEventListener("keyup", (event) => {
@@ -154,6 +169,8 @@ export class GameEngine {
         event.key.length === 1 ? event.key.toLowerCase() : event.key
       ] = false;
     });
+    
+
   }
 
   addEntity(entity) {

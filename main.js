@@ -13,8 +13,6 @@ const ASSET_DOWNLOADER = new AssetDownloader(ASSET_MANAGER);
 // Downloads all sprite sheets from asset downloader
 ASSET_DOWNLOADER.downloadAll();
 
-
-
 ASSET_MANAGER.downloadAll(() => {
   const canvas = document.getElementById("gameWorld");
   const ctx = canvas.getContext("2d");
@@ -23,3 +21,8 @@ ASSET_MANAGER.downloadAll(() => {
 
   GAME_ENGINE.start();
 });
+
+window.addEventListener("keydown", (event) => {
+  console.log(`Key Pressed: ${event.key} (code: ${event.code})`);
+});
+

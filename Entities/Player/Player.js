@@ -300,6 +300,10 @@ export class Player extends Actor {
         GAME_ENGINE.keys[key] = false;
         this.selectedSpell = i;
         window.ASSET_MANAGER.playAsset("./assets/sfx/click1.ogg");
+        this.selectedSpell = i;
+        //GAME_ENGINE.HUD.activeSpellIndex = i;  
+        //GAME_ENGINE.HUD.rotateCylinder(i, 0.5); 
+
       }
     }
 
