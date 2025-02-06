@@ -17,6 +17,7 @@ export class Tumbleweed extends Entity {
     this.rotationSpeed = 0.1; // Speed of rolling rotation
     this.scale = 0.35; // Scale the sprite
     this.isDestructibleObject = true;
+    this.isTumbleweed = true;
     this.isBurning = false; // Track if burning effect is active
 
     // Gravity & Bouncing
@@ -100,7 +101,7 @@ export class Tumbleweed extends Entity {
     this.isBurning = true;
 
     // 60 as y offset to center burning effect
-    GAME_ENGINE.addEntity(new BurningEffect(this, 0, -60));
+    GAME_ENGINE.addEntity(new BurningEffect(this));
   }
 
   draw(ctx) {
