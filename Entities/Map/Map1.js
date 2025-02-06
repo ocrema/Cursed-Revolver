@@ -17,8 +17,8 @@ export class Map1 extends GameMap {
     GAME_ENGINE.addEntity(new Cactus(500, 80));
     GAME_ENGINE.addEntity(new Cactus(1000, 80));
     GAME_ENGINE.addEntity(new Spider(800, 70));
-    GAME_ENGINE.addEntity(new Cactus(250, -450)); 
-    GAME_ENGINE.addEntity(new Cactus(-450, 80)); 
+    GAME_ENGINE.addEntity(new Cactus(450, -650)); 
+    GAME_ENGINE.addEntity(new Cactus(-650, 80)); 
 
 
     // Main Ground
@@ -27,17 +27,20 @@ export class Map1 extends GameMap {
     // Platforms Under Barrels
     GAME_ENGINE.addEntity(new Platform(-600, -200, 7, 1)); 
     GAME_ENGINE.addEntity(new Platform(1000, -270, 7, 1)); 
-    GAME_ENGINE.addEntity(new Platform(200, -310, 7, 1)); 
+    GAME_ENGINE.addEntity(new Platform(200, -510, 7, 1)); 
     GAME_ENGINE.addEntity(new Platform(800, -430, 7, 1)); 
     GAME_ENGINE.addEntity(new Platform(-1000, -120, 7, 1)); 
     GAME_ENGINE.addEntity(new Platform(-400, -420, 7, 1)); 
+
+    // Vertical Pillar for Spider 
+    GAME_ENGINE.addEntity(new Platform(0, 40, 2, 6));
 
     // **Destructible Objects (Barrels)**
     GAME_ENGINE.addEntity(new Barrel(-200, 120));
     GAME_ENGINE.addEntity(new Barrel(800, 120));
     GAME_ENGINE.addEntity(new Barrel(-600, -280));
     GAME_ENGINE.addEntity(new Barrel(1000, -330));
-    GAME_ENGINE.addEntity(new Barrel(110, -400));
+    GAME_ENGINE.addEntity(new Barrel(110, -600));
     GAME_ENGINE.addEntity(new Barrel(800, -480));
     GAME_ENGINE.addEntity(new Barrel(-1000, -180));
     GAME_ENGINE.addEntity(new Barrel(-400, -480));
