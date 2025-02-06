@@ -24,9 +24,9 @@ export class BurningEffect extends Entity {
       this.updateVisualScale();
     }
 
-    // Display on parents position
-    this.x = this.parent.x + this.xOffset;
-    this.y = this.parent.y + this.yOffset;
+    if (parent.collider) {
+      this.updateVisualScale();
+    }
 
     // Load burning animation
     this.addAnimation(
@@ -126,12 +126,12 @@ export class BurningEffect extends Entity {
 
   /**
    * Logic for spreading fires to other entities.
-   * Currently only considers enemies - ares
+   * Currently only considers enemies & other tumbleweeds.
    */
   spreadFire() {
     for (let e of GAME_ENGINE.entities) {
       if (
-        e.isEnemy && // Spreads only to enemy 
+        (e.isEnemy || e.isTumbleweed) && // Spreads to enemies and tumbleweeds
         e !== this.parent && // Don't spread to the parent itself
         e.collider && // Must have a collider
         !e.isBurning && // Must not already be burning
@@ -141,5 +141,43 @@ export class BurningEffect extends Entity {
         GAME_ENGINE.addEntity(new BurningEffect(e));
       }
     }
+  }
+
+  /**
+   * Scales fire visuals. First scales fire effect to be a dynamic percentage of the parents collider so its proportinate.
+   * Also adjusts y offset so the fire effect will be placed correctly.
+   */
+  updateVisualScale() {
+    // Update scale dynamically if parent's collider changes
+    this.scaleX = this.parent.collider.width * this.adjustToParentColliderScale;
+    this.scaleY =
+      this.parent.collider.height * this.adjustToParentColliderScale;
+    this.yOffset = -this.parent.collider.height / 2;
+    this.x = this.parent.x + this.xOffset;
+    this.y = this.parent.y + this.yOffset;
+  }
+
+  draw(ctx) {
+    if (!this.currentAnimation) return;
+    const animation = this.animations[this.currentAnimation];
+    const { spritesheet, frameWidth, frameHeight } = animation;
+
+    if (!spritesheet) return;
+
+    ctx.save();
+    ctx.translate(this.x - GAME_ENGINE.camera.x, this.y - GAME_ENGINE.camera.y);
+    ctx.scale(this.scaleX / frameWidth, this.scaleY / frameHeight);
+    ctx.drawImage(
+      spritesheet,
+      this.currentFrame * frameWidth, // Source X
+      0, // Source Y
+      frameWidth, // Source Width
+      frameHeight, // Source Height
+      -frameWidth / 2, // Destination X (centered)
+      -frameHeight / 2, // Destination Y (centered)
+      frameWidth, // Destination Width
+      frameHeight // Destination Height
+    );
+    ctx.restore();
   }
 }
