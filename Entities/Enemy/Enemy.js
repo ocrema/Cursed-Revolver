@@ -143,7 +143,7 @@ export class Spider extends Actor {
     this.attackCooldown +=
       this.currentAnimation === "attack" ? 0 : GAME_ENGINE.clockTick;
 
-    // update target
+    // check LOS on player
     for (let entity of GAME_ENGINE.entities) {
       if (entity instanceof Player && Util.canSee(this, entity)) {
         if (
