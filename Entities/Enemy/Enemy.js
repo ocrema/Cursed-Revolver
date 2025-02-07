@@ -82,7 +82,25 @@ export class Spider extends Actor {
       320, // Frame width
       320, // Frame height
       5, // Frame count
-      0.25 // Frame duration (slower for idle)
+      0.5 // Frame duration (slower for idle)
+    );
+
+    this.addAnimation(
+      "roam",
+      this.assetManager.getAsset("./assets/spider/Walk.png"),
+      64, // Frame width
+      64, // Frame height
+      5, // Frame count
+      0.5 // Frame duration (slower for idle)
+    );
+
+    this.addAnimation(
+      "aggressive",
+      this.assetManager.getAsset("./assets/spider/Walk.png"),
+      64, // Frame width
+      64, // Frame height
+      5, // Frame count
+      0.5 // Frame duration (slower for idle)
     );
 
     this.addAnimation(
@@ -137,11 +155,10 @@ export class Spider extends Actor {
   }
 
   update() {
-    this.recieveEffects()
-    this.seesPlayer = false;
-    // if currently attacking, don't update attack cooldown
-    this.attackCooldown +=
-      this.currentAnimation === "attack" ? 0 : GAME_ENGINE.clockTick;
+    this.attackCooldown += GAME_ENGINE.clockTick;
+    this.recieveEffects();
+    this.onGround = false;
+    this.onWall = false;
 
     // check LOS on player
     for (let entity of GAME_ENGINE.entities) {

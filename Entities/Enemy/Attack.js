@@ -91,7 +91,12 @@ export class Jaw extends Entity {
     }
 
     // update location
-    this.x = this.spider.x;
+    if (this.facing === 0) {
+      // if facing right
+      this.x = this.spider.x - this.spider.width / 2;
+    } else {
+      this.x = this.spider.x + this.spider.width / 2;
+    }
     this.y = this.spider.y;
 
     for (let entity of GAME_ENGINE.entities) {
@@ -104,6 +109,11 @@ export class Jaw extends Entity {
             y: this.y,
             launchMagnitude: 100,
           });
+
+          // Reset spider attack cooldown when attack hits
+          this.spider.attackCooldown = 0;
+          this.spider.currentAnimation = "run";
+          this.spider.jaw = null;
           this.removeFromWorld = true;
         }
       }
