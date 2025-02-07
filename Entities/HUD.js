@@ -210,7 +210,7 @@ export class HUD extends Entity {
 
     // Spell UI scaling
     const scaleFactor = canvasHeight / 800;
-    const cylinderSize = 200 * scaleFactor;
+    const cylinderSize = 180 * scaleFactor;
     const cylinderX = canvasWidth - cylinderSize - 25 * scaleFactor;
     const cylinderY = canvasHeight - cylinderSize - 25 * scaleFactor;
 
