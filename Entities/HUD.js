@@ -268,15 +268,26 @@ export class HUD extends Entity {
 
     // Debug mode UI
     if (this.debugMode) {
-        ctx.fillStyle = "yellow";
+        ctx.fillStyle = "white";
         ctx.font = `${canvasHeight * 0.025}px Arial`;
 
-        const debugTextX = 70;
+        const debugTextX = 90;
         const debugTextY = 40;
         const lineSpacing = canvasHeight * 0.03;
         let debugLine = 0;
 
         ctx.fillText("DEBUG MODE: ON", debugTextX, debugTextY + debugLine++ * lineSpacing);
+        
+        // Get mouse position relative to the game world
+        const mouseX = GAME_ENGINE.mouse.x + GAME_ENGINE.camera.x;
+        const mouseY = GAME_ENGINE.mouse.y + GAME_ENGINE.camera.y;
+        
+        // Cursor coordinate text position (above the cursor)
+        const cursorTextX = mouseX;
+        const cursorTextY = mouseY - 15; 
+        
+        // Ensure the text remains visible even near the top of the screen
+        const adjustedCursorTextY = Math.max(cursorTextY, 20);
 
         if (player) {
             ctx.fillText(
@@ -299,15 +310,10 @@ export class HUD extends Entity {
                 debugTextX,
                 debugTextY + debugLine++ * lineSpacing
             );
+            ctx.fillText(`X: ${Math.floor(mouseX)}, Y: ${Math.floor(mouseY)}`, debugTextX,
+            debugTextY + debugLine++ * lineSpacing);
         }
-
-        // Get mouse position relative to the game world
-        const mouseX = GAME_ENGINE.mouse.x + GAME_ENGINE.camera.x;
-        const mouseY = GAME_ENGINE.mouse.y + GAME_ENGINE.camera.y;
-
-        // Draw cursor coordinates at the cursor's position
-        ctx.fillText(`X: ${Math.floor(mouseX)}, Y: ${Math.floor(mouseY)}`, mouseX + 15, mouseY - 10);
-    }
+      }
 
     ctx.restore();
   }
