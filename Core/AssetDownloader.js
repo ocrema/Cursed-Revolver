@@ -16,6 +16,7 @@ export class AssetDownloader {
     this.downloadHUDCowboyIcon();
     this.downloadHealthBarAssets();
     this.downloadRevolverCylinderSprites();
+    this.downloadFonts();
   }
 
   downloadPlayerAssets() {
@@ -117,4 +118,9 @@ export class AssetDownloader {
       this.assetManager.queueDownload(`./assets/ui/revolver/cylinder${i}.png`);
     }
   }
+
+  downloadFonts() {
+    this.assetManager.queueDownload("./assets/fonts/texas.ttf");
+  }
+
 }

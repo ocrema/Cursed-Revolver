@@ -76,6 +76,26 @@ export class AssetManager {
 
           this.cache[path] = aud;
           break;
+          case "ttf":
+          case "otf":
+          case "woff":
+          case "woff2":
+            const fontName = path.substring(path.lastIndexOf('/') + 1, path.lastIndexOf('.'));
+            const font = new FontFace(fontName, `url(${path})`);
+
+              font.load().then((loadedFont) => {
+                document.fonts.add(loadedFont);
+                console.log("Loaded font: " + fontName);
+                this.successCount++;
+                if (this.isDone()) callback();
+              }).catch((error) => {
+                  console.log("Error loading font: " + fontName, error);
+                  this.errorCount++;
+                  if (this.isDone()) callback();
+              });
+
+            this.cache[path] = fontName; // Store font name for later use
+          break;
       }
     }
   }

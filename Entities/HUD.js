@@ -167,6 +167,12 @@ export class HUD extends Entity {
     const canvasHeight = ctx.canvas.height;
 
     const healthBarSprite = ASSET_MANAGER.getAsset("./assets/ui/healthbar.png");
+    const customFont = ASSET_MANAGER.getAsset("./assets/fonts/texas.ttf");
+
+    // Select font (custom unless in debug mode)
+    ctx.fillStyle = "white";
+    ctx.font = this.debugMode ? `${canvasHeight * 0.025}px Arial` : `${canvasHeight * 0.03}px ${customFont || "Arial"}`;
+    ctx.textAlign = "center";
 
     // Health bar dimensions
     const healthBarWidth = canvasWidth * this.healthBarWidthRatio;
@@ -216,11 +222,8 @@ export class HUD extends Entity {
     let healthRatio = Math.max(0, Math.min(currentHealth / maxHealth, 1));
     const frameIndex = Math.round((1 - healthRatio) * (totalFrames - 1));
 
-    ctx.fillStyle = "white";
-    ctx.font = `${canvasHeight * 0.03}px Arial`;
-    ctx.textAlign = "center";
-    ctx.fillText(`${Math.round(currentHealth)} / ${maxHealth}`, startX + healthBarWidth / 2, startY - 5);
-
+    ctx.fillText(`${Math.round(currentHealth)} / ${maxHealth}`, startX + healthBarWidth / 2, startY - 5);  
+    
     if (healthBarSprite) {
         ctx.drawImage(
             healthBarSprite,
