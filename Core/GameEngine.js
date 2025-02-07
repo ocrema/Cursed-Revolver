@@ -146,7 +146,21 @@ export class GameEngine {
       this.keys[
         event.key.length === 1 ? event.key.toLowerCase() : event.key
       ] = true;
-      //console.log("Key pressed:", event.key);
+     
+      if (event.key === "Escape") {
+        console.log("Escape key pressed - Toggling pause menu...");
+        //GAME_ENGINE.GAME_CONTROLLER.togglePause();
+        this.GAME_CONTROLLER.togglePause();
+        this.keys["Escape"] = false; // Prevent repeated toggling
+      }
+
+      if (this.GAME_CONTROLLER.isPaused) {
+        if (event.key === "ArrowUp" || event.key === "ArrowDown" || event.key === "Enter") {
+            this.keys[event.key] = true;
+            this.GAME_CONTROLLER.pauseMenu.update(); // Force Pause Menu update
+        }
+    }
+
     });
 
     document.addEventListener("keyup", (event) => {
