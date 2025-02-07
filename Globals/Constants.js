@@ -147,19 +147,6 @@ export const SPELLS_SPRITESHEET = {
   },
 };
 
-// Spells Constants
-
-export const SPELLS_SPRITESHEET = {
-  FIREBALL: {
-    NAME: "Fireball",
-    URL: "./assets/spells/Fireball.png",
-    FRAME_WIDTH: 64,
-    FRAME_HEIGHT: 32,
-    FRAME_COUNT: 5,
-    FRAME_DURATION: 0.15,
-  },
-};
-
 // Effects Constants
 
 export const EFFECTS_SPRITESHEET = {
