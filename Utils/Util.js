@@ -75,8 +75,5 @@ export const newCollider = (w, h, x, y) => {
     */
 
 export const canSee = (A, B) => {
-  return (
-    getDistance(A, B) <
-    A.visualRadius + (B.collider.width + B.collider.height) / 2
-  );
+  return getDistance(A, B) < A.visualRadius;
 };
