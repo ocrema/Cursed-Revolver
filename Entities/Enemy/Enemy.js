@@ -77,10 +77,10 @@ export class Spider extends Actor {
     this.assetManager = window.ASSET_MANAGER;
 
     this.addAnimation(
-      "walk",
+      "run",
       this.assetManager.getAsset("./assets/spider/Walk.png"),
-      320, // Frame width
-      320, // Frame height
+      64, // Frame width
+      64, // Frame height
       5, // Frame count
       0.5 // Frame duration (slower for idle)
     );
@@ -106,52 +106,51 @@ export class Spider extends Actor {
     this.addAnimation(
       "attack",
       this.assetManager.getAsset("./assets/spider/Walk.png"),
-      320, // Frame width
-      320, // Frame height
+      64, // Frame width
+      64, // Frame height
       5, // Frame count
-      0.25 // Frame duration (slower for idle)
+      0.5 // Frame duration (slower for idle)
     );
 
-    this.addAnimation(
-      "aggresive",
-      this.assetManager.getAsset("./assets/spider/Walk.png"),
-      320, // Frame width
-      320, // Frame height
-      5, // Frame count
-      0.25 // Frame duration (slower for idle)
-    );
-
-    this.setAnimation("walk");
-    this.width = 240;
-    this.height = 120;
+    this.setAnimation("roam");
+    this.width = 60;
+    this.height = 40;
+    this.scale = 3;
 
     // Health / Attack
     this.health = 100;
     this.maxHealth = 100;
+    this.jaw = null;
+    this.attackRadius = 200;
     this.attackCooldown = 0;
-    this.attackRate = 4;
+    this.attackTime = 8; // time that spider attempts to attack
+    this.attackRate = 2;
 
     // Movement
     this.collider = new Collider(this.width, this.height);
+    this.randomRoamLength = [250, 400, 750, 800];
+    this.randomRunLength = [550, 600, 700, 750];
 
-    this.walkSpeed = 100;
-    this.runSpeed = 250;
-    this.climbSpeed = 3;
-    this.visualRadius = 500;
+    this.walkSpeed = 300;
+    this.runSpeed = 900;
+    this.aggroSpeed = 400;
+    this.attackSpeed = 500;
+    this.speed = this.walkSpeed;
+    this.climbSpeed = 5;
     this.gravity = 800;
 
+    this.visualRadius = 700;
     this.target = { x: this.x + 200, y: this.y }; // target location of spider
 
     var distance = Util.getDistance(this, this.target);
     this.velocity = {
-      x: ((this.target.x - this.x) / distance) * this.runSpeed,
-      y: ((this.target.y - this.y) / distance) * this.runSpeed,
+      x: ((this.target.x - this.x) / distance) * this.walkSpeed,
+      y: ((this.target.y - this.y) / distance) * this.walkSpeed,
     };
 
     // Flags
     this.isEnemy = true;
-    this.onGround = false;
-    this.onWall = false;
+    this.seesPlayer = false;
   }
 
   update() {
@@ -169,6 +168,7 @@ export class Spider extends Actor {
         ) {
           this.target = { x: entity.x, y: entity.y };
         }
+        this.seesPlayer = true;
       }
     }
 
@@ -236,17 +236,16 @@ export class Spider extends Actor {
     }
 
     // if can see player, can attack, and is in attack radius
-    // If can see player, can attack, and is in attack radius
     if (
       this.seesPlayer &&
       this.attackCooldown > this.attackRate &&
       Math.abs(this.x - this.target.x) < this.attackRadius
     ) {
+      // change animation and speed
       this.setAnimation("attack");
       this.speed = this.attackSpeed;
 
-      // If no jaw, spawn one
-      // additional condiiton added by ares which is if it's been removed from the world, spawn new one 
+      // if no jaw, spawn one in + reset the timer
       if (!this.jaw || this.jaw.removeFromWorld) {
         this.attackCooldown = 0;
         this.jaw = new Jaw(this);
@@ -280,8 +279,8 @@ export class Spider extends Actor {
     var distance = Util.getDistance(this, this.target);
 
     this.velocity = {
-      x: ((this.target.x - this.x) / distance) * this.runSpeed,
-      y: 0,
+      x: ((this.target.x - this.x) / distance) * this.speed,
+      y: this.gravity,
     };
 
     // apply changes to velocity
@@ -318,7 +317,7 @@ export class Spider extends Actor {
         if (collideBottom && this.velocity.y > 0) {
           // if colliding ground and moving down
           this.y = entity.y - entity.collider.height / 2 - this.height / 2;
-          this.onGround = true;
+          this.velocity.y = 0;
         }
 
         if (collideLeft || collideRight) {
@@ -337,51 +336,6 @@ export class Spider extends Actor {
           }
         }
       }
-    }
-
-    // if spider is currently on a wall
-    if (this.onWall) {
-      // climb up wall
-      this.velocity.y =
-        ((this.target.y - this.y) / distance) * this.runSpeed * this.climbSpeed;
-    }
-
-    // if spider is on the ground and trying to move down
-    else if (this.onGround) {
-      this.velocity.y = 0;
-    }
-
-    // if spider is floating and moving
-    else if (!this.onGround && this.velocity.x !== 0) {
-      this.velocity.y += this.gravity;
-    }
-    // update location
-    this.x += this.velocity.x * GAME_ENGINE.clockTick;
-    this.y += this.velocity.y * GAME_ENGINE.clockTick;
-
-    // flip image according to velocity
-    if (this.velocity.x < 0) {
-      this.flip = 0;
-    } else if (this.velocity.x > 0) {
-      this.flip = 1;
-    }
-
-    // attempt to attack
-    if (this.attackCooldown > this.attackRate) {
-      this.attackCooldown = 0;
-      this.setAnimation("attack");
-      GAME_ENGINE.addEntity(new Jaw(this));
-    }
-
-    // apply attack damage
-    for (let attack of this.recieved_attacks) {
-      this.health -= attack.damage;
-    }
-    this.recieved_attacks = [];
-
-    // if spider loses all health
-    if (this.health <= 0) {
-      this.removeFromWorld = true;
     }
   }
 }
