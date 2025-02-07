@@ -28,7 +28,8 @@ export class Player extends Actor {
 
     this.speed = 500; // Movement speed
     this.isMoving = false; // Whether the player is moving
-    this.health = 200;
+    this.health = 100;
+    this.maxHealth = 100;
     this.isLaunchable = true;
     this.validEffects = {};
 
