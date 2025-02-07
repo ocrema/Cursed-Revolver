@@ -28,22 +28,22 @@ export class Player extends Actor {
 
     this.speed = 500; // Movement speed
     this.isMoving = false; // Whether the player is moving
-    this.health = 100;
-    this.maxHealth = 100;
+    this.health = 200;
+    this.maxHealth = 200; 
     this.isLaunchable = true;
     this.validEffects = {};
 
     // Start with the idle animation
     this.setAnimation(PLAYER_SPRITESHEET.IDLE.NAME);
 
-    this.collider = new Collider(70, 110);
+    this.collider = new Collider(65, 110);
 
     this.x_velocity = 0;
     this.y_velocity = 0;
     this.isGrounded = 0; // values above 0 indicate that the player is grounded, so the player can still jump for a little bit after falling off a platform
 
     this.selectedSpell = 0;
-    this.spellCooldowns = [0, 0, 0, 0, 0];
+    this.spellCooldowns = [0, 0, 0, 0, 0, 0];
     this.maxSpellCooldown = 1;
 
     this.timeBetweenFootsteps = 0.4;
@@ -51,9 +51,16 @@ export class Player extends Actor {
 
     this.isDashing = 0;
     this.dashTime = 0.15;
-    this.dashSpeed = 1000;
+    this.dashSpeed = 700;
     this.storedDashSpeed = 0;
     this.dashCooldown = 0;
+
+    this.wallGrabState = 0;
+
+    this.jumpCooldown = 0;
+
+    this.isGroundSlamming = false;
+    this.groundSlamSpeed = 3000;
   }
 
   update() {
@@ -63,7 +70,7 @@ export class Player extends Actor {
     // Player Reset Button - this is if the player dies, this resets player health and respawns them.
     if (GAME_ENGINE.keys["h"]) {
       this.isDead = false;
-      this.health = 100;
+      this.health = 200;
       this.x = 0;
       this.y = 0;
       this.setAnimation(PLAYER_SPRITESHEET.IDLE.NAME);
@@ -147,11 +154,13 @@ export class Player extends Actor {
   }
 
   movement() {
+    //gravity
     this.y_velocity = Math.min(
       this.y_velocity + GAME_ENGINE.clockTick * 3000,
-      10000
+      3000
     );
 
+    // air resistance / friction basically
     if (this.x_velocity > 0) {
       this.x_velocity = Math.max(
         this.x_velocity -
@@ -193,12 +202,31 @@ export class Player extends Actor {
       window.ASSET_MANAGER.playAsset("./assets/sfx/jump.ogg");
     }
 
-    this.isGrounded = Math.max(this.isGrounded - GAME_ENGINE.clockTick, 0);
     this.dashCooldown = Math.max(this.dashCooldown - GAME_ENGINE.clockTick, 0);
+    this.jumpCooldown = Math.max(this.jumpCooldown - GAME_ENGINE.clockTick, 0);
 
-    if (GAME_ENGINE.keys[" "] && this.isGrounded > 0 && this.isDashing <= 0) {
+    // jump
+    if (
+      GAME_ENGINE.keys[" "] &&
+      this.isGrounded > 0 &&
+      this.isDashing <= 0 &&
+      this.jumpCooldown <= 0
+    ) {
       this.isGrounded = 0;
+      this.jumpCooldown = 0.4;
       this.y_velocity = -1500; // Jumping velocity
+      this.setAnimation(PLAYER_SPRITESHEET.JUMP.NAME);
+      this.isJumping = true;
+      window.ASSET_MANAGER.playAsset("./assets/sfx/jump.ogg");
+    } else if (
+      GAME_ENGINE.keys[" "] &&
+      this.wallGrabState !== 0 &&
+      this.isDashing <= 0 &&
+      this.jumpCooldown <= 0
+    ) {
+      this.jumpCooldown = 0.4;
+      this.y_velocity = -400;
+      this.x_velocity = -1000 * this.wallGrabState;
       this.setAnimation(PLAYER_SPRITESHEET.JUMP.NAME);
       this.isJumping = true;
       window.ASSET_MANAGER.playAsset("./assets/sfx/jump.ogg");
@@ -226,79 +254,83 @@ export class Player extends Actor {
 
     // Player Collision Logic
 
-    this.x += (this.x_velocity + velFromKeys) * GAME_ENGINE.clockTick;
-    let collisions = [];
-    for (let e of GAME_ENGINE.entities) {
-      if (
-        e.isPlayer ||
-        e.isAttack ||
-        e.isEnemy ||
-        e.isEffect ||
-        e.isDestructibleObject
-      )
-        continue;
-      if (this.colliding(e)) {
-        collisions.push(e);
+    let hitSomething = false;
+
+    if (!this.isGroundSlamming) {
+      // make disired movement in x direction
+      this.x += (this.x_velocity + velFromKeys) * GAME_ENGINE.clockTick;
+
+      // for all of the entities i am colliding with, move the player as far back as i need to to not be colliding with any of them
+
+      for (let e of GAME_ENGINE.entities) {
+        if (
+          e.isPlayer ||
+          e.isAttack ||
+          e.isEnemy ||
+          e.isEffect ||
+          e.isDestructibleObject
+        )
+          continue;
+        if (this.colliding(e)) {
+          hitSomething = true;
+          if (this.x_velocity + velFromKeys > 0) {
+            this.x = e.x - e.collider.width / 2 - this.collider.width / 2;
+          } else {
+            this.x = e.x + e.collider.width / 2 + this.collider.width / 2;
+          }
+        }
       }
-    }
-    if (collisions.length !== 0) {
-      if (this.x_velocity + velFromKeys > 0) {
-        this.x =
-          collisions.reduce(
-            (acc, curr) => Math.min(acc, curr.x - curr.collider.width / 2),
-            collisions[0].x - collisions[0].collider.width / 2
-          ) -
-          this.collider.width / 2;
+      if (hitSomething) {
+        if (velFromKeys !== 0 && this.isGrounded !== 0.2) {
+          this.wallGrabState = velFromKeys > 0 ? 1 : -1;
+          this.y_velocity = Math.min(this.y_velocity, 100);
+        } else {
+          this.wallGrabState = 0;
+        }
+        this.x_velocity = 0;
       } else {
-        this.x =
-          collisions.reduce(
-            (acc, curr) => Math.max(acc, curr.x + curr.collider.width / 2),
-            collisions[0].x + collisions[0].collider.width / 2
-          ) +
-          this.collider.width / 2;
+        this.wallGrabState = 0;
       }
-      this.x_velocity = 0;
     }
 
+    if (GAME_ENGINE.keys["s"] && this.isGrounded !== 0.2) {
+      this.isGroundSlamming = true;
+      this.wallGrabState = 0;
+    }
+    if (this.isGroundSlamming) {
+      this.y_velocity = this.groundSlamSpeed;
+    }
+
+    this.isGrounded = Math.max(this.isGrounded - GAME_ENGINE.clockTick, 0);
+
+    // make disired movement in y direction
     this.y += this.y_velocity * GAME_ENGINE.clockTick;
-    collisions = [];
+
+    // for all of the entities i am colliding with, move the player as far back as i need to to not be colliding with any of them
+    hitSomething = false;
     for (let e of GAME_ENGINE.entities) {
-      if (
-        e.isPlayer ||
-        e.isAttack ||
-        e.isEnemy ||
-        e.isEffect ||
-        e.isDestructibleObject
-      )
+      if (e.isPlayer || e.isAttack || e.isEnemy || e.isDestructibleObject)
         continue;
       if (this.colliding(e)) {
-        collisions.push(e);
+        hitSomething = true;
+        if (this.y_velocity > 0) {
+          this.y = e.y - e.collider.height / 2 - this.collider.height / 2;
+        } else {
+          this.y = e.y + e.collider.height / 2 + this.collider.height / 2;
+        }
       }
     }
-    if (collisions.length !== 0) {
+    if (hitSomething) {
       if (this.y_velocity > 0) {
         this.isGrounded = 0.2;
-
-        this.y =
-          collisions.reduce(
-            (acc, curr) => Math.min(acc, curr.y - curr.collider.height / 2),
-            collisions[0].y - collisions[0].collider.height / 2
-          ) -
-          this.collider.height / 2;
-      } else {
-        this.y =
-          collisions.reduce(
-            (acc, curr) => Math.max(acc, curr.y + curr.collider.height / 2),
-            collisions[0].y + collisions[0].collider.height / 2
-          ) +
-          this.collider.height / 2;
+        if (this.isGroundSlamming) {
+          this.isGroundSlamming = false;
+        }
       }
-
       if (this.y_velocity > 300) {
         window.ASSET_MANAGER.playAsset("./assets/sfx/landing.wav");
       }
-
-      this.y_velocity = 0;
+      this.y_velocity = 0; // if hit something cancel velocity
     }
   }
 
@@ -315,10 +347,6 @@ export class Player extends Actor {
         GAME_ENGINE.keys[key] = false;
         this.selectedSpell = i;
         window.ASSET_MANAGER.playAsset("./assets/sfx/click1.ogg");
-        this.selectedSpell = i;
-        //GAME_ENGINE.HUD.activeSpellIndex = i;  
-        //GAME_ENGINE.HUD.rotateCylinder(i, 0.5); 
-
       }
     }
 
