@@ -175,3 +175,16 @@ export const EFFECTS_SPRITESHEET = {
     FRAME_DURATION: 0.1,
   },
 };
+
+// UI Constants 
+
+export const UI_SPRITESHEET = {
+  FIREBALL_ICON: {
+    NAME: "FIREBALLICON",
+    URL: "./assets/ui/spells/fireballicon.png",
+    FRAME_WIDTH: 32,
+    FRAME_HEIGHT: 32,
+    FRAME_COUNT: 20,
+    FRAME_DURATION: 0.15,
+  },
+};
