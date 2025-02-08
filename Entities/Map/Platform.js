@@ -22,6 +22,7 @@ export class Platform extends Entity {
     this.cols = cols; // Number of tiles horizontally
     this.rows = rows; // Number of tiles vertically
     this.tileSize = 64; // Each tile will be scaled to 64x64
+    this.isGround = true;
 
     // Fix Collider to Match Drawn Tile Size
     this.collider = new Collider(
@@ -70,17 +71,17 @@ export class Platform extends Entity {
           0,
           0,
           16,
-          16, // Source tile size (original is 16x16)
+          16, // Source tile size (16x16)
           this.x -
             GAME_ENGINE.camera.x +
             col * this.tileSize -
-            (this.cols * this.tileSize) / 2, // X position
+            (this.cols * this.tileSize) / 2,
           this.y -
             GAME_ENGINE.camera.y +
             row * this.tileSize -
-            (this.rows * this.tileSize) / 2, // Y position
-          this.tileSize, // Scaled width (64px)
-          this.tileSize // Scaled height (64px)
+            (this.rows * this.tileSize) / 2,
+          this.tileSize,
+          this.tileSize
         );
       }
     }

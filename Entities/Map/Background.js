@@ -59,7 +59,7 @@ export class Background extends Entity {
       frameHeight, // Source Height
       -frameWidth / 2, // Center the background
       -frameHeight / 2, // Center the background
-      frameWidth * 1.25, // Destination Width
+      frameWidth, // Destination Width
       frameHeight // Destination Height
     );
 

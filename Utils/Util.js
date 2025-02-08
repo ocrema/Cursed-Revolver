@@ -1,4 +1,3 @@
-
 /** Global Parameters Object */
 const params = {};
 
@@ -6,7 +5,7 @@ const params = {};
  * @param {Number} n
  * @returns Random Integer Between 0 and n-1
  */
-const randomInt = n => Math.floor(Math.random() * n);
+export const randomInt = (n) => Math.floor(Math.random() * n);
 
 /**
  * @param {Number} r Red Value
@@ -35,19 +34,21 @@ const hsl = (h, s, l) => `hsl(${h}, ${s}%, ${l}%)`;
 
 /** Creates an alias for requestAnimationFrame for backwards compatibility */
 window.requestAnimFrame = (() => {
-    return window.requestAnimationFrame ||
-        window.webkitRequestAnimationFrame ||
-        window.mozRequestAnimationFrame ||
-        window.oRequestAnimationFrame ||
-        window.msRequestAnimationFrame ||
-        /**
-         * Compatibility for requesting animation frames in older browsers
-         * @param {Function} callback Function
-         * @param {DOM} element DOM ELEMENT
-         */
-        ((callback, element) => {
-            window.setTimeout(callback, 1000 / 60);
-        });
+  return (
+    window.requestAnimationFrame ||
+    window.webkitRequestAnimationFrame ||
+    window.mozRequestAnimationFrame ||
+    window.oRequestAnimationFrame ||
+    window.msRequestAnimationFrame ||
+    /**
+     * Compatibility for requesting animation frames in older browsers
+     * @param {Function} callback Function
+     * @param {DOM} element DOM ELEMENT
+     */
+    ((callback, element) => {
+      window.setTimeout(callback, 1000 / 60);
+    })
+  );
 })();
 
 /**
@@ -56,16 +57,16 @@ window.requestAnimFrame = (() => {
  * @returns Distance between the two points
  */
 export const getDistance = (p1, p2) => {
-    return Math.sqrt(Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2));
+  return Math.sqrt(Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2));
 };
 
 export const getAngle = (p1, p2) => {
-    return Math.atan2(p2.y - p1.y, p2.x - p1.x);
-}
+  return Math.atan2(p2.y - p1.y, p2.x - p1.x);
+};
 
 export const diffBetweenAngles = (a, b) => {
-    return Math.PI - Math.abs(Math.abs(a - b) - Math.PI); 
-}
+  return Math.PI - Math.abs(Math.abs(a - b) - Math.PI);
+};
 
 /*
 export const newCollider = (w, h, x, y) => { 
@@ -73,6 +74,6 @@ export const newCollider = (w, h, x, y) => {
 };
     */
 
-export const canSee = (A,B) => {
-    return getDistance(A,B) < A.visualRadius + ((B.collider.width + B.collider.height) / 2)
-}
+export const canSee = (A, B) => {
+  return getDistance(A, B) < A.visualRadius;
+};

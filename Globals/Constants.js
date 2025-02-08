@@ -117,3 +117,61 @@ export const MAP_TREES_AND_ROCKS = {
   TREE2_URL: "./assets/map/props/tree02.png",
   TREE3_URL: "./assets/map/props/tree03.png",
 };
+
+// Destructible Object Constants
+
+export const DESTRUCTIBLE_OBJECTS_SPRITESHEET = {
+  BARREL: {
+    URL: "./assets/objects/barrel.png",
+  },
+  TUMBLEWEED: {
+    NAME: "TUMBLEWEED",
+    URL: "./assets/objects/tumbleweed.png",
+    FRAME_WIDTH: 256,
+    FRAME_HEIGHT: 256,
+    FRAME_COUNT: 4,
+    FRAME_DURATION: 0.1,
+  },
+};
+
+// Spells Constants
+
+export const SPELLS_SPRITESHEET = {
+  FIREBALL: {
+    NAME: "Fireball",
+    URL: "./assets/spells/Fireball.png",
+    FRAME_WIDTH: 64,
+    FRAME_HEIGHT: 32,
+    FRAME_COUNT: 5,
+    FRAME_DURATION: 0.15,
+  },
+};
+
+// Effects Constants
+
+export const EFFECTS_SPRITESHEET = {
+  FIREBALL_EXPLOSION_SPRITESHEET: {
+    NAME: "FIREBALLEXPLOSION",
+    URL: "./assets/effects/explosion/FireballExplosionEffect.png",
+    FRAME_WIDTH: 48,
+    FRAME_HEIGHT: 48,
+    FRAME_COUNT: 8,
+    FRAME_DURATION: 0.15,
+  },
+  BARREL_EXPLOSION_SPRITESHEET: {
+    NAME: "BARRELEXPLOSION",
+    URL: "./assets/effects/explosion/BarrelExplosionEffect.png",
+    FRAME_WIDTH: 32,
+    FRAME_HEIGHT: 48,
+    FRAME_COUNT: 7,
+    FRAME_DURATION: 0.2,
+  },
+  BURNING_EFFECT: {
+    NAME: "BURNING",
+    URL: "./assets/effects/burning/BurningEffect.png",
+    FRAME_WIDTH: 24,
+    FRAME_HEIGHT: 32,
+    FRAME_COUNT: 8,
+    FRAME_DURATION: 0.1,
+  },
+};
