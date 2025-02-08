@@ -15,7 +15,6 @@ export class HUD extends Entity {
     // Cursor coordinates
     this.cursorX = 0;
     this.cursorY = 0;
-     
 
     // Cowboy animation setup (Blinking images)
     this.cowboyImages = [
@@ -37,12 +36,15 @@ export class HUD extends Entity {
       "./assets/ui/cowboy_spell.png", // Transition end
     ];
 
-    this.cowboyFrameIndex = 0;  // Current frame
-    this.blinkTimer = 0;        // Timer to switch frames
-    this.blinkInterval = 1.0;   // Change every 0.5 seconds
+    this.cowboyFrameIndex = 0; // Current frame
+    this.blinkTimer = 0; // Timer to switch frames
+    this.blinkInterval = 1.0; // Change every 0.5 seconds
     this.spellAnimationTimer = 0; // Timer for spell switching animation
     this.spellAnimationDuration = 1.2; // Duration of spell selection animation
     this.isSpellSwitching = false; // Flag to check if spell switching animation is playing
+    this.healthFlashTimer = 0; // Timer for flashing effect on hit 
+    this.healthFlashDuration = 0.5; // Flash duration in seconds
+    this.lastHealth = 0; // Stores the previous health value
 
     // Spells and cylinder setup
     this.spells = [
@@ -67,7 +69,6 @@ export class HUD extends Entity {
     this.targetRotation = 0; // Target rotation (in radians)
     this.rotationSpeed = 0; // Speed of rotation (radians per frame)
     this.rotationTime = 0; // Time remaining for rotation
-
   }
 
   colliding() {
@@ -75,11 +76,22 @@ export class HUD extends Entity {
   }
 
   update() {
-    const player = GAME_ENGINE.entities.find(e => e.isPlayer);
+    const player = GAME_ENGINE.entities.find((e) => e.isPlayer);
     if (!player) return; //check that player exists
 
-     // Detect Spell Switching
-     if (player.selectedSpell !== this.previousSpellIndex) {
+    // Detect if player took damage
+    if (player.health < this.lastHealth) {
+      this.healthFlashTimer = this.healthFlashDuration; // Start flash effect
+    }
+
+    this.lastHealth = player.health; // Update last health value
+
+    // Reduce flash timer
+    if (this.healthFlashTimer > 0) {
+      this.healthFlashTimer -= GAME_ENGINE.clockTick;
+    }
+    // Detect Spell Switching
+    if (player.selectedSpell !== this.previousSpellIndex) {
       this.isSpellSwitching = true;
       this.spellAnimationTimer = this.spellAnimationDuration; // Start animation timer
       this.previousSpellIndex = player.selectedSpell; // Update previous spell index
@@ -90,7 +102,8 @@ export class HUD extends Entity {
       this.blinkTimer += GAME_ENGINE.clockTick;
       if (this.blinkTimer >= this.blinkInterval) {
         this.blinkTimer = 0; // Reset timer
-        this.cowboyFrameIndex = (this.cowboyFrameIndex + 1) % this.cowboyImages.length;
+        this.cowboyFrameIndex =
+          (this.cowboyFrameIndex + 1) % this.cowboyImages.length;
       }
     }
 
@@ -101,9 +114,9 @@ export class HUD extends Entity {
       }
     }
 
-     // Sync HUD with Player's selected spell
-     this.activeSpellIndex = player.selectedSpell;  
-     this.rotateCylinder(this.activeSpellIndex, 0.5);
+    // Sync HUD with Player's selected spell
+    this.activeSpellIndex = player.selectedSpell;
+    this.rotateCylinder(this.activeSpellIndex, 0.5);
 
     // Toggle debug mode
     if (GAME_ENGINE.keys["b"]) {
@@ -118,7 +131,7 @@ export class HUD extends Entity {
     // Spell selection (1-6 keys)
     for (let i = 1; i <= 6; i++) {
       const key = `Digit${i}`;
-      if (GAME_ENGINE.keys[key]) {  
+      if (GAME_ENGINE.keys[key]) {
         this.rotateCylinder(i - 1, 0.5); // Smoothly switch spells in 0.5s
         GAME_ENGINE.keys[key] = false;
       }
@@ -171,7 +184,9 @@ export class HUD extends Entity {
 
     // Select font (custom unless in debug mode)
     ctx.fillStyle = "white";
-    ctx.font = this.debugMode ? `${canvasHeight * 0.025}px Arial` : `${canvasHeight * 0.03}px ${customFont || "Arial"}`;
+    ctx.font = this.debugMode
+      ? `${canvasHeight * 0.025}px Arial`
+      : `${canvasHeight * 0.03}px ${customFont || "Arial"}`;
     ctx.textAlign = "center";
 
     // Health bar dimensions
@@ -185,14 +200,14 @@ export class HUD extends Entity {
     const cowboyY = canvasHeight - cowboySize / 1.5;
 
     // Determine Cowboy Frame
-    let currentCowboyImage = this.isSpellSwitching 
-        ? this.cowboySpellImages[this.activeSpellIndex + 1] 
-        : this.cowboyImages[this.cowboyFrameIndex];
+    let currentCowboyImage = this.isSpellSwitching
+      ? this.cowboySpellImages[this.activeSpellIndex + 1]
+      : this.cowboyImages[this.cowboyFrameIndex];
 
     // Get Asset and Draw Cowboy
     const cowboyImg = ASSET_MANAGER.getAsset(currentCowboyImage);
     if (cowboyImg) {
-        ctx.drawImage(cowboyImg, cowboyX, cowboyY, cowboySize, cowboySize);
+      ctx.drawImage(cowboyImg, cowboyX, cowboyY, cowboySize, cowboySize);
     }
 
     // Health bar (next to cowboy)
@@ -215,108 +230,130 @@ export class HUD extends Entity {
     const frameHeight = healthBarSprite.height / totalFrames;
 
     // Get player health
-    const player = GAME_ENGINE.entities.find(e => e.isPlayer);
+    const player = GAME_ENGINE.entities.find((e) => e.isPlayer);
     const maxHealth = player ? player.maxHealth : 200;
     const currentHealth = player ? player.health : maxHealth;
 
     let healthRatio = Math.max(0, Math.min(currentHealth / maxHealth, 1));
     const frameIndex = Math.round((1 - healthRatio) * (totalFrames - 1));
 
-    ctx.fillText(`${Math.round(currentHealth)} / ${maxHealth}`, startX + healthBarWidth / 2, startY - 5);  
-    
+    // Text flashing red when hit - idk if to keep this in but itll help me keep better track of when player was hit - ares 
+    ctx.fillStyle = this.healthFlashTimer > 0 ? "red" : "white";
+
+    ctx.fillText(
+      `${Math.round(currentHealth)} / ${maxHealth}`,
+      startX + healthBarWidth / 2,
+      startY - 5
+    );
+
     if (healthBarSprite) {
-        ctx.drawImage(
-            healthBarSprite,
-            0,
-            frameIndex * (healthBarSprite.height / totalFrames),
-            frameWidth,
-            frameHeight,
-            startX,
-            startY,
-            healthBarWidth,
-            healthBarHeight
-        );
+      ctx.drawImage(
+        healthBarSprite,
+        0,
+        frameIndex * (healthBarSprite.height / totalFrames),
+        frameWidth,
+        frameHeight,
+        startX,
+        startY,
+        healthBarWidth,
+        healthBarHeight
+      );
     }
 
     // Draw spell name and icon
-    ctx.fillText(`Spell: ${this.spells[this.activeSpellIndex].name}`, spellTextX, spellTextY);
+    ctx.fillText(
+      `Spell: ${this.spells[this.activeSpellIndex].name}`,
+      spellTextX,
+      spellTextY
+    );
 
-    const spellIcon = ASSET_MANAGER.getAsset(this.spells[this.activeSpellIndex].icon);
+    const spellIcon = ASSET_MANAGER.getAsset(
+      this.spells[this.activeSpellIndex].icon
+    );
     if (spellIcon) {
-        const spellIconSize = 60 * scaleFactor;
-        ctx.drawImage(
-            spellIcon,
-            spellTextX + 90 * scaleFactor,
-            spellTextY - 50 * scaleFactor,
-            spellIconSize,
-            spellIconSize
-        );
+      const spellIconSize = 60 * scaleFactor;
+      ctx.drawImage(
+        spellIcon,
+        spellTextX + 90 * scaleFactor,
+        spellTextY - 50 * scaleFactor,
+        spellIconSize,
+        spellIconSize
+      );
     }
 
     // Draw revolver cylinder (rotating)
     const cylinderImage = ASSET_MANAGER.getAsset(this.cylinderImages[0]);
     if (cylinderImage) {
-        ctx.save();
-        ctx.translate(cylinderX + cylinderSize / 2, cylinderY + cylinderSize / 2);
-        ctx.rotate(this.cylinderRotation);
-        ctx.drawImage(
-            cylinderImage,
-            -cylinderSize / 2,
-            -cylinderSize / 2,
-            cylinderSize,
-            cylinderSize
-        );
-        ctx.restore();
+      ctx.save();
+      ctx.translate(cylinderX + cylinderSize / 2, cylinderY + cylinderSize / 2);
+      ctx.rotate(this.cylinderRotation);
+      ctx.drawImage(
+        cylinderImage,
+        -cylinderSize / 2,
+        -cylinderSize / 2,
+        cylinderSize,
+        cylinderSize
+      );
+      ctx.restore();
     }
 
     // Debug mode UI
     if (this.debugMode) {
-        ctx.fillStyle = "white";
-        ctx.font = `${canvasHeight * 0.025}px Arial`;
+      ctx.fillStyle = "white";
+      ctx.font = `${canvasHeight * 0.025}px Arial`;
 
-        const debugTextX = 90;
-        const debugTextY = 40;
-        const lineSpacing = canvasHeight * 0.03;
-        let debugLine = 0;
+      const debugTextX = 90;
+      const debugTextY = 40;
+      const lineSpacing = canvasHeight * 0.03;
+      let debugLine = 0;
 
-        ctx.fillText("DEBUG MODE: ON", debugTextX, debugTextY + debugLine++ * lineSpacing);
-        
-        // Get mouse position relative to the game world
-        const mouseX = GAME_ENGINE.mouse.x + GAME_ENGINE.camera.x;
-        const mouseY = GAME_ENGINE.mouse.y + GAME_ENGINE.camera.y;
-        
-        // Cursor coordinate text position (above the cursor)
-        const cursorTextX = mouseX;
-        const cursorTextY = mouseY - 15; 
-        
-        // Ensure the text remains visible even near the top of the screen
-        const adjustedCursorTextY = Math.max(cursorTextY, 20);
+      ctx.fillText(
+        "DEBUG MODE: ON",
+        debugTextX,
+        debugTextY + debugLine++ * lineSpacing
+      );
 
-        if (player) {
-            ctx.fillText(
-                `Player Position: (${Math.floor(player.x)}, ${Math.floor(player.y)})`,
-                debugTextX,
-                debugTextY + debugLine++ * lineSpacing
-            );
-            ctx.fillText(
-                `Player Velocity: (${player.x_velocity.toFixed(2)}, ${player.y_velocity.toFixed(2)})`,
-                debugTextX,
-                debugTextY + debugLine++ * lineSpacing
-            );
-            ctx.fillText(
-                `Active Spell: ${this.spells[this.activeSpellIndex].name}`,
-                debugTextX,
-                debugTextY + debugLine++ * lineSpacing
-            );
-            ctx.fillText(
-                `Health: ${currentHealth} / ${maxHealth}`,
-                debugTextX,
-                debugTextY + debugLine++ * lineSpacing
-            );
-            ctx.fillText(`X: ${Math.floor(mouseX)}, Y: ${Math.floor(mouseY)}`, debugTextX,
-            debugTextY + debugLine++ * lineSpacing);
-        }
+      // Get mouse position relative to the game world
+      const mouseX = GAME_ENGINE.mouse.x + GAME_ENGINE.camera.x;
+      const mouseY = GAME_ENGINE.mouse.y + GAME_ENGINE.camera.y;
+
+      // Cursor coordinate text position (above the cursor)
+      const cursorTextX = mouseX;
+      const cursorTextY = mouseY - 15;
+
+      // Ensure the text remains visible even near the top of the screen
+      const adjustedCursorTextY = Math.max(cursorTextY, 20);
+
+      if (player) {
+        ctx.fillText(
+          `Player Position: (${Math.floor(player.x)}, ${Math.floor(player.y)})`,
+          debugTextX,
+          debugTextY + debugLine++ * lineSpacing
+        );
+        ctx.fillText(
+          `Player Velocity: (${player.x_velocity.toFixed(
+            2
+          )}, ${player.y_velocity.toFixed(2)})`,
+          debugTextX,
+          debugTextY + debugLine++ * lineSpacing
+        );
+        ctx.fillText(
+          `Active Spell: ${this.spells[this.activeSpellIndex].name}`,
+          debugTextX,
+          debugTextY + debugLine++ * lineSpacing
+        );
+        ctx.fillText(
+          `Health: ${currentHealth} / ${maxHealth}`,
+          debugTextX,
+          debugTextY + debugLine++ * lineSpacing
+        );
+        ctx.fillText(
+          `X: ${Math.floor(mouseX)}, Y: ${Math.floor(mouseY)}`,
+          debugTextX,
+          debugTextY + debugLine++ * lineSpacing
+        );
       }
+    }
 
     ctx.restore();
   }
