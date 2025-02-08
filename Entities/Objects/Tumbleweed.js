@@ -57,23 +57,26 @@ export class Tumbleweed extends Entity {
     this.y_velocity += this.gravity * GAME_ENGINE.clockTick;
     this.y += this.y_velocity * GAME_ENGINE.clockTick;
 
-    if (this.direction === "right") {
-      this.x += this.speed * GAME_ENGINE.clockTick;
-    } else {
-      this.x -= this.speed * GAME_ENGINE.clockTick;
-    }
+    // Move horizontally based on direction
+    let moveX = this.speed * GAME_ENGINE.clockTick;
+    if (this.direction === "left") moveX = -moveX;
+    this.x += moveX;
 
-    this.rotation += (this.speed * GAME_ENGINE.clockTick) / 50;
+    // Rotate the tumbleweed
+    this.rotation += moveX / 50;
 
     for (let e of GAME_ENGINE.entities) {
       if (e.isGround && this.colliding(e)) {
-        this.bounceOffGround(e);
+        if (e.collider.height > e.collider.width) {
+          this.bounceOffObject(e); // Treats tall objects as walls
+        } else {
+          this.bounceOffGround(e);
+        }
         break;
       }
     }
 
     for (let e of GAME_ENGINE.entities) {
-      // Checks if fireball explosion was the collision temporary check - ares
       if (e.isFireballEffect && this.colliding(e)) {
         this.onFireballHit(e);
         e.removeFromWorld = true;
@@ -89,6 +92,29 @@ export class Tumbleweed extends Entity {
       Math.random() * (this.maxBounce - this.minBounce) +
       this.minBounce
     );
+  }
+
+  bounceOffObject(object) {
+    console.log("💥 Tumbleweed hit a tall object! Reversing direction.");
+
+    // Reverse direction
+    this.direction = this.direction === "right" ? "left" : "right";
+
+    // Reduce speed slightly for realism
+    this.speed *= this.bounceDecay;
+
+    // Apply a small bounce effect
+    this.y_velocity = -(
+      Math.random() * (this.maxBounce - this.minBounce) +
+      this.minBounce
+    );
+
+    // Prevent sticking inside the object by slightly moving it away
+    if (this.direction === "right") {
+      this.x = object.x + object.collider.width / 2 + this.collider.width / 2;
+    } else {
+      this.x = object.x - object.collider.width / 2 - this.collider.width / 2;
+    }
   }
 
   /**
