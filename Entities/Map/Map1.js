@@ -1,7 +1,8 @@
 import { GameMap } from "../Entities.js";
 import { Player } from "../Player/Player.js";
 import { Background } from "./Background.js";
-import { Cactus, Spider } from "../Enemy/Enemy.js";
+import { Cactus } from "../Enemy/Cactus.js";
+import { Spider } from "../Enemy/Spider.js";
 import { GAME_ENGINE } from "../../main.js";
 import { Platform } from "./Platform.js";
 import { Barrel } from "../Objects/Barrel.js";
@@ -51,8 +52,8 @@ export class Map1 extends GameMap {
 
     // **Tumbleweeds**
     GAME_ENGINE.addEntity(new Tumbleweed(-800, -250, "right"));
-    GAME_ENGINE.addEntity(new Tumbleweed(700, -300, "left"));
-    GAME_ENGINE.addEntity(new Tumbleweed(200, -500, "right"));
+    GAME_ENGINE.addEntity(new Tumbleweed(700, -600, "left"));
+    GAME_ENGINE.addEntity(new Tumbleweed(200, -700, "right"));
     GAME_ENGINE.addEntity(new Tumbleweed(-1100, 80, "right"));
   }
 }

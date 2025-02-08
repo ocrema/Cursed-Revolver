@@ -121,7 +121,7 @@ export class Tumbleweed extends Entity {
   onFireballHit() {
     if (this.isBurning) return; // Prevent multiple burns
 
-    console.log("🔥 Tumbleweed is now burning!");
+    //console.log("🔥 Tumbleweed is now burning!");
     this.isBurning = true;
 
     // 60 as y offset to center burning effect
