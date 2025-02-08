@@ -12,7 +12,7 @@ export class Tumbleweed extends Entity {
     this.entityOrder = 2; // Render below spells
     this.assetManager = window.ASSET_MANAGER;
     this.direction = direction;
-    this.speed = 200; // Horizontal movement speed
+    this.speed = 250; // Horizontal movement speed
     this.rotation = 0; // Rotation angle
     this.rotationSpeed = 0.1; // Speed of rolling rotation
     this.scale = 0.35; // Scale the sprite
