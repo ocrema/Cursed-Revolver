@@ -4,6 +4,7 @@ import { Player } from "../Player/Player.js";
 import { Thorn, Jaw } from "./Attack.js";
 import * as Util from "../../Utils/Util.js";
 import { Collider } from "../Collider.js";
+import { ENEMY_SPRITESHEET } from "../../Globals/Constants.js";
 
 export class Cactus extends Actor {
   constructor(x, y) {
@@ -14,9 +15,9 @@ export class Cactus extends Actor {
 
     this.addAnimation(
       "placeholder",
-      this.assetManager.getAsset("./assets/cactus/cactus.png"),
-      320, // Frame width
-      320, // Frame height
+      this.assetManager.getAsset(ENEMY_SPRITESHEET.CACTUS.URL),
+      32, // Frame width
+      32, // Frame height
       1, // Frame count
       0.25 // Frame duration (slower for idle)
     );
@@ -24,6 +25,7 @@ export class Cactus extends Actor {
     this.setAnimation("placeholder");
     this.width = 160;
     this.height = 250;
+    this.scale = 7.5
 
     // Health / Attack
     this.health = 50;

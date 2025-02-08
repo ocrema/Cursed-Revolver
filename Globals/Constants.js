@@ -118,6 +118,12 @@ export const MAP_TREES_AND_ROCKS = {
   TREE3_URL: "./assets/map/props/tree03.png",
 };
 
+export const ENEMY_SPRITESHEET = { 
+  CACTUS: { 
+    URL: "./assets/cactus/newcactus.png"
+  }
+}
+
 // Destructible Object Constants
 
 export const DESTRUCTIBLE_OBJECTS_SPRITESHEET = {

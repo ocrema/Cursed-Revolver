@@ -14,10 +14,10 @@ export class Map1 extends GameMap {
     GAME_ENGINE.addEntity(new Background());
 
     // **Enemies**
-    GAME_ENGINE.addEntity(new Cactus(600, 80));
-    GAME_ENGINE.addEntity(new Cactus(1200, 80));
-    GAME_ENGINE.addEntity(new Cactus(-900, 80));
-    GAME_ENGINE.addEntity(new Cactus(150, -900));
+    GAME_ENGINE.addEntity(new Cactus(600, 100));
+    GAME_ENGINE.addEntity(new Cactus(1200, 100));
+    GAME_ENGINE.addEntity(new Cactus(-900, 100));
+    GAME_ENGINE.addEntity(new Cactus(150, -850));
     GAME_ENGINE.addEntity(new Spider(1000, 70));
     GAME_ENGINE.addEntity(new Spider(-700, 70));
 
