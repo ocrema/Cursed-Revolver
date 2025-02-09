@@ -145,6 +145,15 @@ export const SPELLS_SPRITESHEET = {
     FRAME_COUNT: 5,
     FRAME_DURATION: 0.15,
   },
+
+  WATERWAVE: {
+    NAME: "WaterWave",
+    URL: "./assets/spells/WaterWave.png",
+    FRAME_WIDTH: 128,
+    FRAME_HEIGHT: 128,
+    FRAME_COUNT: 9,
+    FRAME_DURATION: 0.15,
+  },
 };
 
 // Effects Constants

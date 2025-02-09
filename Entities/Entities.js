@@ -177,16 +177,16 @@ export class Entity {
       this.x =
         other.x -
         other.collider.width / 2 -
-        this.collider.width / 2 +
-        other.collider.x_offset -
-        this.collider.x_offset;
+        this.collider.width / 2 -
+        other.collider.x_offset +
+        this.collider.x_offset - 1;
     else
       this.x =
         other.x +
         other.collider.width / 2 +
-        this.collider.width / 2 -
-        other.collider.x_offset +
-        this.collider.x_offset;
+        this.collider.width / 2 +
+        other.collider.x_offset -
+        this.collider.x_offset + 1;
   }
   /**
    * moves this entity so that it is against the other entities' collider border in the y direction
@@ -197,16 +197,16 @@ export class Entity {
       this.y =
         other.y -
         other.collider.height / 2 -
-        this.collider.height / 2 +
-        other.collider.y_offset -
-        this.collider.y_offset;
+        this.collider.height / 2 -
+        other.collider.y_offset +
+        this.collider.y_offset - 1;
     else
       this.y =
         other.y +
         other.collider.height / 2 +
-        this.collider.height / 2 -
-        other.collider.y_offset +
-        this.collider.y_offset;
+        this.collider.height / 2 +
+        other.collider.y_offset -
+        this.collider.y_offset + 1;
   }
 }
 

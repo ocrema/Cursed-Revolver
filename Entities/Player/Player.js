@@ -6,6 +6,7 @@ import { ChainLightning } from "../Spells/ChainLightning.js";
 import { Collider } from "../Collider.js";
 import { GAME_ENGINE } from "../../main.js";
 import { PlayerAnimationLoader } from "./PlayerAnimationLoader.js";
+import { WaterWave } from "../Spells/WaterWave.js";
 
 export class Player extends Actor {
   constructor() {
@@ -273,11 +274,13 @@ export class Player extends Actor {
           continue;
         if (this.colliding(e)) {
           hitSomething = true;
+          /*
           if (this.x_velocity + velFromKeys > 0) {
-            this.x = e.x - e.collider.width / 2 - this.collider.width / 2;
+            this.x = e.x - e.collider.width / 2 - this.collider.width / 2 - 1;
           } else {
-            this.x = e.x + e.collider.width / 2 + this.collider.width / 2;
-          }
+            this.x = e.x + e.collider.width / 2 + this.collider.width / 2 + 1;
+          }*/
+         this.moveAgainstX(e);
         }
       }
       if (hitSomething) {
@@ -313,11 +316,13 @@ export class Player extends Actor {
         continue;
       if (this.colliding(e)) {
         hitSomething = true;
+        /*
         if (this.y_velocity > 0) {
-          this.y = e.y - e.collider.height / 2 - this.collider.height / 2;
+          this.y = e.y - e.collider.height / 2 - this.collider.height / 2 - 1;
         } else {
-          this.y = e.y + e.collider.height / 2 + this.collider.height / 2;
-        }
+          this.y = e.y + e.collider.height / 2 + this.collider.height / 2 + 1;
+        }*/
+        this.moveAgainstY(e);
       }
     }
     if (hitSomething) {
@@ -415,6 +420,22 @@ export class Player extends Actor {
           )
         );
         GAME_ENGINE.addEntity(chain_lightning);
+      }
+      else if (this.selectedSpell === 2) {
+        const water_wave = new WaterWave(
+          this,
+          Util.getAngle(
+            {
+              x: this.x - GAME_ENGINE.camera.x,
+              y: this.y - GAME_ENGINE.camera.y,
+            },
+            {
+              x: GAME_ENGINE.mouse.x,
+              y: GAME_ENGINE.mouse.y,
+            }
+          )
+        );
+        GAME_ENGINE.addEntity(water_wave);
       }
     }
   }
