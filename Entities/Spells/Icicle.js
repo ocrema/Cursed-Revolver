@@ -80,7 +80,7 @@ export class Icicle extends Entity {
                 this.stuckYOffset = this.y - e.y;
                 this.collider = null;
                 this.experationTimer = 1;
-                window.ASSET_MANAGER.playAsset("./assets/sfx/icicle_impact.wav");
+                window.ASSET_MANAGER.playAsset("./assets/sfx/icicle_impact.wav", .7);
                 return;
             }
         }

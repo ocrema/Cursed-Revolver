@@ -104,17 +104,17 @@ export class AssetManager {
     return this.cache[path];
   }
 
-  playAsset(path, volume = 0.5) {
+  playAsset(path, volumeMult = 1) {
     if (this.audioMuted) return;
     let audio = this.cache[path];
     if (!audio) return;
     if (audio.currentTime != 0) {
       let bak = audio.cloneNode();
       bak.currentTime = 0;
-      bak.volume = volume;
+      bak.volume = .3 * volumeMult;
       bak.play();
     } else {
-      audio.volume = volume;
+      audio.volume = .3 * volumeMult;
       audio.currentTime = 0;
       audio.play();
     }

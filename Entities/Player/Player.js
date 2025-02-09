@@ -265,23 +265,11 @@ export class Player extends Actor {
       // for all of the entities i am colliding with, move the player as far back as i need to to not be colliding with any of them
 
       for (let e of GAME_ENGINE.entities) {
-        if (
-          e.isPlayer ||
-          e.isAttack ||
-          e.isEnemy ||
-          e.isEffect ||
-          e.isDestructibleObject
-        )
+        if (e.isPlayer || e.isAttack || e.isEnemy || e.isEffect || e.isDestructibleObject)
           continue;
         if (this.colliding(e)) {
           hitSomething = true;
-          /*
-          if (this.x_velocity + velFromKeys > 0) {
-            this.x = e.x - e.collider.width / 2 - this.collider.width / 2 - 1;
-          } else {
-            this.x = e.x + e.collider.width / 2 + this.collider.width / 2 + 1;
-          }*/
-         this.moveAgainstX(e);
+          this.moveAgainstX(e);
         }
       }
       if (hitSomething) {
@@ -297,7 +285,7 @@ export class Player extends Actor {
       }
     }
 
-    if (GAME_ENGINE.keys["s"] && this.isGrounded !== 0.2) {
+    if (GAME_ENGINE.keys["s"] && this.isGrounded < 0.15) {
       this.isGroundSlamming = true;
       this.wallGrabState = 0;
     }
@@ -317,24 +305,16 @@ export class Player extends Actor {
         continue;
       if (this.colliding(e)) {
         hitSomething = true;
-        /*
-        if (this.y_velocity > 0) {
-          this.y = e.y - e.collider.height / 2 - this.collider.height / 2 - 1;
-        } else {
-          this.y = e.y + e.collider.height / 2 + this.collider.height / 2 + 1;
-        }*/
         this.moveAgainstY(e);
       }
     }
     if (hitSomething) {
       if (this.y_velocity > 0) {
         this.isGrounded = 0.2;
-        if (this.isGroundSlamming) {
-          this.isGroundSlamming = false;
-        }
+        this.isGroundSlamming = false;
       }
       if (this.y_velocity > 300) {
-        window.ASSET_MANAGER.playAsset("./assets/sfx/landing.wav");
+        window.ASSET_MANAGER.playAsset("./assets/sfx/landing.wav", 1.5);
       }
       this.y_velocity = 0; // if hit something cancel velocity
     }
@@ -354,6 +334,19 @@ export class Player extends Actor {
         this.selectedSpell = i;
         window.ASSET_MANAGER.playAsset("./assets/sfx/click1.ogg");
       }
+    }
+    if (GAME_ENGINE.keys["q"]) {
+      GAME_ENGINE.keys["q"] = false;
+      this.selectedSpell--;
+      if (this.selectedSpell < 0) this.selectedSpell = 5;
+      console.log(this.selectedSpell);
+      window.ASSET_MANAGER.playAsset("./assets/sfx/click1.ogg");
+    }
+    if (GAME_ENGINE.keys["e"]) {
+      GAME_ENGINE.keys["e"] = false;
+      this.selectedSpell++;
+      if (this.selectedSpell > 5) this.selectedSpell = 0;
+      window.ASSET_MANAGER.playAsset("./assets/sfx/click1.ogg");
     }
 
     // cast spell
