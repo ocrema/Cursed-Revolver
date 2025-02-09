@@ -52,6 +52,7 @@ export class AssetManager {
         case "wav":
         case "mp3":
         case "mp4":
+        case "PNG":
         case "ogg":
           const aud = new Audio();
           aud.addEventListener("loadeddata", () => {

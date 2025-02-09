@@ -118,6 +118,12 @@ export const MAP_TREES_AND_ROCKS = {
   TREE3_URL: "./assets/map/props/tree03.png",
 };
 
+export const ENEMY_SPRITESHEET = { 
+  CACTUS: { 
+    URL: "./assets/cactus/newcactus.png"
+  }
+}
+
 // Destructible Object Constants
 
 export const DESTRUCTIBLE_OBJECTS_SPRITESHEET = {
@@ -197,5 +203,18 @@ export const EFFECTS_SPRITESHEET = {
     FRAME_HEIGHT: 32,
     FRAME_COUNT: 8,
     FRAME_DURATION: 0.1,
+  },
+};
+
+// UI Constants 
+
+export const UI_SPRITESHEET = {
+  FIREBALL_ICON: {
+    NAME: "FIREBALLICON",
+    URL: "./assets/ui/spells/fireballicon.png",
+    FRAME_WIDTH: 32,
+    FRAME_HEIGHT: 32,
+    FRAME_COUNT: 20,
+    FRAME_DURATION: 0.15,
   },
 };

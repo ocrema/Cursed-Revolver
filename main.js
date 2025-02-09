@@ -23,6 +23,6 @@ ASSET_MANAGER.downloadAll(() => {
 });
 
 window.addEventListener("keydown", (event) => {
-  console.log(`Key Pressed: ${event.key} (code: ${event.code})`);
+  //console.log(`Key Pressed: ${event.key} (code: ${event.code})`);
 });
 

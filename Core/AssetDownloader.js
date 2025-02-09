@@ -24,7 +24,7 @@ export class AssetDownloader {
     // UX
     this.downloadSFXAssets();
 
-    // HUD
+    // HUD / UI
     this.downloadPauseMenuButtons();
     this.downloadHUDSpells();
     this.downloadHUDCowboyIcon();
@@ -46,6 +46,7 @@ export class AssetDownloader {
 
   downloadEnemyAssets() {
     this.assetManager.queueDownload("./assets/cactus/cactus.png");
+    this.assetManager.queueDownload("./assets/cactus/newcactus.png");
 
     this.assetManager.queueDownload("./assets/spider/Walk.png");
   }
@@ -135,6 +136,7 @@ export class AssetDownloader {
   // HUD Assets
 
   downloadHUDSpells() {
+    this.assetManager.queueDownload("./assets/ui/spells/fireballicon.png");
     this.assetManager.queueDownload("./assets/ui/spells/fireball.png");
     this.assetManager.queueDownload("./assets/ui/spells/lightning.png");
     this.assetManager.queueDownload("./assets/ui/spells/water.png");
@@ -167,5 +169,4 @@ export class AssetDownloader {
   downloadFonts() {
     this.assetManager.queueDownload("./assets/fonts/texas.ttf");
   }
-
 }
