@@ -72,29 +72,29 @@ export class ChainLightning extends Entity {
     if (!this.struck || this.targets.length <= 1) return;
 
     ctx.strokeStyle = "yellow";
-    ctx.lineWidth = Math.random() * 20 + 5;
+    ctx.lineWidth = Math.random() * 10 + 5;
     let maxOffset = 120;
     ctx.beginPath();
-    ctx.moveTo(
-      this.targets[0].x -
-        GAME_ENGINE.camera.x +
-        Math.random() * maxOffset -
-        maxOffset / 2,
-      this.targets[0].y -
-        GAME_ENGINE.camera.y +
-        Math.random() * maxOffset -
-        maxOffset / 2
+    ctx.moveTo(this.targets[0].x - GAME_ENGINE.camera.x + Math.random() * maxOffset - maxOffset / 2,
+      this.targets[0].y - GAME_ENGINE.camera.y + Math.random() * maxOffset - maxOffset / 2
     );
     for (let i = 1; i < this.targets.length; i++) {
-      ctx.lineTo(
-        this.targets[i].x -
-          GAME_ENGINE.camera.x +
-          Math.random() * maxOffset -
-          maxOffset / 2,
-        this.targets[i].y -
-          GAME_ENGINE.camera.y +
-          Math.random() * maxOffset -
-          maxOffset / 2
+      ctx.lineTo(this.targets[i].x - GAME_ENGINE.camera.x + Math.random() * maxOffset - maxOffset / 2,
+        this.targets[i].y - GAME_ENGINE.camera.y + Math.random() * maxOffset - maxOffset / 2
+      );
+    }
+    ctx.stroke();
+
+    ctx.strokeStyle = "white";
+    ctx.lineWidth = Math.random() * 5 + 5;
+    maxOffset = 120;
+    ctx.beginPath();
+    ctx.moveTo(this.targets[0].x - GAME_ENGINE.camera.x + Math.random() * maxOffset - maxOffset / 2,
+      this.targets[0].y - GAME_ENGINE.camera.y + Math.random() * maxOffset - maxOffset / 2
+    );
+    for (let i = 1; i < this.targets.length; i++) {
+      ctx.lineTo(this.targets[i].x - GAME_ENGINE.camera.x + Math.random() * maxOffset - maxOffset / 2,
+        this.targets[i].y - GAME_ENGINE.camera.y + Math.random() * maxOffset - maxOffset / 2
       );
     }
     ctx.stroke();

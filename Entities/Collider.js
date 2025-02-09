@@ -10,14 +10,14 @@ export class Collider {
     colliding(x1, y1, other, x2, y2) {
         if (!other) return false;
 
-        const b1left = x1 - this.width/2 + this.x_offset;
-        const b1right = x1 + this.width/2 + this.x_offset;
-        const b1bottom = y1 + this.height/2 + this.y_offset;
-        const b1top = y1 - this.height/2 + this.y_offset;
-        const b2left = x2 - other.width/2 + other.x_offset;
-        const b2right = x2 + other.width/2 + other.x_offset;
-        const b2bottom = y2 + other.height/2 + other.y_offset;
-        const b2top = y2 - other.height/2 + other.y_offset;
+        const b1left = x1 - this.width/2 - this.x_offset;
+        const b1right = x1 + this.width/2 - this.x_offset;
+        const b1bottom = y1 + this.height/2 - this.y_offset;
+        const b1top = y1 - this.height/2 - this.y_offset;
+        const b2left = x2 - other.width/2 - other.x_offset;
+        const b2right = x2 + other.width/2 - other.x_offset;
+        const b2bottom = y2 + other.height/2 - other.y_offset;
+        const b2top = y2 - other.height/2 - other.y_offset;
         
         return b1right > b2left &&
             b1left < b2right &&
