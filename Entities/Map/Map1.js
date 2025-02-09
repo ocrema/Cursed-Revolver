@@ -1,7 +1,8 @@
 import { GameMap } from "../Entities.js";
 import { Player } from "../Player/Player.js";
 import { Background } from "./Background.js";
-import { Cactus, Spider } from "../Enemy/Enemy.js";
+import { Cactus } from "../Enemy/Cactus.js";
+import { Spider } from "../Enemy/Spider.js";
 import { GAME_ENGINE } from "../../main.js";
 import { Platform } from "./Platform.js";
 import { Barrel } from "../Objects/Barrel.js";
@@ -9,45 +10,50 @@ import { Tumbleweed } from "../Objects/Tumbleweed.js";
 
 export class Map1 extends GameMap {
   load() {
-    // ground level is 80 
+    // ground level is 80
     GAME_ENGINE.addEntity(new Player());
     GAME_ENGINE.addEntity(new Background());
 
-    // Enemies
-    GAME_ENGINE.addEntity(new Cactus(500, 80));
-    GAME_ENGINE.addEntity(new Cactus(1000, 80));
-    GAME_ENGINE.addEntity(new Cactus(450, -650)); 
-     GAME_ENGINE.addEntity(new Cactus(-650, 80)); 
-    GAME_ENGINE.addEntity(new Spider(800, 70));
+    // **Enemies**
+    GAME_ENGINE.addEntity(new Cactus(600, 100));
+    GAME_ENGINE.addEntity(new Cactus(1200, 100));
+    GAME_ENGINE.addEntity(new Cactus(-900, 100));
+    GAME_ENGINE.addEntity(new Cactus(150, -850));
+    GAME_ENGINE.addEntity(new Spider(1000, 70));
+    GAME_ENGINE.addEntity(new Spider(-700, 70));
 
+    // **Main Ground (Expanded)**
+    GAME_ENGINE.addEntity(new Platform(0, 500, 140, 10));
 
-    // Main Ground
-    GAME_ENGINE.addEntity(new Platform(0, 500, 100, 10));
+    // **Two Tall Vertical Pillars at Ends**
+    GAME_ENGINE.addEntity(new Platform(-2500, 250, 3, 40)); // Left pillar
+    GAME_ENGINE.addEntity(new Platform(2500, 250, 3, 40)); // Right pillar
 
-    // Platforms Under Barrels
-    GAME_ENGINE.addEntity(new Platform(-600, -200, 7, 1)); 
-    GAME_ENGINE.addEntity(new Platform(1000, -270, 7, 1)); 
-    GAME_ENGINE.addEntity(new Platform(200, -510, 7, 1)); 
-    GAME_ENGINE.addEntity(new Platform(800, -430, 7, 1)); 
-    GAME_ENGINE.addEntity(new Platform(-1000, -120, 7, 1)); 
-    GAME_ENGINE.addEntity(new Platform(-400, -420, 7, 1)); 
+    // **Floating Platforms (Spread further apart & Moved up)**
+    GAME_ENGINE.addEntity(new Platform(-800, -400, 10, 1));
+    GAME_ENGINE.addEntity(new Platform(0, -750, 8, 1));
+    GAME_ENGINE.addEntity(new Platform(600, -700, 6, 1));
+    GAME_ENGINE.addEntity(new Platform(-600, -900, 7, 1));
 
-    // Vertical Pillar for Spider 
+    // **Vertical Pillar for Spider**
     GAME_ENGINE.addEntity(new Platform(0, 40, 2, 6));
 
-    // **Destructible Objects (Barrels)**
-     GAME_ENGINE.addEntity(new Barrel(-200, 120));
-    GAME_ENGINE.addEntity(new Barrel(800, 120));
-    GAME_ENGINE.addEntity(new Barrel(-600, -280));
-    GAME_ENGINE.addEntity(new Barrel(1000, -330));
-    GAME_ENGINE.addEntity(new Barrel(110, -600));
-    GAME_ENGINE.addEntity(new Barrel(800, -480));
-    GAME_ENGINE.addEntity(new Barrel(-1000, -180));
-    GAME_ENGINE.addEntity(new Barrel(-400, -480));
+    GAME_ENGINE.addEntity(new Platform(-1200, -100, 5, 1));
+    GAME_ENGINE.addEntity(new Platform(1300, -300, 5, 1));
+    GAME_ENGINE.addEntity(new Platform(300, -400, 6, 1));
 
-    // Tumbleweeds
-     GAME_ENGINE.addEntity(new Tumbleweed(-500, -250, "right"));
-    GAME_ENGINE.addEntity(new Tumbleweed(500, -250, "left"));
-    GAME_ENGINE.addEntity(new Tumbleweed(100, -400, "right")); // Bouncing off a platform
+    // **Destructible Objects (Barrels)**
+    GAME_ENGINE.addEntity(new Barrel(-400, 120));
+    GAME_ENGINE.addEntity(new Barrel(900, 120));
+    GAME_ENGINE.addEntity(new Barrel(565, -800));
+    GAME_ENGINE.addEntity(new Barrel(1250, -400));
+    GAME_ENGINE.addEntity(new Barrel(-1100, -200));
+    GAME_ENGINE.addEntity(new Barrel(-500, -500));
+
+    // **Tumbleweeds**
+    GAME_ENGINE.addEntity(new Tumbleweed(-800, -250, "right"));
+    GAME_ENGINE.addEntity(new Tumbleweed(700, -600, "left"));
+    GAME_ENGINE.addEntity(new Tumbleweed(200, -700, "right"));
+    GAME_ENGINE.addEntity(new Tumbleweed(-1100, 80, "right"));
   }
 }
