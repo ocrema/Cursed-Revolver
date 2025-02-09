@@ -7,6 +7,7 @@ import { Collider } from "../Collider.js";
 import { GAME_ENGINE } from "../../main.js";
 import { PlayerAnimationLoader } from "./PlayerAnimationLoader.js";
 import { WaterWave } from "../Spells/WaterWave.js";
+import { Icicle } from "../Spells/Icicle.js";
 
 export class Player extends Actor {
   constructor() {
@@ -375,67 +376,24 @@ export class Player extends Actor {
       this.spellCooldowns[this.selectedSpell] = this.maxSpellCooldown;
       window.ASSET_MANAGER.playAsset("./assets/sfx/revolver_shot.ogg", 1);
 
+      let dir = Util.getAngle(
+        {
+          x: this.x - GAME_ENGINE.camera.x,
+          y: this.y - GAME_ENGINE.camera.y,
+        },
+        {
+          x: GAME_ENGINE.mouse.x,
+          y: GAME_ENGINE.mouse.y,
+        });
+
       if (this.selectedSpell === 0) {
-        const fireball = new Fireball();
-        fireball.x = this.x;
-        fireball.y = this.y;
-        fireball.dir = Util.getAngle(
-          {
-            x: this.x - GAME_ENGINE.camera.x,
-            y: this.y - GAME_ENGINE.camera.y,
-          },
-          {
-            x: GAME_ENGINE.mouse.x,
-            y: GAME_ENGINE.mouse.y,
-          }
-        );
-        GAME_ENGINE.addEntity(fireball);
+        GAME_ENGINE.addEntity(new Fireball(this, dir));
       } else if (this.selectedSpell === 1) {
-        const chain_lightning = new ChainLightning(
-          this,
-          Util.getAngle(
-            {
-              x: this.x - GAME_ENGINE.camera.x,
-              y: this.y - GAME_ENGINE.camera.y,
-            },
-            {
-              x: GAME_ENGINE.mouse.x,
-              y: GAME_ENGINE.mouse.y,
-            }
-          )
-        );
-        GAME_ENGINE.addEntity(chain_lightning);
-      } else if (this.selectedSpell === 1) {
-        const chain_lightning = new ChainLightning(
-          this,
-          Util.getAngle(
-            {
-              x: this.x - GAME_ENGINE.camera.x,
-              y: this.y - GAME_ENGINE.camera.y,
-            },
-            {
-              x: GAME_ENGINE.mouse.x,
-              y: GAME_ENGINE.mouse.y,
-            }
-          )
-        );
-        GAME_ENGINE.addEntity(chain_lightning);
-      }
-      else if (this.selectedSpell === 2) {
-        const water_wave = new WaterWave(
-          this,
-          Util.getAngle(
-            {
-              x: this.x - GAME_ENGINE.camera.x,
-              y: this.y - GAME_ENGINE.camera.y,
-            },
-            {
-              x: GAME_ENGINE.mouse.x,
-              y: GAME_ENGINE.mouse.y,
-            }
-          )
-        );
-        GAME_ENGINE.addEntity(water_wave);
+        GAME_ENGINE.addEntity(new ChainLightning(this, dir));
+      } else if (this.selectedSpell === 2) {
+        GAME_ENGINE.addEntity(new WaterWave(this, dir));
+      } else if (this.selectedSpell === 3) {
+        GAME_ENGINE.addEntity(new Icicle(this, dir));
       }
     }
   }

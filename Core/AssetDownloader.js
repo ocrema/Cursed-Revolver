@@ -81,6 +81,8 @@ export class AssetDownloader {
   downloadSpellAssets() {
     this.assetManager.queueDownload("./assets/spells/Fireball.png");
     this.assetManager.queueDownload("./assets/spells/WaterWave.png");
+    this.assetManager.queueDownload("./assets/spells/Icicle.png");
+    this.assetManager.queueDownload("./assets/spells/Icicle_Explosion.png");
   }
 
   // Objects

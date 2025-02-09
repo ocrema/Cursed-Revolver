@@ -14,7 +14,7 @@ export class WaterWave extends Entity {
         this.y = pos.y;
         this.dir = dir;
         this.entityOrder = 3;
-        this.speed = 2000;
+        this.speed = 1500;
         this.isAttack = true;
         this.experationTimer = .7;
         this.spriteScale = 3;
@@ -32,7 +32,7 @@ export class WaterWave extends Entity {
             SPELLS_SPRITESHEET.WATERWAVE.FRAME_DURATION
         );
         this.setAnimation(SPELLS_SPRITESHEET.WATERWAVE.NAME, true);
-        this.collider = new Collider(100, 100);
+        this.collider = new Collider(200, 200);
     }
 
     update() {
