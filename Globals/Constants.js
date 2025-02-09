@@ -151,6 +151,30 @@ export const SPELLS_SPRITESHEET = {
     FRAME_COUNT: 5,
     FRAME_DURATION: 0.15,
   },
+  WATERWAVE: {
+    NAME: "WaterWave",
+    URL: "./assets/spells/WaterWave.png",
+    FRAME_WIDTH: 128,
+    FRAME_HEIGHT: 128,
+    FRAME_COUNT: 9,
+    FRAME_DURATION: 0.05,
+  },
+  ICICLE: {
+    NAME: "Icicle",
+    URL: "./assets/spells/Icicle.png",
+    FRAME_WIDTH: 128,
+    FRAME_HEIGHT: 64,
+    FRAME_COUNT: 6,
+    FRAME_DURATION: 0.05,
+  },
+  ICICLE_EXPLOSION: {
+    NAME: "Icicle_Explosion",
+    URL: "./assets/spells/Icicle_Explosion.png",
+    FRAME_WIDTH: 128,
+    FRAME_HEIGHT: 128,
+    FRAME_COUNT: 6,
+    FRAME_DURATION: 0.05,
+  },
 };
 
 // Effects Constants

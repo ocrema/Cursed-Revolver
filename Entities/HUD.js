@@ -127,7 +127,7 @@ export class HUD extends Entity {
       console.log(`Debug Mode: ${this.debugMode ? "ON" : "OFF"}`);
       GAME_ENGINE.keys["b"] = false;
     }
-
+    /*
     // Spell selection (1-6 keys)
     for (let i = 1; i <= 6; i++) {
       const key = `Digit${i}`;
@@ -136,6 +136,7 @@ export class HUD extends Entity {
         GAME_ENGINE.keys[key] = false;
       }
     }
+      */
 
     // Smooth rotation logic
     if (this.rotationTime > 0) {

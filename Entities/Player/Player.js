@@ -6,6 +6,8 @@ import { ChainLightning } from "../Spells/ChainLightning.js";
 import { Collider } from "../Collider.js";
 import { GAME_ENGINE } from "../../main.js";
 import { PlayerAnimationLoader } from "./PlayerAnimationLoader.js";
+import { WaterWave } from "../Spells/WaterWave.js";
+import { Icicle } from "../Spells/Icicle.js";
 
 export class Player extends Actor {
   constructor() {
@@ -263,21 +265,11 @@ export class Player extends Actor {
       // for all of the entities i am colliding with, move the player as far back as i need to to not be colliding with any of them
 
       for (let e of GAME_ENGINE.entities) {
-        if (
-          e.isPlayer ||
-          e.isAttack ||
-          e.isEnemy ||
-          e.isEffect ||
-          e.isDestructibleObject
-        )
+        if (e.isPlayer || e.isAttack || e.isEnemy || e.isEffect || e.isDestructibleObject)
           continue;
         if (this.colliding(e)) {
           hitSomething = true;
-          if (this.x_velocity + velFromKeys > 0) {
-            this.x = e.x - e.collider.width / 2 - this.collider.width / 2;
-          } else {
-            this.x = e.x + e.collider.width / 2 + this.collider.width / 2;
-          }
+          this.moveAgainstX(e);
         }
       }
       if (hitSomething) {
@@ -293,7 +285,7 @@ export class Player extends Actor {
       }
     }
 
-    if (GAME_ENGINE.keys["s"] && this.isGrounded !== 0.2) {
+    if (GAME_ENGINE.keys["s"] && this.isGrounded < 0.15) {
       this.isGroundSlamming = true;
       this.wallGrabState = 0;
     }
@@ -313,22 +305,16 @@ export class Player extends Actor {
         continue;
       if (this.colliding(e)) {
         hitSomething = true;
-        if (this.y_velocity > 0) {
-          this.y = e.y - e.collider.height / 2 - this.collider.height / 2;
-        } else {
-          this.y = e.y + e.collider.height / 2 + this.collider.height / 2;
-        }
+        this.moveAgainstY(e);
       }
     }
     if (hitSomething) {
       if (this.y_velocity > 0) {
         this.isGrounded = 0.2;
-        if (this.isGroundSlamming) {
-          this.isGroundSlamming = false;
-        }
+        this.isGroundSlamming = false;
       }
       if (this.y_velocity > 300) {
-        window.ASSET_MANAGER.playAsset("./assets/sfx/landing.wav");
+        window.ASSET_MANAGER.playAsset("./assets/sfx/landing.wav", 1.5);
       }
       this.y_velocity = 0; // if hit something cancel velocity
     }
@@ -348,6 +334,19 @@ export class Player extends Actor {
         this.selectedSpell = i;
         window.ASSET_MANAGER.playAsset("./assets/sfx/click1.ogg");
       }
+    }
+    if (GAME_ENGINE.keys["q"]) {
+      GAME_ENGINE.keys["q"] = false;
+      this.selectedSpell--;
+      if (this.selectedSpell < 0) this.selectedSpell = 5;
+      console.log(this.selectedSpell);
+      window.ASSET_MANAGER.playAsset("./assets/sfx/click1.ogg");
+    }
+    if (GAME_ENGINE.keys["e"]) {
+      GAME_ENGINE.keys["e"] = false;
+      this.selectedSpell++;
+      if (this.selectedSpell > 5) this.selectedSpell = 0;
+      window.ASSET_MANAGER.playAsset("./assets/sfx/click1.ogg");
     }
 
     // cast spell
@@ -370,51 +369,24 @@ export class Player extends Actor {
       this.spellCooldowns[this.selectedSpell] = this.maxSpellCooldown;
       window.ASSET_MANAGER.playAsset("./assets/sfx/revolver_shot.ogg", 1);
 
+      let dir = Util.getAngle(
+        {
+          x: this.x - GAME_ENGINE.camera.x,
+          y: this.y - GAME_ENGINE.camera.y,
+        },
+        {
+          x: GAME_ENGINE.mouse.x,
+          y: GAME_ENGINE.mouse.y,
+        });
+
       if (this.selectedSpell === 0) {
-        const fireball = new Fireball();
-        fireball.x = this.x;
-        fireball.y = this.y;
-        fireball.dir = Util.getAngle(
-          {
-            x: this.x - GAME_ENGINE.camera.x,
-            y: this.y - GAME_ENGINE.camera.y,
-          },
-          {
-            x: GAME_ENGINE.mouse.x,
-            y: GAME_ENGINE.mouse.y,
-          }
-        );
-        GAME_ENGINE.addEntity(fireball);
+        GAME_ENGINE.addEntity(new Fireball(this, dir));
       } else if (this.selectedSpell === 1) {
-        const chain_lightning = new ChainLightning(
-          this,
-          Util.getAngle(
-            {
-              x: this.x - GAME_ENGINE.camera.x,
-              y: this.y - GAME_ENGINE.camera.y,
-            },
-            {
-              x: GAME_ENGINE.mouse.x,
-              y: GAME_ENGINE.mouse.y,
-            }
-          )
-        );
-        GAME_ENGINE.addEntity(chain_lightning);
-      } else if (this.selectedSpell === 1) {
-        const chain_lightning = new ChainLightning(
-          this,
-          Util.getAngle(
-            {
-              x: this.x - GAME_ENGINE.camera.x,
-              y: this.y - GAME_ENGINE.camera.y,
-            },
-            {
-              x: GAME_ENGINE.mouse.x,
-              y: GAME_ENGINE.mouse.y,
-            }
-          )
-        );
-        GAME_ENGINE.addEntity(chain_lightning);
+        GAME_ENGINE.addEntity(new ChainLightning(this, dir));
+      } else if (this.selectedSpell === 2) {
+        GAME_ENGINE.addEntity(new WaterWave(this, dir));
+      } else if (this.selectedSpell === 3) {
+        GAME_ENGINE.addEntity(new Icicle(this, dir));
       }
     }
   }

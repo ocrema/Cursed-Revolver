@@ -81,6 +81,9 @@ export class AssetDownloader {
 
   downloadSpellAssets() {
     this.assetManager.queueDownload("./assets/spells/Fireball.png");
+    this.assetManager.queueDownload("./assets/spells/WaterWave.png");
+    this.assetManager.queueDownload("./assets/spells/Icicle.png");
+    this.assetManager.queueDownload("./assets/spells/Icicle_Explosion.png");
   }
 
   // Objects
@@ -116,6 +119,7 @@ export class AssetDownloader {
     this.assetManager.queueDownload("./assets/sfx/revolver_shot.ogg");
     this.assetManager.queueDownload("./assets/sfx/jump.ogg");
     this.assetManager.queueDownload("./assets/sfx/landing.wav");
+    this.assetManager.queueDownload("./assets/sfx/waterwave.wav");
   }
 
   downloadPauseMenuButtons() {

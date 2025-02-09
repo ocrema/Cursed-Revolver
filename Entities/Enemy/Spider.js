@@ -136,7 +136,7 @@ export class Spider extends Actor {
 
     // debug statement, delete this eventually ^_^
     if (this.y > 490) {
-      console.log(this);
+      //console.log(this);
     }
   }
 

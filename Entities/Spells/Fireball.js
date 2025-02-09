@@ -10,11 +10,11 @@ import {
 } from "../../Globals/Constants.js";
 
 export class Fireball extends Entity {
-  constructor() {
+  constructor(pos, dir) {
     super();
-    this.x = 0;
-    this.y = 0;
-    this.dir = 0; // in radians
+    this.x = pos.x;
+    this.y = pos.y;
+    this.dir = dir; // in radians
     this.entityOrder = 3;
     this.speed = 1000;
     this.isAttack = true;
