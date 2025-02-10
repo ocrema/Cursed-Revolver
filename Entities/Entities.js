@@ -71,6 +71,7 @@ export class Entity {
     if (this.isEnemy) {
       this.drawHealthBar(ctx);
     }
+
     const animation = this.animations[this.currentAnimation];
     const { spritesheet, frameWidth, frameHeight } = animation;
 
@@ -86,6 +87,10 @@ export class Entity {
 
     ctx.translate(this.x, this.y); // Move to the entity's position
     ctx.scale(this.scale, this.scale); // Apply scaling factor
+
+    if (this.angle) { // if entity has an angle
+      ctx.rotate(this.angle);
+    }
 
     // Draw the current frame of the active animation
     ctx.drawImage(

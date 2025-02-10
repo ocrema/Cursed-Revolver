@@ -30,11 +30,13 @@ export class Thorn extends Entity {
       y: ((this.target.y - this.y) / distance) * this.speed,
     };
 
+    this.angle = Util.getAngle(this, target);
+
     this.addAnimation(
       "placeholder",
       this.assetManager.getAsset("./assets/thorn/thorn.png"),
-      32, // Frame width
-      32, // Frame height
+      64, // Frame width
+      64, // Frame height
       1, // Frame count
       0.25 // Frame duration (slower for idle)
     );
