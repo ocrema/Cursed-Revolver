@@ -20,6 +20,7 @@ export class AssetDownloader {
     this.downloadMapGroundAssets();
     this.downloadMapObjectAssets();
     this.downloadDestructibleObjectAssets();
+    this.downloadEnvironmentalAssets();
 
     // UX
     this.downloadSFXAssets();
@@ -91,6 +92,10 @@ export class AssetDownloader {
   downloadDestructibleObjectAssets() {
     this.assetManager.queueDownload("./assets/objects/barrel.png");
     this.assetManager.queueDownload("./assets/objects/tumbleweed.png");
+  }
+
+  downloadEnvironmentalAssets() {
+    this.assetManager.queueDownload("./assets/stampede/horse.png");
   }
 
   // Effects
