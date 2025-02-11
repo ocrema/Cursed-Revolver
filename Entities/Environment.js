@@ -43,6 +43,10 @@ export class Stampede extends Entity {
         this.data = {damage: 10};
         this.attackTime = 2;
         this.attackCooldown = 2;
+
+        // Flags
+
+        this.isAttack = true;
     }
 
     update() {
