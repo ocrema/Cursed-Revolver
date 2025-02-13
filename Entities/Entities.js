@@ -71,10 +71,13 @@ export class Entity {
     if (this.isEnemy) {
       this.drawHealthBar(ctx);
     }
+
     const animation = this.animations[this.currentAnimation];
     const { spritesheet, frameWidth, frameHeight } = animation;
 
     if (!spritesheet) return;
+
+    this.updateAnimation(GAME_ENGINE.clockTick);
 
     ctx.save(); // Save the current transformation state
     ctx.translate(-GAME_ENGINE.camera.x, -GAME_ENGINE.camera.y);
@@ -86,6 +89,10 @@ export class Entity {
 
     ctx.translate(this.x, this.y); // Move to the entity's position
     ctx.scale(this.scale, this.scale); // Apply scaling factor
+
+    if (this.angle) { // if entity has an angle
+      ctx.rotate(this.angle);
+    }
 
     // Draw the current frame of the active animation
     ctx.drawImage(

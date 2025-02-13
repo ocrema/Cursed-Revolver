@@ -30,11 +30,11 @@ export class Cactus extends Actor {
     this.health = 50;
     this.maxHealth = 50;
     this.fireRate = 1; // max time before attack
-    this.elapsedTime = 0; // time since attack
+    this.attackTime = 0; // time since attack
 
     // Movement
     this.collider = new Collider(this.width, this.height);
-    this.visualRadius = 300; // pixels away from center
+    this.visualRadius = 400; // pixels away from center
 
     // Flags
     this.isEnemy = true;
@@ -43,14 +43,17 @@ export class Cactus extends Actor {
 
   update() {
     this.recieveEffects();
-    this.elapsedTime += GAME_ENGINE.clockTick;
+    this.attackTime += GAME_ENGINE.clockTick;
 
     for (let entity of GAME_ENGINE.entities) {
       if (entity instanceof Player) {
         // cactus sees player
-        if (Util.canSee(this, entity) && this.elapsedTime > this.fireRate) {
+        if (Util.canSee(this, entity) && 
+        this.attackTime > this.fireRate &&
+        Util.canAttack(new Thorn(this.x, this.y, entity), entity)
+        ) {
           // this.setAnimation("attack");
-          this.elapsedTime = 0;
+          this.attackTime = 0;
           GAME_ENGINE.addEntity(new Thorn(this.x, this.y, entity));
         }
       }

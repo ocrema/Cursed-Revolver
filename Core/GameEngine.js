@@ -1,5 +1,6 @@
 import { Timer } from "../Utils/Timer.js";
 import { Camera } from "../Core/Camera.js";
+import { Event } from "../Core/Event.js";
 import { PauseMenu } from "../Entities/PauseMenu.js";
 import { MainMenu } from "../Entities/MainMenu.js";
 import { GameLogicController } from "../Core/GameLogicController.js";
@@ -16,7 +17,9 @@ export class GameEngine {
     this.width = 2000;
     this.height = 1000;
     this.camera = Camera.getInstance();
+    this.event = Event.getInstance();
     this.addEntity(this.camera);
+    this.addEntity(this.event);
     this.debug_colliders = false;
 
     this.click = null;

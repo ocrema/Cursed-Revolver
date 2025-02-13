@@ -31,6 +31,7 @@ export class Platform extends Entity {
     );
 
     this.assetManager = window.ASSET_MANAGER;
+    this.isPlatform = true;
   }
 
   /**

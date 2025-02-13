@@ -1,3 +1,5 @@
+import { Collider } from "../Entities/Collider.js";
+
 /** Global Parameters Object */
 const params = {};
 
@@ -77,3 +79,39 @@ export const newCollider = (w, h, x, y) => {
 export const canSee = (A, B) => {
   return getDistance(A, B) < A.visualRadius;
 };
+
+// checks if o1 can see o2
+export const canAttack = (o1, o2) => {
+  
+  // if o1 is colliding with o2
+  if(o1.collider && o1.collider.colliding(o1.x, o1.y, o2.collider, o2.x, o2.y)) {
+    return true;
+  } else {
+    // calculate velocity --> move based on collider size
+    var distance = getDistance(o2, o1);
+    let velocity = {x: (o2.x - o1.x) / distance * o1.collider.width, y: (o2.y - o1.y) / distance * o1.collider.height}
+    
+    // update velocity if too small
+    velocity.x = Math.sign(velocity.x) * Math.max(5, Math.abs(velocity.x));
+    velocity.y = Math.sign(velocity.y) * Math.max(5, Math.abs(velocity.y));
+    
+    // create moved object version of first object
+    let tempObject = {
+      x: o1.x + velocity.x,
+      y: o1.y + velocity.y,
+      collider: new Collider(o1.collider.width, o1.collider.height),
+    };
+
+    // if colliding with ANY platform
+    for (let entity of GAME_ENGINE.entities) {
+      if (entity.isPlatform &&
+        entity.colliding(tempObject)   
+      ) {
+        return false;
+      }
+    }
+
+    // recursion 
+    return canAttack(tempObject, o2);
+  }
+}

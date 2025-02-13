@@ -193,7 +193,7 @@ export class Spider extends Actor {
 
     if (
       this.currentAnimation === "run" &&
-      Math.abs(this.x - this.target.x) < 5
+      Math.abs(this.x - this.target.x) < 20
     ) {
       this.speed = this.runSpeed;
       if (this.velocity.x < 0) {
