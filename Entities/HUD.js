@@ -298,8 +298,10 @@ export class HUD extends Entity {
       ctx.restore();
     }
 
-    /*// **Game Over Screen with Pause & Restart**
+    // **Game Over Screen with Pause & Restart**
     if (currentHealth <= 0) {
+      console.log("Player health is 0! Triggering Game Over.");
+      GAME_ENGINE.GAME_CONTROLLER.setGameOver();
     
       ctx.fillStyle = "rgba(255, 0, 0, 0.5)"; // Semi-transparent red overlay
       ctx.fillRect(0, 0, canvasWidth, canvasHeight);
@@ -315,11 +317,11 @@ export class HUD extends Entity {
 
       // Restart Instructions
       ctx.font = `${canvasHeight * 0.04}px Texas, Arial`;
-      //ctx.fillText("Press ESC for MENU", canvasWidth / 2, canvasHeight / 1.5);
+      ctx.fillText("Press R to Restart", canvasWidth / 2, canvasHeight / 1.5);
       
       ctx.restore();
       return; 
-    }*/
+    }
 
     // Debug mode UI
     if (this.debugMode) {
