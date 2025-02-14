@@ -152,7 +152,7 @@ export class GameEngine {
 
       console.log(`Key pressed: ${event.key}`);
 
-      if (event.key.toLowerCase() === "r") {
+      if (this.GAME_CONTROLLER.isGameOver == true && event.key.toLowerCase() === "r") {
         console.log("R key detected!"); //check
         window.location.reload();
       }

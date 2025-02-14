@@ -156,7 +156,10 @@ export class AssetDownloader {
     this.assetManager.queueDownload("./assets/ui/cowboy2.png");
     this.assetManager.queueDownload("./assets/ui/cowboy_spell.png");
     for (let i = 1; i <= 6; i++) {
-      this.assetManager.queueDownload(`./assets/ui/cowboy_spell${i}.png`);
+      this.assetManager.queueDownload(`./assets/ui/cowboy_spell${i}.png`); 
+    }
+    for (let i = 1; i <= 6; i++) {
+      this.assetManager.queueDownload(`./assets/ui/cowboy_flash${i}.png`); 
     }
   }
 
