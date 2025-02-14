@@ -298,7 +298,7 @@ export class HUD extends Entity {
       ctx.restore();
     }
 
-    // **Game Over Screen with Pause & Restart**
+    /*// **Game Over Screen with Pause & Restart**
     if (currentHealth <= 0) {
     
       ctx.fillStyle = "rgba(255, 0, 0, 0.5)"; // Semi-transparent red overlay
@@ -319,7 +319,7 @@ export class HUD extends Entity {
       
       ctx.restore();
       return; 
-    }
+    }*/
 
     // Debug mode UI
     if (this.debugMode) {
