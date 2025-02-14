@@ -1,13 +1,13 @@
 import { Stampede } from "../Entities/Environment.js";
 import { GAME_ENGINE } from "../main.js";
 
-export class Event {
+export class Events {
   static instance = null;
   constructor() {
-    if (Event.instance) {
-      return Event.instance;
+    if (Events.instance) {
+      return Events.instance;
     }
-    Event.instance = this;
+    Events.instance = this;
 
     this.time = 0;
 
@@ -29,9 +29,9 @@ export class Event {
   }
 
   static getInstance() {
-    if (!Event.instance) {
-      Event.instance = new Event();
+    if (!Events.instance) {
+      Events.instance = new Events();
     }
-    return Event.instance;
+    return Events.instance;
   }
 }
