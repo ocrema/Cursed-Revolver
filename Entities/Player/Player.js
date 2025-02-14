@@ -122,9 +122,9 @@ export class Player extends Actor {
       this.recieved_attacks.length > 0 &&
       this.currentAnimation !== PLAYER_SPRITESHEET.HIT.NAME
     ) {
-      console.log(
-        "ouch! i took " + this.recieved_attacks[0].damage + " damage"
-      );
+      // console.log(
+      //   "ouch! i took " + this.recieved_attacks[0].damage + " damage"
+      // );
 
       this.setAnimation(PLAYER_SPRITESHEET.HIT.NAME);
 
@@ -137,7 +137,7 @@ export class Player extends Actor {
     if (this.health <= 0) {
       this.isDead = true;
       this.setAnimation(PLAYER_SPRITESHEET.DEAD.NAME, false);
-      console.log("i died");
+      //console.log("i died");
     }
 
     // Update the active animation

@@ -192,12 +192,12 @@ export class GameEngine {
       i++;
 
     this.entities.splice(i, 0, entity);
-    console.log(
-      "Entity added:",
-      entity.constructor.name,
-      "Total entities:",
-      this.entities.length
-    );
+    // console.log(
+    //   "Entity added:",
+    //   entity.constructor.name,
+    //   "Total entities:",
+    //   this.entities.length
+    // );
   }
 
   draw() {
