@@ -298,6 +298,29 @@ export class HUD extends Entity {
       ctx.restore();
     }
 
+    // **Game Over Screen with Pause & Restart**
+    if (currentHealth <= 0) {
+    
+      ctx.fillStyle = "rgba(255, 0, 0, 0.5)"; // Semi-transparent red overlay
+      ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+
+      // Load custom font
+      ctx.font = `${canvasHeight * 0.12}px Texas, Arial`;
+      ctx.textAlign = "center";
+
+      // Central "GAME OVER" text with full opacity
+      ctx.fillStyle = "white";
+      ctx.font = `${canvasHeight * 0.12}px Texas, Arial`;
+      ctx.fillText("GAME OVER", canvasWidth / 2, canvasHeight / 2);
+
+      // Restart Instructions
+      ctx.font = `${canvasHeight * 0.04}px Texas, Arial`;
+      //ctx.fillText("Press ESC for MENU", canvasWidth / 2, canvasHeight / 1.5);
+      
+      ctx.restore();
+      return; 
+    }
+
     // Debug mode UI
     if (this.debugMode) {
       ctx.fillStyle = "white";
