@@ -273,6 +273,8 @@ export class GameEngine {
         this.entities.splice(i, 1);
       }
     }
+   // console.log("Entities in game:", GAME_ENGINE.entities.map(e => e.constructor.name));
+
   }
 
   loop() {

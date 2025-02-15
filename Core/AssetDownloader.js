@@ -56,6 +56,18 @@ export class AssetDownloader {
     this.assetManager.queueDownload("./assets/thorn/thorn.png");
   }
 
+  downloadCowboyAssets() {
+    this.assetManager.queueDownload("./assets/cowboy/CowBoyIdle.png");
+    this.assetManager.queueDownload("./assets/cowboy/CowBoyWalking.png");
+    this.assetManager.queueDownload("./assets/cowboy/CowBoyDrawWeapon.png");
+    this.assetManager.queueDownload("./assets/cowboy/CowBoyQuickDrawShot.png");
+    this.assetManager.queueDownload("./assets/cowboy/CowBoyRapidFire.png");
+    this.assetManager.queueDownload("./assets/cowboy/CowBoyShoot.png");
+    this.assetManager.queueDownload("./assets/cowboy/CowBoySmokingIdle.png");
+    this.assetManager.queueDownload("./assets/cowboy/CowBoyBullet.png");
+  }
+  
+
   downloadBackgroundAssets() {
     this.assetManager.queueDownload("./assets/background/background.png");
     this.assetManager.queueDownload("./assets/background/background1.png");

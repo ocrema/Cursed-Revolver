@@ -7,6 +7,7 @@ import { GAME_ENGINE } from "../../main.js";
 import { Platform } from "./Platform.js";
 import { Barrel } from "../Objects/Barrel.js";
 import { Tumbleweed } from "../Objects/Tumbleweed.js";
+import { CowboyEnemy } from "../Enemy/CowboyEnemy.js";
 
 export class Map1 extends GameMap {
   load() {
@@ -21,6 +22,12 @@ export class Map1 extends GameMap {
     GAME_ENGINE.addEntity(new Cactus(150, -850));
     GAME_ENGINE.addEntity(new Spider(1000, 70));
     GAME_ENGINE.addEntity(new Spider(-700, 70));
+    
+    // **Cowboy Enemy
+    GAME_ENGINE.addEntity(new CowboyEnemy(300, 100));
+    GAME_ENGINE.addEntity(new CowboyEnemy(-500, 120));
+    GAME_ENGINE.addEntity(new CowboyEnemy(310, 100));
+    GAME_ENGINE.addEntity(new CowboyEnemy(0, 100)); // Closer to (0,0)
 
     // **Main Ground (Expanded)**
     GAME_ENGINE.addEntity(new Platform(0, 500, 140, 10));
@@ -55,5 +62,6 @@ export class Map1 extends GameMap {
     GAME_ENGINE.addEntity(new Tumbleweed(700, -600, "left"));
     GAME_ENGINE.addEntity(new Tumbleweed(200, -700, "right"));
     GAME_ENGINE.addEntity(new Tumbleweed(-1100, 80, "right"));
+
   }
 }
