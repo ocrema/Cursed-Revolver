@@ -120,7 +120,7 @@ export const MAP_TREES_AND_ROCKS = {
 
 export const ENEMY_SPRITESHEET = { 
   CACTUS: { 
-    URL: "./assets/cactus/newcactus.png"
+    URL: "./assets/enemy/cactus/newcactus.png"
   }
 }
 

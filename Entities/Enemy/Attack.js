@@ -34,7 +34,7 @@ export class Thorn extends Entity {
 
     this.addAnimation(
       "placeholder",
-      this.assetManager.getAsset("./assets/thorn/thorn.png"),
+      this.assetManager.getAsset("./assets/enemy/thorn/thorn.png"),
       64, // Frame width
       64, // Frame height
       1, // Frame count

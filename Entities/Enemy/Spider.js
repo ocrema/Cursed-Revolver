@@ -16,7 +16,7 @@ export class Spider extends Actor {
 
     this.addAnimation(
       "run",
-      this.assetManager.getAsset("./assets/spider/Walk.png"),
+      this.assetManager.getAsset("./assets/enemy/spider/Walk.png"),
       64, // Frame width
       64, // Frame height
       5, // Frame count
@@ -25,7 +25,7 @@ export class Spider extends Actor {
 
     this.addAnimation(
       "roam",
-      this.assetManager.getAsset("./assets/spider/Walk.png"),
+      this.assetManager.getAsset("./assets/enemy/spider/Walk.png"),
       64, // Frame width
       64, // Frame height
       5, // Frame count
@@ -34,7 +34,7 @@ export class Spider extends Actor {
 
     this.addAnimation(
       "aggressive",
-      this.assetManager.getAsset("./assets/spider/Walk.png"),
+      this.assetManager.getAsset("./assets/enemy/spider/Walk.png"),
       64, // Frame width
       64, // Frame height
       5, // Frame count
@@ -43,7 +43,7 @@ export class Spider extends Actor {
 
     this.addAnimation(
       "attack",
-      this.assetManager.getAsset("./assets/spider/Walk.png"),
+      this.assetManager.getAsset("./assets/enemy/spider/Walk.png"),
       64, // Frame width
       64, // Frame height
       5, // Frame count
