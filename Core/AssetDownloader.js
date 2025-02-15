@@ -46,14 +46,14 @@ export class AssetDownloader {
   }
 
   downloadEnemyAssets() {
-    this.assetManager.queueDownload("./assets/cactus/cactus.png");
-    this.assetManager.queueDownload("./assets/cactus/newcactus.png");
+    this.assetManager.queueDownload("./assets/enemy/cactus/cactus.png");
+    this.assetManager.queueDownload("./assets/enemy/cactus/newcactus.png");
 
-    this.assetManager.queueDownload("./assets/spider/Walk.png");
+    this.assetManager.queueDownload("./assets/enemy/spider/Walk.png");
   }
 
   downloadEnemyAttackAssets() {
-    this.assetManager.queueDownload("./assets/thorn/thorn.png");
+    this.assetManager.queueDownload("./assets/enemy/thorn/thorn.png");
   }
 
   downloadBackgroundAssets() {
@@ -95,7 +95,7 @@ export class AssetDownloader {
   }
 
   downloadEnvironmentalAssets() {
-    this.assetManager.queueDownload("./assets/stampede/horse.png");
+    this.assetManager.queueDownload("./assets/enemy/stampede/horse.png");
   }
 
   // Effects
