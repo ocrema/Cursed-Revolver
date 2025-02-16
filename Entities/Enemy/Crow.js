@@ -32,6 +32,15 @@ export class Crow extends Actor {
     );
 
     this.addAnimation(
+      CROW_SPRITESHEET.ATTACK.NAME,
+      this.assetManager.getAsset(CROW_SPRITESHEET.ATTACK.URL),
+      CROW_SPRITESHEET.ATTACK.FRAME_WIDTH,
+      CROW_SPRITESHEET.ATTACK.FRAME_HEIGHT,
+      CROW_SPRITESHEET.ATTACK.FRAME_COUNT,
+      CROW_SPRITESHEET.ATTACK.FRAME_DURATION
+    );
+
+    this.addAnimation(
       CROW_SPRITESHEET.DEATH.NAME,
       this.assetManager.getAsset(CROW_SPRITESHEET.DEATH.URL),
       CROW_SPRITESHEET.DEATH.FRAME_WIDTH,
@@ -43,7 +52,7 @@ export class Crow extends Actor {
     this.setAnimation(CROW_SPRITESHEET.FLY.NAME);
     this.width = 60;
     this.height = 40;
-    this.scale = 5;
+    this.scale = 6;
     this.health = 60;
     this.maxHealth = 60;
 
@@ -100,7 +109,6 @@ export class Crow extends Actor {
     //console.log(`🦅 Crow State: ${this.state}`);
 
     if (this.isDead) {
-      this.handleDeath();
       return;
     }
 
@@ -149,42 +157,42 @@ export class Crow extends Actor {
   patrol() {
     this.x += this.patrolSpeed * this.direction * GAME_ENGINE.clockTick;
 
+    // Ensure sprite flips correctly
+    this.flip = this.direction > 0 ? 1 : 0;
+
     if (Math.abs(this.x - this.startX) > this.patrolRange - this.turnBuffer) {
-      //console.log("Reached patrol limit. Changing direction.");
       this.direction *= -1;
       this.x += this.direction * this.turnBuffer;
     }
-
-    this.flip = this.direction > 0 ? 1 : 0;
   }
 
   startAttack(player) {
     this.state = this.states.ATTACK;
-    this.setAnimation(CROW_SPRITESHEET.FLY.NAME);
+    this.setAnimation(CROW_SPRITESHEET.ATTACK.NAME);
     this.isAttacking = true;
-    this.attackStartPosition = { x: this.x, y: this.y }; // Store original position before attack
+    this.attackStartPosition = { x: this.x, y: this.y };
     this.target = { x: player.x, y: player.y + 50 };
-    console
-      .log
-      // `⚔️ Crow diving to attack at ${this.target.x}, ${this.target.y}`
-      ();
+
+    // Flip based on target direction
+    this.flip = this.target.x > this.x ? 1 : 0;
   }
 
   attack() {
-    this.x += (this.target.x - this.x) * 0.02;
-    this.y += (this.target.y - this.y) * 0.02;
+    let dx = this.target.x - this.x;
+    let dy = this.target.y - this.y;
 
-    if (
-      Math.abs(this.x - this.target.x) < 10 &&
-      Math.abs(this.y - this.target.y) < 10
-    ) {
+    this.x += dx * 0.02;
+    this.y += dy * 0.02;
+
+    // Flip based on movement direction
+    this.flip = dx > 0 ? 1 : 0;
+
+    if (Math.abs(dx) < 10 && Math.abs(dy) < 10) {
       if (!this.jaw || this.jaw.removeFromWorld) {
         this.attackCooldown = 0;
         this.jaw = new Jaw(this);
         GAME_ENGINE.addEntity(this.jaw);
       }
-
-      //console.log("" Attack complete. Retreating to inverse X position.");
       this.resetToPatrol();
     }
   }
@@ -202,18 +210,16 @@ export class Crow extends Actor {
   }
 
   retreat() {
-    console
-      .log
-      //`Retreating to ${this.retreatTarget.x}, ${this.retreatTarget.y}...`
-      ();
-    this.x += (this.retreatTarget.x - this.x) * 0.02;
-    this.y += (this.retreatTarget.y - this.y) * 0.02;
+    let dx = this.retreatTarget.x - this.x;
+    let dy = this.retreatTarget.y - this.y;
 
-    if (
-      Math.abs(this.x - this.retreatTarget.x) < 2 &&
-      Math.abs(this.y - this.retreatTarget.y) < 2
-    ) {
-      //console.log("Crow has fully retreated to inverse X position.");
+    this.x += dx * 0.01;
+    this.y += dy * 0.015;
+
+    // Flip based on movement direction
+    this.flip = dx > 0 ? 1 : 0;
+
+    if (Math.abs(dx) < 2 && Math.abs(dy) < 2) {
       this.x = this.retreatTarget.x;
       this.y = this.retreatTarget.y;
       this.retreating = false;
@@ -244,6 +250,12 @@ export class Crow extends Actor {
     this.recieved_attacks = [];
   }
 
+  die() {
+    console.log("💀 Crow is dead.");
+    this.isDead = true;
+    this.setAnimation(CROW_SPRITESHEET.DEATH.NAME, false);
+  }
+
   draw(ctx) {
     if (GAME_ENGINE.debug_colliders) {
       super.draw(ctx);
@@ -260,5 +272,9 @@ export class Crow extends Actor {
     } else {
       super.draw(ctx);
     }
+  }
+
+  onAnimationComplete() {
+    this.removeFromWorld = true;
   }
 }

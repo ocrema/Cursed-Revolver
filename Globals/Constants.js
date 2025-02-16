@@ -95,7 +95,7 @@ export const PLAYER_COLLIDER = {
 
 export const CROW_SPRITESHEET = {
   FLY: {
-    NAME: "CROWIDLE",
+    NAME: "CROWFLY",
     URL: "./assets/enemy/Crow/Fly/Left.png",
     FRAME_WIDTH: 40,
     FRAME_HEIGHT: 40,
@@ -104,11 +104,11 @@ export const CROW_SPRITESHEET = {
   },
   ATTACK: {
     NAME: "CROWATTACK",
-    URL: "./assets/enemy/Crow/Fly/Attack/Left.png",
+    URL: "./assets/enemy/Crow/Attack/Left.png",
     FRAME_WIDTH: 40,
     FRAME_HEIGHT: 40,
     FRAME_COUNT: 5,
-    FRAME_DURATION: 0.2,
+    FRAME_DURATION: 0.15,
   },
   HURT: {
     NAME: "CROWHURT",
@@ -116,7 +116,7 @@ export const CROW_SPRITESHEET = {
     FRAME_WIDTH: 40,
     FRAME_HEIGHT: 40,
     FRAME_COUNT: 5,
-    FRAME_DURATION: 0.2,
+    FRAME_DURATION: 0.1,
   },
   DEATH: {
     NAME: "CROWDEATH",
