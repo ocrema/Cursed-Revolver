@@ -48,9 +48,10 @@ export class Cactus extends Actor {
     for (let entity of GAME_ENGINE.entities) {
       if (entity instanceof Player) {
         // cactus sees player
-        if (Util.canSee(this, entity) && 
-        this.attackTime > this.fireRate &&
-        Util.canAttack(new Thorn(this.x, this.y, entity), entity)
+        if (
+          Util.canSee(this, entity) &&
+          this.attackTime > this.fireRate &&
+          Util.canAttack(new Thorn(this.x, this.y, entity), entity)
         ) {
           // this.setAnimation("attack");
           this.attackTime = 0;
@@ -67,6 +68,24 @@ export class Cactus extends Actor {
 
     if (this.health <= 0) {
       this.removeFromWorld = true;
+    }
+  }
+
+  draw(ctx) {
+    if (GAME_ENGINE.debug_colliders) {
+      super.draw(ctx);
+      ctx.strokeStyle = "red";
+      ctx.beginPath();
+      ctx.arc(
+        this.x - GAME_ENGINE.camera.x,
+        this.y - GAME_ENGINE.camera.y,
+        this.visualRadius,
+        0,
+        Math.PI * 2
+      );
+      ctx.stroke();
+    } else {
+      super.draw(ctx);
     }
   }
 }

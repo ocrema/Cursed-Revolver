@@ -1,3 +1,4 @@
+import { GAME_ENGINE } from "../main.js";
 import * as Util from "../Utils/Util.js";
 
 export class Entity {
@@ -90,7 +91,8 @@ export class Entity {
     ctx.translate(this.x, this.y); // Move to the entity's position
     ctx.scale(this.scale, this.scale); // Apply scaling factor
 
-    if (this.angle) { // if entity has an angle
+    if (this.angle) {
+      // if entity has an angle
       ctx.rotate(this.angle);
     }
 
@@ -186,14 +188,16 @@ export class Entity {
         other.collider.width / 2 -
         this.collider.width / 2 -
         other.collider.x_offset +
-        this.collider.x_offset - 1;
+        this.collider.x_offset -
+        1;
     else
       this.x =
         other.x +
         other.collider.width / 2 +
         this.collider.width / 2 +
         other.collider.x_offset -
-        this.collider.x_offset + 1;
+        this.collider.x_offset +
+        1;
   }
   /**
    * moves this entity so that it is against the other entities' collider border in the y direction
@@ -206,14 +210,16 @@ export class Entity {
         other.collider.height / 2 -
         this.collider.height / 2 -
         other.collider.y_offset +
-        this.collider.y_offset - 1;
+        this.collider.y_offset -
+        1;
     else
       this.y =
         other.y +
         other.collider.height / 2 +
         this.collider.height / 2 +
         other.collider.y_offset -
-        this.collider.y_offset + 1;
+        this.collider.y_offset +
+        1;
   }
 }
 
