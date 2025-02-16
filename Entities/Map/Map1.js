@@ -25,7 +25,7 @@ export class Map1 extends GameMap {
     // GAME_ENGINE.addEntity(new Cactus(1200, 100));
     // GAME_ENGINE.addEntity(new Cactus(-900, 100));
     // GAME_ENGINE.addEntity(new Cactus(150, -850));
-     GAME_ENGINE.addEntity(new Spider(1000, 70));
+     //GAME_ENGINE.addEntity(new Spider(1000, 70));
     // GAME_ENGINE.addEntity(new Spider(-700, 70));
 
     // // **Two Tall Vertical Pillars at Ends**
