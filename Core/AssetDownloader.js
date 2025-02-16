@@ -48,8 +48,12 @@ export class AssetDownloader {
   downloadEnemyAssets() {
     this.assetManager.queueDownload("./assets/enemy/cactus/cactus.png");
     this.assetManager.queueDownload("./assets/enemy/cactus/newcactus.png");
-
     this.assetManager.queueDownload("./assets/enemy/spider/Walk.png");
+
+    // Crow Enemy 
+    this.assetManager.queueDownload("./assets/enemy/Crow/Fly/Left.png")
+    this.assetManager.queueDownload("./assets/enemy/Crow/Hurt/Left.png");
+    this.assetManager.queueDownload("./assets/enemy/Crow/Die/Left.png");
   }
 
   downloadEnemyAttackAssets() {

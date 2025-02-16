@@ -114,7 +114,7 @@ export class Jaw extends Entity {
 
           // Reset spider attack cooldown when attack hits
           this.spider.attackCooldown = 0;
-          this.spider.currentAnimation = "run";
+          //this.spider.currentAnimation = "run";
           this.spider.jaw = null;
           this.removeFromWorld = true;
         }

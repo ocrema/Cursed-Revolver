@@ -4,6 +4,7 @@ import { Player } from "../Player/Player.js";
 import { Jaw } from "./Attack.js";
 import * as Util from "../../Utils/Util.js";
 import { Collider } from "../Collider.js";
+import { GAME_ENGINE } from "../../main.js";
 
 export class Spider extends Actor {
   constructor(x, y) {
@@ -274,6 +275,24 @@ export class Spider extends Actor {
           }
         }
       }
+    }
+  }
+
+  draw(ctx) {
+    if (GAME_ENGINE.debug_colliders) {
+      super.draw(ctx);
+      ctx.strokeStyle = "red";
+      ctx.beginPath();
+      ctx.arc(
+        this.x - GAME_ENGINE.camera.x,
+        this.y - GAME_ENGINE.camera.y,
+        this.visualRadius,
+        0,
+        Math.PI * 2
+      );
+      ctx.stroke();
+    } else {
+      super.draw(ctx);
     }
   }
 }
