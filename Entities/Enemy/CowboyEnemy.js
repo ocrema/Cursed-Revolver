@@ -80,7 +80,7 @@ export class CowboyEnemy extends Actor {
     this.velocity = { x: 0, y: this.gravity };
 
     this.visualRadius = 700; // Detection range
-    this.attackRadius = 700; // Attack range
+    this.attackRadius = 300; // Attack range
     this.seesPlayer = false;
 
     this.smokingTimer = 0;
@@ -166,6 +166,8 @@ export class CowboyEnemy extends Actor {
     }
 
     this.applyDamage();
+    this.handleCollisions();
+   // this.movement();
 
     if (this.health <= 0) {
       this.removeFromWorld = true;
@@ -190,7 +192,7 @@ export class CowboyEnemy extends Actor {
     setTimeout(() => {
       this.setAnimation("shoot");
       GAME_ENGINE.addEntity(new CowboyBullet(this.x, this.y, player));
-      this.attackCooldown = 0;
+      this.attackCooldown = this.fireRate;
 
       // Reset back to idle after shooting
       setTimeout(() => {
@@ -233,6 +235,42 @@ export class CowboyEnemy extends Actor {
       this.health -= attack.damage;
     }
     this.recieved_attacks = [];
+  }
+  
+  handleCollisions() {
+    for (let entity of GAME_ENGINE.entities) {
+      if (entity instanceof Platform && this.colliding(entity)) {
+        let thisTop = this.y - this.height / 2;
+        let thisBottom = this.y + this.height / 2;
+        let thisLeft = this.x - this.width / 2;
+        let thisRight = this.x + this.width / 2;
+
+        let eTop = entity.y - entity.collider.height / 2;
+        let eBottom = entity.y + entity.collider.height / 2;
+        let eLeft = entity.x - entity.collider.width / 2;
+        let eRight = entity.x + entity.collider.width / 2;
+
+        let collideBottom = thisBottom > eTop && thisTop < eTop && thisRight > eLeft && thisLeft < eRight;
+        let collideLeft = thisLeft < eRight && thisRight > eRight;
+        let collideRight = thisRight > eLeft && thisLeft < eLeft;
+
+        if (collideBottom) {
+          this.y = eTop - this.height / 2;
+          this.velocity.y = 0;
+          this.onGround = true;
+        }
+
+        if (collideLeft || collideRight) {
+          this.velocity.x = 0;
+          this.onWall = true;
+          if (collideRight) {
+            this.x = entity.x - entity.collider.width / 2 - this.width / 2;
+          } else {
+            this.x = entity.x + entity.collider.width / 2 + this.width / 2;
+          }
+        }
+      }
+    }
   }
 }
 

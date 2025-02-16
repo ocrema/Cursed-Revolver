@@ -8,7 +8,6 @@ import { Platform } from "./Platform.js";
 import { Barrel } from "../Objects/Barrel.js";
 import { Tumbleweed } from "../Objects/Tumbleweed.js";
 import { CowboyEnemy } from "../Enemy/CowboyEnemy.js";
-import { Cowboy_Enemy } from "../Enemy/Cowboy_Enemy.js";
 
 export class Map1 extends GameMap {
   load() {
