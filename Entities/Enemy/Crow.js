@@ -97,7 +97,7 @@ export class Crow extends Actor {
   }
 
   update() {
-    console.log(`🦅 Crow State: ${this.state}`);
+    //console.log(`🦅 Crow State: ${this.state}`);
 
     if (this.isDead) {
       this.handleDeath();
@@ -138,7 +138,7 @@ export class Crow extends Actor {
       this.patrol();
 
       if (this.attackCooldown <= 0 && canSee(this, player)) {
-        console.log("🦅 Crow spotted the player! Preparing to attack!");
+        //console.log("Crow spotted the player! Preparing to attack!");
         this.startAttack(player);
       }
     } else if (this.state === this.states.ATTACK) {
@@ -150,7 +150,7 @@ export class Crow extends Actor {
     this.x += this.patrolSpeed * this.direction * GAME_ENGINE.clockTick;
 
     if (Math.abs(this.x - this.startX) > this.patrolRange - this.turnBuffer) {
-      console.log("🦅 Reached patrol limit. Changing direction.");
+      //console.log("Reached patrol limit. Changing direction.");
       this.direction *= -1;
       this.x += this.direction * this.turnBuffer;
     }
@@ -164,9 +164,10 @@ export class Crow extends Actor {
     this.isAttacking = true;
     this.attackStartPosition = { x: this.x, y: this.y }; // Store original position before attack
     this.target = { x: player.x, y: player.y + 50 };
-    console.log(
-      `⚔️ Crow diving to attack at ${this.target.x}, ${this.target.y}`
-    );
+    console
+      .log
+      // `⚔️ Crow diving to attack at ${this.target.x}, ${this.target.y}`
+      ();
   }
 
   attack() {
@@ -183,7 +184,7 @@ export class Crow extends Actor {
         GAME_ENGINE.addEntity(this.jaw);
       }
 
-      console.log("🦅 Attack complete. Retreating to inverse X position.");
+      //console.log("" Attack complete. Retreating to inverse X position.");
       this.resetToPatrol();
     }
   }
@@ -201,9 +202,10 @@ export class Crow extends Actor {
   }
 
   retreat() {
-    console.log(
-      `🦅 Retreating to ${this.retreatTarget.x}, ${this.retreatTarget.y}...`
-    );
+    console
+      .log
+      //`Retreating to ${this.retreatTarget.x}, ${this.retreatTarget.y}...`
+      ();
     this.x += (this.retreatTarget.x - this.x) * 0.02;
     this.y += (this.retreatTarget.y - this.y) * 0.02;
 
@@ -211,7 +213,7 @@ export class Crow extends Actor {
       Math.abs(this.x - this.retreatTarget.x) < 2 &&
       Math.abs(this.y - this.retreatTarget.y) < 2
     ) {
-      console.log("🦅 Crow has fully retreated to inverse X position.");
+      //console.log("Crow has fully retreated to inverse X position.");
       this.x = this.retreatTarget.x;
       this.y = this.retreatTarget.y;
       this.retreating = false;
@@ -225,9 +227,9 @@ export class Crow extends Actor {
 
     for (let attack of this.recieved_attacks) {
       this.health -= attack.damage;
-      console.log(
-        `🦅 Crow took ${attack.damage} damage! Health: ${this.health}`
-      );
+      // console.log(
+      //   `Crow took ${attack.damage} damage! Health: ${this.health}`
+      // );
 
       if (this.health > 0) {
         this.setAnimation(CROW_SPRITESHEET.HURT.NAME);
