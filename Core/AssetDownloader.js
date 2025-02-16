@@ -48,8 +48,18 @@ export class AssetDownloader {
   downloadEnemyAssets() {
     this.assetManager.queueDownload("./assets/cactus/cactus.png");
     this.assetManager.queueDownload("./assets/cactus/newcactus.png");
-
+    
+    
+    this.assetManager.queueDownload("./assets/cowboy/walk.png");
     this.assetManager.queueDownload("./assets/spider/Walk.png");
+    this.assetManager.queueDownload("./assets/cowboy/CowBoyIdle.png");
+    this.assetManager.queueDownload("./assets/cowboy/CowBoyWalking.png");
+    this.assetManager.queueDownload("./assets/cowboy/CowBoyDrawWeapon.png");
+    this.assetManager.queueDownload("./assets/cowboy/CowBoyQuickDrawShot.png");
+    this.assetManager.queueDownload("./assets/cowboy/CowBoyRapidFire.png");
+    this.assetManager.queueDownload("./assets/cowboy/CowBoyShoot.png");
+    this.assetManager.queueDownload("./assets/cowboy/CowBoySmokingIdle.png");
+    this.assetManager.queueDownload("./assets/cowboy/CowBoyBullet.png");
   }
 
   downloadEnemyAttackAssets() {

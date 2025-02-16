@@ -8,6 +8,7 @@ import { Platform } from "./Platform.js";
 import { Barrel } from "../Objects/Barrel.js";
 import { Tumbleweed } from "../Objects/Tumbleweed.js";
 import { CowboyEnemy } from "../Enemy/CowboyEnemy.js";
+import { Cowboy_Enemy } from "../Enemy/Cowboy_Enemy.js";
 
 export class Map1 extends GameMap {
   load() {
@@ -16,18 +17,15 @@ export class Map1 extends GameMap {
     GAME_ENGINE.addEntity(new Background());
 
     // **Enemies**
-    GAME_ENGINE.addEntity(new Cactus(200, 100));
-    GAME_ENGINE.addEntity(new Cactus(1200, 100));
-    GAME_ENGINE.addEntity(new Cactus(-900, 100));
-    GAME_ENGINE.addEntity(new Cactus(150, -850));
-    GAME_ENGINE.addEntity(new Spider(1000, 70));
-    GAME_ENGINE.addEntity(new Spider(-700, 70));
+    // GAME_ENGINE.addEntity(new Cactus(200, 100));
+    // GAME_ENGINE.addEntity(new Cactus(1200, 100));
+    // GAME_ENGINE.addEntity(new Cactus(-900, 100));
+    // GAME_ENGINE.addEntity(new Cactus(150, -850));
+    // GAME_ENGINE.addEntity(new Spider(1000, 70));
+    // GAME_ENGINE.addEntity(new Spider(-700, 70));
     
     // **Cowboy Enemy
-    GAME_ENGINE.addEntity(new CowboyEnemy(300, 100));
-    GAME_ENGINE.addEntity(new CowboyEnemy(-500, 120));
-    GAME_ENGINE.addEntity(new CowboyEnemy(310, 100));
-    GAME_ENGINE.addEntity(new CowboyEnemy(0, 100)); // Closer to (0,0)
+    GAME_ENGINE.addEntity(new CowboyEnemy(380, 130));
 
     // **Main Ground (Expanded)**
     GAME_ENGINE.addEntity(new Platform(0, 500, 140, 10));

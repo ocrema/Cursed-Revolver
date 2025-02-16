@@ -82,74 +82,78 @@ export class Fireball extends Entity {
   }
 }
 
-export class ChainLightning extends Entity {
-    constructor(caster, dir) {
-        super();
-        this.dir = dir; // in radians
-        this.entityOrder = 3;
-        this.isAttack = true;
-        this.experationTimer = .35;
-        this.chains = 4;
-        this.firstBolt = true;
-        this.maxChainLength = 1000;
-        this.maxShotAngle = Math.PI / 3;
-        this.targets = [caster];
-        window.ASSET_MANAGER.playAsset("./assets/sfx/lightning.wav");
+export class CowboyBullet extends Actor {
+  constructor(x, y, target) {
+    super();
+    Object.assign(this, { x, y, target });
+
+    this.speed = 1500; // Faster bullet speed
+    this.damage = 25;
+    this.removeFromWorld = false;
+    this.assetManager = window.ASSET_MANAGER;
+
+    this.collider = new Collider(20, 10);
+
+    // Compute bullet velocity manually
+    const distance = Util.getDistance(this, target);
+    this.velocity = {
+      x: ((target.x - this.x) / distance) * this.speed,
+      y: ((target.y - this.y) / distance) * this.speed
+    };
+
+    // Calculate rotation angle in radians
+    this.rotation = Math.atan2(this.velocity.y, this.velocity.x);
+
+    // Determine if the bullet should be flipped when moving left
+    this.isFlipped = this.velocity.x < 0;
+
+    // Load the bullet sprite
+    this.bulletImage = this.assetManager.getAsset("./assets/cowboy/CowBoyBullet.png");
+
+    this.width = 40; // Adjust based on actual sprite size
+    this.height = 10; // Adjust based on actual sprite size
+  }
+
+  update() {
+    // Move the bullet
+    this.x += this.velocity.x * GAME_ENGINE.clockTick;
+    this.y += this.velocity.y * GAME_ENGINE.clockTick;
+
+    // Check for collision with the player
+    for (let entity of GAME_ENGINE.entities) {
+      if (entity instanceof Player && this.colliding(entity)) {
+        entity.queueAttack({ damage: this.damage });
+        this.removeFromWorld = true;
+      }
+    }
+  }
+
+  draw(ctx) {
+    if (!this.bulletImage) return; // Prevent errors if image not loaded
+
+    ctx.save();
+
+    // Translate to the bullet's position
+    ctx.translate(this.x - GAME_ENGINE.camera.x, this.y - GAME_ENGINE.camera.y);
+
+    // Rotate the canvas to align with the bullet's direction
+    ctx.rotate(this.rotation);
+
+    // Flip the image horizontally if moving left
+    if (this.isFlipped) {
+      ctx.scale(1, -1); // Flip on Y-axis to mirror the image correctly
     }
 
-    update() {
-        if (this.struck) {
-            this.experationTimer -= GAME_ENGINE.clockTick;
-            if (this.targets.length > 1) GAME_ENGINE.camera.triggerShake(25);
-            if (this.experationTimer <= 0) this.removeFromWorld = true;
-            return;
-        }
+    // Draw the bullet image, centered
+    ctx.drawImage(
+      this.bulletImage,
+      -this.width / 2, // Centering the bullet
+      -this.height / 2, // Centering the bullet
+      this.width,
+      this.height
+    );
 
-        let enemies = GAME_ENGINE.entities.filter((e) => (e.isEnemy));
-
-        let source = this.targets[0];
-        let target = null;
-        let targetIndex = null;
-
-        while (source !== null && enemies.length !== 0 && this.chains >= 1) {
-
-            for (let i = 0; i < enemies.length; i++) {
-                if (this.firstBolt && Util.diffBetweenAngles(Util.getAngle(source, enemies[i]), this.dir) > this.maxShotAngle) continue;
-                if (Util.getDistance(source, enemies[i]) > this.maxChainLength) continue;
-                if (target === null || Util.getDistance(source, enemies[i]) < Util.getDistance(source, target)) {
-                    target = enemies[i];
-                    targetIndex = i;
-                }
-            }
-
-            if (target !== null) {
-                this.targets.push(target);
-                enemies.splice(targetIndex, 1);
-                target.queueAttack({damage: 10, shock: 5});
-            }
-
-            this.chains--;
-            this.firstBolt = false;
-            source = target;
-            target = null;
-        }
-
-
-        this.struck = true;
-    }
-
-    draw(ctx) {
-        if (!this.struck || this.targets.length <= 1) return;
-
-        ctx.strokeStyle = "yellow";
-        ctx.lineWidth = Math.random() * 20 + 5;
-        let maxOffset = 120;
-        ctx.beginPath();
-        ctx.moveTo(this.targets[0].x - GAME_ENGINE.camera.x + Math.random() * maxOffset - maxOffset/2, this.targets[0].y - GAME_ENGINE.camera.y + Math.random() * maxOffset - maxOffset/2);
-        for (let i = 1; i < this.targets.length; i++) {
-            ctx.lineTo(this.targets[i].x - GAME_ENGINE.camera.x + Math.random() * maxOffset - maxOffset/2, this.targets[i].y - GAME_ENGINE.camera.y + Math.random() * maxOffset - maxOffset/2);
-        }
-        ctx.stroke();
-    }
+    ctx.restore();
+  }
 }
- 
+
