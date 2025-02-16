@@ -150,29 +150,36 @@ export class GameEngine {
         event.key.length === 1 ? event.key.toLowerCase() : event.key
       ] = true;
 
-      console.log(`Key pressed: ${event.key}`);
+      //console.log(`Key pressed: ${event.key}`);
 
-      if (this.GAME_CONTROLLER.isGameOver == true && event.key.toLowerCase() === "r") {
+      if (
+        this.GAME_CONTROLLER.isGameOver == true &&
+        event.key.toLowerCase() === "r"
+      ) {
         console.log("R key detected!"); //check
         window.location.reload();
       }
-     
+
       if (event.key === "Escape") {
         console.log("Escape key pressed - Toggling pause menu...");
         //GAME_ENGINE.GAME_CONTROLLER.togglePause();
-        if(this.GAME_CONTROLLER){
+        if (this.GAME_CONTROLLER) {
           this.GAME_CONTROLLER.togglePause();
         }
         this.keys["Escape"] = false; // Prevent repeated toggling
       }
 
-      if (this.GAME_CONTROLLER && this.GAME_CONTROLLER.isPaused) { //line 167
-        if (event.key === "ArrowUp" || event.key === "ArrowDown" || event.key === "Enter") {
-            this.keys[event.key] = true;
-            this.GAME_CONTROLLER.pauseMenu.update(); // Force Pause Menu update
+      if (this.GAME_CONTROLLER && this.GAME_CONTROLLER.isPaused) {
+        //line 167
+        if (
+          event.key === "ArrowUp" ||
+          event.key === "ArrowDown" ||
+          event.key === "Enter"
+        ) {
+          this.keys[event.key] = true;
+          this.GAME_CONTROLLER.pauseMenu.update(); // Force Pause Menu update
         }
-    }
-
+      }
     });
 
     document.addEventListener("keyup", (event) => {
@@ -220,7 +227,7 @@ export class GameEngine {
     for (let i = 0; i < this.entities.length; i++) {
       this.entities[i].draw(this.ctx);
     }
-    
+
     if (this.debug_colliders) {
       this.ctx.lineWidth = 5;
       this.ctx.strokeStyle = "limegreen";
@@ -237,7 +244,7 @@ export class GameEngine {
             e.y - this.camera.y - 2,
             4,
             4
-          )
+          );
         }
       }
     }
@@ -278,7 +285,7 @@ export class GameEngine {
   }
 
   loop() {
-    this.clockTick = Math.min(this.timer.tick(), 1/20);
+    this.clockTick = Math.min(this.timer.tick(), 1 / 20);
     this.update();
     this.draw();
   }
