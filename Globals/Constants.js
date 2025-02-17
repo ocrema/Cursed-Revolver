@@ -144,16 +144,7 @@ export const GROUND_SPRITESHEET = {
 
 // Map Object Constants
 
-export const MAP_TREES_AND_ROCKS = {
-  ROCK1_URL: "./assets/map/props/rocks1.png",
-  ROCK2_URL: "./assets/map/props/rocks2.png",
-  ROCK3_URL: "./assets/map/props/rocks3.png",
-  ROCK4_URL: "./assets/map/props/rocks4.png",
-  ROCK5_URL: "./assets/map/props/rocks5.png",
-  TREE1_URL: "./assets/map/props/tree01.png",
-  TREE2_URL: "./assets/map/props/tree02.png",
-  TREE3_URL: "./assets/map/props/tree03.png",
-};
+export const MAP_CONSTANTS = {};
 
 export const ENEMY_SPRITESHEET = {
   CACTUS: {
