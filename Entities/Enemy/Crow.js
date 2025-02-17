@@ -204,7 +204,7 @@ export class Crow extends Actor {
     this.retreating = true;
     this.attackCooldown = this.attackRate;
     this.retreatTarget = {
-      x: -this.attackStartPosition.x, // Inverse X
+      x: this.attackStartPosition.x, // Inverse X
       y: this.attackStartPosition.y, // Same Y
     };
   }

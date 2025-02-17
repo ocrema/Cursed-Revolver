@@ -24,7 +24,7 @@ export class Cactus extends Actor {
     this.setAnimation("placeholder");
     this.width = 160;
     this.height = 250;
-    this.scale = 7.5;
+    this.scale = 6.5;
 
     // Health / Attack
     this.health = 50;
