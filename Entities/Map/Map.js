@@ -17,7 +17,7 @@ export class Map extends GameMap {
     GAME_ENGINE.addEntity(new Background());
 
     const TILESET_IMAGE = new Image();
-    TILESET_IMAGE.src = `${window.location.origin}/assets/map/Tileset/00Atlas.png`;
+    TILESET_IMAGE.src = `${window.location.origin}/assets/map/Tileset/Atlas.png`;
 
     const gameMap = new Tilemap(
       "./Entities/Map/MapAssets/216Map.json",
