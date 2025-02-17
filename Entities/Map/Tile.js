@@ -22,7 +22,8 @@ export class Tile extends Entity {
     this.tilesPerRow = tilesPerRow;
     this.firstGID = firstGID;
     this.scale = scale; // Scale factor
-    
+    this.isGround = true;
+
     if (this.tileID < 73) {
       this.collider = new Collider(
         this.tileSize * this.scale, // Scale width

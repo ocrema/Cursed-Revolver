@@ -26,7 +26,7 @@ export class Map extends GameMap {
     GAME_ENGINE.addEntity(gameMap);
 
     this.addEnemies();
-    addObjects();
+    this.addObjects();
   }
 
   addEnemies() {
@@ -44,6 +44,11 @@ export class Map extends GameMap {
     GAME_ENGINE.addEntity(new Cactus(4200, 260));
 
     // Cowboy Enemy
-    GAME_ENGINE.addEntity(new CowboyEnemy(1480, 1330));
+    GAME_ENGINE.addEntity(new CowboyEnemy(4115, 1330));
+  }
+
+  addObjects() {
+    GAME_ENGINE.addEntity(new Tumbleweed(3200, -100, "left"));
+    GAME_ENGINE.addEntity(new Tumbleweed(4750, -100, "right"));
   }
 }
