@@ -50,5 +50,6 @@ export class Map extends GameMap {
   addObjects() {
     GAME_ENGINE.addEntity(new Tumbleweed(3200, -100, "left"));
     GAME_ENGINE.addEntity(new Tumbleweed(4750, -100, "right"));
+    GAME_ENGINE.addEntity(new Barrel(2569, 275));
   }
 }
