@@ -47,7 +47,7 @@ export class AssetDownloader {
 
   downloadEnemyAssets() {
     this.assetManager.queueDownload("./assets/cowboy/walk.png");
-    this.assetManager.queueDownload("./assets/spider/Walk.png");
+    this.assetManager.queueDownload("./assets/enemy/spider/Walk.png");
     this.assetManager.queueDownload("./assets/cowboy/CowBoyIdle.png");
     this.assetManager.queueDownload("./assets/cowboy/CowBoyWalking.png");
     this.assetManager.queueDownload("./assets/cowboy/CowBoyDrawWeapon.png");
@@ -89,7 +89,7 @@ export class AssetDownloader {
   }
 
   downloadMapGroundAssets() {
-    this.assetManager.queueDownload("./assets/map/Tileset/00Atlas.png");
+    this.assetManager.queueDownload("./assets/map/Tileset/Atlas.png");
     this.assetManager.queueDownload("./assets/map/Tileset/tileMain2.png");
     this.assetManager.queueDownload("./assets/map/Tileset/tileMain5.png");
     this.assetManager.queueDownload("./assets/map/Tileset/platforms10.png");
