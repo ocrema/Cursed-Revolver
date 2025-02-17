@@ -9,35 +9,30 @@ import { Barrel } from "../Objects/Barrel.js";
 import { Tumbleweed } from "../Objects/Tumbleweed.js";
 import { CowboyEnemy } from "../Enemy/CowboyEnemy.js";
 import { Crow } from "../Enemy/Crow.js";
+import { Tilemap } from "./Tilemap.js";
 
-export class Map1 extends GameMap {
-  load() {
+export class Map extends GameMap {
+  async load() {
     // ground level is 80
-    GAME_ENGINE.addEntity(new Player());
+    GAME_ENGINE.addEntity(new Player(500, -1000));
     GAME_ENGINE.addEntity(new Background());
 
-    // **Enemies**
-    // GAME_ENGINE.addEntity(new Cactus(200, 100));
-    // GAME_ENGINE.addEntity(new Cactus(1200, 100));
-    // GAME_ENGINE.addEntity(new Cactus(-900, 100));
-    // GAME_ENGINE.addEntity(new Cactus(150, -850));
-    // GAME_ENGINE.addEntity(new Spider(1000, 70));
-    // GAME_ENGINE.addEntity(new Spider(-700, 70));
-    
-    // **Cowboy Enemy
-    GAME_ENGINE.addEntity(new CowboyEnemy(380, 130));
-
+    const TILESET_IMAGE = new Image();
+    TILESET_IMAGE.src = "../../assets/map/Tileset/00Atlas.png";
+    const gameMap = new Tilemap("./Entities/Map/untitled.json", TILESET_IMAGE);
+    await gameMap.load();
+    GAME_ENGINE.addEntity(gameMap);
     // **Main Ground (Expanded)**
-    GAME_ENGINE.addEntity(new Platform(0, 500, 140, 10));
+    // GAME_ENGINE.addEntity(new Platform(0, 500, 140, 10));
 
-    GAME_ENGINE.addEntity(new Crow(0, -100))
+    // GAME_ENGINE.addEntity(new Crow(0, -100))
 
     // // **Enemies**
     // GAME_ENGINE.addEntity(new Cactus(200, 100));
     // GAME_ENGINE.addEntity(new Cactus(1200, 100));
     // GAME_ENGINE.addEntity(new Cactus(-900, 100));
     // GAME_ENGINE.addEntity(new Cactus(150, -850));
-     //GAME_ENGINE.addEntity(new Spider(1000, 70));
+    //GAME_ENGINE.addEntity(new Spider(1000, 70));
     // GAME_ENGINE.addEntity(new Spider(-700, 70));
 
     // // **Two Tall Vertical Pillars at Ends**

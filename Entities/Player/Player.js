@@ -10,13 +10,13 @@ import { WaterWave } from "../Spells/WaterWave.js";
 import { Icicle } from "../Spells/Icicle.js";
 
 export class Player extends Actor {
-  constructor() {
+  constructor(x,y) {
     super();
     // Assigns asset manager from window asset manager singleton
     this.assetManager = window.ASSET_MANAGER;
     this.scale = 1.7;
-    this.x = 0;
-    this.y = 0;
+    this.x = x;
+    this.y = y;
 
     this.isPlayer = true;
 

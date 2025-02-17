@@ -1,5 +1,5 @@
 import { Entity } from "../Entities/Entities.js";
-import { Map1 } from "../Entities/Map/Map1.js";
+import { Map } from "../Entities/Map/Map.js";
 import { HUD } from "../Entities/HUD.js";
 import { PauseMenu } from "../Entities/PauseMenu.js";
 
@@ -41,7 +41,7 @@ export class GameLogicController extends Entity {
     // Initialize the game
     if (this.state === 0) {
       this.state = 1;
-      const map = new Map1();
+      const map = new Map();
       this.GAME_ENGINE.addEntity(map);
       map.load();
       this.GAME_ENGINE.addEntity(new HUD());
