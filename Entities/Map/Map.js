@@ -42,5 +42,8 @@ export class Map extends GameMap {
     GAME_ENGINE.addEntity(new Cactus(2300, 260));
     GAME_ENGINE.addEntity(new Cactus(3000, 260));
     GAME_ENGINE.addEntity(new Cactus(4200, 260));
+
+    // Cowboy Enemy
+    GAME_ENGINE.addEntity(new CowboyEnemy(1480, 1330));
   }
 }

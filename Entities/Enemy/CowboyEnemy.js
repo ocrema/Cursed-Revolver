@@ -1,5 +1,5 @@
 import { Actor } from "../Entities.js";
-import { Platform } from "../Map/Platform.js";
+import { Tile } from "../Map/Tile.js";
 import { Player } from "../Player/Player.js";
 import { Collider } from "../Collider.js";
 import * as Util from "../../Utils/Util.js";
@@ -17,17 +17,17 @@ export class CowboyEnemy extends Actor {
       this.assetManager.getAsset("./assets/cowboy/CowBoyIdle.png"),
       48, // Frame width
       64, // Frame height
-      7,   // Frame count
+      7, // Frame count
       0.15 // Frame duration
     );
-    
+
     // Load Animations
     this.addAnimation(
       "smoking",
       this.assetManager.getAsset("./assets/cowboy/CowBoySmokingIdle.png"),
       48, // Frame width
       64, // Frame height
-      7,   // Frame count
+      7, // Frame count
       0.15 // Frame duration
     );
 
@@ -43,8 +43,8 @@ export class CowboyEnemy extends Actor {
     this.addAnimation(
       "drawWeapon",
       this.assetManager.getAsset("./assets/cowboy/CowBoyDrawWeapon.png"),
-      49, 
-      55, 
+      49,
+      55,
       7,
       0.12
     );
@@ -73,10 +73,10 @@ export class CowboyEnemy extends Actor {
     this.gravity = 800;
 
     this.collider = new Collider(this.width, this.height);
-  
+
     // Roaming behavior
     this.randomRoamLength = [250, 400, 750, 800];
-    this.target = { x: this.x + 200, y: this.y }; 
+    this.target = { x: this.x + 200, y: this.y };
     this.velocity = { x: 0, y: this.gravity };
 
     this.visualRadius = 700; // Detection range
@@ -125,10 +125,12 @@ export class CowboyEnemy extends Actor {
 
         const distance = Util.getDistance(this, entity);
 
-
         // If currently drawing weapon, don't interrupt
         if (!this.isDrawingWeapon) {
-          if (distance < this.attackRadius && this.attackCooldown > this.fireRate) {
+          if (
+            distance < this.attackRadius &&
+            this.attackCooldown > this.fireRate
+          ) {
             this.attack(entity);
           } else if (distance < this.visualRadius) {
             this.chasePlayer(entity);
@@ -137,7 +139,7 @@ export class CowboyEnemy extends Actor {
         // // Attack when in range
         // if (distance < this.attackRadius && this.attackCooldown > this.fireRate) {
         //   this.attack(entity);
-        // } 
+        // }
         // // Chase if player is seen but not in range
         // else if (distance < this.visualRadius) {
         //   this.chasePlayer(entity);
@@ -167,7 +169,7 @@ export class CowboyEnemy extends Actor {
 
     this.applyDamage();
     this.handleCollisions();
-   // this.movement();
+    // this.movement();
 
     if (this.health <= 0) {
       this.removeFromWorld = true;
@@ -177,7 +179,7 @@ export class CowboyEnemy extends Actor {
   // attack(player) {
   //   this.setAnimation("shoot");
   //   this.attackCooldown = 0;
-    
+
   //   GAME_ENGINE.addEntity(new CowboyBullet(this.x, this.y, player));
   // }
 
@@ -199,7 +201,6 @@ export class CowboyEnemy extends Actor {
         this.setAnimation("idle");
         this.isDrawingWeapon = false;
       }, 200); // Adjust timing based on shoot animation duration
-
     }, 600); // Adjust timing based on drawWeapon animation duration
   }
 
@@ -219,13 +220,17 @@ export class CowboyEnemy extends Actor {
       this.setAnimation("idle");
 
       if (this.velocity.x < 0) {
-        this.target.x += this.randomRoamLength[Util.randomInt(this.randomRoamLength.length)];
+        this.target.x +=
+          this.randomRoamLength[Util.randomInt(this.randomRoamLength.length)];
       } else {
-        this.target.x -= this.randomRoamLength[Util.randomInt(this.randomRoamLength.length)];
+        this.target.x -=
+          this.randomRoamLength[Util.randomInt(this.randomRoamLength.length)];
       }
     } else {
       this.setAnimation("walk");
-      this.velocity.x = ((this.target.x - this.x) / Math.abs(this.target.x - this.x)) * this.speed;
+      this.velocity.x =
+        ((this.target.x - this.x) / Math.abs(this.target.x - this.x)) *
+        this.speed;
       this.x += this.velocity.x * GAME_ENGINE.clockTick;
     }
   }
@@ -236,10 +241,10 @@ export class CowboyEnemy extends Actor {
     }
     this.recieved_attacks = [];
   }
-  
+
   handleCollisions() {
     for (let entity of GAME_ENGINE.entities) {
-      if (entity instanceof Platform && this.colliding(entity)) {
+      if (entity instanceof Tile && this.colliding(entity)) {
         let thisTop = this.y - this.height / 2;
         let thisBottom = this.y + this.height / 2;
         let thisLeft = this.x - this.width / 2;
@@ -250,7 +255,11 @@ export class CowboyEnemy extends Actor {
         let eLeft = entity.x - entity.collider.width / 2;
         let eRight = entity.x + entity.collider.width / 2;
 
-        let collideBottom = thisBottom > eTop && thisTop < eTop && thisRight > eLeft && thisLeft < eRight;
+        let collideBottom =
+          thisBottom > eTop &&
+          thisTop < eTop &&
+          thisRight > eLeft &&
+          thisLeft < eRight;
         let collideLeft = thisLeft < eRight && thisRight > eRight;
         let collideRight = thisRight > eLeft && thisLeft < eLeft;
 
@@ -287,14 +296,14 @@ export class CowboyBullet extends Actor {
     this.collider = new Collider(20, 10);
     //this.velocity = Util.getDirection(this, target, this.speed);
 
-     // **Fix: Compute bullet velocity manually**
-     const distance = Util.getDistance(this, target);
-     this.velocity = {
-       x: ((target.x - this.x) / distance) * this.speed,
-       y: ((target.y - this.y) / distance) * this.speed
-     };
+    // **Fix: Compute bullet velocity manually**
+    const distance = Util.getDistance(this, target);
+    this.velocity = {
+      x: ((target.x - this.x) / distance) * this.speed,
+      y: ((target.y - this.y) / distance) * this.speed,
+    };
 
-      // Calculate rotation angle in radians
+    // Calculate rotation angle in radians
     this.rotation = Math.atan2(this.velocity.y, this.velocity.x);
 
     // Determine if the bullet is moving left
@@ -325,5 +334,4 @@ export class CowboyBullet extends Actor {
       }
     }
   }
-  
 }
