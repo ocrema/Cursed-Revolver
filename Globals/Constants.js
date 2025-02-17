@@ -91,6 +91,43 @@ export const PLAYER_COLLIDER = {
   OFFSET_Y: 0,
 };
 
+// Enemy SpriteSheets
+
+export const CROW_SPRITESHEET = {
+  FLY: {
+    NAME: "CROWFLY",
+    URL: "./assets/enemy/Crow/Fly/Left.png",
+    FRAME_WIDTH: 40,
+    FRAME_HEIGHT: 40,
+    FRAME_COUNT: 5,
+    FRAME_DURATION: 0.2,
+  },
+  ATTACK: {
+    NAME: "CROWATTACK",
+    URL: "./assets/enemy/Crow/Attack/Left.png",
+    FRAME_WIDTH: 40,
+    FRAME_HEIGHT: 40,
+    FRAME_COUNT: 5,
+    FRAME_DURATION: 0.15,
+  },
+  HURT: {
+    NAME: "CROWHURT",
+    URL: "./assets/enemy/Crow/Hurt/Left.png",
+    FRAME_WIDTH: 40,
+    FRAME_HEIGHT: 40,
+    FRAME_COUNT: 5,
+    FRAME_DURATION: 0.1,
+  },
+  DEATH: {
+    NAME: "CROWDEATH",
+    URL: "./assets/enemy/Crow/Die/Left.png",
+    FRAME_WIDTH: 40,
+    FRAME_HEIGHT: 40,
+    FRAME_COUNT: 5,
+    FRAME_DURATION: 0.2,
+  },
+};
+
 // Map Ground Constants
 
 export const GROUND_SPRITESHEET = {
@@ -107,22 +144,13 @@ export const GROUND_SPRITESHEET = {
 
 // Map Object Constants
 
-export const MAP_TREES_AND_ROCKS = {
-  ROCK1_URL: "./assets/map/props/rocks1.png",
-  ROCK2_URL: "./assets/map/props/rocks2.png",
-  ROCK3_URL: "./assets/map/props/rocks3.png",
-  ROCK4_URL: "./assets/map/props/rocks4.png",
-  ROCK5_URL: "./assets/map/props/rocks5.png",
-  TREE1_URL: "./assets/map/props/tree01.png",
-  TREE2_URL: "./assets/map/props/tree02.png",
-  TREE3_URL: "./assets/map/props/tree03.png",
-};
+export const MAP_CONSTANTS = {};
 
-export const ENEMY_SPRITESHEET = { 
-  CACTUS: { 
-    URL: "./assets/cactus/newcactus.png"
-  }
-}
+export const ENEMY_SPRITESHEET = {
+  CACTUS: {
+    URL: "./assets/enemy/cactus/newcactus.png",
+  },
+};
 
 // Destructible Object Constants
 
@@ -206,7 +234,7 @@ export const EFFECTS_SPRITESHEET = {
   },
 };
 
-// UI Constants 
+// UI Constants
 
 export const UI_SPRITESHEET = {
   FIREBALL_ICON: {

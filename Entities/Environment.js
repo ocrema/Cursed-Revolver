@@ -12,7 +12,7 @@ export class Stampede extends Entity {
         this.assetManager = window.ASSET_MANAGER;
         this.addAnimation(
             "stampede",
-            this.assetManager.getAsset("./assets/stampede/horse.png"),
+            this.assetManager.getAsset("./assets/enemy/stampede/horse.png"),
             100, // Frame width
             48, // Frame height
             6, // Frame count

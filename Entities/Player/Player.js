@@ -10,13 +10,13 @@ import { WaterWave } from "../Spells/WaterWave.js";
 import { Icicle } from "../Spells/Icicle.js";
 
 export class Player extends Actor {
-  constructor() {
+  constructor(x,y) {
     super();
     // Assigns asset manager from window asset manager singleton
     this.assetManager = window.ASSET_MANAGER;
     this.scale = 1.7;
-    this.x = 0;
-    this.y = 0;
+    this.x = x;
+    this.y = y;
 
     this.isPlayer = true;
 
@@ -31,7 +31,7 @@ export class Player extends Actor {
     this.speed = 500; // Movement speed
     this.isMoving = false; // Whether the player is moving
     this.health = 200;
-    this.maxHealth = 200; 
+    this.maxHealth = 200;
     this.isLaunchable = true;
     this.validEffects = {};
 
@@ -265,7 +265,13 @@ export class Player extends Actor {
       // for all of the entities i am colliding with, move the player as far back as i need to to not be colliding with any of them
 
       for (let e of GAME_ENGINE.entities) {
-        if (e.isPlayer || e.isAttack || e.isEnemy || e.isEffect || e.isDestructibleObject)
+        if (
+          e.isPlayer ||
+          e.isAttack ||
+          e.isEnemy ||
+          e.isEffect ||
+          e.isDestructibleObject
+        )
           continue;
         if (this.colliding(e)) {
           hitSomething = true;
@@ -377,7 +383,8 @@ export class Player extends Actor {
         {
           x: GAME_ENGINE.mouse.x,
           y: GAME_ENGINE.mouse.y,
-        });
+        }
+      );
 
       if (this.selectedSpell === 0) {
         GAME_ENGINE.addEntity(new Fireball(this, dir));

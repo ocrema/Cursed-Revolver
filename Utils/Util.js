@@ -66,6 +66,24 @@ export const getAngle = (p1, p2) => {
   return Math.atan2(p2.y - p1.y, p2.x - p1.x);
 };
 
+/**
+ * Calculates the direction vector from one entity to another with a given speed.
+ * @param {Object} source - The entity shooting the bullet (e.g., CowboyEnemy).
+ * @param {Object} target - The entity being targeted (e.g., Player).
+ * @param {number} speed - The speed of the bullet.
+ * @returns {Object} - The x and y velocity values for the bullet.
+ */
+export function getDirection(source, target, speed) {
+  const dx = target.x - source.x;
+  const dy = target.y - source.y;
+  const distance = Math.sqrt(dx * dx + dy * dy);
+
+  return {
+      x: (dx / distance) * speed,
+      y: (dy / distance) * speed
+  };
+}
+
 export const diffBetweenAngles = (a, b) => {
   return Math.PI - Math.abs(Math.abs(a - b) - Math.PI);
 };

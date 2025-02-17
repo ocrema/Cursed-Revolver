@@ -41,7 +41,11 @@ export class HUD extends Entity {
     this.blinkInterval = 1.0; // Change every 0.5 seconds
     this.spellAnimationTimer = 0; // Timer for spell switching animation
     this.spellAnimationDuration = 1.2; // Duration of spell selection animation
+    this.attackAnimationTimer = 0;
+    this.attackAnimationDuration = 0.8;
     this.isSpellSwitching = false; // Flag to check if spell switching animation is playing
+    this.isAttacking = false; 
+    this.currentCowboyImage = this.cowboyImages[0]; 
     this.healthFlashTimer = 0; // Timer for flashing effect on hit 
     this.healthFlashDuration = 0.5; // Flash duration in seconds
     this.lastHealth = 0; // Stores the previous health value
@@ -79,6 +83,11 @@ export class HUD extends Entity {
     const player = GAME_ENGINE.entities.find((e) => e.isPlayer);
     if (!player) return; //check that player exists
 
+    // Ensure the cowboy image is set on the first frame
+    if (!this.currentCowboyImage) {
+        this.currentCowboyImage = this.cowboyImages[0]; // Default cowboy sprite
+    }
+
     // Detect if player took damage
     if (player.health < this.lastHealth) {
       this.healthFlashTimer = this.healthFlashDuration; // Start flash effect
@@ -104,34 +113,20 @@ export class HUD extends Entity {
       this.attackAnimationTimer = this.spellAnimationDuration; // Set attack animation timer
     }
 
-    // Blinking
-    // if (!this.isSpellSwitching) {
-    //   this.blinkTimer += GAME_ENGINE.clockTick;
-    //   if (this.blinkTimer >= this.blinkInterval) {
-    //     this.blinkTimer = 0; // Reset timer
-    //     this.cowboyFrameIndex =
-    //       (this.cowboyFrameIndex + 1) % this.cowboyImages.length;
-    //   }
-    // }
-
-    // if (this.isSpellSwitching) {
-    //   this.spellAnimationTimer -= GAME_ENGINE.clockTick;
-    //   if (this.spellAnimationTimer <= 0) {
-    //     this.isSpellSwitching = false; // End spell animation
-    //   }
-    // }
-
     // Handle Cowboy Animation (Spell & Attack Flash)
-    if (this.isSpellSwitching || this.isAttacking) {
-      const flashFrameIndex = Math.floor(((this.spellAnimationTimer + this.attackAnimationTimer) / this.spellAnimationDuration) * 6);
-      this.currentCowboyImage = `./assets/ui/cowboy_flash${Math.min(flashFrameIndex + 1, 6)}.png`;
+    if (this.isSpellSwitching == true || this.isAttacking == true) {
+      const flashFrameIndex = Math.floor(
+        ((this.spellAnimationTimer + this.attackAnimationTimer) / this.spellAnimationDuration) * 6);
+        this.currentCowboyImage = `./assets/ui/cowboy_flash${Math.min(flashFrameIndex + 1, 6)}.png`;
 
       // Reduce animation timers
       if (this.isSpellSwitching) this.spellAnimationTimer -= GAME_ENGINE.clockTick;
       if (this.isAttacking) this.attackAnimationTimer -= GAME_ENGINE.clockTick;
 
       // End animations when timers expire
-      if (this.spellAnimationTimer <= 0) this.isSpellSwitching = false;
+      if (this.spellAnimationTimer <= 0) {
+        this.isSpellSwitching = false;
+      }
       if (this.attackAnimationTimer <= 0) {
         console.log("ATTACK ANIMATION END!");
         this.isAttacking = false;
@@ -155,7 +150,6 @@ export class HUD extends Entity {
     if (GAME_ENGINE.keys["b"]) {
       this.debugMode = !this.debugMode;
       GAME_ENGINE.debug_colliders = this.debugMode;
-      //GAME_ENGINE.audioMuted = this.debugMode;// Mute/unmute audio in debug mode
       ASSET_MANAGER.toggleMute(this.debugMode);
       console.log(`Debug Mode: ${this.debugMode ? "ON" : "OFF"}`);
       GAME_ENGINE.keys["b"] = false;
@@ -196,7 +190,6 @@ export class HUD extends Entity {
     this.spinTargetFrame = index;
     this.spinning = true;
   }
-
 
   draw(ctx) {
     ctx.save();
@@ -371,7 +364,6 @@ export class HUD extends Entity {
     ];
     
     return spellGlows[spellIndex] || "rgba(255, 255, 255, 0.8)"; // Default glow if index is out of range
-}
-
+  }
 
 }

@@ -3,6 +3,7 @@ import { Collider } from "../Collider.js";
 import { GAME_ENGINE } from "../../main.js";
 import { BurningEffect } from "../Effects/BurningEffect.js";
 import { DESTRUCTIBLE_OBJECTS_SPRITESHEET } from "../../Globals/Constants.js";
+import { Tile } from "../Map/Tile.js";
 
 export class Tumbleweed extends Entity {
   constructor(x, y, direction = "right") {

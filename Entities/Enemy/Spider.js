@@ -1,9 +1,11 @@
 import { Actor } from "../Entities.js";
-import { Platform } from "../Map/Platform.js";
+//import { Platform } from "../Map/Platform.js";
 import { Player } from "../Player/Player.js";
 import { Jaw } from "./Attack.js";
 import * as Util from "../../Utils/Util.js";
 import { Collider } from "../Collider.js";
+import { GAME_ENGINE } from "../../main.js";
+import { Tile } from "../Map/Tile.js";
 
 export class Spider extends Actor {
   constructor(x, y) {
@@ -16,7 +18,7 @@ export class Spider extends Actor {
 
     this.addAnimation(
       "run",
-      this.assetManager.getAsset("./assets/spider/Walk.png"),
+      this.assetManager.getAsset("./assets/enemy/spider/Walk.png"),
       64, // Frame width
       64, // Frame height
       5, // Frame count
@@ -25,7 +27,7 @@ export class Spider extends Actor {
 
     this.addAnimation(
       "roam",
-      this.assetManager.getAsset("./assets/spider/Walk.png"),
+      this.assetManager.getAsset("./assets/enemy/spider/Walk.png"),
       64, // Frame width
       64, // Frame height
       5, // Frame count
@@ -34,7 +36,7 @@ export class Spider extends Actor {
 
     this.addAnimation(
       "aggressive",
-      this.assetManager.getAsset("./assets/spider/Walk.png"),
+      this.assetManager.getAsset("./assets/enemy/spider/Walk.png"),
       64, // Frame width
       64, // Frame height
       5, // Frame count
@@ -43,7 +45,7 @@ export class Spider extends Actor {
 
     this.addAnimation(
       "attack",
-      this.assetManager.getAsset("./assets/spider/Walk.png"),
+      this.assetManager.getAsset("./assets/enemy/spider/Walk.png"),
       64, // Frame width
       64, // Frame height
       5, // Frame count
@@ -223,11 +225,7 @@ export class Spider extends Actor {
 
     // apply changes to velocity
     for (let entity of GAME_ENGINE.entities) {
-      if (
-        entity instanceof Platform &&
-        entity.collider &&
-        this.colliding(entity)
-      ) {
+      if (entity instanceof Tile && entity.collider && this.colliding(entity)) {
         let thisTop = this.y - this.height / 2;
         let thisBottom = this.y + this.height / 2;
         let thisLeft = this.x - this.width / 2;
@@ -274,6 +272,24 @@ export class Spider extends Actor {
           }
         }
       }
+    }
+  }
+
+  draw(ctx) {
+    if (GAME_ENGINE.debug_colliders) {
+      super.draw(ctx);
+      ctx.strokeStyle = "red";
+      ctx.beginPath();
+      ctx.arc(
+        this.x - GAME_ENGINE.camera.x,
+        this.y - GAME_ENGINE.camera.y,
+        this.visualRadius,
+        0,
+        Math.PI * 2
+      );
+      ctx.stroke();
+    } else {
+      super.draw(ctx);
     }
   }
 }

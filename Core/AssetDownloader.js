@@ -46,15 +46,42 @@ export class AssetDownloader {
   }
 
   downloadEnemyAssets() {
-    this.assetManager.queueDownload("./assets/cactus/cactus.png");
-    this.assetManager.queueDownload("./assets/cactus/newcactus.png");
-
+    this.assetManager.queueDownload("./assets/cowboy/walk.png");
     this.assetManager.queueDownload("./assets/spider/Walk.png");
+    this.assetManager.queueDownload("./assets/cowboy/CowBoyIdle.png");
+    this.assetManager.queueDownload("./assets/cowboy/CowBoyWalking.png");
+    this.assetManager.queueDownload("./assets/cowboy/CowBoyDrawWeapon.png");
+    this.assetManager.queueDownload("./assets/cowboy/CowBoyQuickDrawShot.png");
+    this.assetManager.queueDownload("./assets/cowboy/CowBoyRapidFire.png");
+    this.assetManager.queueDownload("./assets/cowboy/CowBoyShoot.png");
+    this.assetManager.queueDownload("./assets/cowboy/CowBoySmokingIdle.png");
+    this.assetManager.queueDownload("./assets/cowboy/CowBoyBullet.png");
+    this.assetManager.queueDownload("./assets/enemy/cactus/cactus.png");
+    this.assetManager.queueDownload("./assets/enemy/cactus/newcactus.png");
+    this.assetManager.queueDownload("./assets/enemy/spider/Walk.png");
+
+    // Crow Enemy 
+    this.assetManager.queueDownload("./assets/enemy/Crow/Fly/Left.png")
+    this.assetManager.queueDownload("./assets/enemy/Crow/Hurt/Left.png");
+    this.assetManager.queueDownload("./assets/enemy/Crow/Die/Left.png");
+    this.assetManager.queueDownload("./assets/enemy/Crow/Attack/Left.png");
   }
 
   downloadEnemyAttackAssets() {
-    this.assetManager.queueDownload("./assets/thorn/thorn.png");
+    this.assetManager.queueDownload("./assets/enemy/thorn/thorn.png");
   }
+
+  downloadCowboyAssets() {
+    this.assetManager.queueDownload("./assets/cowboy/CowBoyIdle.png");
+    this.assetManager.queueDownload("./assets/cowboy/CowBoyWalking.png");
+    this.assetManager.queueDownload("./assets/cowboy/CowBoyDrawWeapon.png");
+    this.assetManager.queueDownload("./assets/cowboy/CowBoyQuickDrawShot.png");
+    this.assetManager.queueDownload("./assets/cowboy/CowBoyRapidFire.png");
+    this.assetManager.queueDownload("./assets/cowboy/CowBoyShoot.png");
+    this.assetManager.queueDownload("./assets/cowboy/CowBoySmokingIdle.png");
+    this.assetManager.queueDownload("./assets/cowboy/CowBoyBullet.png");
+  }
+  
 
   downloadBackgroundAssets() {
     this.assetManager.queueDownload("./assets/background/background.png");
@@ -62,6 +89,7 @@ export class AssetDownloader {
   }
 
   downloadMapGroundAssets() {
+    this.assetManager.queueDownload("./assets/map/Tileset/00Atlas.png");
     this.assetManager.queueDownload("./assets/map/Tileset/tileMain2.png");
     this.assetManager.queueDownload("./assets/map/Tileset/tileMain5.png");
     this.assetManager.queueDownload("./assets/map/Tileset/platforms10.png");
@@ -95,7 +123,7 @@ export class AssetDownloader {
   }
 
   downloadEnvironmentalAssets() {
-    this.assetManager.queueDownload("./assets/stampede/horse.png");
+    this.assetManager.queueDownload("./assets/enemy/stampede/horse.png");
   }
 
   // Effects

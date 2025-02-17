@@ -1,8 +1,8 @@
 import { Entity } from "../Entities.js";
-import { Platform } from "../Map/Platform.js";
 import { Player } from "../Player/Player.js";
 import * as Util from "../../Utils/Util.js";
 import { Collider } from "../Collider.js";
+import { Tile } from "../Map/Tile.js";
 
 export class Thorn extends Entity {
   constructor(x, y, target) {
@@ -34,7 +34,7 @@ export class Thorn extends Entity {
 
     this.addAnimation(
       "placeholder",
-      this.assetManager.getAsset("./assets/thorn/thorn.png"),
+      this.assetManager.getAsset("./assets/enemy/thorn/thorn.png"),
       64, // Frame width
       64, // Frame height
       1, // Frame count
@@ -63,7 +63,7 @@ export class Thorn extends Entity {
         if (entity instanceof Player) {
           entity.queueAttack({ damage: 20 });
           this.removeFromWorld = true;
-        } else if (entity instanceof Platform) {
+        } else if (entity instanceof Tile) {
           this.removeFromWorld = true;
         }
       }
@@ -114,7 +114,7 @@ export class Jaw extends Entity {
 
           // Reset spider attack cooldown when attack hits
           this.spider.attackCooldown = 0;
-          this.spider.currentAnimation = "run";
+          //this.spider.currentAnimation = "run";
           this.spider.jaw = null;
           this.removeFromWorld = true;
         }
