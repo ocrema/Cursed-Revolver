@@ -67,6 +67,7 @@ export class AssetDownloader {
   }
 
   downloadMapGroundAssets() {
+    this.assetManager.queueDownload("./assets/map/Tileset/00Atlas.png");
     this.assetManager.queueDownload("./assets/map/Tileset/tileMain2.png");
     this.assetManager.queueDownload("./assets/map/Tileset/tileMain5.png");
     this.assetManager.queueDownload("./assets/map/Tileset/platforms10.png");
