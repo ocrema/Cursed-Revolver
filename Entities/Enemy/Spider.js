@@ -1,10 +1,11 @@
 import { Actor } from "../Entities.js";
-import { Platform } from "../Map/Platform.js";
+//import { Platform } from "../Map/Platform.js";
 import { Player } from "../Player/Player.js";
 import { Jaw } from "./Attack.js";
 import * as Util from "../../Utils/Util.js";
 import { Collider } from "../Collider.js";
 import { GAME_ENGINE } from "../../main.js";
+import { Tile } from "../Map/Tile.js";
 
 export class Spider extends Actor {
   constructor(x, y) {
@@ -224,11 +225,7 @@ export class Spider extends Actor {
 
     // apply changes to velocity
     for (let entity of GAME_ENGINE.entities) {
-      if (
-        entity instanceof Platform &&
-        entity.collider &&
-        this.colliding(entity)
-      ) {
+      if (entity instanceof Tile && entity.collider && this.colliding(entity)) {
         let thisTop = this.y - this.height / 2;
         let thisBottom = this.y + this.height / 2;
         let thisLeft = this.x - this.width / 2;

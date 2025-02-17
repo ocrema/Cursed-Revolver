@@ -1,8 +1,8 @@
 import { Entity } from "../Entities.js";
-import { Platform } from "../Map/Platform.js";
 import { Player } from "../Player/Player.js";
 import * as Util from "../../Utils/Util.js";
 import { Collider } from "../Collider.js";
+import { Tile } from "../Map/Tile.js";
 
 export class Thorn extends Entity {
   constructor(x, y, target) {
@@ -63,7 +63,7 @@ export class Thorn extends Entity {
         if (entity instanceof Player) {
           entity.queueAttack({ damage: 20 });
           this.removeFromWorld = true;
-        } else if (entity instanceof Platform) {
+        } else if (entity instanceof Tile) {
           this.removeFromWorld = true;
         }
       }
