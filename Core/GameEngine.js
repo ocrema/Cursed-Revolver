@@ -278,6 +278,7 @@ export class GameEngine {
     for (let i = this.entities.length - 1; i >= 0; --i) {
       if (this.entities[i] && this.entities[i].removeFromWorld) {
         this.entities.splice(i, 1);
+        this.GAME_CONTROLLER.hud.checkWin();
       }
     }
    // console.log("Entities in game:", GAME_ENGINE.entities.map(e => e.constructor.name));

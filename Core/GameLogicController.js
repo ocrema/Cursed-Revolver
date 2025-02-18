@@ -17,6 +17,9 @@ export class GameLogicController extends Entity {
     this.pauseMenu.hide(); // Initially hide the menu
     this.GAME_ENGINE.addEntity(this.pauseMenu);
 
+    // Storing hud as an entity to be constructed later
+    this.hud = null;
+
     // Register this as the game controller
     this.GAME_ENGINE.GAME_CONTROLLER = this;
   }
@@ -44,7 +47,8 @@ export class GameLogicController extends Entity {
       const map = new Map();
       this.GAME_ENGINE.addEntity(map);
       map.load();
-      this.GAME_ENGINE.addEntity(new HUD());
+      this.hud = new HUD();
+      this.GAME_ENGINE.addEntity(this.hud);
     }
 
     if (this.isGameOver) {
