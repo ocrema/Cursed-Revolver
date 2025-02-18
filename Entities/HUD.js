@@ -73,6 +73,8 @@ export class HUD extends Entity {
     this.targetRotation = 0; // Target rotation (in radians)
     this.rotationSpeed = 0; // Speed of rotation (radians per frame)
     this.rotationTime = 0; // Time remaining for rotation
+
+    this.gameWon = false; // Flag that swaps after an enemy is killed
   }
 
   colliding() {
@@ -305,6 +307,25 @@ export class HUD extends Entity {
       ctx.restore();
     }
 
+    // === Game Win Screen ===
+
+    if (this.gameWon) {
+      console.log("All enemies are dead! Triggering game over.");
+      GAME_ENGINE.GAME_CONTROLLER.setGameOver();
+
+      ctx.fillStyle = "rgba(0, 104, 71, 0.5)"; // Red overlay
+      ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+
+      ctx.fillStyle = "white";
+      ctx.font = `${canvasHeight * 0.12}px Texas, Arial`;
+      ctx.fillText("GAME WON", canvasWidth / 2, canvasHeight / 2);
+
+      ctx.font = `${canvasHeight * 0.04}px Texas, Arial`;
+      ctx.fillText("Press R to Restart", canvasWidth / 2, canvasHeight / 1.5);
+
+      ctx.restore();
+      return;
+    }
 
     // === Game Over Screen ===
     if (currentHealth <= 0) {
@@ -351,6 +372,17 @@ export class HUD extends Entity {
     }
 
     ctx.restore();
+  }
+
+  checkWin(){
+    let enemiesDead = true;
+    for (let entity of GAME_ENGINE.entities) {
+      // if an entity is an enemy and has more than 0 health
+      if (entity.isEnemy && entity.health > 0) {
+        enemiesDead = false;
+      }
+    }
+    this.gameWon = enemiesDead;
   }
 
   getSpellGlowColor(spellIndex) {
