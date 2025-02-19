@@ -203,6 +203,14 @@ export const SPELLS_SPRITESHEET = {
     FRAME_COUNT: 6,
     FRAME_DURATION: 0.05,
   },
+  VOIDORB: {
+    NAME: "Void_Orb",
+    URL: "./assets/spells/Void_Orb.png",
+    FRAME_WIDTH: 32,
+    FRAME_HEIGHT: 32,
+    FRAME_COUNT: 8,
+    FRAME_DURATION: 0.1,
+  },
 };
 
 // Effects Constants

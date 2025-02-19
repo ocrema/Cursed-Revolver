@@ -113,6 +113,7 @@ export class AssetDownloader {
     this.assetManager.queueDownload("./assets/spells/WaterWave.png");
     this.assetManager.queueDownload("./assets/spells/Icicle.png");
     this.assetManager.queueDownload("./assets/spells/Icicle_Explosion.png");
+    this.assetManager.queueDownload("./assets/spells/Void_Orb.png");
   }
 
   // Objects
@@ -153,6 +154,7 @@ export class AssetDownloader {
     this.assetManager.queueDownload("./assets/sfx/jump.ogg");
     this.assetManager.queueDownload("./assets/sfx/landing.wav");
     this.assetManager.queueDownload("./assets/sfx/waterwave.wav");
+    this.assetManager.queueDownload("./assets/sfx/void.wav");
   }
 
   downloadPauseMenuButtons() {
