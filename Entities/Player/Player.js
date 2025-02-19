@@ -1,4 +1,4 @@
-import { Actor } from "../Entities.js";
+import { Actor, Entity } from "../Entities.js";
 import { PLAYER_SPRITESHEET } from "../../Globals/Constants.js";
 import * as Util from "../../Utils/Util.js";
 import { Fireball } from "../Spells/Fireball.js";
@@ -11,7 +11,7 @@ import { Icicle } from "../Spells/Icicle.js";
 import { VoidOrb } from "../Spells/VoidOrb.js";
 
 export class Player extends Actor {
-  constructor(x,y) {
+  constructor(x, y) {
     super();
     // Assigns asset manager from window asset manager singleton
     this.assetManager = window.ASSET_MANAGER;
@@ -167,13 +167,13 @@ export class Player extends Actor {
     if (this.x_velocity > 0) {
       this.x_velocity = Math.max(
         this.x_velocity -
-          GAME_ENGINE.clockTick * (this.isGrounded == 0.2 ? 9000 : 1000),
+        GAME_ENGINE.clockTick * (this.isGrounded == 0.2 ? 9000 : 1000),
         0
       );
     } else {
       this.x_velocity = Math.min(
         this.x_velocity +
-          GAME_ENGINE.clockTick * (this.isGrounded == 0.2 ? 9000 : 1000),
+        GAME_ENGINE.clockTick * (this.isGrounded == 0.2 ? 9000 : 1000),
         0
       );
     }
@@ -193,6 +193,7 @@ export class Player extends Actor {
       this.isDashing = this.dashTime;
       this.dashCooldown = 0.5;
       window.ASSET_MANAGER.playAsset("./assets/sfx/jump.ogg");
+      GAME_ENGINE.addEntity(new DashDust(this.x, this.y + this.collider.height / 2, true));
     } else if (
       GAME_ENGINE.keys["d"] &&
       !GAME_ENGINE.keys["a"] &&
@@ -203,6 +204,7 @@ export class Player extends Actor {
       this.isDashing = this.dashTime;
       this.dashCooldown = 0.5;
       window.ASSET_MANAGER.playAsset("./assets/sfx/jump.ogg");
+      GAME_ENGINE.addEntity(new DashDust(this.x, this.y + this.collider.height / 2));
     }
 
     this.dashCooldown = Math.max(this.dashCooldown - GAME_ENGINE.clockTick, 0);
@@ -280,12 +282,13 @@ export class Player extends Actor {
         }
       }
       if (hitSomething) {
+        /*
         if (velFromKeys !== 0 && this.isGrounded !== 0.2) {
           this.wallGrabState = velFromKeys > 0 ? 1 : -1;
           this.y_velocity = Math.min(this.y_velocity, 100);
         } else {
           this.wallGrabState = 0;
-        }
+        }*/
         this.x_velocity = 0;
       } else {
         this.wallGrabState = 0;
@@ -322,6 +325,7 @@ export class Player extends Actor {
       }
       if (this.y_velocity > 300) {
         window.ASSET_MANAGER.playAsset("./assets/sfx/landing.wav", 1.5);
+        GAME_ENGINE.addEntity(new LandingDust(this.x, this.y + this.collider.height / 2));
       }
       this.y_velocity = 0; // if hit something cancel velocity
     }
@@ -401,5 +405,92 @@ export class Player extends Actor {
         GAME_ENGINE.addEntity(new VoidOrb(this, dir));
       }
     }
+  }
+}
+
+class LandingDust extends Entity {
+  constructor(x, y) {
+    super();
+    this.x = x;
+    this.y = y;
+    this.time = 0;
+    this.end = 0.5;
+    this.entityOrder = 3;
+    this.image = window.ASSET_MANAGER.getAsset("./assets/effects/dust/landingdust.png");
+    this.scale = 5;
+  }
+  update() {
+    this.time += GAME_ENGINE.clockTick;
+    if (this.time >= this.end) {
+      this.removeFromWorld = true;
+    }
+  }
+  draw(ctx) {
+    const frame = Math.floor((this.time / this.end) * 7);
+    ctx.save();
+    ctx.translate(
+      this.x - GAME_ENGINE.camera.x,
+      this.y - GAME_ENGINE.camera.y
+    );
+
+    ctx.drawImage(
+      this.image,
+      frame * 32,
+      0,
+      32,
+      16,
+      (-32 * this.scale) / 2,
+      (-16 * this.scale),
+      32 * this.scale,
+      16 * this.scale
+    );
+
+    ctx.restore();
+  }
+}
+
+class DashDust extends Entity {
+  constructor(x, y, flip) {
+    super();
+    this.x = x;
+    this.y = y;
+    this.time = 0;
+    this.end = 0.5;
+    this.entityOrder = 3;
+    this.image = window.ASSET_MANAGER.getAsset("./assets/effects/dust/dashdust.png");
+    this.scale = 3;
+    this.flip = flip;
+  }
+  update() {
+    this.time += GAME_ENGINE.clockTick;
+    if (this.time >= this.end) {
+      this.removeFromWorld = true;
+    }
+  }
+  draw(ctx) {
+    const frame = Math.floor((this.time / this.end) * 8);
+    ctx.save();
+    ctx.translate(
+      this.x - GAME_ENGINE.camera.x,
+      this.y - GAME_ENGINE.camera.y
+    );
+    if (this.flip) {
+      ctx.scale(-1, 1);
+      //ctx.translate(-this.x * 2, 0);
+    }
+
+    ctx.drawImage(
+      this.image,
+      frame * 48,
+      0,
+      48,
+      32,
+      (-48 * this.scale) / 2,
+      (-32 * this.scale),
+      48 * this.scale,
+      32 * this.scale
+    );
+
+    ctx.restore();
   }
 }

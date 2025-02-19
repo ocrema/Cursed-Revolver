@@ -139,6 +139,8 @@ export class AssetDownloader {
     this.assetManager.queueDownload(
       "./assets/effects/burning/BurningEffect.png"
     );
+    this.assetManager.queueDownload("./assets/effects/dust/landingdust.png");
+    this.assetManager.queueDownload("./assets/effects/dust/dashdust.png");
   }
 
   downloadSFXAssets() {
