@@ -1,5 +1,5 @@
 import { Actor } from "../Entities.js";
-import { Tile } from "../Map/Tile.js";
+import { Tile } from "../Map/Tiles/Tile.js";
 import { Player } from "../Player/Player.js";
 import { Collider } from "../Collider.js";
 import * as Util from "../../Utils/Util.js";

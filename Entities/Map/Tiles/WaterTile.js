@@ -1,7 +1,7 @@
-import { Entity } from "../Entities.js";
-import { Collider } from "../Collider.js";
+import { Entity } from "../../Entities.js";
+import { Collider } from "../../Collider.js";
 
-export class Tile extends Entity {
+export class WaterTile extends Entity {
   constructor(
     x,
     y,
@@ -22,14 +22,12 @@ export class Tile extends Entity {
     this.tilesPerRow = tilesPerRow;
     this.firstGID = firstGID;
     this.scale = scale; // Scale factor
-    this.isGround = true;
+    this.isWater = true;
 
-    if (this.tileID < 73) {
-      this.collider = new Collider(
-        this.tileSize * this.scale, // Scale width
-        this.tileSize * this.scale // Scale height
-      );
-    }
+    this.collider = new Collider(
+      this.tileSize * this.scale, // Scale width
+      this.tileSize * this.scale // Scale height
+    );
   }
 
   draw(ctx) {

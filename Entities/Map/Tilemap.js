@@ -1,5 +1,6 @@
-import { Tile } from "./Tile.js";
+import { Tile } from "./Tiles/Tile.js";
 import { GAME_ENGINE } from "../../main.js";
+import { WaterTile } from "./Tiles/WaterTile.js";
 
 export class Tilemap {
   constructor(
@@ -19,7 +20,7 @@ export class Tilemap {
     this.mapHeight = 0;
     this.firstGID = 0;
     this.solidTiles = new Set(solidTileIDs);
-    this.scale = scale; // Apply universal scaling
+    this.scale = scale;
   }
 
   async load() {
@@ -59,6 +60,21 @@ export class Tilemap {
           // Ignore empty tiles
           let worldX = x * this.tileSize * this.scale;
           let worldY = y * this.tileSize * this.scale;
+
+          if (tileID === 74 || tileID === 75) {
+            let tile = new WaterTile(
+              worldX,
+              worldY,
+              tileID,
+              this.tilesetImage,
+              this.tileSize,
+              this.tilesPerRow,
+              this.firstGID,
+              this.solidTiles,
+              this.scale
+            );
+            GAME_ENGINE.addEntity(tile);
+          }
 
           let tile = new Tile(
             worldX,
