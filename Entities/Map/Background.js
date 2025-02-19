@@ -5,13 +5,13 @@ import { Camera } from "../../Core/Camera.js";
 export class Background extends Entity {
   constructor() {
     super();
-    this.scale = 3.5; // Scale the background
+    this.scale = 4; // Scale the background
     this.entityOrder = -10; // Background should be behind everything
     this.camera = Camera.getInstance();
     this.player = this.camera.player;
 
     // Define the height threshold for underground transition
-    this.undergroundThreshold = 500; // Adjust this based on your map
+    this.undergroundThreshold = 850; // Adjust this based on your map
 
     // Load both backgrounds
     this.backgrounds = {
