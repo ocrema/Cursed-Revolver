@@ -113,6 +113,7 @@ export class AssetDownloader {
     this.assetManager.queueDownload("./assets/spells/WaterWave.png");
     this.assetManager.queueDownload("./assets/spells/Icicle.png");
     this.assetManager.queueDownload("./assets/spells/Icicle_Explosion.png");
+    this.assetManager.queueDownload("./assets/spells/Void_Orb.png");
   }
 
   // Objects
