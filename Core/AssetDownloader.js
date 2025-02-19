@@ -154,6 +154,7 @@ export class AssetDownloader {
     this.assetManager.queueDownload("./assets/sfx/jump.ogg");
     this.assetManager.queueDownload("./assets/sfx/landing.wav");
     this.assetManager.queueDownload("./assets/sfx/waterwave.wav");
+    this.assetManager.queueDownload("./assets/sfx/void.wav");
   }
 
   downloadPauseMenuButtons() {

@@ -18,8 +18,9 @@ export class VoidOrb extends Entity {
         this.isAttack = true;
         this.experationTimer = 5;
         this.spriteScale = 7;
+        this.dps = 10;
 
-        //window.ASSET_MANAGER.playAsset("./assets/sfx/waterwave.wav");
+        window.ASSET_MANAGER.playAsset("./assets/sfx/void.wav", 1.5);
 
 
         this.addAnimation(
@@ -42,18 +43,13 @@ export class VoidOrb extends Entity {
         this.x += Math.cos(this.dir) * this.speed * GAME_ENGINE.clockTick;
         this.y += Math.sin(this.dir) * this.speed * GAME_ENGINE.clockTick;
 
-        /*
+        
         for (let e of GAME_ENGINE.entities) {
-            if (e.isPlayer || e.isAttack) continue;
-
-            if (this.colliding(e) && !this.thingsHit.includes(e)) {
-                if (e.isActor) {
-                    e.queueAttack({ damage: 1, soaked: 10, stun: .4, x: this.x, y: this.y, launchMagnitude: 100 });
-                    this.thingsHit.push(e);
-                }
+            if (e.isEnemy && this.colliding(e)) {
+                e.queueAttack({ damage: this.dps * GAME_ENGINE.clockTick, void: 5});
             }
         }
-            */
+            
 
         this.experationTimer -= GAME_ENGINE.clockTick;
         if (this.experationTimer <= 0) this.removeFromWorld = true;
@@ -74,6 +70,8 @@ export class VoidOrb extends Entity {
         );
         //ctx.rotate(this.dir); // Rotate to match movement direction
 
+        ctx.shadowColor = "purple";
+        ctx.shadowBlur = 10;
         ctx.drawImage(
             window.ASSET_MANAGER.getAsset(
                 SPELLS_SPRITESHEET.VOIDORB.URL

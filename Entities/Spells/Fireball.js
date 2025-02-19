@@ -87,7 +87,7 @@ export class Fireball extends Entity {
           x: this.x,
           y: this.y,
           burn: 5,
-          launchMagnitude: 3000,
+          launchMagnitude: 2500,
         });
       }
     }
