@@ -8,31 +8,58 @@ export class Background extends Entity {
     this.scale = 3.5; // Scale the background
     this.entityOrder = -10; // Background should be behind everything
     this.camera = Camera.getInstance();
+    this.player = this.camera.player;
 
+    // Define the height threshold for underground transition
+    this.undergroundThreshold = 500; // Adjust this based on your map
+
+    // Load both backgrounds
+    this.backgrounds = {
+      aboveGround: ASSET_MANAGER.getAsset(BACKGROUND_SPRITESHEET.ABOVE.URL),
+      underground: ASSET_MANAGER.getAsset(BACKGROUND_SPRITESHEET.UNDER.URL),
+    };
+
+    // Add both animations at the start
     this.addAnimation(
-      "background",
-      ASSET_MANAGER.getAsset(BACKGROUND_SPRITESHEET.URL), // Spritesheet
-      BACKGROUND_SPRITESHEET.FRAME_WIDTH, // Frame width
-      BACKGROUND_SPRITESHEET.FRAME_HEIGHT, // Frame height
-      BACKGROUND_SPRITESHEET.FRAME_COUNT, // Frame count
-      BACKGROUND_SPRITESHEET.FRAME_DURATION // Frame duration
+      BACKGROUND_SPRITESHEET.ABOVE.NAME,
+      this.backgrounds.aboveGround,
+      BACKGROUND_SPRITESHEET.ABOVE.FRAME_WIDTH,
+      BACKGROUND_SPRITESHEET.ABOVE.FRAME_HEIGHT,
+      BACKGROUND_SPRITESHEET.ABOVE.FRAME_COUNT,
+      BACKGROUND_SPRITESHEET.ABOVE.FRAME_DURATION
     );
 
-    this.setAnimation("background");
+    this.addAnimation(
+      BACKGROUND_SPRITESHEET.UNDER.NAME,
+      this.backgrounds.underground,
+      BACKGROUND_SPRITESHEET.UNDER.FRAME_WIDTH,
+      BACKGROUND_SPRITESHEET.UNDER.FRAME_HEIGHT,
+      BACKGROUND_SPRITESHEET.UNDER.FRAME_COUNT,
+      BACKGROUND_SPRITESHEET.UNDER.FRAME_DURATION
+    );
+
+    // Set initial animation
+    this.setAnimation(BACKGROUND_SPRITESHEET.ABOVE.NAME);
   }
 
-  /**
-   * Updates the background position based on player movement.
-   * Uses parallax scrolling where the background moves slower than the foreground.
-   */
   update() {
     this.updateAnimation(GAME_ENGINE.clockTick);
+
+    // Check if the player exists
+    if (!this.camera.player) return;
+
+    // Determine which background should be active
+    const newAnimation =
+      this.camera.player.y > this.undergroundThreshold
+        ? BACKGROUND_SPRITESHEET.UNDER.NAME
+        : BACKGROUND_SPRITESHEET.ABOVE.NAME;
+
+    // Only change animation if it's different from the current one
+    if (this.currentAnimation !== newAnimation) {
+      this.setAnimation(newAnimation);
+    }
   }
 
-  /**
-   * Draws the parallax background relative to the player's movement.
-   * @param {CanvasRenderingContext2D} ctx - The rendering context.
-   */
   draw(ctx) {
     if (!this.currentAnimation) return;
 
@@ -41,28 +68,28 @@ export class Background extends Entity {
 
     if (!spritesheet) return;
 
-    ctx.save(); // Save the current transformation state
+    ctx.save();
 
-    // Parallax effect: Background moves at a fraction of the camera movement
-    const parallaxX = -this.camera.x * 0.05; // Moves slower than foreground
-    const parallaxY = -this.camera.y * 0.0025; // Moves even slower vertically
+    // Parallax effect
+    const parallaxX = -this.camera.x * 0.05;
+    const parallaxY = -this.camera.y * 0.0025;
 
     ctx.translate(parallaxX, parallaxY);
     ctx.scale(this.scale, this.scale);
 
-    // Draw the background image
+    // Draw background
     ctx.drawImage(
       spritesheet,
-      this.currentFrame * frameWidth, // Source X
-      25, // Source Y
-      frameWidth, // Source Width
-      frameHeight, // Source Height
-      -frameWidth / 2, // Center the background
-      -frameHeight / 2, // Center the background
-      frameWidth, // Destination Width
-      frameHeight // Destination Height
+      this.currentFrame * frameWidth,
+      25,
+      frameWidth,
+      frameHeight,
+      -frameWidth / 2,
+      -frameHeight / 2,
+      frameWidth,
+      frameHeight
     );
 
-    ctx.restore(); // Restore the transformation state
+    ctx.restore();
   }
 }

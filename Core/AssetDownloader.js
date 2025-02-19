@@ -84,8 +84,9 @@ export class AssetDownloader {
   
 
   downloadBackgroundAssets() {
-    this.assetManager.queueDownload("./assets/background/background.png");
-    this.assetManager.queueDownload("./assets/background/background1.png");
+    this.assetManager.queueDownload("./assets/background/AboveBackground.png");
+    this.assetManager.queueDownload("./assets/background/UndergroundBackground.png");
+    this.assetManager.queueDownload("./assets/background/UndergroundBackground1.png");
   }
 
   downloadMapGroundAssets() {

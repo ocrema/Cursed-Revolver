@@ -249,8 +249,6 @@ export class Player extends Actor {
       currentSpeed *= 0.5;
     }
 
-    console.log(currentSpeed);
-
     // Movement logic
 
     let velFromKeys = 0;
