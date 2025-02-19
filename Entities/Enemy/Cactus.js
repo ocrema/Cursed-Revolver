@@ -102,6 +102,7 @@ export class Cactus extends Actor {
   update() {
     this.recieveEffects();
 
+
     this.attackTime += GAME_ENGINE.clockTick;
     this.idleTimer += GAME_ENGINE.clockTick;
 
