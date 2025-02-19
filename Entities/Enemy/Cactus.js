@@ -14,10 +14,50 @@ export class Cactus extends Actor {
 
     this.addAnimation(
       "placeholder",
-      this.assetManager.getAsset(ENEMY_SPRITESHEET.CACTUS.URL),
-      32, // Frame width
-      32, // Frame height
+      this.assetManager.getAsset("./assets/enemy/cactus/aggro.png"),
+      160, // Frame width
+      160, // Frame height
       1, // Frame count
+      0.25 // Frame duration (slower for idle)
+    );
+    this.addAnimation(
+      "placeholder",
+      this.assetManager.getAsset("./assets/enemy/cactus/attack.png"),
+      160, // Frame width
+      160, // Frame height
+      3, // Frame count
+      0.25 // Frame duration (slower for idle)
+    );
+    this.addAnimation(
+      "placeholder",
+      this.assetManager.getAsset("./assets/enemy/cactus/cactus.png"),
+      160, // Frame width
+      160, // Frame height
+      1, // Frame count
+      0.25 // Frame duration (slower for idle)
+    );
+    this.addAnimation(
+      "placeholder",
+      this.assetManager.getAsset("./assets/enemy/cactus/damage.png"),
+      160, // Frame width
+      160, // Frame height
+      2, // Frame count
+      0.25 // Frame duration (slower for idle)
+    );
+    this.addAnimation(
+      "placeholder",
+      this.assetManager.getAsset("./assets/enemy/cactus/die.png"),
+      160, // Frame width
+      160, // Frame height
+      4, // Frame count
+      0.25 // Frame duration (slower for idle)
+    );
+    this.addAnimation(
+      "placeholder",
+      this.assetManager.getAsset("./assets/enemy/cactus/idle.png"),
+      160, // Frame width
+      160, // Frame height
+      8, // Frame count
       0.25 // Frame duration (slower for idle)
     );
 
@@ -43,6 +83,7 @@ export class Cactus extends Actor {
 
   update() {
     this.recieveEffects();
+
     this.attackTime += GAME_ENGINE.clockTick;
 
     for (let entity of GAME_ENGINE.entities) {
