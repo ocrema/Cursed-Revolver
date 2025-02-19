@@ -14,6 +14,7 @@ export class Tile extends Entity {
     scale = 1
   ) {
     super();
+    this.entityOrder = -9;
     this.x = x;
     this.y = y;
     this.tileID = tileID;
