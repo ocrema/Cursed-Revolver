@@ -217,6 +217,7 @@ export class GameEngine {
   }
 
   draw() {
+    this.ctx.imageSmoothingEnabled = false;
     this.ctx.clearRect(
       -this.width / 2,
       -this.height / 2,

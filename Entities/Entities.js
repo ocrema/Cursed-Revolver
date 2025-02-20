@@ -157,7 +157,7 @@ export class Entity {
     ctx.font = `${healthBarHeight * 0.8}px Arial`;
     ctx.textAlign = "center";
     ctx.fillText(
-      `${Math.round(this.health)} / ${this.maxHealth}`,
+      `${Math.ceil(this.health)} / ${this.maxHealth}`,
       screenX,
       screenY + healthBarHeight - 4
     );
@@ -276,7 +276,7 @@ export class Actor extends Entity {
           this.y_velocity += v * Math.sin(angle);
         } else if (k === "x" || k === "y") {
         } else {
-          this.effects[k] = v;
+          this.effects[k] = Math.max(this.effects[k] || 0, v);
         }
       }
     }
