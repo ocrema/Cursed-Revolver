@@ -16,7 +16,6 @@ export class Map extends GameMap {
     GAME_ENGINE.addEntity(new Player(1500, -200));
     GAME_ENGINE.addEntity(new Background());
 
-    //const TILESET_IMAGE = new Image();
     const TILESET_IMAGE = window.ASSET_MANAGER.getAsset(
       "./assets/map/Atlas.png"
     );
