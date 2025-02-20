@@ -43,11 +43,12 @@ export class Background extends Entity {
     this.underAnimation = BACKGROUND_SPRITESHEET.UNDER.NAME;
 
     this.transitionAlpha = 0; // Opacity for transition
-    this.transitionSpeed = 1.5; // Speed of fade transition
+    this.transitionSpeed = 3; // Speed of fade transition
     this.isGoingUnderground = false; // Track if transitioning downward
   }
 
   update() {
+    this.transitionSpeed = 3;
     this.updateAnimation(GAME_ENGINE.clockTick);
 
     if (!this.camera.player) return;
@@ -65,7 +66,7 @@ export class Background extends Entity {
     if (this.isGoingUnderground) {
       this.transitionAlpha += this.transitionSpeed * GAME_ENGINE.clockTick;
       if (this.transitionAlpha > 1) this.transitionAlpha = 1;
-      this.setAnimation(BACKGROUND_SPRITESHEET.UNDER.NAME)
+      this.setAnimation(BACKGROUND_SPRITESHEET.UNDER.NAME);
     } else {
       this.transitionAlpha -= this.transitionSpeed * GAME_ENGINE.clockTick;
       if (this.transitionAlpha < 0) this.transitionAlpha = 0;
