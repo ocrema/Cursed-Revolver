@@ -1,0 +1,15 @@
+{
+  "columns": 100,
+  "image": "../../../assets/map/Atlas.png",
+  "imageheight": 80,
+  "imagewidth": 320,
+  "margin": 0,
+  "name": "Test",
+  "spacing": 0,
+  "tilecount": 100,
+  "tiledversion": "1.11.2",
+  "tileheight": 16,
+  "tilewidth": 16,
+  "type": "tileset",
+  "version": "1.10"
+}

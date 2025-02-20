@@ -1,0 +1,14 @@
+{ "columns":1,
+ "image":"..\/..\/..\/assets\/map\/4 Conjoined Wooden Spikes.png",
+ "imageheight":18,
+ "imagewidth":41,
+ "margin":0,
+ "name":"Spikes",
+ "spacing":0,
+ "tilecount":1,
+ "tiledversion":"1.11.2",
+ "tileheight":18,
+ "tilewidth":41,
+ "type":"tileset",
+ "version":"1.10"
+}
