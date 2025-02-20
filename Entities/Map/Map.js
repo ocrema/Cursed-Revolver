@@ -18,7 +18,7 @@ export class Map extends GameMap {
 
     //const TILESET_IMAGE = new Image();
     const TILESET_IMAGE = window.ASSET_MANAGER.getAsset(
-      "./assets/map/Tileset/Atlas.png"
+      "./assets/map/Atlas.png"
     );
 
     const gameMap = new Tilemap(
