@@ -20,10 +20,20 @@ export class Map extends GameMap {
       "./assets/map/Atlas.png"
     );
 
-    const gameMap = new Tilemap(
-      "./Entities/Map/MapAssets/216Map.json",
-      TILESET_IMAGE
+    const TILESET_IMAGE2 = window.ASSET_MANAGER.getAsset(
+      "./assets/map/Spikes.png"
     );
+
+    const TILESET_IMAGES = [
+      window.ASSET_MANAGER.getAsset("./assets/map/Atlas.png"),
+      window.ASSET_MANAGER.getAsset("./assets/map/Spikes.png"),
+    ];
+
+    const gameMap = new Tilemap(
+      "./Entities/Map/MapAssets/Map.json",
+      TILESET_IMAGES
+    );
+    
     await gameMap.load();
     GAME_ENGINE.addEntity(gameMap);
 

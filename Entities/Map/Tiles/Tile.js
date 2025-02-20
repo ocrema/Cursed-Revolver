@@ -25,7 +25,10 @@ export class Tile extends Entity {
     this.scale = scale; // Scale factor
     this.isGround = true;
 
-    if (this.tileID !== 6 && this.tileID < 73) {
+    // 6 is the like internal block
+    // 74 is where the like grass blocks start
+    // 100 is where other external tilesets start from
+    if (this.tileID !== 6 && this.tileID < 74) {
       this.collider = new Collider(
         this.tileSize * this.scale, // Scale width
         this.tileSize * this.scale // Scale height

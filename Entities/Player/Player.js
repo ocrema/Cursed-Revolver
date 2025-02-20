@@ -285,7 +285,8 @@ export class Player extends Actor {
           e.isAttack ||
           e.isEnemy ||
           e.isEffect ||
-          e.isDestructibleObject
+          e.isDestructibleObject ||
+          e.isSpike
         )
           continue;
         if (e.isWater) {
@@ -326,7 +327,13 @@ export class Player extends Actor {
     // for all of the entities i am colliding with, move the player as far back as i need to to not be colliding with any of them
     hitSomething = false;
     for (let e of GAME_ENGINE.entities) {
-      if (e.isPlayer || e.isAttack || e.isEnemy || e.isDestructibleObject)
+      if (
+        e.isPlayer ||
+        e.isAttack ||
+        e.isEnemy ||
+        e.isDestructibleObject ||
+        e.isSpike
+      )
         continue;
 
       if (e.isWater) {

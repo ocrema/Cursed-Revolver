@@ -1,24 +1,25 @@
 import { Tile } from "./Tiles/Tile.js";
 import { GAME_ENGINE } from "../../main.js";
 import { WaterTile } from "./Tiles/WaterTile.js";
+import { SpikeTile } from "./Tiles/SpikeTile.js";
 
 export class Tilemap {
   constructor(
     mapPath,
-    tilesetImage,
+    tilesetImages,
     tileSize = 16,
     atlasWidth = 320,
     solidTileIDs = [],
     scale = 4
   ) {
     this.mapPath = mapPath;
-    this.tilesetImage = tilesetImage;
+    this.tilesetImages = tilesetImages; // Store all tileset images
     this.tileSize = tileSize;
     this.tilesPerRow = atlasWidth / tileSize;
     this.tiles = [];
     this.mapWidth = 0;
     this.mapHeight = 0;
-    this.firstGID = 0;
+    this.tilesets = [];
     this.solidTiles = new Set(solidTileIDs);
     this.scale = scale;
   }
@@ -44,11 +45,25 @@ export class Tilemap {
     this.mapWidth = tileLayer.width;
     this.mapHeight = tileLayer.height;
 
-    if (data.tilesets.length > 0) {
-      this.firstGID = data.tilesets[0].firstgid;
-    }
+    // Store tilesets with their firstGID
+    this.tilesets = data.tilesets.map((tileset, index) => ({
+      firstGID: tileset.firstgid,
+      image: this.tilesetImages[index], // Map to corresponding image
+    }));
 
     this.generateTiles();
+  }
+
+  getTilesetForTile(tileID) {
+    // Find the correct tileset for the given tile ID
+    let selectedTileset = null;
+    for (let i = this.tilesets.length - 1; i >= 0; i--) {
+      if (tileID >= this.tilesets[i].firstGID) {
+        selectedTileset = this.tilesets[i];
+        break;
+      }
+    }
+    return selectedTileset;
   }
 
   generateTiles() {
@@ -57,7 +72,10 @@ export class Tilemap {
         let tileID = this.tiles[y * this.mapWidth + x];
 
         if (tileID > 0) {
-          // Ignore empty tiles
+          let tileset = this.getTilesetForTile(tileID);
+          if (!tileset) continue;
+
+          let adjustedTileID = tileID; // Adjust tile ID relative to tileset
           let worldX = x * this.tileSize * this.scale;
           let worldY = y * this.tileSize * this.scale;
 
@@ -65,25 +83,40 @@ export class Tilemap {
             let tile = new WaterTile(
               worldX,
               worldY,
-              tileID,
-              this.tilesetImage,
+              adjustedTileID,
+              tileset.image,
               this.tileSize,
               this.tilesPerRow,
-              this.firstGID,
+              tileset.firstGID,
               this.solidTiles,
               this.scale
             );
             GAME_ENGINE.addEntity(tile);
           }
 
+          if (tileID == 101) {
+            let spikeTile = new SpikeTile(
+              worldX,
+              worldY,
+              adjustedTileID,
+              tileset.image,
+              this.tileSize,
+              this.tilesPerRow,
+              tileset.firstGID,
+              this.solidTiles,
+              this.scale
+            );
+            GAME_ENGINE.addEntity(spikeTile);
+          }
+
           let tile = new Tile(
             worldX,
             worldY,
-            tileID,
-            this.tilesetImage,
+            adjustedTileID,
+            tileset.image,
             this.tileSize,
             this.tilesPerRow,
-            this.firstGID,
+            tileset.firstGID,
             this.solidTiles,
             this.scale
           );
