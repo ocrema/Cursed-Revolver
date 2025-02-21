@@ -9,6 +9,7 @@ import { Tumbleweed } from "../Objects/Tumbleweed.js";
 import { CowboyEnemy } from "../Enemy/CowboyEnemy.js";
 import { Crow } from "../Enemy/Crow.js";
 import { Tilemap } from "./Tilemap.js";
+import { GrowingTree } from "../Objects/GrowingTree.js";
 
 export class Map extends GameMap {
   async load() {
@@ -54,5 +55,6 @@ export class Map extends GameMap {
     GAME_ENGINE.addEntity(new Tumbleweed(3200, -100, "left"));
     GAME_ENGINE.addEntity(new Tumbleweed(4750, -100, "right"));
     GAME_ENGINE.addEntity(new Barrel(2569, 275));
+    GAME_ENGINE.addEntity(new GrowingTree(1000, 0));
   }
 }
