@@ -2,7 +2,7 @@ import { Entity } from "../Entities.js";
 import { Player } from "../Player/Player.js";
 import * as Util from "../../Utils/Util.js";
 import { Collider } from "../Collider.js";
-import { Tile } from "../Map/Tile.js";
+import { Tile } from "../Map/Tiles/Tile.js";
 
 export class Thorn extends Entity {
   constructor(x, y, target) {

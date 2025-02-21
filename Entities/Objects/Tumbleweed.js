@@ -3,7 +3,7 @@ import { Collider } from "../Collider.js";
 import { GAME_ENGINE } from "../../main.js";
 import { BurningEffect } from "../Effects/BurningEffect.js";
 import { DESTRUCTIBLE_OBJECTS_SPRITESHEET } from "../../Globals/Constants.js";
-import { Tile } from "../Map/Tile.js";
+import { Tile } from "../Map/Tiles/Tile.js";
 
 export class Tumbleweed extends Entity {
   constructor(x, y, direction = "right") {
@@ -58,23 +58,26 @@ export class Tumbleweed extends Entity {
     this.y_velocity += this.gravity * GAME_ENGINE.clockTick;
     this.y += this.y_velocity * GAME_ENGINE.clockTick;
 
-    // Move horizontally based on direction
     let moveX = this.speed * GAME_ENGINE.clockTick;
     if (this.direction === "left") moveX = -moveX;
     this.x += moveX;
 
-    // Rotate the tumbleweed
-    this.rotation += moveX / 50;
+    this.rotation += moveX / 50; // Rotate the tumbleweed
 
     for (let e of GAME_ENGINE.entities) {
-      if (e.isGround && this.colliding(e)) {
-        if (e.collider.height > e.collider.width) {
-          this.bounceOffObject(e); // Treats tall objects as walls
+      if (e instanceof Tile && this.colliding(e)) {
+        if (e.tileID === 7) {
+          this.bounceOffObject(e); // Bounce off walls
         } else {
-          this.bounceOffGround(e);
+          this.bounceOffGround(e); // Bounce off ground
         }
         break;
       }
+    }
+
+    // Prevent excessive downward speed
+    if (this.y_velocity > this.maxBounce) {
+      this.y_velocity = this.maxBounce;
     }
 
     for (let e of GAME_ENGINE.entities) {
