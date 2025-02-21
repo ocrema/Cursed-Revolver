@@ -121,6 +121,7 @@ export class AssetDownloader {
   downloadDestructibleObjectAssets() {
     this.assetManager.queueDownload("./assets/objects/barrel.png");
     this.assetManager.queueDownload("./assets/objects/tumbleweed.png");
+    this.assetManager.queueDownload("./assets/objects/growing_tree.png");
   }
 
   downloadEnvironmentalAssets() {
