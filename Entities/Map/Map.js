@@ -17,24 +17,17 @@ export class Map extends GameMap {
     GAME_ENGINE.addEntity(new Player(1500, -200));
     GAME_ENGINE.addEntity(new Background());
 
-    const TILESET_IMAGE = window.ASSET_MANAGER.getAsset(
-      "./assets/map/Atlas.png"
-    );
-
-    const TILESET_IMAGE2 = window.ASSET_MANAGER.getAsset(
-      "./assets/map/Spikes.png"
-    );
-
     const TILESET_IMAGES = [
       window.ASSET_MANAGER.getAsset("./assets/map/Atlas.png"),
       window.ASSET_MANAGER.getAsset("./assets/map/Spikes.png"),
+      window.ASSET_MANAGER.getAsset("./assets/map/Saloon.png"),
     ];
 
     const gameMap = new Tilemap(
       "./Entities/Map/MapAssets/Map.json",
       TILESET_IMAGES
     );
-    
+
     await gameMap.load();
     GAME_ENGINE.addEntity(gameMap);
 

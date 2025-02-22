@@ -1,0 +1,14 @@
+{ "columns":1,
+ "image":"..\/..\/..\/assets\/map\/Saloon.png",
+ "imageheight":144,
+ "imagewidth":256,
+ "margin":0,
+ "name":"Saloon",
+ "spacing":0,
+ "tilecount":1,
+ "tiledversion":"1.11.2",
+ "tileheight":144,
+ "tilewidth":256,
+ "type":"tileset",
+ "version":"1.10"
+}

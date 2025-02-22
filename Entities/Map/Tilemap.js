@@ -2,6 +2,7 @@ import { Tile } from "./Tiles/Tile.js";
 import { GAME_ENGINE } from "../../main.js";
 import { WaterTile } from "./Tiles/WaterTile.js";
 import { SpikeTile } from "./Tiles/SpikeTile.js";
+import { SaloonTile } from "./Tiles/SaloonTile.js";
 
 export class Tilemap {
   constructor(
@@ -107,6 +108,22 @@ export class Tilemap {
               this.scale
             );
             GAME_ENGINE.addEntity(spikeTile);
+          }
+
+          if (tileID == 103) {
+            console.log(tileset.image);
+            let saloonTile = new SaloonTile(
+              worldX,
+              worldY,
+              adjustedTileID,
+              tileset.image,
+              this.tileSize,
+              this.tilesPerRow,
+              tileset.firstGID,
+              this.solidTiles,
+              this.scale
+            );
+            GAME_ENGINE.addEntity(saloonTile);
           }
 
           let tile = new Tile(
