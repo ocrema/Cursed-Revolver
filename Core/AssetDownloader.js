@@ -116,6 +116,7 @@ export class AssetDownloader {
     this.assetManager.queueDownload("./assets/spells/Icicle.png");
     this.assetManager.queueDownload("./assets/spells/Icicle_Explosion.png");
     this.assetManager.queueDownload("./assets/spells/Void_Orb.png");
+    this.assetManager.queueDownload("./assets/spells/Vine.png");
   }
 
   // Objects
@@ -123,6 +124,7 @@ export class AssetDownloader {
   downloadDestructibleObjectAssets() {
     this.assetManager.queueDownload("./assets/objects/barrel.png");
     this.assetManager.queueDownload("./assets/objects/tumbleweed.png");
+    this.assetManager.queueDownload("./assets/objects/growing_tree.png");
   }
 
   downloadEnvironmentalAssets() {
@@ -159,6 +161,7 @@ export class AssetDownloader {
     this.assetManager.queueDownload("./assets/sfx/landing.wav");
     this.assetManager.queueDownload("./assets/sfx/waterwave.wav");
     this.assetManager.queueDownload("./assets/sfx/void.wav");
+    this.assetManager.queueDownload("./assets/sfx/vine.wav");
   }
 
   downloadPauseMenuButtons() {

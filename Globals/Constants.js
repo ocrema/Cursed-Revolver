@@ -230,6 +230,10 @@ export const SPELLS_SPRITESHEET = {
     FRAME_COUNT: 8,
     FRAME_DURATION: 0.1,
   },
+  VINEGRAPPLE: {
+    NAME: "Vine_Grapple",
+    URL: "./assets/spells/Vine.png",
+  },
 };
 
 // Effects Constants

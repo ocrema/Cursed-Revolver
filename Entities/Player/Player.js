@@ -9,6 +9,7 @@ import { PlayerAnimationLoader } from "./PlayerAnimationLoader.js";
 import { WaterWave } from "../Spells/WaterWave.js";
 import { Icicle } from "../Spells/Icicle.js";
 import { VoidOrb } from "../Spells/VoidOrb.js";
+import { VineGrapple } from "../Spells/VineGrapple.js";
 
 export class Player extends Actor {
   constructor(x, y) {
@@ -432,7 +433,7 @@ export class Player extends Actor {
       } else if (this.selectedSpell === 3) {
         GAME_ENGINE.addEntity(new Icicle(this, dir));
       } else if (this.selectedSpell === 4) {
-        // GAME_ENGINE.addEntity(new VineBall(this, dir));
+        GAME_ENGINE.addEntity(new VineGrapple(this, dir));
       } else if (this.selectedSpell === 5) {
         GAME_ENGINE.addEntity(new VoidOrb(this, dir));
       }
