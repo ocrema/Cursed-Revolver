@@ -5,11 +5,13 @@ import * as Util from "../../Utils/Util.js";
 import { Collider } from "../Collider.js";
 import { ENEMY_SPRITESHEET } from "../../Globals/Constants.js";
 import { GAME_ENGINE } from "../../main.js";
+import { GAME_ENGINE } from "../../main.js";
 
 export class Cactus extends Actor {
   constructor(x, y) {
     super();
     Object.assign(this, { x, y });
+
 
     // Animation
     this.assetManager = window.ASSET_MANAGER;
@@ -101,8 +103,6 @@ export class Cactus extends Actor {
 
   update() {
     this.recieveEffects();
-
-
     this.attackTime += GAME_ENGINE.clockTick;
     this.idleTimer += GAME_ENGINE.clockTick;
 
