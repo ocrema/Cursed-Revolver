@@ -2,7 +2,7 @@ import { Entity } from "../Entities/Entities.js";
 
 export class Camera extends Entity {
   static instance = null;
-  constructor() {
+  constructor(mapWidth, mapHeight, screenWidth, screenHeight) {
     if (Camera.instance) {
       return Camera.instance;
     }
@@ -15,6 +15,12 @@ export class Camera extends Entity {
     this.player = null;
     this.shakeIntensity = 0;
     this.shakeDecay = 0.9; // How fast the shake fades (0.9 = fast, 0.99 = slow)
+
+    // Define camera boundaries based on the map size and screen size
+    this.minX = 0;
+    this.maxX = mapWidth - screenWidth;
+    this.minY = 0;
+    this.maxY = mapHeight - screenHeight;
   }
 
   update() {
@@ -37,23 +43,36 @@ export class Camera extends Entity {
       const followSpeed = 5; // Lower values = slower camera movement
       const lerpFactor = Math.min(followSpeed * GAME_ENGINE.clockTick, 1);
 
-      const verticalOffset = -150; // Move the camera 150 pixels upwards
+      const verticalOffset = -100; // Move the camera 150 pixels upwards
 
       // Smoothly interpolate the camera towards the player's position + vertical offset
       this.x += (this.player.x - this.x) * lerpFactor;
       this.y += (this.player.y + verticalOffset - this.y) * lerpFactor;
+
+      // Clamp the camera within the map boundaries
+      this.x = Math.max(this.minX, Math.min(this.x, this.maxX));
+      this.y = Math.max(this.minY, Math.min(this.y, this.maxY));
     }
   }
 
-  static getInstance() {
+  static getInstance(
+    mapWidth = 5000,
+    mapHeight = 1500,
+    screenWidth = 0,
+    screenHeight = 0
+  ) {
     if (!Camera.instance) {
-      Camera.instance = new Camera();
+      Camera.instance = new Camera(
+        mapWidth,
+        mapHeight,
+        screenWidth,
+        screenHeight
+      );
     }
     return Camera.instance;
   }
 
   triggerShake(intensity) {
-    //if (!DEBUG_MODE.isActive)
     this.shakeIntensity = intensity;
   }
 }

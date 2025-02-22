@@ -1,4 +1,5 @@
 import { Collider } from "../Entities/Collider.js";
+import { GAME_ENGINE } from "../main.js";
 
 /** Global Parameters Object */
 const params = {};
@@ -132,4 +133,20 @@ export const canAttack = (o1, o2) => {
     // recursion 
     return canAttack(tempObject, o2);
   }
+}
+
+/**
+ * Distance From Camera Volume Multiplier
+ * returns a value between 0 and 1 that represents how loud a sound should be based on distance from camera
+ * use like this: 
+ * window.ASSET_MANAGER.playAsset("./assets/sfx/lightning.wav", yourVolumeMult * Util.DFCVM(yourEntity));
+ */
+export const DFCVM = (e) => {
+  if (!e || !GAME_ENGINE.camera) return 0;
+  const maxVolumeDis = 2000;
+  const minVolumeDis = 5000;
+  const distance = getDistance(e, GAME_ENGINE.camera);
+  if (distance < maxVolumeDis) return 1;
+  if (distance > minVolumeDis) return 0;
+  return 1 - (distance - maxVolumeDis) / (minVolumeDis - maxVolumeDis);
 }

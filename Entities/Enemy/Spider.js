@@ -5,7 +5,7 @@ import { Jaw } from "./Attack.js";
 import * as Util from "../../Utils/Util.js";
 import { Collider } from "../Collider.js";
 import { GAME_ENGINE } from "../../main.js";
-import { Tile } from "../Map/Tile.js";
+import { Tile } from "../Map/Tiles/Tile.js";
 
 export class Spider extends Actor {
   constructor(x, y) {

@@ -9,6 +9,7 @@ import { PlayerAnimationLoader } from "./PlayerAnimationLoader.js";
 import { WaterWave } from "../Spells/WaterWave.js";
 import { Icicle } from "../Spells/Icicle.js";
 import { VoidOrb } from "../Spells/VoidOrb.js";
+import { VineGrapple } from "../Spells/VineGrapple.js";
 
 export class Player extends Actor {
   constructor(x, y) {
@@ -34,6 +35,7 @@ export class Player extends Actor {
     this.health = 200;
     this.maxHealth = 200;
     this.isLaunchable = true;
+    this.inWater = false;
     this.validEffects = {};
 
     // Start with the idle animation
@@ -157,6 +159,7 @@ export class Player extends Actor {
   }
 
   movement() {
+    this.inWater = false;
     //gravity
     this.y_velocity = Math.min(
       this.y_velocity + GAME_ENGINE.clockTick * 3000,
@@ -183,6 +186,14 @@ export class Player extends Actor {
       this.x_velocity = this.storedDashSpeed;
       this.isDashing -= GAME_ENGINE.clockTick;
     }
+
+    for (let e of GAME_ENGINE.entities) {
+      if (e.isWater && this.colliding(e)) {
+        this.inWater = true;
+        break;
+      }
+    }
+
     if (
       GAME_ENGINE.keys["a"] &&
       !GAME_ENGINE.keys["d"] &&
@@ -237,6 +248,11 @@ export class Player extends Actor {
       window.ASSET_MANAGER.playAsset("./assets/sfx/jump.ogg");
     }
 
+    let currentSpeed = this.speed;
+    if (this.inWater) {
+      currentSpeed *= 0.5;
+    }
+
     // Movement logic
 
     let velFromKeys = 0;
@@ -244,7 +260,7 @@ export class Player extends Actor {
       GAME_ENGINE.keys["a"] ||
       (this.isDashing > 0 && this.storedDashSpeed < 0)
     ) {
-      velFromKeys -= this.speed;
+      velFromKeys -= currentSpeed;
       this.isMoving = true;
       this.flip = true;
     }
@@ -252,7 +268,7 @@ export class Player extends Actor {
       GAME_ENGINE.keys["d"] ||
       (this.isDashing > 0 && this.storedDashSpeed > 0)
     ) {
-      velFromKeys += this.speed;
+      velFromKeys += currentSpeed;
       this.isMoving = true;
       this.flip = false;
     }
@@ -273,9 +289,14 @@ export class Player extends Actor {
           e.isAttack ||
           e.isEnemy ||
           e.isEffect ||
-          e.isDestructibleObject
+          e.isDestructibleObject ||
+          e.isSpike
         )
           continue;
+        if (e.isWater) {
+          this.inWater = true;
+          continue;
+        }
         if (this.colliding(e)) {
           hitSomething = true;
           this.moveAgainstX(e);
@@ -311,8 +332,20 @@ export class Player extends Actor {
     // for all of the entities i am colliding with, move the player as far back as i need to to not be colliding with any of them
     hitSomething = false;
     for (let e of GAME_ENGINE.entities) {
-      if (e.isPlayer || e.isAttack || e.isEnemy || e.isDestructibleObject)
+      if (
+        e.isPlayer ||
+        e.isAttack ||
+        e.isEnemy ||
+        e.isDestructibleObject ||
+        e.isSpike
+      )
         continue;
+
+      if (e.isWater) {
+        this.inWater = true;
+        continue;
+      }
+
       if (this.colliding(e)) {
         hitSomething = true;
         this.moveAgainstY(e);
@@ -400,7 +433,7 @@ export class Player extends Actor {
       } else if (this.selectedSpell === 3) {
         GAME_ENGINE.addEntity(new Icicle(this, dir));
       } else if (this.selectedSpell === 4) {
-        // GAME_ENGINE.addEntity(new VineBall(this, dir));
+        GAME_ENGINE.addEntity(new VineGrapple(this, dir));
       } else if (this.selectedSpell === 5) {
         GAME_ENGINE.addEntity(new VoidOrb(this, dir));
       }

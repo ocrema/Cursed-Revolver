@@ -22,7 +22,7 @@ export class ChainLightning extends Entity {
   update() {
     if (this.struck) {
       this.experationTimer -= GAME_ENGINE.clockTick;
-      if (this.targets.length > 1) GAME_ENGINE.camera.triggerShake(25);
+      //if (this.targets.length > 1) GAME_ENGINE.camera.triggerShake(10);
       if (this.experationTimer <= 0) this.removeFromWorld = true;
       return;
     }
@@ -70,7 +70,9 @@ export class ChainLightning extends Entity {
 
   draw(ctx) {
     if (!this.struck || this.targets.length <= 1) return;
-
+    ctx.save();
+    ctx.shadowBlur = 10;
+    ctx.shadowColor = "yellow";
     ctx.strokeStyle = "yellow";
     ctx.lineWidth = Math.random() * 10 + 5;
     let maxOffset = 120;
@@ -98,5 +100,6 @@ export class ChainLightning extends Entity {
       );
     }
     ctx.stroke();
+    ctx.restore();
   }
 }

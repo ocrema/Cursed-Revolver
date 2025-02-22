@@ -5,64 +5,119 @@ import { Camera } from "../../Core/Camera.js";
 export class Background extends Entity {
   constructor() {
     super();
-    this.scale = 3.5; // Scale the background
+    this.scale = 4; // Scale the background
     this.entityOrder = -10; // Background should be behind everything
     this.camera = Camera.getInstance();
+    this.player = this.camera.player;
 
+    // Define the height threshold for underground transition
+    this.undergroundThreshold = 750;
+
+    // Load both backgrounds
+    this.backgrounds = {
+      aboveGround: ASSET_MANAGER.getAsset(BACKGROUND_SPRITESHEET.ABOVE.URL),
+      underground: ASSET_MANAGER.getAsset(BACKGROUND_SPRITESHEET.UNDER.URL),
+    };
+
+    // Add both animations at the start
     this.addAnimation(
-      "background",
-      ASSET_MANAGER.getAsset(BACKGROUND_SPRITESHEET.URL), // Spritesheet
-      BACKGROUND_SPRITESHEET.FRAME_WIDTH, // Frame width
-      BACKGROUND_SPRITESHEET.FRAME_HEIGHT, // Frame height
-      BACKGROUND_SPRITESHEET.FRAME_COUNT, // Frame count
-      BACKGROUND_SPRITESHEET.FRAME_DURATION // Frame duration
+      BACKGROUND_SPRITESHEET.ABOVE.NAME,
+      this.backgrounds.aboveGround,
+      BACKGROUND_SPRITESHEET.ABOVE.FRAME_WIDTH,
+      BACKGROUND_SPRITESHEET.ABOVE.FRAME_HEIGHT,
+      BACKGROUND_SPRITESHEET.ABOVE.FRAME_COUNT,
+      BACKGROUND_SPRITESHEET.ABOVE.FRAME_DURATION
     );
 
-    this.setAnimation("background");
+    this.addAnimation(
+      BACKGROUND_SPRITESHEET.UNDER.NAME,
+      this.backgrounds.underground,
+      BACKGROUND_SPRITESHEET.UNDER.FRAME_WIDTH,
+      BACKGROUND_SPRITESHEET.UNDER.FRAME_HEIGHT,
+      BACKGROUND_SPRITESHEET.UNDER.FRAME_COUNT,
+      BACKGROUND_SPRITESHEET.UNDER.FRAME_DURATION
+    );
+
+    // Set the initial state
+    this.aboveAnimation = BACKGROUND_SPRITESHEET.ABOVE.NAME;
+    this.underAnimation = BACKGROUND_SPRITESHEET.UNDER.NAME;
+
+    this.transitionAlpha = 0; // Opacity for transition
+    this.transitionSpeed = 3; // Speed of fade transition
+    this.isGoingUnderground = false; // Track if transitioning downward
   }
 
-  /**
-   * Updates the background position based on player movement.
-   * Uses parallax scrolling where the background moves slower than the foreground.
-   */
   update() {
+    this.transitionSpeed = 3;
     this.updateAnimation(GAME_ENGINE.clockTick);
+
+    if (!this.camera.player) return;
+
+    // Determine if player is going underground or back up
+    const isPlayerUnderground =
+      this.camera.player.y > this.undergroundThreshold;
+
+    if (isPlayerUnderground !== this.isGoingUnderground) {
+      // Start transition when state changes
+      this.isGoingUnderground = isPlayerUnderground;
+    }
+
+    // Handle fade transition
+    if (this.isGoingUnderground) {
+      this.transitionAlpha += this.transitionSpeed * GAME_ENGINE.clockTick;
+      if (this.transitionAlpha > 1) this.transitionAlpha = 1;
+      this.setAnimation(BACKGROUND_SPRITESHEET.UNDER.NAME);
+    } else {
+      this.transitionAlpha -= this.transitionSpeed * GAME_ENGINE.clockTick;
+      if (this.transitionAlpha < 0) this.transitionAlpha = 0;
+      this.setAnimation(BACKGROUND_SPRITESHEET.ABOVE.NAME);
+    }
   }
 
-  /**
-   * Draws the parallax background relative to the player's movement.
-   * @param {CanvasRenderingContext2D} ctx - The rendering context.
-   */
   draw(ctx) {
-    if (!this.currentAnimation) return;
+    if (
+      !this.animations[this.aboveAnimation] ||
+      !this.animations[this.underAnimation]
+    )
+      return;
 
-    const animation = this.animations[this.currentAnimation];
+    ctx.save();
+
+    // Parallax effect
+    const parallaxX = -this.camera.x * 0.05;
+    const parallaxY = -this.camera.y * 0.0025;
+    ctx.translate(parallaxX, parallaxY);
+    ctx.scale(this.scale, this.scale);
+
+    // **Draw the above ground background (fading out when underground)**
+    ctx.globalAlpha = 1 - this.transitionAlpha;
+    this.drawBackground(ctx, this.aboveAnimation);
+
+    // **Draw the underground background (fading in)**
+    ctx.globalAlpha = this.transitionAlpha;
+    this.drawBackground(ctx, this.underAnimation);
+
+    // Restore alpha
+    ctx.globalAlpha = 1;
+    ctx.restore();
+  }
+
+  drawBackground(ctx, animationName) {
+    const animation = this.animations[animationName];
     const { spritesheet, frameWidth, frameHeight } = animation;
 
     if (!spritesheet) return;
 
-    ctx.save(); // Save the current transformation state
-
-    // Parallax effect: Background moves at a fraction of the camera movement
-    const parallaxX = -this.camera.x * 0.05; // Moves slower than foreground
-    const parallaxY = -this.camera.y * 0.0025; // Moves even slower vertically
-
-    ctx.translate(parallaxX, parallaxY);
-    ctx.scale(this.scale, this.scale);
-
-    // Draw the background image
     ctx.drawImage(
       spritesheet,
-      this.currentFrame * frameWidth, // Source X
-      25, // Source Y
-      frameWidth, // Source Width
-      frameHeight, // Source Height
-      -frameWidth / 2, // Center the background
-      -frameHeight / 2, // Center the background
-      frameWidth, // Destination Width
-      frameHeight // Destination Height
+      this.currentFrame * frameWidth,
+      0,
+      frameWidth,
+      frameHeight,
+      -frameWidth / 2,
+      -frameHeight / 2,
+      frameWidth,
+      frameHeight
     );
-
-    ctx.restore(); // Restore the transformation state
   }
 }
