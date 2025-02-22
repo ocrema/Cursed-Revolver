@@ -60,8 +60,8 @@ export class AssetDownloader {
     this.assetManager.queueDownload("./assets/enemy/cactus/newcactus.png");
     this.assetManager.queueDownload("./assets/enemy/spider/Walk.png");
 
-    // Crow Enemy 
-    this.assetManager.queueDownload("./assets/enemy/Crow/Fly/Left.png")
+    // Crow Enemy
+    this.assetManager.queueDownload("./assets/enemy/Crow/Fly/Left.png");
     this.assetManager.queueDownload("./assets/enemy/Crow/Hurt/Left.png");
     this.assetManager.queueDownload("./assets/enemy/Crow/Die/Left.png");
     this.assetManager.queueDownload("./assets/enemy/Crow/Attack/Left.png");
@@ -81,18 +81,19 @@ export class AssetDownloader {
     this.assetManager.queueDownload("./assets/cowboy/CowBoySmokingIdle.png");
     this.assetManager.queueDownload("./assets/cowboy/CowBoyBullet.png");
   }
-  
 
   downloadBackgroundAssets() {
-    this.assetManager.queueDownload("./assets/background/background.png");
-    this.assetManager.queueDownload("./assets/background/background1.png");
+    this.assetManager.queueDownload("./assets/background/AboveBackground.png");
+    this.assetManager.queueDownload(
+      "./assets/background/UndergroundBackground.png"
+    );
+    this.assetManager.queueDownload(
+      "./assets/background/UndergroundBackground1.png"
+    );
   }
 
   downloadMapGroundAssets() {
-    this.assetManager.queueDownload("./assets/map/Tileset/Atlas.png");
-    this.assetManager.queueDownload("./assets/map/Tileset/tileMain2.png");
-    this.assetManager.queueDownload("./assets/map/Tileset/tileMain5.png");
-    this.assetManager.queueDownload("./assets/map/Tileset/platforms10.png");
+    this.assetManager.queueDownload("./assets/map/Atlas.png");
     this.assetManager.queueDownload("./assets/map/deserttileset.png");
   }
 
@@ -106,6 +107,7 @@ export class AssetDownloader {
     this.assetManager.queueDownload("./assets/map/props/tree02.png");
     this.assetManager.queueDownload("./assets/map/props/tree03.png");
     this.assetManager.queueDownload("./assets/map/props/tree04.png");
+    this.assetManager.queueDownload("./assets/map/Spikes.png");
   }
 
   downloadSpellAssets() {
@@ -191,10 +193,10 @@ export class AssetDownloader {
     this.assetManager.queueDownload("./assets/ui/cowboy2.png");
     this.assetManager.queueDownload("./assets/ui/cowboy_spell.png");
     for (let i = 1; i <= 6; i++) {
-      this.assetManager.queueDownload(`./assets/ui/cowboy_spell${i}.png`); 
+      this.assetManager.queueDownload(`./assets/ui/cowboy_spell${i}.png`);
     }
     for (let i = 1; i <= 6; i++) {
-      this.assetManager.queueDownload(`./assets/ui/cowboy_flash${i}.png`); 
+      this.assetManager.queueDownload(`./assets/ui/cowboy_flash${i}.png`);
     }
   }
 

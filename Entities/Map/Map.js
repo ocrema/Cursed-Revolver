@@ -17,15 +17,24 @@ export class Map extends GameMap {
     GAME_ENGINE.addEntity(new Player(1500, -200));
     GAME_ENGINE.addEntity(new Background());
 
-    //const TILESET_IMAGE = new Image();
     const TILESET_IMAGE = window.ASSET_MANAGER.getAsset(
-      "./assets/map/Tileset/Atlas.png"
+      "./assets/map/Atlas.png"
     );
 
-    const gameMap = new Tilemap(
-      "./Entities/Map/MapAssets/216Map.json",
-      TILESET_IMAGE
+    const TILESET_IMAGE2 = window.ASSET_MANAGER.getAsset(
+      "./assets/map/Spikes.png"
     );
+
+    const TILESET_IMAGES = [
+      window.ASSET_MANAGER.getAsset("./assets/map/Atlas.png"),
+      window.ASSET_MANAGER.getAsset("./assets/map/Spikes.png"),
+    ];
+
+    const gameMap = new Tilemap(
+      "./Entities/Map/MapAssets/Map.json",
+      TILESET_IMAGES
+    );
+    
     await gameMap.load();
     GAME_ENGINE.addEntity(gameMap);
 
@@ -38,16 +47,16 @@ export class Map extends GameMap {
     GAME_ENGINE.addEntity(new Crow(2500, -500));
     GAME_ENGINE.addEntity(new Crow(4090, -200));
 
-    // Spider
+    // // // Spider
     GAME_ENGINE.addEntity(new Spider(2600, 200));
     GAME_ENGINE.addEntity(new Spider(4262, 200));
 
-    // Cacti
+    // // Cacti
     GAME_ENGINE.addEntity(new Cactus(2300, 260));
     GAME_ENGINE.addEntity(new Cactus(3000, 260));
     GAME_ENGINE.addEntity(new Cactus(4200, 260));
 
-    // Cowboy Enemy
+    // // // Cowboy Enemy
     GAME_ENGINE.addEntity(new CowboyEnemy(4115, 1330));
   }
 
