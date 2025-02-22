@@ -66,13 +66,13 @@ export class Cactus extends Actor {
       160, // Frame height
       8, // Frame count
       0.25, // Frame duration (slower for idle)
-      false
+      true
     );
 
     this.setAnimation("default");
     this.width = 160;
     this.height = 250;
-    this.scale = 1;
+    this.scale = 2;
 
     this.tookDamage = false;
     this.dead = false;
@@ -103,8 +103,52 @@ export class Cactus extends Actor {
     this.recieveEffects();
 
     this.attackTime += GAME_ENGINE.clockTick;
-    this.idleTimer += GAME_ENGINE.clockTick;
 
+    this.attemptAttack();
+
+    // apply attack damage
+    for (let attack of this.recieved_attacks) {
+      this.tookDamage = true;
+      this.health -= attack.damage;
+    }
+    this.recieved_attacks = [];
+
+    if (this.health <= 0) {
+      this.removeFromWorld = true;
+    }
+
+    this.changeAnimation();
+  }
+
+  changeAnimation() {
+    this.idleTimer += GAME_ENGINE.clockTick;
+    var randomNumber = Util.randomInt(this.idleCooldown.length - 1);
+
+
+
+    if (this.idleTimer > this.idleCooldown[randomNumber]) {
+      this.idleTimer = 0;
+      this.setAnimation("idle");
+    }
+
+    if (this.seesPlayer && this.currentAnimation !== "aggressive") {
+      this.setAnimation("aggressive");
+    }
+
+    if (this.attacking) {
+      this.setAnimation("attack");
+    }
+
+    if (this.tookDamage && this.currentAnimation !== "damage") {
+      this.setAnimation("damage");
+    }
+
+    if (this.dead && this.currentAnimation !== "die") {
+      this.setAnimation("die");
+    }
+  }
+
+  attemptAttack() {
     for (let entity of GAME_ENGINE.entities) {
       if (entity instanceof Player) {
         // cactus sees player
@@ -122,38 +166,6 @@ export class Cactus extends Actor {
       }
     }
 
-    // apply attack damage
-    for (let attack of this.recieved_attacks) {
-      this.tookDamage = true;
-      this.health -= attack.damage;
-    }
-    this.recieved_attacks = [];
-
-    if (this.health <= 0) {
-      this.removeFromWorld = true;
-    }
-
-    this.changeAnimation();
-  }
-
-  changeAnimation() {
-    if (this.seesPlayer && this.currentAnimation !== "aggressive") {
-      this.setAnimation("aggressive");
-    }
-
-    if (this.attacking) {
-      this.setAnimation("attack");
-    }
-
-    if (this.tookDamage && this.currentAnimation !== "damage") {
-      this.setAnimation("damage");
-    }
-
-    if (this.dead && this.currentAnimation !== "die") {
-      this.setAnimation("die");
-    }
-
-    console.log(this.currentAnimation);
   }
   
   onAnimationComplete() {
@@ -177,4 +189,43 @@ export class Cactus extends Actor {
       super.draw(ctx);
     }
   }
+}
+
+export class SpitterCactus extends Cactus {
+ constructor ( x, y, isLeft ) {
+  super( x, y );
+
+  this.cactusOffset = 200;
+  this.leftTarget = {x: this.x - this.cactusOffset, y: this.y};
+  this.rightTarget = {x: this.x + this.cactusOffset, y: this.y};
+  this.currentTarget = isLeft ? this.leftTarget : this.rightTarget;
+
+  this.attackTime = 0;
+  // length of burst
+  this.activeFire = 2;
+  // time between first thorn short between bursts
+  this.fireRate = this.activeFire + 2;
+  // time between thorn shots
+  this.thornCooldown = 0.25;
+  // time since last thorn shot
+  this.thornTime = 0;
+ } 
+
+ attemptAttack() {
+  this.thornTime += GAME_ENGINE.clockTick;
+  console.log(this.thornTime);
+
+  // ready to attack
+  if (this.attackTime < this.activeFire && 
+    this.attackTime < this.fireRate && 
+    this.thornTime > this.thornCooldown) {
+      this.thornTime = 0;
+      GAME_ENGINE.addEntity(new Thorn(this.x, this.y, this.currentTarget));
+  }
+
+  if (this.attackTime > this.fireRate) {
+    this.attackTime = 0;
+  }
+ }
+
 }

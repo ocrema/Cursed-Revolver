@@ -18,8 +18,8 @@ export class Thorn extends Entity {
 
     // distance the thorn has travelled
     this.travelled = 0;
-    this.maxRange = 300;
-    this.speed = 4;
+    this.maxRange = 500;
+    this.speed = 8;
     this.data = { damage: 20 };
     this.removeFromWorld = false;
     this.collider = new Collider(this.width, this.height);
