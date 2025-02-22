@@ -1,5 +1,3 @@
-import { Entity } from "../../Entities.js";
-import { Collider } from "../../Collider.js";
 import { Tile } from "./Tile.js";
 
 export class SaloonTile extends Tile {
@@ -42,8 +40,8 @@ export class SaloonTile extends Tile {
       tilesetY,
       256,
       144, // Full tile size
-      this.x - GAME_ENGINE.camera.x, 
-      this.y - GAME_ENGINE.camera.y - 135 * this.scale, // Move up 
+      this.x - GAME_ENGINE.camera.x,
+      this.y - GAME_ENGINE.camera.y - 135 * this.scale, // Move up
       256 * this.scale,
       144 * this.scale // Apply scaling
     );

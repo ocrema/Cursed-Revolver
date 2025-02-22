@@ -14,25 +14,27 @@ import { GrowingTree } from "../Objects/GrowingTree.js";
 export class Map extends GameMap {
   async load() {
     // ground level is 80
-    GAME_ENGINE.addEntity(new Player(1500, -200));
+    GAME_ENGINE.addEntity(new Player(1500, 500));
     GAME_ENGINE.addEntity(new Background());
 
     const TILESET_IMAGES = [
       window.ASSET_MANAGER.getAsset("./assets/map/Atlas.png"),
       window.ASSET_MANAGER.getAsset("./assets/map/Spikes.png"),
       window.ASSET_MANAGER.getAsset("./assets/map/Saloon.png"),
+      window.ASSET_MANAGER.getAsset("./assets/map/Signs.png"),
     ];
 
     const gameMap = new Tilemap(
-      "./Entities/Map/MapAssets/Map.json",
+      "./Entities/Map/MapAssets/FinalMap.json",
       TILESET_IMAGES
     );
 
     await gameMap.load();
     GAME_ENGINE.addEntity(gameMap);
+    GAME_ENGINE.addEntity(new Cactus(3000, 260));
 
-    this.addEnemies();
-    this.addObjects();
+    //this.addEnemies();
+    //this.addObjects();
   }
 
   addEnemies() {
