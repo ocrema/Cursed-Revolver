@@ -2,7 +2,7 @@ import { Collider } from "../../Collider.js";
 import { Tile } from "./Tile.js";
 import { Player } from "../../Player/Player.js";
 
-export class SpikeTile extends Tile {
+export class SpawnPointTile extends Tile {
   constructor(
     x,
     y,
@@ -25,7 +25,7 @@ export class SpikeTile extends Tile {
     this.firstGID = firstGID;
     this.scale = scale; // Scale factor
     this.isGround = true;
-    this.isSpike = true;
+    this.isSpawnPoint = true;
 
     this.collider = new Collider(
       this.tileSize * this.scale, // Scale width
@@ -36,13 +36,29 @@ export class SpikeTile extends Tile {
   update() {
     for (let e of GAME_ENGINE.entities) {
       if (e instanceof Player && this.colliding(e)) {
-        e.queueAttack({
-          damage: 100,
-          x: this.x,
-          y: this.y,
-          launchMagnitude: 0,
-        });
+        e.setSpawnPoint(e.x, e.y);
       }
     }
+  }
+
+  draw(ctx) {
+    if (!this.tilesetImage || this.tileID < this.firstGID) return;
+
+    let tileIndex = this.tileID - this.firstGID;
+    let tilesetX = (tileIndex % this.tilesPerRow) * this.tileSize;
+    let tilesetY = Math.floor(tileIndex / this.tilesPerRow) * this.tileSize;
+
+    // Adjust the drawing position to move it UP and RIGHT
+    ctx.drawImage(
+      this.tilesetImage,
+      tilesetX,
+      tilesetY,
+      63,
+      63, // Full tile size
+      this.x - GAME_ENGINE.camera.x - 30 * this.scale,
+      this.y - GAME_ENGINE.camera.y - 40 * this.scale, // Move up
+      63 * this.scale,
+      63 * this.scale // Apply scaling
+    );
   }
 }

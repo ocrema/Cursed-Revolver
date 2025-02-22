@@ -112,6 +112,7 @@ export class AssetDownloader {
     this.assetManager.queueDownload("./assets/map/props/tree04.png");
     this.assetManager.queueDownload("./assets/map/Spikes.png");
     this.assetManager.queueDownload("./assets/map/Saloon.png");
+    this.assetManager.queueDownload("./assets/map/Signs.png");
   }
 
   downloadSpellAssets() {

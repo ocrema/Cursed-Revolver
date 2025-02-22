@@ -3,6 +3,7 @@ import { GAME_ENGINE } from "../../main.js";
 import { WaterTile } from "./Tiles/WaterTile.js";
 import { SpikeTile } from "./Tiles/SpikeTile.js";
 import { SaloonTile } from "./Tiles/SaloonTile.js";
+import { SpawnPointTile } from "./Tiles/SpawnPointTile.js";
 
 export class Tilemap {
   constructor(
@@ -80,7 +81,21 @@ export class Tilemap {
           let worldX = x * this.tileSize * this.scale;
           let worldY = y * this.tileSize * this.scale;
 
-          if (tileID === 74 || tileID === 75) {
+          if (tileID === 104) {
+            let spawnPointTile = new SpawnPointTile(
+              worldX,
+              worldY,
+              adjustedTileID,
+              tileset.image,
+              this.tileSize,
+              this.tilesPerRow,
+              tileset.firstGID,
+              this.solidTiles,
+              this.scale
+            );
+            console.log(spawnPointTile);
+            GAME_ENGINE.addEntity(spawnPointTile);
+          } else if (tileID === 74 || tileID === 75) {
             let tile = new WaterTile(
               worldX,
               worldY,
@@ -93,9 +108,7 @@ export class Tilemap {
               this.scale
             );
             GAME_ENGINE.addEntity(tile);
-          }
-
-          if (tileID == 101) {
+          } else if (tileID == 101) {
             let spikeTile = new SpikeTile(
               worldX,
               worldY,
@@ -108,10 +121,7 @@ export class Tilemap {
               this.scale
             );
             GAME_ENGINE.addEntity(spikeTile);
-          }
-
-          if (tileID == 103) {
-            console.log(tileset.image);
+          } else if (tileID == 103) {
             let saloonTile = new SaloonTile(
               worldX,
               worldY,
@@ -124,20 +134,20 @@ export class Tilemap {
               this.scale
             );
             GAME_ENGINE.addEntity(saloonTile);
+          } else {
+            let tile = new Tile(
+              worldX,
+              worldY,
+              adjustedTileID,
+              tileset.image,
+              this.tileSize,
+              this.tilesPerRow,
+              tileset.firstGID,
+              this.solidTiles,
+              this.scale
+            );
+            GAME_ENGINE.addEntity(tile);
           }
-
-          let tile = new Tile(
-            worldX,
-            worldY,
-            adjustedTileID,
-            tileset.image,
-            this.tileSize,
-            this.tilesPerRow,
-            tileset.firstGID,
-            this.solidTiles,
-            this.scale
-          );
-          GAME_ENGINE.addEntity(tile);
         }
       }
     }
