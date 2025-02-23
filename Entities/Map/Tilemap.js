@@ -84,7 +84,7 @@ export class Tilemap {
 
           let tileClass = Tile;
 
-          if (tileID === 80) {
+          if (tileID === 105) {
             tileClass = SpawnPointTile;
           } else if (tileID === 74 || tileID === 75) {
             tileClass = WaterTile;
@@ -92,7 +92,7 @@ export class Tilemap {
             tileClass = SpikeTile;
           } else if (tileID == 102) {
             tileClass = SaloonTile;
-          } else if (tileID === 104 ) {
+          } else if (tileID === 104) {
             tileClass = TreeTile;
           }
 
