@@ -101,11 +101,10 @@ export class AssetDownloader {
   }
 
   downloadMapObjectAssets() {
-    this.assetManager.queueDownload("./assets/map/props/rocks1.png");
+    this.assetManager.queueDownload("./assets/map/Rock1.png");
     this.assetManager.queueDownload("./assets/map/props/rocks2.png");
     this.assetManager.queueDownload("./assets/map/props/rocks3.png");
     this.assetManager.queueDownload("./assets/map/props/rocks4.png");
-    this.assetManager.queueDownload("./assets/map/props/rocks5.png");
     this.assetManager.queueDownload("./assets/map/props/tree01.png");
     this.assetManager.queueDownload("./assets/map/props/tree02.png");
     this.assetManager.queueDownload("./assets/map/props/tree03.png");
@@ -113,6 +112,7 @@ export class AssetDownloader {
     this.assetManager.queueDownload("./assets/map/Spikes.png");
     this.assetManager.queueDownload("./assets/map/CactusSpikes.png");
     this.assetManager.queueDownload("./assets/map/Saloon.png");
+    this.assetManager.queueDownload("./assets/map/SpawnPoint.png");
     this.assetManager.queueDownload("./assets/map/Signs.png");
     this.assetManager.queueDownload("./assets/map/Campfire.png");
   }

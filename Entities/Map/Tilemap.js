@@ -54,6 +54,9 @@ export class Tilemap {
       image: this.tilesetImages[index], // Map to corresponding image
     }));
 
+    console.log(this.tilesetImages);
+    console.log(this.tilesets);
+
     this.generateTiles();
   }
 
@@ -78,6 +81,9 @@ export class Tilemap {
           let tileset = this.getTilesetForTile(tileID);
           if (!tileset) continue;
 
+          if (!tileset.image) {
+            console.error(`Tileset GID ${tileset.firstGID} image is undefined`);
+          }
           let adjustedTileID = tileID; // Adjust tile ID relative to tileset
           let worldX = x * this.tileSize * this.scale;
           let worldY = y * this.tileSize * this.scale;
