@@ -7,6 +7,7 @@ import { GAME_ENGINE } from "../../main.js";
 import { Barrel } from "../Objects/Barrel.js";
 import { Tumbleweed } from "../Objects/Tumbleweed.js";
 import { CowboyEnemy } from "../Enemy/CowboyEnemy.js";
+import { EarthGolem } from "../Enemy/EarthGolem.js";
 import { StaticCowboyEnemy } from "../Enemy/StaticCowboyEnemy.js";
 import { Crow } from "../Enemy/Crow.js";
 import { Tilemap } from "./Tilemap.js";
@@ -61,6 +62,9 @@ export class Map extends GameMap {
     // Cowboy Enemy
     GAME_ENGINE.addEntity(new CowboyEnemy(4115, 1330));
     GAME_ENGINE.addEntity(new StaticCowboyEnemy(3300, 275));
+
+    GAME_ENGINE.addEntity(new EarthGolem(4215, 1330));
+
   }
 
   addObjects() {

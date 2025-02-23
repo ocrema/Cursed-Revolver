@@ -47,7 +47,7 @@ export class CowboyEnemy extends Actor {
       "drawWeapon",
       this.assetManager.getAsset("./assets/cowboy/CowBoyDrawWeapon.png"),
       49,
-      55,
+      64,
       7,
       0.12
     );
@@ -56,7 +56,7 @@ export class CowboyEnemy extends Actor {
       "shoot",
       this.assetManager.getAsset("./assets/cowboy/CowBoyShoot.png"),
       48,
-      48,
+      64,
       5,
       0.2
     );
