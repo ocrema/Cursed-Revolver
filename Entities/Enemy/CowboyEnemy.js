@@ -61,7 +61,7 @@ export class CowboyEnemy extends Actor {
     this.setAnimation("idle"); // Default animation
 
     this.width = 50;
-    this.height = 120;
+    this.height = 110;
     this.scale = 3;
     this.speed = 200;
     this.health = 120;
@@ -106,82 +106,145 @@ export class CowboyEnemy extends Actor {
     }
   }
 
+  // update() {
+  //   this.attackCooldown += GAME_ENGINE.clockTick;
+  //   this.smokingTimer -= GAME_ENGINE.clockTick;
+  //   this.recieveEffects();
+  //   this.onGround = false;
+  //   this.onWall = false;
+
+  //   let playerDetected = false;
+  //   let playerTarget = null;
+
+  //   // Apply gravity if not on the ground
+  //   if (!this.onGround) {
+  //       this.velocity.y += this.gravity * GAME_ENGINE.clockTick;
+  //   } else {
+  //       this.velocity.y = 0; // Stop downward movement when on ground
+  //   }
+
+  //   // Update cowboy position with velocity
+  //   this.y += this.velocity.y * GAME_ENGINE.clockTick;
+
+  //   // Check for player detection
+  //   for (let entity of GAME_ENGINE.entities) {
+  //     if (entity instanceof Player && Util.canSee(this, entity)) {
+  //       this.seesPlayer = true;
+  //       playerDetected = true;
+  //       playerTarget = entity;
+
+  //       const distance = Util.getDistance(this, entity);
+
+  //       // If currently drawing weapon, don't interrupt
+  //       if (!this.isDrawingWeapon) {
+  //         if (
+  //           distance < this.attackRadius &&
+  //           this.attackCooldown > this.fireRate
+  //         ) {
+  //           this.attack(entity);
+  //         } else if (distance < this.visualRadius) {
+  //           this.chasePlayer(entity);
+  //         }
+  //       }
+  //     }
+  //   }
+
+  //   // **When Player is OUT of Sight**
+  //   if (!playerDetected) {
+  //     this.seesPlayer = false;
+
+  //     // **Idle for 1 second, then transition to smoking**
+  //     if (this.smokingTimer <= 0) {
+  //       this.setAnimation("smoking");
+  //     } else {
+  //       this.setAnimation("idle");
+  //     }
+  //   } else {
+  //     // Reset smoking transition timer
+  //     this.smokingTimer = 1.0; // 1 second before transitioning to smoking
+  //   }
+
+  //   this.applyDamage();
+  //   this.handleCollisions();
+  //   // this.movement();
+
+  //   // Ensure cowboy moves with updated velocity
+  //   this.x += this.velocity.x * GAME_ENGINE.clockTick;
+
+  //   if (this.health <= 0) {
+  //     this.removeFromWorld = true;
+  //   }
+  // }
+
   update() {
     this.attackCooldown += GAME_ENGINE.clockTick;
     this.smokingTimer -= GAME_ENGINE.clockTick;
     this.recieveEffects();
+
+    // Reset movement state
     this.onGround = false;
     this.onWall = false;
 
     let playerDetected = false;
     let playerTarget = null;
 
-    // Check for player detection
-    for (let entity of GAME_ENGINE.entities) {
-      if (entity instanceof Player && Util.canSee(this, entity)) {
-        this.seesPlayer = true;
-        playerDetected = true;
-        playerTarget = entity;
-
-        const distance = Util.getDistance(this, entity);
-
-        // If currently drawing weapon, don't interrupt
-        if (!this.isDrawingWeapon) {
-          if (
-            distance < this.attackRadius &&
-            this.attackCooldown > this.fireRate
-          ) {
-            this.attack(entity);
-          } else if (distance < this.visualRadius) {
-            this.chasePlayer(entity);
-          }
-        }
-        // // Attack when in range
-        // if (distance < this.attackRadius && this.attackCooldown > this.fireRate) {
-        //   this.attack(entity);
-        // }
-        // // Chase if player is seen but not in range
-        // else if (distance < this.visualRadius) {
-        //   this.chasePlayer(entity);
-        // }
-      }
-    }
-
-    // if (!playerDetected) {
-    //   this.seesPlayer = false;
-    //   this.roam();
-    // }
-
-    // **When Player is OUT of Sight**
-    if (!playerDetected) {
-      this.seesPlayer = false;
-
-      // **Idle for 1 second, then transition to smoking**
-      if (this.smokingTimer <= 0) {
-        this.setAnimation("smoking");
-      } else {
-        this.setAnimation("idle");
-      }
+    // **Apply Gravity Smoothly**
+    if (!this.onGround) {
+        this.velocity.y += this.gravity * GAME_ENGINE.clockTick;
     } else {
-      // Reset smoking transition timer
-      this.smokingTimer = 1.0; // 1 second before transitioning to smoking
+        this.velocity.y = 0; // Stop downward movement when on ground
     }
 
-    this.applyDamage();
-    this.handleCollisions();
-    // this.movement();
+    // **Check for player detection**
+    for (let entity of GAME_ENGINE.entities) {
+        if (entity instanceof Player && Util.canSee(this, entity)) {
+            this.seesPlayer = true;
+            playerDetected = true;
+            playerTarget = entity;
 
+            const distance = Util.getDistance(this, entity);
+
+            // If currently drawing weapon, don't interrupt
+            if (!this.isDrawingWeapon) {
+                if (distance < this.attackRadius && this.attackCooldown > this.fireRate) {
+                    this.attack(entity);
+                } else if (distance < this.visualRadius) {
+                    this.chasePlayer(entity);
+                }
+            }
+        }
+    }
+
+    // **Handle Roaming Behavior When No Player is Detected**
+    if (!playerDetected) {
+        this.seesPlayer = false;
+        this.roam();
+    } else {
+        this.smokingTimer = 1.0; // Reset smoking timer when seeing player
+    }
+
+    // **Apply Damage from Attacks**
+    this.applyDamage();
+
+    // **Handle Collisions with Ground and Walls**
+    this.handleCollisions();
+
+    // **Update Position Based on Velocity**
+    this.x += this.velocity.x * GAME_ENGINE.clockTick;
+    this.y += this.velocity.y * GAME_ENGINE.clockTick;
+
+    // **Check if Cowboy Should Be Removed**
     if (this.health <= 0) {
-      this.removeFromWorld = true;
+        this.removeFromWorld = true;
     }
   }
 
-  // attack(player) {
-  //   this.setAnimation("shoot");
-  //   this.attackCooldown = 0;
+  attack(player) {
+    this.setAnimation("shoot");
+    this.attackCooldown = 0;
 
-  //   GAME_ENGINE.addEntity(new CowboyBullet(this.x, this.y, player));
-  // }
+    GAME_ENGINE.addEntity(new CowboyBullet(this.x, this.y, player));
+  }
 
   attack(player) {
     // If cowboy is already drawing weapon, don't reset animation
@@ -204,36 +267,72 @@ export class CowboyEnemy extends Actor {
     }, 600); // Adjust timing based on drawWeapon animation duration
   }
 
-  chasePlayer(player) {
-    if (this.currentAnimation !== "walk") {
-      this.setAnimation("walk");
-    }
+  // chasePlayer(player) {
+  //   if (this.currentAnimation !== "walk") {
+  //     this.setAnimation("walk");
+  //   }
 
-    this.flip = player.x < this.x;
-    const direction = this.flip ? -1 : 1;
-    this.x += direction * this.speed * GAME_ENGINE.clockTick;
+  //   this.flip = player.x < this.x;
+  //   const direction = this.flip ? -1 : 1;
+  //   this.x += direction * this.speed * GAME_ENGINE.clockTick;
+  // }
+
+
+/**
+ * Refined chasing movement for the cowboy enemy.
+ */
+chasePlayer(player) {
+  if (this.currentAnimation !== "walk") {
+      this.setAnimation("walk");
   }
+
+  this.flip = player.x < this.x; 
+  const direction = this.flip ? -1 : 1;
+
+  // **Stop Moving If Close to Player**
+  if (Math.abs(this.x - player.x) > 20) {
+      this.velocity.x = direction * this.speed;
+  } else {
+      this.velocity.x = 0; // Stop near player
+  }
+}
+
+  // roam() {
+  //   // Switch to idle state if close to target
+  //   if (Math.abs(this.x - this.target.x) < 5) {
+  //     this.setAnimation("idle");
+
+  //     if (this.velocity.x < 0) {
+  //       this.target.x +=
+  //         this.randomRoamLength[Util.randomInt(this.randomRoamLength.length)];
+  //     } else {
+  //       this.target.x -=
+  //         this.randomRoamLength[Util.randomInt(this.randomRoamLength.length)];
+  //     }
+  //   } else {
+  //     this.setAnimation("walk");
+  //     this.velocity.x =
+  //       ((this.target.x - this.x) / Math.abs(this.target.x - this.x)) *
+  //       this.speed;
+  //     this.x += this.velocity.x * GAME_ENGINE.clockTick;
+  //   }
+  // }
 
   roam() {
-    // Switch to idle state if close to target
     if (Math.abs(this.x - this.target.x) < 5) {
-      this.setAnimation("idle");
+        this.setAnimation("idle");
 
-      if (this.velocity.x < 0) {
-        this.target.x +=
-          this.randomRoamLength[Util.randomInt(this.randomRoamLength.length)];
-      } else {
-        this.target.x -=
-          this.randomRoamLength[Util.randomInt(this.randomRoamLength.length)];
-      }
+        let roamDistance = this.randomRoamLength[Util.randomInt(this.randomRoamLength.length)];
+        if (this.velocity.x < 0) {
+            this.target.x += roamDistance; // Move Right
+        } else {
+            this.target.x -= roamDistance; // Move Left
+        }
     } else {
-      this.setAnimation("walk");
-      this.velocity.x =
-        ((this.target.x - this.x) / Math.abs(this.target.x - this.x)) *
-        this.speed;
-      this.x += this.velocity.x * GAME_ENGINE.clockTick;
+        this.setAnimation("walk");
+        this.velocity.x = Math.sign(this.target.x - this.x) * this.speed;
     }
-  }
+}
 
   applyDamage() {
     for (let attack of this.recieved_attacks) {
@@ -242,45 +341,67 @@ export class CowboyEnemy extends Actor {
     this.recieved_attacks = [];
   }
 
+  // handleCollisions() {
+  //   for (let entity of GAME_ENGINE.entities) {
+  //     if (entity instanceof Tile && this.colliding(entity)) {
+  //       let thisTop = this.y - this.height / 2;
+  //       let thisBottom = this.y + this.height / 2;
+  //       let thisLeft = this.x - this.width / 2;
+  //       let thisRight = this.x + this.width / 2;
+
+  //       let eTop = entity.y - entity.collider.height / 2;
+  //       let eBottom = entity.y + entity.collider.height / 2;
+  //       let eLeft = entity.x - entity.collider.width / 2;
+  //       let eRight = entity.x + entity.collider.width / 2;
+
+  //       let collideBottom =
+  //         thisBottom > eTop &&
+  //         thisTop < eTop &&
+  //         thisRight > eLeft &&
+  //         thisLeft < eRight;
+  //       let collideLeft = thisLeft < eRight && thisRight > eRight;
+  //       let collideRight = thisRight > eLeft && thisLeft < eLeft;
+
+  //       if (collideBottom) {
+  //         this.y = eTop - this.height / 2;
+  //         this.velocity.y = 0;
+  //         this.onGround = true;
+  //       }
+
+  //       if (collideLeft || collideRight) {
+  //         this.velocity.x = 0;
+  //         this.onWall = true;
+  //         if (collideRight) {
+  //           this.x = entity.x - entity.collider.width / 2 - this.width / 2;
+  //         } else {
+  //           this.x = entity.x + entity.collider.width / 2 + this.width / 2;
+  //         }
+  //       }
+  //     }
+  //   }
+  // }
+
   handleCollisions() {
     for (let entity of GAME_ENGINE.entities) {
-      if (entity instanceof Tile && this.colliding(entity)) {
-        let thisTop = this.y - this.height / 2;
-        let thisBottom = this.y + this.height / 2;
-        let thisLeft = this.x - this.width / 2;
-        let thisRight = this.x + this.width / 2;
+        if (entity instanceof Tile && this.colliding(entity)) {
+            let thisBottom = this.y + this.height / 2;
+            let eTop = entity.y - entity.collider.height / 2;
 
-        let eTop = entity.y - entity.collider.height / 2;
-        let eBottom = entity.y + entity.collider.height / 2;
-        let eLeft = entity.x - entity.collider.width / 2;
-        let eRight = entity.x + entity.collider.width / 2;
+            let collideBottom = 
+                thisBottom > eTop &&
+                this.y < eTop &&
+                this.x + this.width / 2 > entity.x - entity.collider.width / 2 &&
+                this.x - this.width / 2 < entity.x + entity.collider.width / 2;
 
-        let collideBottom =
-          thisBottom > eTop &&
-          thisTop < eTop &&
-          thisRight > eLeft &&
-          thisLeft < eRight;
-        let collideLeft = thisLeft < eRight && thisRight > eRight;
-        let collideRight = thisRight > eLeft && thisLeft < eLeft;
-
-        if (collideBottom) {
-          this.y = eTop - this.height / 2;
-          this.velocity.y = 0;
-          this.onGround = true;
+            if (collideBottom) {
+                this.y = eTop - this.height / 2;
+                this.velocity.y = 0;
+                this.onGround = true;
+            }
         }
-
-        if (collideLeft || collideRight) {
-          this.velocity.x = 0;
-          this.onWall = true;
-          if (collideRight) {
-            this.x = entity.x - entity.collider.width / 2 - this.width / 2;
-          } else {
-            this.x = entity.x + entity.collider.width / 2 + this.width / 2;
-          }
-        }
-      }
     }
-  }
+}
+
 }
 
 export class CowboyBullet extends Actor {
