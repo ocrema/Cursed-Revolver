@@ -28,14 +28,14 @@ export class HealingBottle extends Actor {
     }
 
     update() {
-        console.log(`HealingBottle updating at (${this.x}, ${this.y})`);
+        //console.log(`HealingBottle updating at (${this.x}, ${this.y})`);
 
         for (let entity of GAME_ENGINE.entities) {
             if (entity instanceof Player) {
-                console.log(`Checking collision with Player at (${entity.x}, ${entity.y})`);
+                //console.log(`Checking collision with Player at (${entity.x}, ${entity.y})`);
 
                 if (!entity.collider) {
-                    console.error("Player has no collider! Skipping collision check.");
+                    //console.error("Player has no collider! Skipping collision check.");
                     continue;
                 }
 
@@ -58,17 +58,17 @@ export class HealingBottle extends Actor {
                 let collideX = playerRight + proximityBuffer > bottleLeft && playerLeft - proximityBuffer < bottleRight;
                 let collideY = playerBottom > bottleTop && playerTop < bottleBottom;
 
-                console.log(`Collision Check: collideX=${collideX}, collideY=${collideY}`);
-                console.log(`Player Bounds: L=${playerLeft}, R=${playerRight}, T=${playerTop}, B=${playerBottom}`);
-                console.log(`Bottle Bounds: L=${bottleLeft}, R=${bottleRight}, T=${bottleTop}, B=${bottleBottom}`);
+                //console.log(`Collision Check: collideX=${collideX}, collideY=${collideY}`);
+                //console.log(`Player Bounds: L=${playerLeft}, R=${playerRight}, T=${playerTop}, B=${playerBottom}`);
+                //console.log(`Bottle Bounds: L=${bottleLeft}, R=${bottleRight}, T=${bottleTop}, B=${bottleBottom}`);
 
                 if (collideX && collideY) {
-                    console.log("Healing bottle collected! Attempting to heal player...");
+                    //console.log("Healing bottle collected! Attempting to heal player...");
 
                     if (typeof entity.heal === "function") {
-                        console.log("Calling heal() on player...");
+                        //console.log("Calling heal() on player...");
                         entity.heal(this.healingAmount);
-                        console.log("Healing successful!");
+                        //console.log("Healing successful!");
                     } else {
                         console.error("heal() function is missing on Player!");
                     }

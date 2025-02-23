@@ -109,70 +109,61 @@ export class CowboyEnemy extends Actor {
     }
   }
 
-  update() {
-    this.attackCooldown += GAME_ENGINE.clockTick;
-    this.smokingTimer -= GAME_ENGINE.clockTick;
-    this.recieveEffects();
 
-    // Reset movement state
-    this.onGround = false;
-    this.onWall = false;
+update() {
+  this.attackCooldown += GAME_ENGINE.clockTick;
+  this.recieveEffects();
 
-    let playerDetected = false;
-    let playerTarget = null;
+  let playerDetected = false;
+  let playerTarget = null;
 
-    // **Apply Gravity Smoothly**
-    if (!this.onGround) {
-        this.velocity.y += this.gravity * GAME_ENGINE.clockTick;
-    } else {
-        this.velocity.y = 0; // Stop downward movement when on ground
-    }
+  if (!this.onGround) {
+      this.velocity.y += this.gravity * GAME_ENGINE.clockTick;
+  } else {
+      this.velocity.y = 0;
+  }
 
-    // **Check for player detection**
-    for (let entity of GAME_ENGINE.entities) {
-        if (entity instanceof Player && Util.canSee(this, entity)) {
-            this.seesPlayer = true;
-            playerDetected = true;
-            playerTarget = entity;
+  for (let entity of GAME_ENGINE.entities) {
+      if (entity instanceof Player && Util.canSee(this, entity)) {
+          this.seesPlayer = true;
+          playerDetected = true;
+          playerTarget = entity;
 
-            const distance = Util.getDistance(this, entity);
+          const distance = Util.getDistance(this, entity);
 
-            // If currently drawing weapon, don't interrupt
-            if (!this.isDrawingWeapon) {
-                if (distance < this.attackRadius && this.attackCooldown > this.fireRate) {
-                    this.attack(entity);
-                } else if (distance < this.visualRadius) {
-                    this.chasePlayer(entity);
-                }
-            }
-        }
-    }
+          if (!this.isDrawingWeapon) {
+              if (distance < this.attackRadius && this.attackCooldown > this.fireRate) {
+                  this.attack(entity);
+              } else if (distance < this.visualRadius) {
+                  this.chasePlayer(entity);
+              }
+          }
+      }
+  }
 
-    // **Handle Roaming Behavior When No Player is Detected**
-    if (!playerDetected) {
-        this.seesPlayer = false;
-        this.roam();
-    } else {
-        this.smokingTimer = 1.0; // Reset smoking timer when seeing player
-    }
+  // **If No Player Is Detected, Stop Moving**
+  if (!playerDetected) {
+      this.velocity.x = 0;
+      this.setAnimation("idle");
+  }
 
-    // **Apply Damage from Attacks**
-    this.applyDamage();
+  this.applyDamage();
+  this.handleCollisions();
 
-    // **Handle Collisions with Ground and Walls**
-    this.handleCollisions();
+  // **Prevent Cowboy From Sliding Past Player**
+  if (Math.abs(this.velocity.x) < 5) {
+      this.velocity.x = 0; 
+  }
 
-    // **Update Position Based on Velocity**
-    this.x += this.velocity.x * GAME_ENGINE.clockTick;
-    this.y += this.velocity.y * GAME_ENGINE.clockTick;
+  this.x += this.velocity.x * GAME_ENGINE.clockTick;
+  this.y += this.velocity.y * GAME_ENGINE.clockTick;
 
-    // **Check if Cowboy Should Be Removed**
-    if (this.health <= 0) {
-      this.spawnHealingBottle();  // Spawn healing bottle
+  if (this.health <= 0) {
+      this.spawnHealingBottle();
       this.removeFromWorld = true;
       this.collider = null;
-    }
   }
+}
 
 
   spawnHealingBottle() {
@@ -216,38 +207,53 @@ export class CowboyEnemy extends Actor {
     }, 600); // Adjust timing based on drawWeapon animation duration
   }
 
-
   chasePlayer(player) {
-    if (this.currentAnimation !== "walk") {
+    if (this.currentAnimation !== "walk" && this.velocity.x !== 0) {
         this.setAnimation("walk");
     }
 
     this.flip = player.x < this.x; 
     const direction = this.flip ? -1 : 1;
 
-    // **Stop Moving If Close to Player**
-    if (Math.abs(this.x - player.x) > 20) {
-        this.velocity.x = direction * this.speed;
-    } else {
-        this.velocity.x = 0; // Stop near player
+    // **Accurate Collider-Based Positions**
+    const cowboyLeft = this.x - this.collider.width / 2;
+    const cowboyRight = this.x + this.collider.width / 2;
+    const playerLeft = player.x - player.collider.width / 2;
+    const playerRight = player.x + player.collider.width / 2;
+
+    const distanceToPlayer = Math.abs(Math.abs(this.x) - Math.abs(player.x));
+    const stopDistance = 310; // Cowboy stops moving at this distance
+
+    // console.log(`Cowboy Position: L=${cowboyLeft}, R=${cowboyRight}`);
+    // console.log(`Player Position: L=${playerLeft}, R=${playerRight}`);
+    // console.log(`Distance to Player: ${distanceToPlayer}, Stop Distance: ${stopDistance}`);
+
+    // **If close enough, stop moving but keep shooting**
+    if (distanceToPlayer <= stopDistance) {
+        if (this.velocity.x !== 0) {  // Only log when stopping to avoid spam
+            //console.log("Cowboy Stopping - Close Enough to Player");
+        }
+        this.velocity.x = 0;  
+        this.setAnimation("idle");  
+
+        // **Ensure continuous shooting**
+        if (this.attackCooldown >= this.fireRate) {
+            //console.log("Cowboy is attacking the player!");
+            this.attack(player);
+        }
+        return; 
+    }
+
+    // **Only update velocity if not within stop distance**
+    this.velocity.x = direction * this.speed; 
+
+    // **Attack while moving if within attack range**
+    if (distanceToPlayer <= this.attackRadius && this.attackCooldown >= this.fireRate) {
+        //console.log("Cowboy is attacking while moving!");
+        this.attack(player);
     }
   }
 
-  roam() {
-    if (Math.abs(this.x - this.target.x) < 5) {
-        this.setAnimation("idle");
-
-        let roamDistance = this.randomRoamLength[Util.randomInt(this.randomRoamLength.length)];
-        if (this.velocity.x < 0) {
-            this.target.x += roamDistance; // Move Right
-        } else {
-            this.target.x -= roamDistance; // Move Left
-        }
-    } else {
-        this.setAnimation("walk");
-        this.velocity.x = Math.sign(this.target.x - this.x) * this.speed;
-    }
-}
 
   applyDamage() {
     for (let attack of this.recieved_attacks) {
