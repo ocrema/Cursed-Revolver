@@ -81,73 +81,30 @@ export class Tilemap {
           let worldX = x * this.tileSize * this.scale;
           let worldY = y * this.tileSize * this.scale;
 
+          let tileClass = Tile;
+
           if (tileID === 104) {
-            let spawnPointTile = new SpawnPointTile(
-              worldX,
-              worldY,
-              adjustedTileID,
-              tileset.image,
-              this.tileSize,
-              this.tilesPerRow,
-              tileset.firstGID,
-              this.solidTiles,
-              this.scale
-            );
-            console.log(spawnPointTile);
-            GAME_ENGINE.addEntity(spawnPointTile);
+            tileClass = SpawnPointTile;
           } else if (tileID === 74 || tileID === 75) {
-            let tile = new WaterTile(
-              worldX,
-              worldY,
-              adjustedTileID,
-              tileset.image,
-              this.tileSize,
-              this.tilesPerRow,
-              tileset.firstGID,
-              this.solidTiles,
-              this.scale
-            );
-            GAME_ENGINE.addEntity(tile);
+            tileClass = WaterTile;
           } else if (tileID == 101) {
-            let spikeTile = new SpikeTile(
-              worldX,
-              worldY,
-              adjustedTileID,
-              tileset.image,
-              this.tileSize,
-              this.tilesPerRow,
-              tileset.firstGID,
-              this.solidTiles,
-              this.scale
-            );
-            GAME_ENGINE.addEntity(spikeTile);
+            tileClass = SpikeTile;
           } else if (tileID == 103) {
-            let saloonTile = new SaloonTile(
-              worldX,
-              worldY,
-              adjustedTileID,
-              tileset.image,
-              this.tileSize,
-              this.tilesPerRow,
-              tileset.firstGID,
-              this.solidTiles,
-              this.scale
-            );
-            GAME_ENGINE.addEntity(saloonTile);
-          } else {
-            let tile = new Tile(
-              worldX,
-              worldY,
-              adjustedTileID,
-              tileset.image,
-              this.tileSize,
-              this.tilesPerRow,
-              tileset.firstGID,
-              this.solidTiles,
-              this.scale
-            );
-            GAME_ENGINE.addEntity(tile);
+            tileClass = SaloonTile;
           }
+
+          let tile = new tileClass(
+            worldX,
+            worldY,
+            adjustedTileID,
+            tileset.image,
+            this.tileSize,
+            this.tilesPerRow,
+            tileset.firstGID,
+            this.solidTiles,
+            this.scale
+          );
+          GAME_ENGINE.addEntity(tile);
         }
       }
     }
