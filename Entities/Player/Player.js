@@ -68,6 +68,23 @@ export class Player extends Actor {
     this.groundSlamSpeed = 3000;
   }
 
+  heal(amount) {
+    console.log(`Healing Player: +${amount} HP`);
+    
+    // Forcefully increase health
+    let oldHealth = this.health;
+    this.health = Math.min(this.maxHealth, this.health + amount);
+    
+    //console.log(` Player Health Before: ${oldHealth}, After: ${this.health}`);
+
+    // Ensure the update is visible in the HUD (if applicable)
+    if (this.hud) {
+        this.hud.updateHealth(this.health);
+    }
+}
+
+
+
   update() {
     this.isMoving = false;
     this.isJumping = false;
