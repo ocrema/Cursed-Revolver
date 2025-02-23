@@ -4,6 +4,7 @@ import { WaterTile } from "./Tiles/WaterTile.js";
 import { SpikeTile } from "./Tiles/SpikeTile.js";
 import { SaloonTile } from "./Tiles/SaloonTile.js";
 import { SpawnPointTile } from "./Tiles/SpawnPointTile.js";
+import { TreeTile } from "./Tiles/TreeTile.js";
 
 export class Tilemap {
   constructor(
@@ -91,6 +92,8 @@ export class Tilemap {
             tileClass = SpikeTile;
           } else if (tileID == 103) {
             tileClass = SaloonTile;
+          } else if (tileID === 105) {
+            tileClass = TreeTile;
           }
 
           let tile = new tileClass(

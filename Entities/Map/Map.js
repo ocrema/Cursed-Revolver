@@ -22,6 +22,7 @@ export class Map extends GameMap {
       window.ASSET_MANAGER.getAsset("./assets/map/Spikes.png"),
       window.ASSET_MANAGER.getAsset("./assets/map/Saloon.png"),
       window.ASSET_MANAGER.getAsset("./assets/map/Signs.png"),
+      window.ASSET_MANAGER.getAsset("./assets/map/props/tree04.png"),
     ];
 
     const gameMap = new Tilemap(
