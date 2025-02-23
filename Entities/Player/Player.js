@@ -32,7 +32,7 @@ export class Player extends Actor {
 
     this.playerAnimationLoader.loadPlayerAnimations();
 
-    this.speed = 2200; // Movement speed
+    this.speed = 500; // Movement speed
     this.isMoving = false; // Whether the player is moving
     this.health = 200;
     this.maxHealth = 200;
@@ -47,6 +47,7 @@ export class Player extends Actor {
 
     this.x_velocity = 0;
     this.y_velocity = 0;
+    this.jumpForce = -1500;
     this.isGrounded = 0; // values above 0 indicate that the player is grounded, so the player can still jump for a little bit after falling off a platform
 
     this.selectedSpell = 0;
@@ -76,6 +77,14 @@ export class Player extends Actor {
   }
 
   update() {
+    if (GAME_ENGINE.debug_colliders) {
+      this.health = 1000000;
+      this.jumpForce = -2100;
+      this.speed = 1000;
+    } else {
+      this.speed = 600;
+      this.jumpForce = -1500;
+    }
     this.isMoving = false;
     this.isJumping = false;
 
@@ -241,7 +250,7 @@ export class Player extends Actor {
     ) {
       this.isGrounded = 0;
       this.jumpCooldown = 0.4;
-      this.y_velocity = -1500; // Jumping velocity
+      this.y_velocity = this.jumpForce; // Jumping velocity
       this.setAnimation(PLAYER_SPRITESHEET.JUMP.NAME);
       this.isJumping = true;
       window.ASSET_MANAGER.playAsset("./assets/sfx/jump.ogg");
