@@ -10,6 +10,7 @@ import { CowboyEnemy } from "../Enemy/CowboyEnemy.js";
 import { Crow } from "../Enemy/Crow.js";
 import { Tilemap } from "./Tilemap.js";
 import { GrowingTree } from "../Objects/GrowingTree.js";
+import { SpawnPoint } from "../Objects/SpawnPoint.js";
 
 export class Map extends GameMap {
   async load() {
