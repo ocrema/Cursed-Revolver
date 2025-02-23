@@ -8,6 +8,11 @@
  "tilecount":1,
  "tiledversion":"1.11.2",
  "tileheight":63,
+ "tileoffset":
+    {
+     "x":-25,
+     "y":10
+    },
  "tilewidth":63,
  "type":"tileset",
  "version":"1.10"
