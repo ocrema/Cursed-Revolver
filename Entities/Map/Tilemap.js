@@ -90,9 +90,9 @@ export class Tilemap {
             tileClass = WaterTile;
           } else if (tileID == 101) {
             tileClass = SpikeTile;
-          } else if (tileID == 103) {
+          } else if (tileID == 102) {
             tileClass = SaloonTile;
-          } else if (tileID === 105) {
+          } else if (tileID === 104 ) {
             tileClass = TreeTile;
           }
 

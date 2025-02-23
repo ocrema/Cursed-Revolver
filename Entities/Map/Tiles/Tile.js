@@ -34,6 +34,10 @@ export class Tile extends Entity {
         this.tileSize * this.scale // Scale height
       );
     }
+
+    if (this.tileID < 74 && this.tileID >= 87) {
+      this.entityOrder = -8;
+    }
   }
 
   draw(ctx) {
