@@ -32,7 +32,7 @@ export class Player extends Actor {
 
     this.playerAnimationLoader.loadPlayerAnimations();
 
-    this.speed = 500; // Movement speed
+    this.speed = 2200; // Movement speed
     this.isMoving = false; // Whether the player is moving
     this.health = 200;
     this.maxHealth = 200;

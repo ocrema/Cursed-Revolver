@@ -15,7 +15,7 @@ import { SpawnPoint } from "../Objects/SpawnPoint.js";
 export class Map extends GameMap {
   async load() {
     // ground level is 80
-    GAME_ENGINE.addEntity(new Player(763, 3500));
+    GAME_ENGINE.addEntity(new Player(763, 1500));
     GAME_ENGINE.addEntity(new Background());
 
     const TILESET_IMAGES = [
