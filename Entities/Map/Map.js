@@ -7,6 +7,7 @@ import { GAME_ENGINE } from "../../main.js";
 import { Barrel } from "../Objects/Barrel.js";
 import { Tumbleweed } from "../Objects/Tumbleweed.js";
 import { CowboyEnemy } from "../Enemy/CowboyEnemy.js";
+import { StaticCowboyEnemy } from "../Enemy/StaticCowboyEnemy.js";
 import { Crow } from "../Enemy/Crow.js";
 import { Tilemap } from "./Tilemap.js";
 import { GrowingTree } from "../Objects/GrowingTree.js";
@@ -59,8 +60,7 @@ export class Map extends GameMap {
 
     // Cowboy Enemy
     GAME_ENGINE.addEntity(new CowboyEnemy(4115, 1330));
-    GAME_ENGINE.addEntity(new HealingBottle(3200, 275));
-
+    GAME_ENGINE.addEntity(new StaticCowboyEnemy(3300, 275));
   }
 
   addObjects() {
@@ -68,5 +68,7 @@ export class Map extends GameMap {
     GAME_ENGINE.addEntity(new Tumbleweed(4750, -100, "right"));
     GAME_ENGINE.addEntity(new Barrel(2569, 275));
     GAME_ENGINE.addEntity(new GrowingTree(1000, 0));
+    //healing bottle
+    GAME_ENGINE.addEntity(new HealingBottle(3200, 275));
   }
 }
