@@ -23,7 +23,7 @@ export class TreeTile extends Tile {
       solidTiles,
       scale
     );
-    this.entityOrder = -9;
+    this.entityOrder = -8;
   }
 
   draw(ctx) {
