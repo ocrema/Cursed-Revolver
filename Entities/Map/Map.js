@@ -20,7 +20,7 @@ export class Map extends GameMap {
 
     const TILESET_IMAGES = [
       window.ASSET_MANAGER.getAsset("./assets/map/Atlas.png"),
-      window.ASSET_MANAGER.getAsset("./assets/map/Spikes.png"),
+      window.ASSET_MANAGER.getAsset("./assets/map/CactusSpikes.png"),
       window.ASSET_MANAGER.getAsset("./assets/map/Saloon.png"),
       window.ASSET_MANAGER.getAsset("./assets/map/Signs.png"),
       window.ASSET_MANAGER.getAsset("./assets/map/props/tree04.png"),
