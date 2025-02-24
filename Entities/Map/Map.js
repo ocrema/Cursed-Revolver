@@ -31,16 +31,17 @@ export class Map extends GameMap {
     ];
 
     const gameMap = new Tilemap(
-      "./Entities/Map/MapAssets/FinalMap.json",
+      "./Entities/Map/MapAssets/Map.json",
       TILESET_IMAGES
     );
 
     await gameMap.load();
     GAME_ENGINE.addEntity(gameMap);
     GAME_ENGINE.addEntity(new Cactus(3000, 260));
-
-    //this.addEnemies();
-    //this.addObjects();
+    GAME_ENGINE.addEntity(new CowboyEnemy(1200, 2132));
+    GAME_ENGINE.addEntity(new StaticCowboyEnemy(1200, 2132));
+    //this.addOldMapEnemies();
+    //this.addOldMapObjects();
   }
 
   addEnemies() {
@@ -59,10 +60,9 @@ export class Map extends GameMap {
 
     // Cowboy Enemy
     GAME_ENGINE.addEntity(new CowboyEnemy(4115, 1330));
-    GAME_ENGINE.addEntity(new StaticCowboyEnemy(3300, 275));
+    GAME_ENGINE.addEntity(new StaticCowboyEnemy(1200, 2132));
 
     GAME_ENGINE.addEntity(new EarthGolem(4215, 1330));
-
   }
 
   addObjects() {
