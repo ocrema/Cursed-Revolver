@@ -1,7 +1,7 @@
 import { Entity } from "../Entities.js";
 import { Collider } from "../Collider.js";
 import { Player } from "../Player/Player.js";
-import { MAP_CONSTANTS } from "../../../Globals/Constants.js";
+import { MAP_CONSTANTS } from "../../Globals/Constants.js";
 
 export class SpawnPoint extends Entity {
   constructor(x, y, scale = 1) {
