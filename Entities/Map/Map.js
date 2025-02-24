@@ -87,7 +87,7 @@ export class Map extends GameMap {
     GAME_ENGINE.addEntity(new Tumbleweed(4750, -100, "right"));
     GAME_ENGINE.addEntity(new Barrel(2569, 275));
     GAME_ENGINE.addEntity(new Barrel(2250, 1375));
-    GAME_ENGINE.addEntity(new GrowingTree(1000, 0));
+    GAME_ENGINE.addEntity(new GrowingTree(1000, 300));
     //healing bottle
     GAME_ENGINE.addEntity(new HealingBottle(3200, 275));
   }
