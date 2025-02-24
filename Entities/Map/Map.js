@@ -31,7 +31,7 @@ export class Map extends GameMap {
     ];
 
     const gameMap = new Tilemap(
-      "./Entities/Map/MapAssets/Map.json",
+      "./Entities/Map/MapAssets/FinalMap.json",
       TILESET_IMAGES
     );
 
