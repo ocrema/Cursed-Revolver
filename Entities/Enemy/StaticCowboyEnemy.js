@@ -3,6 +3,8 @@ import { Player } from "../Player/Player.js";
 import { Collider } from "../Collider.js";
 import * as Util from "../../Utils/Util.js";
 import { CowboyBullet } from "./CowboyEnemy.js"; // Import Cowboy Bullet
+import { HealingBottle } from "../Enemy/HealingBottle.js"; // Ensure this is the correct path
+
 
 export class StaticCowboyEnemy extends Actor {
   constructor(x, y) {
@@ -83,6 +85,13 @@ export class StaticCowboyEnemy extends Actor {
       }
     }
 
+    // **Debug: Check if attacks are being received**
+    if (this.recieved_attacks.length > 0) {
+        console.log(`Static Cowboy hit! Received attacks:`, this.recieved_attacks);
+    }
+
+    this.applyDamage();
+
     // **If no player is detected, return to idle animation**
     if (!playerDetected) {
       this.setAnimation("idle");
@@ -105,12 +114,27 @@ export class StaticCowboyEnemy extends Actor {
   applyDamage() {
     for (let attack of this.recieved_attacks) {
       this.health -= attack.damage;
+      console.log(`Static Cowboy takes ${attack.damage} damage! Health: ${this.health}`);
     }
-    this.recieved_attacks = [];
-
+    this.recieved_attacks = []; // Clear attacks after processing
+  
+    // **Check if the cowboy dies**
     if (this.health <= 0) {
+      console.log("Static Cowboy has died!");
+  
+      // **Spawn a HealingBottle at Cowboy's Position**
+      this.spawnHealingBottle();
+  
       this.removeFromWorld = true;
       this.collider = null;
     }
   }
+  
+  spawnHealingBottle() {
+    let bottle = new HealingBottle(this.x, this.y); // Spawn at cowboy's position
+    GAME_ENGINE.addEntity(bottle);
+    console.log(`HealingBottle spawned at (${this.x}, ${this.y})`);
+  }
+  
+  
 }
