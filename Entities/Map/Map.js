@@ -137,6 +137,15 @@ export class Map extends GameMap {
     }
   }
 
+  addCowboyEnemies(gameMap) {
+    const cowboySpawnPoints = gameMap.getCowboySpawnPoints();
+
+    for (let spawn of cowboySpawnPoints) {
+      const cowboy = new StaticCowboyEnemy(spawn.x, spawn.y - 10);
+      GAME_ENGINE.addEntity(cowboy);
+    }
+  }
+
   addOldMapEnemies() {
     // Crow
     GAME_ENGINE.addEntity(new Crow(2500, -500));

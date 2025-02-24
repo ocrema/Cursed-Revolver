@@ -140,7 +140,6 @@ export class Tilemap {
               break;
           }
 
-
           let tile = new tileClass(
             worldX,
             worldY,
