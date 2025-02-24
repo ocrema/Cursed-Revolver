@@ -128,6 +128,15 @@ export class Map extends GameMap {
     }
   }
 
+  addCactusEnemies(gameMap) {
+    const enemySpawnPoints = gameMap.getCactusSpawnPoints();
+
+    for (let spawn of enemySpawnPoints) {
+      const enemy = new Cactus(spawn.x, spawn.y - 10);
+      GAME_ENGINE.addEntity(enemy);
+    }
+  }
+
   addOldMapEnemies() {
     // Crow
     GAME_ENGINE.addEntity(new Crow(2500, -500));
