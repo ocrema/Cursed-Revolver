@@ -63,11 +63,11 @@ export class Map extends GameMap {
   addOldMapEnemies() {
     // Crow
     GAME_ENGINE.addEntity(new Crow(2500, -500));
-    GAME_ENGINE.addEntity(new Crow(4090, -200));
+    //GAME_ENGINE.addEntity(new Crow(4090, -200));
 
     // Spider
     GAME_ENGINE.addEntity(new Spider(2600, 200));
-    GAME_ENGINE.addEntity(new Spider(4262, 200));
+    //GAME_ENGINE.addEntity(new Spider(4262, 200));
 
     // Cacti
     GAME_ENGINE.addEntity(new Cactus(2300, 260));
