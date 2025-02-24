@@ -73,20 +73,23 @@ export class Player extends Actor {
 
   heal(amount) {
     console.log(`Healing Player: +${amount} HP`);
-    
+
     // Forcefully increase health
     let oldHealth = this.health;
     this.health = Math.min(this.maxHealth, this.health + amount);
-    
+
     //console.log(` Player Health Before: ${oldHealth}, After: ${this.health}`);
 
     // Ensure the update is visible in the HUD (if applicable)
     if (this.hud) {
-        this.hud.updateHealth(this.health);
+      this.hud.updateHealth(this.health);
     }
-}
+  }
 
-
+  setSpawnPoint(x, y) {
+    this.spawnX = x;
+    this.spawnY = y;
+  }
 
   update() {
     if (GAME_ENGINE.debug_colliders) {

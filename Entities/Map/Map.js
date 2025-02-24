@@ -35,10 +35,19 @@ export class Map extends GameMap {
       window.ASSET_MANAGER.getAsset("./assets/map/Rock1.png"),
     ];
 
-    const gameMap = new Tilemap(
-      "./Entities/Map/MapAssets/Map.json",
-      TILESET_IMAGES
-    );
+    let gameMap;
+
+    if (oldMap) {
+      gameMap = new Tilemap(
+        "./Entities/Map/MapAssets/Map.json",
+        TILESET_IMAGES
+      );
+    } else {
+      gameMap = new Tilemap(
+        "./Entities/Map/MapAssets/FinalMap.json",
+        TILESET_IMAGES
+      );
+    }
 
     await gameMap.load();
     GAME_ENGINE.addEntity(gameMap);
@@ -82,4 +91,10 @@ export class Map extends GameMap {
     //healing bottle
     GAME_ENGINE.addEntity(new HealingBottle(3200, 275));
   }
+
+  addNewMapEnemies() {
+    GAME_ENGINE.addEntity(new Cactus(3000, 260));
+  }
+
+  addNewMapObjects() {}
 }
