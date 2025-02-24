@@ -26,6 +26,7 @@ export class Tilemap {
     this.solidTiles = new Set(solidTileIDs);
     this.scale = scale;
     this.cactusSpawnPoints = [];
+    this.cowboySpawnPoints = [];
   }
 
   async load() {
@@ -118,13 +119,12 @@ export class Tilemap {
               break;
 
             case 108:
-              this.cowboySpawnPoints.push({x: worldX, y: worldY});
+              this.cowboySpawnPoints.push({ x: worldX, y: worldY });
               break;
 
             default:
               break;
           }
-
 
           let tile = new tileClass(
             worldX,
@@ -145,5 +145,9 @@ export class Tilemap {
 
   getCactusSpawnPoints() {
     return this.cactusSpawnPoints;
+  }
+
+  getCowboySpawnPoints() { 
+    return this.cowboySpawnPoints;
   }
 }
