@@ -16,8 +16,13 @@ import { HealingBottle } from "../../Entities/Enemy/HealingBottle.js";
 
 export class Map extends GameMap {
   async load() {
-    // ground level is 80
-    GAME_ENGINE.addEntity(new Player(763, 1500));
+    let oldMap = true;
+
+    if (oldMap) {
+      GAME_ENGINE.addEntity(new Player(1470, -70));
+    } else {
+      GAME_ENGINE.addEntity(new Player(763, 1500));
+    }
     GAME_ENGINE.addEntity(new Background());
 
     const TILESET_IMAGES = [
@@ -31,20 +36,22 @@ export class Map extends GameMap {
     ];
 
     const gameMap = new Tilemap(
-      "./Entities/Map/MapAssets/FinalMap.json",
+      "./Entities/Map/MapAssets/Map.json",
       TILESET_IMAGES
     );
 
     await gameMap.load();
     GAME_ENGINE.addEntity(gameMap);
-    GAME_ENGINE.addEntity(new Cactus(3000, 260));
-    GAME_ENGINE.addEntity(new CowboyEnemy(1200, 2132));
-    GAME_ENGINE.addEntity(new StaticCowboyEnemy(1200, 2132));
-    //this.addOldMapEnemies();
-    //this.addOldMapObjects();
+    if (oldMap) {
+      this.addOldMapEnemies();
+      this.addOldMapObjects();
+    } else {
+      this.addNewMapEnemies();
+      this.addNewMapObjects();
+    }
   }
 
-  addEnemies() {
+  addOldMapEnemies() {
     // Crow
     GAME_ENGINE.addEntity(new Crow(2500, -500));
     GAME_ENGINE.addEntity(new Crow(4090, -200));
@@ -60,15 +67,17 @@ export class Map extends GameMap {
 
     // Cowboy Enemy
     GAME_ENGINE.addEntity(new CowboyEnemy(4115, 1330));
-    GAME_ENGINE.addEntity(new StaticCowboyEnemy(1200, 2132));
+    GAME_ENGINE.addEntity(new StaticCowboyEnemy(836, 1443));
+    GAME_ENGINE.addEntity(new StaticCowboyEnemy(2190, 1375));
 
     GAME_ENGINE.addEntity(new EarthGolem(4215, 1330));
   }
 
-  addObjects() {
+  addOldMapObjects() {
     GAME_ENGINE.addEntity(new Tumbleweed(3200, -100, "left"));
     GAME_ENGINE.addEntity(new Tumbleweed(4750, -100, "right"));
     GAME_ENGINE.addEntity(new Barrel(2569, 275));
+    GAME_ENGINE.addEntity(new Barrel(2250, 1375));
     GAME_ENGINE.addEntity(new GrowingTree(1000, 0));
     //healing bottle
     GAME_ENGINE.addEntity(new HealingBottle(3200, 275));
