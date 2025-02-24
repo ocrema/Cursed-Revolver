@@ -7,6 +7,7 @@ export class PauseMenu extends Entity {
     this.isVisible = false; 
     this.menuOptions = ["Resume", "Settings", "Quit"]; 
     this.selectedOption = 0; 
+    this.showSettings = false;
   }
 
   setVisibility(visible) {
@@ -29,7 +30,18 @@ export class PauseMenu extends Entity {
       return;
     }
 
-    //console.log("PauseMenu is updating");
+    if (this.showSettings) {
+      // **Exit settings menu when pressing Escape**
+      if (GAME_ENGINE.keys["Escape"]) {
+        this.showSettings = false;
+        //this.show();
+        GAME_ENGINE.keys["Escape"] = false;
+        return;
+      }
+      //return;
+    }
+
+    console.log("PauseMenu is updating");
 
     // Navigate through menu options
     if (GAME_ENGINE.keys["ArrowUp"]) {
@@ -54,6 +66,7 @@ export class PauseMenu extends Entity {
     }
   }
 
+
   draw(ctx) {
     if (!this.isVisible) {
       //console.log("PauseMenu is hidden, skipping draw");
@@ -66,6 +79,12 @@ export class PauseMenu extends Entity {
     const centerX = this.x / 2;
     const centerY = this.y / 2;
   
+
+    if (this.showSettings) {
+      this.drawSettings(ctx, centerX, centerY);
+      return;
+    }
+
     // Define menu dimensions (adjust as needed)
     const menuWidth = 330; // Width of the pause menu
     const menuHeight = 330; // Height of the pause menu
@@ -128,6 +147,41 @@ export class PauseMenu extends Entity {
     ctx.restore();
   }  
 
+  drawSettings(ctx, centerX, centerY) {
+    // **Draw a semi-transparent black background**
+    ctx.fillStyle = "rgba(0, 0, 0, 0.8)";
+    ctx.fillRect(centerX - 350, centerY - 200, 700, 400);
+
+    // **Draw title**
+    ctx.fillStyle = "white";
+    ctx.font = "30px Arial";
+    ctx.textAlign = "center";
+    ctx.fillText("How to Play", centerX, centerY - 150);
+
+    // **Draw tutorial instructions**
+    ctx.font = "24px Arial";
+    ctx.textAlign = "left";
+
+    const tutorialText = [
+      "A  - Move Left",
+      "D  - Move Right",
+      "Space - Jump",
+      "Shift - Dash",
+      "Num Keys (1-6) - Switch Spells",
+      "Click - Shoot",
+      "Enemies drop potions when killed",
+    ];
+
+    tutorialText.forEach((text, index) => {
+      ctx.fillText(text, centerX - 300, centerY - 100 + index * 35);
+    });
+
+    // **Display a hint for exiting tutorial**
+    ctx.font = "20px Arial";
+    ctx.fillStyle = "yellow";
+    ctx.fillText("Press ESC to return", centerX-80, centerY + 160);
+  }
+
   handleClick(mouseX, mouseY) {
     if (!this.isVisible) return;
   
@@ -174,6 +228,8 @@ export class PauseMenu extends Entity {
       GAME_ENGINE.GAME_CONTROLLER.togglePause();
     } else if (selectedOption === "Settings") {
       console.log("Settings button clicked (not implemented)");
+      //this.isVisible = true;
+      //this.showSettings = true; 
     } else if (selectedOption === "Quit") {
       window.location.reload();
     }
