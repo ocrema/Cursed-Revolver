@@ -163,7 +163,16 @@ export const GROUND_SPRITESHEET = {
 
 // Map Object Constants
 
-export const MAP_CONSTANTS = {};
+export const MAP_CONSTANTS = {
+  CAMPFIRE: {
+    NAME: "CAMPFIRE",
+    URL: "./assets/map/Campfire.png",
+    FRAME_WIDTH: 32,
+    FRAME_HEIGHT: 64,
+    FRAME_COUNT: 8,
+    FRAME_DURATION: 0.25,
+  },
+};
 
 export const ENEMY_SPRITESHEET = {
   CACTUS: {

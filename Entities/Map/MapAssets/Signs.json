@@ -1,0 +1,19 @@
+{ "columns":1,
+ "image":"..\/..\/..\/assets\/map\/Signs.png",
+ "imageheight":63,
+ "imagewidth":63,
+ "margin":0,
+ "name":"Signs",
+ "spacing":0,
+ "tilecount":1,
+ "tiledversion":"1.11.2",
+ "tileheight":63,
+ "tileoffset":
+    {
+     "x":-25,
+     "y":10
+    },
+ "tilewidth":63,
+ "type":"tileset",
+ "version":"1.10"
+}
