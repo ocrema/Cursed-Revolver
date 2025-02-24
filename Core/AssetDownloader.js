@@ -175,6 +175,7 @@ export class AssetDownloader {
   downloadPauseMenuButtons() {
     this.assetManager.queueDownload("./assets/ui/menu/buttonResume.png");
     this.assetManager.queueDownload("./assets/ui/menu/buttonSettings.png");
+    this.assetManager.queueDownload("./assets/ui/menu/buttonHelp.png");
     this.assetManager.queueDownload("./assets/ui/menu/buttonQuit.png");
     this.assetManager.queueDownload("./assets/ui/menu/buttonStart.png");
     this.assetManager.queueDownload("./assets/ui/menu/menuBackground.png");
