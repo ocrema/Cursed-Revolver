@@ -16,7 +16,7 @@ import { HealingBottle } from "../../Entities/Enemy/HealingBottle.js";
 
 export class Map extends GameMap {
   async load() {
-    let oldMap = true;
+    let oldMap = false;
 
     if (oldMap) {
       GAME_ENGINE.addEntity(new Player(1470, -70));
@@ -31,8 +31,13 @@ export class Map extends GameMap {
       window.ASSET_MANAGER.getAsset("./assets/map/Saloon.png"),
       window.ASSET_MANAGER.getAsset("./assets/map/Signs.png"),
       window.ASSET_MANAGER.getAsset("./assets/map/props/tree04.png"),
-      window.ASSET_MANAGER.getAsset("./assets/map/SpawnPoint.png"),
+      window.ASSET_MANAGER.getAsset(
+        "./assets/map/SpawnPoints/PlayerSpawnPoint.png"
+      ),
       window.ASSET_MANAGER.getAsset("./assets/map/Rock1.png"),
+      window.ASSET_MANAGER.getAsset(
+        "./assets/map/SpawnPoints/CactusSpawnPoint.png"
+      ),
     ];
 
     let gameMap;
@@ -55,8 +60,18 @@ export class Map extends GameMap {
       this.addOldMapEnemies();
       this.addOldMapObjects();
     } else {
+      this.addCactusEnemies(gameMap);
       this.addNewMapEnemies();
       this.addNewMapObjects();
+    }
+  }
+
+  addCactusEnemies(gameMap) {
+    const enemySpawnPoints = gameMap.getCactusSpawnPoints();
+
+    for (let spawn of enemySpawnPoints) {
+      const enemy = new Cactus(spawn.x, spawn.y - 10);
+      GAME_ENGINE.addEntity(enemy);
     }
   }
 

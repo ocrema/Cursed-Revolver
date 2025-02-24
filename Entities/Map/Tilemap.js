@@ -25,6 +25,7 @@ export class Tilemap {
     this.tilesets = [];
     this.solidTiles = new Set(solidTileIDs);
     this.scale = scale;
+    this.cactusSpawnPoints = [];
   }
 
   async load() {
@@ -90,17 +91,40 @@ export class Tilemap {
 
           let tileClass = Tile;
 
-          if (tileID === 105) {
-            tileClass = SpawnPointTile;
-          } else if (tileID === 74 || tileID === 75) {
-            tileClass = WaterTile;
-          } else if (tileID == 101) {
-            tileClass = SpikeTile;
-          } else if (tileID == 102) {
-            tileClass = SaloonTile;
-          } else if (tileID === 104) {
-            tileClass = TreeTile;
+          switch (tileID) {
+            case 105:
+              tileClass = SpawnPointTile;
+              break;
+
+            case 74:
+            case 75:
+              tileClass = WaterTile;
+              break;
+
+            case 101:
+              tileClass = SpikeTile;
+              break;
+
+            case 102:
+              tileClass = SaloonTile;
+              break;
+
+            case 104:
+              tileClass = TreeTile;
+              break;
+
+            case 107:
+              this.cactusSpawnPoints.push({ x: worldX, y: worldY });
+              break;
+
+            case 108:
+              this.cowboySpawnPoints.push({x: worldX, y: worldY});
+              break;
+
+            default:
+              break;
           }
+
 
           let tile = new tileClass(
             worldX,
@@ -117,5 +141,9 @@ export class Tilemap {
         }
       }
     }
+  }
+
+  getCactusSpawnPoints() {
+    return this.cactusSpawnPoints;
   }
 }

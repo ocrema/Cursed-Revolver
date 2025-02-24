@@ -110,7 +110,8 @@ export class AssetDownloader {
     this.assetManager.queueDownload("./assets/map/Spikes.png");
     this.assetManager.queueDownload("./assets/map/CactusSpikes.png");
     this.assetManager.queueDownload("./assets/map/Saloon.png");
-    this.assetManager.queueDownload("./assets/map/SpawnPoint.png");
+    this.assetManager.queueDownload("./assets/map/SpawnPoints/PlayerSpawnPoint.png");
+    this.assetManager.queueDownload("./assets/map/SpawnPoints/CactusSpawnPoint.png");
     this.assetManager.queueDownload("./assets/map/Signs.png");
     this.assetManager.queueDownload("./assets/map/Campfire.png");
   }
