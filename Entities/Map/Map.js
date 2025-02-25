@@ -146,6 +146,15 @@ export class Map extends GameMap {
     }
   }
 
+  addBirdEnemies(gameMap) {
+    const birdSpawnPoints = gameMap.getBirdSpawnPoints();
+
+    for (let spawn of birdSpawnPoints) {
+      const bird = new Crow(spawn.x, spawn.y - 10);
+      GAME_ENGINE.addEntity(bird);
+    }
+  }
+
   addOldMapEnemies() {
     // Crow
     GAME_ENGINE.addEntity(new Crow(2500, -500));
