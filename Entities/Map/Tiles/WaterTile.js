@@ -47,14 +47,12 @@ export class WaterTile extends Entity {
       16, // Source tile size (16x16)
       this.x -
         GAME_ENGINE.camera.x -
-        ((this.scale - 1) * this.tileSize) / 2 -
-        1 * this.scale,
+        (this.scale * this.tileSize) / 2,
       this.y -
         GAME_ENGINE.camera.y -
-        ((this.scale - 1) * this.tileSize) / 2 -
-        1 * this.scale,
-      this.tileSize * this.scale,
-      this.tileSize * this.scale // Apply scaling
+        (this.scale * this.tileSize) / 2,
+      this.tileSize * this.scale + 1,
+      this.tileSize * this.scale + 1 // Apply scaling
     );
   }
 }

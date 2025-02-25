@@ -290,6 +290,7 @@ export class CowboyBullet extends Actor {
     super();
     Object.assign(this, { x, y, target });
 
+    this.isAttack = true;
     this.speed = 1000;
     this.damage = 5;
     this.removeFromWorld = false;
