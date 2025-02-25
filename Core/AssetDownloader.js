@@ -91,6 +91,7 @@ export class AssetDownloader {
     this.assetManager.queueDownload(
       "./assets/background/UndergroundBackground1.png"
     );
+    this.assetManager.queueDownload("./assets/background/SpiderBackground.png");
   }
 
   downloadMapGroundAssets() {

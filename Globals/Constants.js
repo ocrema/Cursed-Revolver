@@ -25,6 +25,14 @@ export const BACKGROUND_SPRITESHEET = {
     FRAME_COUNT: 15,
     FRAME_DURATION: 0.1,
   },
+  SPIDER: {
+    NAME: "SPIDER",
+    URL: "./assets/background/SpiderBackground.png",
+    FRAME_WIDTH: 576,
+    FRAME_HEIGHT: 324,
+    FRAME_COUNT: 24,
+    FRAME_DURATION: 0.1,
+  },
 };
 
 // PLAYER SECTION //
