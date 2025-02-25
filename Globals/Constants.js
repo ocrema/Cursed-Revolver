@@ -65,7 +65,7 @@ export const PLAYER_SPRITESHEET = {
     FRAME_WIDTH: 600,
     FRAME_HEIGHT: 600,
     FRAME_COUNT: 5,
-    FRAME_DURATION: 0.075,
+    FRAME_DURATION: 0.1,
   },
   FALL: {
     NAME: "FALL",
@@ -86,9 +86,9 @@ export const PLAYER_SPRITESHEET = {
   DEAD: {
     NAME: "DEAD",
     URL: "./assets/player/Death.png",
-    FRAME_WIDTH: 231,
-    FRAME_HEIGHT: 190,
-    FRAME_COUNT: 7,
+    FRAME_WIDTH: 600,
+    FRAME_HEIGHT: 600,
+    FRAME_COUNT: 14,
     FRAME_DURATION: 0.25,
   },
 };

@@ -412,7 +412,6 @@ export class Player extends Actor {
         window.ASSET_MANAGER.playAsset("./assets/sfx/click1.ogg");
       }
     }
-    console.log(GAME_ENGINE.keys)
     if (GAME_ENGINE.keys["q"] || GAME_ENGINE.keys["wheelUp"]) {
       GAME_ENGINE.keys["q"] = false;
       GAME_ENGINE.keys["wheelUp"] = false;

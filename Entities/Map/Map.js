@@ -1,7 +1,7 @@
 import { GameMap } from "../Entities.js";
 import { Player } from "../Player/Player.js";
 import { Background } from "./Background.js";
-import { Cactus } from "../Enemy/Cactus.js";
+import { Cactus, SpitterCactus } from "../Enemy/Cactus.js";
 import { Spider } from "../Enemy/Spider.js";
 import { GAME_ENGINE } from "../../main.js";
 import { Barrel } from "../Objects/Barrel.js";
@@ -71,8 +71,9 @@ export class Map extends GameMap {
 
     // Cacti
     GAME_ENGINE.addEntity(new Cactus(2300, 260));
-    GAME_ENGINE.addEntity(new Cactus(3000, 260));
+    GAME_ENGINE.addEntity(new SpitterCactus(3000, 260));
     GAME_ENGINE.addEntity(new Cactus(4200, 260));
+    
 
     // Cowboy Enemy
     GAME_ENGINE.addEntity(new CowboyEnemy(4115, 1330));
