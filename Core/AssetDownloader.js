@@ -61,10 +61,10 @@ export class AssetDownloader {
     this.assetManager.queueDownload("./assets/enemy/spider/Walk.png");
 
     // Crow Enemy
-    this.assetManager.queueDownload("./assets/enemy/Crow/Fly/Left.png");
-    this.assetManager.queueDownload("./assets/enemy/Crow/Hurt/Left.png");
-    this.assetManager.queueDownload("./assets/enemy/Crow/Die/Left.png");
-    this.assetManager.queueDownload("./assets/enemy/Crow/Attack/Left.png");
+    this.assetManager.queueDownload("./assets/enemy/Crow/Fly/noshadow.png");
+    this.assetManager.queueDownload("./assets/enemy/Crow/Hurt/noshadow.png");
+    this.assetManager.queueDownload("./assets/enemy/Crow/Die/noshadow.png");
+    this.assetManager.queueDownload("./assets/enemy/Crow/Attack/noshadow.png");
 
     // Earth Golem
     this.assetManager.queueDownload("./assets/enemy/golem/golem_walk.png");

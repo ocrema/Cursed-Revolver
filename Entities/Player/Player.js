@@ -418,15 +418,18 @@ export class Player extends Actor {
         window.ASSET_MANAGER.playAsset("./assets/sfx/click1.ogg");
       }
     }
-    if (GAME_ENGINE.keys["q"]) {
+    console.log(GAME_ENGINE.keys)
+    if (GAME_ENGINE.keys["q"] || GAME_ENGINE.keys["wheelUp"]) {
       GAME_ENGINE.keys["q"] = false;
+      GAME_ENGINE.keys["wheelUp"] = false;
       this.selectedSpell--;
       if (this.selectedSpell < 0) this.selectedSpell = 5;
       console.log(this.selectedSpell);
       window.ASSET_MANAGER.playAsset("./assets/sfx/click1.ogg");
     }
-    if (GAME_ENGINE.keys["e"]) {
+    if (GAME_ENGINE.keys["e"] || GAME_ENGINE.keys["wheelDown"]) {
       GAME_ENGINE.keys["e"] = false;
+      GAME_ENGINE.keys["wheelDown"] = false;
       this.selectedSpell++;
       if (this.selectedSpell > 5) this.selectedSpell = 0;
       window.ASSET_MANAGER.playAsset("./assets/sfx/click1.ogg");

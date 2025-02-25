@@ -15,14 +15,14 @@ export class EarthGolem extends Actor {
     this.assetManager = window.ASSET_MANAGER;
 
     this.addAnimation(
-        "walk", 
-        this.assetManager.getAsset("./assets/enemy/golem/golem_walk.png"), 
-        384, // Corrected Frame Width
-        90, // Corrected Frame Height
-        8,   // Number of frames
-        0.4  // Frame duration
+      "walk",
+      this.assetManager.getAsset("./assets/enemy/golem/golem_walk.png"),
+      384, // Corrected Frame Width
+      90, // Corrected Frame Height
+      8,   // Number of frames
+      0.4  // Frame duration
     );
-      
+
 
     this.setAnimation("walk"); // Default animation
 
@@ -31,7 +31,7 @@ export class EarthGolem extends Actor {
     this.width = 100;
     this.height = 200;
     this.collider = new Collider(this.width, this.height);
-    
+
     //this.width = 80;
     //this.height = 100;
     this.scale = 3;
@@ -43,7 +43,7 @@ export class EarthGolem extends Actor {
     this.attackRate = 3; // Attacks every 3 seconds
 
     // **Movement**
-   // this.collider = new Collider(this.width, this.height);
+    // this.collider = new Collider(this.width, this.height);
     this.randomRoamLength = [150, 200, 250]; // Moves small distances
     this.walkSpeed = 100; // Slow movement
     this.aggroSpeed = 150; // Slightly faster when it sees player
@@ -139,9 +139,6 @@ export class EarthGolem extends Actor {
 
   // **Movement Handling**
   movement() {
-    this.x += this.velocity.x * GAME_ENGINE.clockTick;
-    this.y += this.velocity.y * GAME_ENGINE.clockTick;
-
     var distance = Util.getDistance(this, this.target);
 
     this.velocity = {
@@ -149,17 +146,54 @@ export class EarthGolem extends Actor {
       y: this.gravity,
     };
 
-    for (let entity of GAME_ENGINE.entities) {
-      if (entity instanceof Tile && entity.collider && this.colliding(entity)) {
-        let thisBottom = this.y + this.height / 2;
-        let eTop = entity.y - entity.collider.height / 2;
+    this.x += this.velocity.x * GAME_ENGINE.clockTick;
 
-        if (thisBottom > eTop) {
-          this.y = eTop - this.height / 2;
-          this.velocity.y = 0;
-        }
+    // for all of the entities i am colliding with, move the player as far back as i need to to not be colliding with any of them
+
+    for (let e of GAME_ENGINE.entities) {
+      if (
+        e.isPlayer ||
+        e.isAttack ||
+        e.isEnemy ||
+        e.isEffect ||
+        e.isDestructibleObject ||
+        e.isSpike ||
+        e.isSpawnPoint
+      )
+        continue;
+      if (e.isWater) {
+        this.inWater = true;
+        continue;
+      }
+      if (this.colliding(e)) {
+        //hitSomething = true;
+        this.moveAgainstX(e);
       }
     }
+    this.y += this.velocity.y * GAME_ENGINE.clockTick;
+    for (let e of GAME_ENGINE.entities) {
+      if (
+        e.isPlayer ||
+        e.isAttack ||
+        e.isEnemy ||
+        e.isDestructibleObject ||
+        e.isSpike ||
+        e.isSpawnPoint
+      )
+        continue;
+
+      if (e.isWater) {
+        this.inWater = true;
+        continue;
+      }
+
+      if (this.colliding(e)) {
+        //hitSomething = true;
+        this.moveAgainstY(e);
+      }
+    }
+    
+
   }
 
   draw(ctx) {
@@ -188,5 +222,5 @@ export class EarthGolem extends Actor {
       height: this.height * 0.8,
     };
   }
-  
+
 }

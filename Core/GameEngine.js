@@ -132,7 +132,7 @@ export class GameEngine {
     });
 
     this.ctx.canvas.addEventListener("wheel", (e) => {
-      this.wheel = e;
+      this.keys[(e.deltaY < 0 ? "wheelUp" : "wheelDown")] = true;
       e.preventDefault();
       //console.log("Mouse wheel used:", e.deltaY);
     });
