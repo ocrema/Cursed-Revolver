@@ -31,6 +31,7 @@ export class Tilemap {
     this.birdSpawnPoints = [];
     this.barrelSpawnPoints = [];
     this.backgroundTriggerPoints = [];
+    this.tumbleweedTriggerPoints = [];
   }
 
   async load() {
@@ -136,6 +137,9 @@ export class Tilemap {
               tileClass = BackgroundTriggerTile;
               this.backgroundTriggerPoints.push({ x: worldX, y: worldY });
               break;
+            case 112:
+              this.tumbleweedTriggerPoints.push({ x: worldX, y: worldY });
+              break;
             default:
               break;
           }
@@ -175,5 +179,9 @@ export class Tilemap {
 
   getBackgroundTriggerPoints() {
     return this.backgroundTriggerPoints;
+  }
+
+  getTumbleweedTriggerPoints() {
+    return this.tumbleweedTriggerPoints;
   }
 }

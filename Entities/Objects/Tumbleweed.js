@@ -19,6 +19,7 @@ export class Tumbleweed extends Entity {
     this.scale = 0.35; // Scale the sprite
     this.isDestructibleObject = true;
     this.isTumbleweed = true;
+    this.burningTimer = 0;
     this.isBurning = false; // Track if burning effect is active
 
     // Gravity & Bouncing
@@ -55,6 +56,13 @@ export class Tumbleweed extends Entity {
   }
 
   update() {
+    if (this.isBurning) {
+      this.burningTimer += GAME_ENGINE.clockTick;
+      if (this.burningTimer >= 6) {
+        this.removeFromWorld = true;
+        return;
+      }
+    }
     this.y_velocity += this.gravity * GAME_ENGINE.clockTick;
     this.y += this.y_velocity * GAME_ENGINE.clockTick;
 

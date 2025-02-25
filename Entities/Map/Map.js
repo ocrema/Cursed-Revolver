@@ -54,6 +54,9 @@ export class Map extends GameMap {
       window.ASSET_MANAGER.getAsset(
         "./assets/map/SpawnPoints/BackgroundTrigger.png"
       ),
+      window.ASSET_MANAGER.getAsset(
+        "./assets/map/SpawnPoints/TumbleweedSpawnPoint.png"
+      ),
     ];
 
     let gameMap;
@@ -80,7 +83,16 @@ export class Map extends GameMap {
       this.addCowboyEnemies(gameMap);
       this.addBirdEnemies(gameMap);
       this.addBarrelObjects(gameMap);
+      this.addTumbleweedObjects(gameMap);
       this.addBackgroundTriggerObjects(gameMap);
+    }
+  }
+
+  addTumbleweedObjects(gameMap) {
+    const tumbleweedTriggerPoints = gameMap.getTumbleweedTriggerPoints();
+    for (let spawn of tumbleweedTriggerPoints) {
+      const tumbleweed = new Tumbleweed(spawn.x, spawn.y, "right");
+      GAME_ENGINE.addEntity(tumbleweed);
     }
   }
 
