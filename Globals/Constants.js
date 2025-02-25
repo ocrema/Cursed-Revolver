@@ -30,7 +30,7 @@ export const BACKGROUND_SPRITESHEET = {
     URL: "./assets/background/SpiderBackground.png",
     FRAME_WIDTH: 576,
     FRAME_HEIGHT: 324,
-    FRAME_COUNT: 24,
+    FRAME_COUNT: 1,
     FRAME_DURATION: 0.1,
   },
 };

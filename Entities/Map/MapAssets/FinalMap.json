@@ -146,7 +146,7 @@
         }, 
         {
          "firstgid":111,
-         "source":"BackgroundTriger.json"
+         "source":"BackgroundTrigger.json"
         }],
  "tilewidth":16,
  "type":"map",
