@@ -13,6 +13,8 @@ import { Crow } from "../Enemy/Crow.js";
 import { Tilemap } from "./Tilemap.js";
 import { GrowingTree } from "../Objects/GrowingTree.js";
 import { HealingBottle } from "../../Entities/Enemy/HealingBottle.js";
+import { BackgroundTriggerTile } from "./Tiles/BackgroundTriggerTile.js";
+import { BACKGROUND_SPRITESHEET } from "../../Globals/Constants.js";
 
 export class Map extends GameMap {
   async load() {
@@ -23,7 +25,9 @@ export class Map extends GameMap {
     } else {
       GAME_ENGINE.addEntity(new Player(763, 1500));
     }
-    GAME_ENGINE.addEntity(new Background());
+
+    const backgroundList = Object.values(BACKGROUND_SPRITESHEET);
+    GAME_ENGINE.addEntity(new Background(backgroundList));
 
     const TILESET_IMAGES = [
       window.ASSET_MANAGER.getAsset("./assets/map/Atlas.png"),
@@ -46,6 +50,9 @@ export class Map extends GameMap {
       ),
       window.ASSET_MANAGER.getAsset(
         "./assets/map/SpawnPoints/BarrelSpawnPoint.png"
+      ),
+      window.ASSET_MANAGER.getAsset(
+        "./assets/map/SpawnPoints/BackgroundTrigger.png"
       ),
     ];
 
@@ -73,8 +80,15 @@ export class Map extends GameMap {
       this.addCowboyEnemies(gameMap);
       this.addBirdEnemies(gameMap);
       this.addBarrelObjects(gameMap);
-      this.addNewMapEnemies();
-      this.addNewMapObjects();
+      this.addBackgroundTriggerObjects(gameMap);
+    }
+  }
+
+  addBackgroundTriggerObjects(gameMap) {
+    const backgroundTriggerPoints = gameMap.getBackgroundTriggerPoints();
+    for (let spawn of backgroundTriggerPoints) {
+      const backgroundTrigger = new BackgroundTriggerTile(spawn.x, spawn.y);
+      GAME_ENGINE.addEntity(backgroundTrigger);
     }
   }
 
@@ -146,10 +160,4 @@ export class Map extends GameMap {
     //healing bottle
     GAME_ENGINE.addEntity(new HealingBottle(3200, 275));
   }
-
-  addNewMapEnemies() {
-    GAME_ENGINE.addEntity(new Cactus(3000, 260));
-  }
-
-  addNewMapObjects() {}
 }

@@ -5,6 +5,7 @@ import { SpikeTile } from "./Tiles/SpikeTile.js";
 import { SaloonTile } from "./Tiles/SaloonTile.js";
 import { SpawnPointTile } from "./Tiles/SpawnPointTile.js";
 import { TreeTile } from "./Tiles/TreeTile.js";
+import { BackgroundTriggerTile } from "./Tiles/BackgroundTriggerTile.js";
 
 export class Tilemap {
   constructor(
@@ -29,6 +30,7 @@ export class Tilemap {
     this.cowboySpawnPoints = [];
     this.birdSpawnPoints = [];
     this.barrelSpawnPoints = [];
+    this.backgroundTriggerPoints = [];
   }
 
   async load() {
@@ -130,6 +132,10 @@ export class Tilemap {
             case 110:
               this.barrelSpawnPoints.push({ x: worldX, y: worldY });
               break;
+            case 111:
+              tileClass = BackgroundTriggerTile;
+              this.backgroundTriggerPoints.push({ x: worldX, y: worldY });
+              break;
             default:
               break;
           }
@@ -165,5 +171,9 @@ export class Tilemap {
 
   getBarrelSpawnPoints() {
     return this.barrelSpawnPoints;
+  }
+
+  getBackgroundTriggerPoints() {
+    return this.backgroundTriggerPoints;
   }
 }

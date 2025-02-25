@@ -125,6 +125,9 @@ export class AssetDownloader {
     this.assetManager.queueDownload(
       "./assets/map/SpawnPoints/BarrelSpawnPoint.png"
     );
+    this.assetManager.queueDownload(
+      "./assets/map/SpawnPoints/BackgroundTrigger.png"
+    );
     this.assetManager.queueDownload("./assets/map/Signs.png");
     this.assetManager.queueDownload("./assets/map/Campfire.png");
   }

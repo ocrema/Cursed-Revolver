@@ -320,7 +320,8 @@ export class Player extends Actor {
           e.isEffect ||
           e.isDestructibleObject ||
           e.isSpike ||
-          e.isSpawnPoint
+          e.isSpawnPoint ||
+          e.isBackgroundTrigger
         )
           continue;
         if (e.isWater) {
@@ -368,7 +369,8 @@ export class Player extends Actor {
         e.isEnemy ||
         e.isDestructibleObject ||
         e.isSpike ||
-        e.isSpawnPoint
+        e.isSpawnPoint ||
+        e.isBackgroundTrigger
       )
         continue;
 

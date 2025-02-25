@@ -1,116 +1,95 @@
 import { Entity } from "../Entities.js";
-import { BACKGROUND_SPRITESHEET } from "../../Globals/Constants.js";
 import { Camera } from "../../Core/Camera.js";
+import { BACKGROUND_SPRITESHEET } from "../../Globals/Constants.js";
 
 export class Background extends Entity {
   constructor() {
     super();
-    this.scale = 4; // Scale the background
-    this.entityOrder = -10; // Background should be behind everything
+    this.scale = 4;
+    this.entityOrder = -10;
     this.camera = Camera.getInstance();
-    this.player = this.camera.player;
 
-    // Define the height threshold for underground transition
-    this.undergroundThreshold = 750;
+    this.backgroundList = Object.values(BACKGROUND_SPRITESHEET);
+    this.currentIndex = 0;
+    this.isTransitioning = false;
+    this.nextBackgroundIndex = null;
 
-    // Load both backgrounds
-    this.backgrounds = {
-      aboveGround: ASSET_MANAGER.getAsset(BACKGROUND_SPRITESHEET.ABOVE.URL),
-      underground: ASSET_MANAGER.getAsset(BACKGROUND_SPRITESHEET.UNDER.URL),
-    };
+    this.animations = {};
+    this.loadBackgroundData();
+    this.setCurrentBackground();
 
-    // Add both animations at the start
-    this.addAnimation(
-      BACKGROUND_SPRITESHEET.ABOVE.NAME,
-      this.backgrounds.aboveGround,
-      BACKGROUND_SPRITESHEET.ABOVE.FRAME_WIDTH,
-      BACKGROUND_SPRITESHEET.ABOVE.FRAME_HEIGHT,
-      BACKGROUND_SPRITESHEET.ABOVE.FRAME_COUNT,
-      BACKGROUND_SPRITESHEET.ABOVE.FRAME_DURATION
-    );
+    this.elapsedTime = 0;
+    this.currentFrame = 0;
+  }
 
-    this.addAnimation(
-      BACKGROUND_SPRITESHEET.UNDER.NAME,
-      this.backgrounds.underground,
-      BACKGROUND_SPRITESHEET.UNDER.FRAME_WIDTH,
-      BACKGROUND_SPRITESHEET.UNDER.FRAME_HEIGHT,
-      BACKGROUND_SPRITESHEET.UNDER.FRAME_COUNT,
-      BACKGROUND_SPRITESHEET.UNDER.FRAME_DURATION
-    );
+  loadBackgroundData() {
+    this.backgroundList.forEach((bgData) => {
+      this.animations[bgData.NAME] = {
+        spritesheet: new Image(),
+        frameWidth: bgData.FRAME_WIDTH,
+        frameHeight: bgData.FRAME_HEIGHT,
+        frameCount: bgData.FRAME_COUNT,
+        frameDuration: bgData.FRAME_DURATION,
+      };
+      this.animations[bgData.NAME].spritesheet.src = bgData.URL;
+    });
+  }
 
-    // Set the initial state
-    this.aboveAnimation = BACKGROUND_SPRITESHEET.ABOVE.NAME;
-    this.underAnimation = BACKGROUND_SPRITESHEET.UNDER.NAME;
+  setCurrentBackground() {
+    const bgData = this.backgroundList[this.currentIndex];
+    if (!bgData) return;
 
-    this.transitionAlpha = 0; // Opacity for transition
-    this.transitionSpeed = 3; // Speed of fade transition
-    this.isGoingUnderground = false; // Track if transitioning downward
+    this.currentBackground = this.animations[bgData.NAME];
+    if (!this.currentBackground) return;
+
+    this.currentFrame = 0;
+    this.elapsedTime = 0;
+  }
+
+  nextBackground() {
+    if (this.isTransitioning) return;
+
+    this.currentIndex = (this.currentIndex + 1) % this.backgroundList.length;
+    this.setCurrentBackground();
+    this.isTransitioning = false;
   }
 
   update() {
-    this.transitionSpeed = 3;
-    this.updateAnimation(GAME_ENGINE.clockTick);
-
-    if (!this.camera.player) return;
-
-    // Determine if player is going underground or back up
-    const isPlayerUnderground =
-      this.camera.player.y > this.undergroundThreshold;
-
-    if (isPlayerUnderground !== this.isGoingUnderground) {
-      // Start transition when state changes
-      this.isGoingUnderground = isPlayerUnderground;
-    }
-
-    // Handle fade transition
-    if (this.isGoingUnderground) {
-      this.transitionAlpha += this.transitionSpeed * GAME_ENGINE.clockTick;
-      if (this.transitionAlpha > 1) this.transitionAlpha = 1;
-      this.setAnimation(BACKGROUND_SPRITESHEET.UNDER.NAME);
-    } else {
-      this.transitionAlpha -= this.transitionSpeed * GAME_ENGINE.clockTick;
-      if (this.transitionAlpha < 0) this.transitionAlpha = 0;
-      this.setAnimation(BACKGROUND_SPRITESHEET.ABOVE.NAME);
+    if (this.currentBackground) {
+      this.elapsedTime += GAME_ENGINE.clockTick;
+      if (this.elapsedTime >= this.currentBackground.frameDuration) {
+        this.elapsedTime = 0;
+        this.currentFrame =
+          (this.currentFrame + 1) % this.currentBackground.frameCount;
+      }
     }
   }
 
   draw(ctx) {
-    if (
-      !this.animations[this.aboveAnimation] ||
-      !this.animations[this.underAnimation]
-    )
-      return;
+    if (!this.currentBackground) return;
 
     ctx.save();
 
-    // Parallax effect
+    // Restore Parallax Effect
     const parallaxX = -this.camera.x * 0.05;
     const parallaxY = -this.camera.y * 0.0025;
     ctx.translate(parallaxX, parallaxY);
     ctx.scale(this.scale, this.scale);
 
-    // **Draw the above ground background (fading out when underground)**
-    ctx.globalAlpha = 1 - this.transitionAlpha;
-    this.drawBackground(ctx, this.aboveAnimation);
+    this.drawBackground(ctx, this.currentBackground);
 
-    // **Draw the underground background (fading in)**
-    ctx.globalAlpha = this.transitionAlpha;
-    this.drawBackground(ctx, this.underAnimation);
-
-    // Restore alpha
-    ctx.globalAlpha = 1;
     ctx.restore();
   }
 
-  drawBackground(ctx, animationName) {
-    const animation = this.animations[animationName];
-    const { spritesheet, frameWidth, frameHeight } = animation;
+  drawBackground(ctx, animation) {
+    if (!animation || !animation.spritesheet) return;
 
-    if (!spritesheet) return;
+    const { spritesheet, frameWidth, frameHeight } = animation;
+    const frameX = this.currentFrame * frameWidth;
 
     ctx.drawImage(
       spritesheet,
-      this.currentFrame * frameWidth,
+      frameX,
       0,
       frameWidth,
       frameHeight,
