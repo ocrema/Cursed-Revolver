@@ -44,6 +44,9 @@ export class Map extends GameMap {
       window.ASSET_MANAGER.getAsset(
         "./assets/map/SpawnPoints/BirdSpawnPoint.png"
       ),
+      window.ASSET_MANAGER.getAsset(
+        "./assets/map/SpawnPoints/BarrelSpawnPoint.png"
+      ),
     ];
 
     let gameMap;
@@ -69,6 +72,7 @@ export class Map extends GameMap {
       this.addCactusEnemies(gameMap);
       this.addCowboyEnemies(gameMap);
       this.addBirdEnemies(gameMap);
+      this.addBarrelObjects(gameMap);
       this.addNewMapEnemies();
       this.addNewMapObjects();
     }
@@ -98,6 +102,15 @@ export class Map extends GameMap {
     for (let spawn of birdSpawnPoints) {
       const bird = new Crow(spawn.x, spawn.y - 10);
       GAME_ENGINE.addEntity(bird);
+    }
+  }
+
+  addBarrelObjects(gameMap) {
+    const barrelSpawnPoints = gameMap.getBarrelSpawnPoints();
+
+    for (let spawn of barrelSpawnPoints) {
+      const barrel = new Barrel(spawn.x, spawn.y - 10);
+      GAME_ENGINE.addEntity(barrel);
     }
   }
 

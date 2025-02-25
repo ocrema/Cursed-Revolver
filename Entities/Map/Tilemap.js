@@ -28,6 +28,7 @@ export class Tilemap {
     this.cactusSpawnPoints = [];
     this.cowboySpawnPoints = [];
     this.birdSpawnPoints = [];
+    this.barrelSpawnPoints = [];
   }
 
   async load() {
@@ -126,7 +127,9 @@ export class Tilemap {
             case 109:
               this.birdSpawnPoints.push({ x: worldX, y: worldY });
               break;
-
+            case 110:
+              this.barrelSpawnPoints.push({ x: worldX, y: worldY });
+              break;
             default:
               break;
           }
@@ -158,5 +161,9 @@ export class Tilemap {
 
   getBirdSpawnPoints() {
     return this.birdSpawnPoints;
+  }
+
+  getBarrelSpawnPoints() {
+    return this.barrelSpawnPoints;
   }
 }
