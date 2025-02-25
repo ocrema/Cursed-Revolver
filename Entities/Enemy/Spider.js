@@ -140,6 +140,8 @@ export class Spider extends Actor {
     if (this.y > 490) {
       //console.log(this);
     }
+
+    this.updateAnimation(GAME_ENGINE.clockTick);
   }
 
   // cycles through different cases to set animation state

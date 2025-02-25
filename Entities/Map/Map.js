@@ -47,16 +47,16 @@ export class Map extends GameMap {
     GAME_ENGINE.addEntity(new Crow(2500, -500));
     GAME_ENGINE.addEntity(new Crow(4090, -200));
 
-    // // // Spider
+    // Spider
     GAME_ENGINE.addEntity(new Spider(2600, 200));
     GAME_ENGINE.addEntity(new Spider(4262, 200));
 
-    // // Cacti
+    // Cacti
     GAME_ENGINE.addEntity(new Cactus(2300, 260));
     GAME_ENGINE.addEntity(new Cactus(3000, 260));
     GAME_ENGINE.addEntity(new Cactus(4200, 260));
 
-    // // // Cowboy Enemy
+    // Cowboy Enemy
     GAME_ENGINE.addEntity(new CowboyEnemy(4115, 1330));
   }
 

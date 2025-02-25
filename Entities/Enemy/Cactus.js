@@ -3,7 +3,6 @@ import { Player } from "../Player/Player.js";
 import { Thorn } from "./Attack.js";
 import * as Util from "../../Utils/Util.js";
 import { Collider } from "../Collider.js";
-import { ENEMY_SPRITESHEET } from "../../Globals/Constants.js";
 import { GAME_ENGINE } from "../../main.js";
 
 export class Cactus extends Actor {
@@ -21,8 +20,7 @@ export class Cactus extends Actor {
       160, // Frame width
       160, // Frame height
       1, // Frame count
-      0.25, // Frame duration (slower for idle)
-      false 
+      0.25 // Frame duration (slower for idle) 
     );
     this.addAnimation(
       "attack",
@@ -30,8 +28,7 @@ export class Cactus extends Actor {
       160, // Frame width
       160, // Frame height
       3, // Frame count
-      0.25, // Frame duration (slower for idle)
-      false 
+      0.25 // Frame duration (slower for idle)
     );
     this.addAnimation(
       "default",
@@ -39,8 +36,7 @@ export class Cactus extends Actor {
       160, // Frame width
       160, // Frame height
       1, // Frame count
-      0.25, // Frame duration (slower for idle)
-      false 
+      0.25 // Frame duration (slower for idle)
     ); 
     this.addAnimation(
       "damage",
@@ -48,8 +44,7 @@ export class Cactus extends Actor {
       160, // Frame width
       160, // Frame height
       2, // Frame count
-      0.25, // Frame duration (slower for idle)
-      false 
+      0.25 // Frame duration (slower for idle) 
     );
     this.addAnimation(
       "die",
@@ -57,8 +52,7 @@ export class Cactus extends Actor {
       160, // Frame width
       160, // Frame height
       4, // Frame count
-      0.25, // Frame duration (slower for idle)
-      false 
+      0.2 // Frame duration (slower for idle)
     );
     this.addAnimation(
       "idle",
@@ -66,9 +60,7 @@ export class Cactus extends Actor {
       160, // Frame width
       160, // Frame height
       8, // Frame count
-      0.25, // Frame duration (slower for idle)
-      true
-    );
+      0.5);// Frame duration (slower for idle)
 
     this.setAnimation("default");
     this.width = 160;
@@ -95,7 +87,7 @@ export class Cactus extends Actor {
     this.tookDamage = false;
     this.dead = false;
     this.seesPlayer = false;
-    this.attack = true;
+    this.attacking = true;
     this.idleTimer = 0;
     this.idleCooldown = [5, 7, 10, 13, 15];
   }
@@ -107,45 +99,53 @@ export class Cactus extends Actor {
     this.attemptAttack();
 
     // apply attack damage
-    for (let attack of this.recieved_attacks) {
+    if (this.recieved_attacks.length == 0) {
+      this.tookDamage = false;
+    } else {
+      for (let attack of this.recieved_attacks) {
       this.tookDamage = true;
       this.health -= attack.damage;
-    }
+      }
     this.recieved_attacks = [];
+    }
 
     if (this.health <= 0) {
-      this.removeFromWorld = true;
+      this.dead = true;
     }
 
     this.changeAnimation();
+    this.updateAnimation(GAME_ENGINE.clockTick);
   }
 
   changeAnimation() {
     this.idleTimer += GAME_ENGINE.clockTick;
     var randomNumber = Util.randomInt(this.idleCooldown.length - 1);
 
-
-
     if (this.idleTimer > this.idleCooldown[randomNumber]) {
       this.idleTimer = 0;
-      this.setAnimation("idle");
-    }
-
-    if (this.seesPlayer && this.currentAnimation !== "aggressive") {
-      this.setAnimation("aggressive");
-    }
-
-    if (this.attacking) {
-      this.setAnimation("attack");
-    }
-
-    if (this.tookDamage && this.currentAnimation !== "damage") {
-      this.setAnimation("damage");
+      this.setAnimation("idle", false);
     }
 
     if (this.dead && this.currentAnimation !== "die") {
-      this.setAnimation("die");
+      this.idleTimer = 0;
+      this.setAnimation("die", false);
     }
+
+    else if (this.tookDamage && this.currentAnimation !== "damage") {
+      this.idleTimer = 0;
+      this.setAnimation("damage", false);
+    }
+
+    else if (this.attacking) {
+      this.idleTimer = 0;
+      this.setAnimation("attack", false);
+    }
+
+    else if (this.seesPlayer && this.currentAnimation !== "attack") {
+      this.setAnimation("aggressive", false);
+    }    
+
+    console.log(this.currentAnimation);
   }
 
   attemptAttack() {
@@ -156,12 +156,16 @@ export class Cactus extends Actor {
           Util.canSee(this, entity) &&
           this.attackTime > this.fireRate &&
           Util.canAttack(new Thorn(this.x, this.y, entity), entity)
-        ) {
-          this.attacking = true;
+        ) {     
           this.attackTime = 0;
           GAME_ENGINE.addEntity(new Thorn(this.x, this.y, entity));
+          this.attacking = true;
+          this.seesPlayer = true;
         } else if (Util.canSee(this, entity)) {
           this.seesPlayer = true;
+        } else {
+          this.seesPlayer = false;
+          this.attacking = false;
         }
       }
     }
@@ -169,6 +173,10 @@ export class Cactus extends Actor {
   }
   
   onAnimationComplete() {
+    if (this.currentAnimation == "die") {
+      this.removeFromWorld = true;
+    }
+
     this.setAnimation("default");
   }
 
@@ -221,6 +229,9 @@ export class SpitterCactus extends Cactus {
     this.thornTime > this.thornCooldown) {
       this.thornTime = 0;
       GAME_ENGINE.addEntity(new Thorn(this.x, this.y, this.currentTarget));
+  } else if (this.attackTime > this.activeFire && 
+    this.attackTime < this.fireRate) {
+      this.attacking = true;
   }
 
   if (this.attackTime > this.fireRate) {
