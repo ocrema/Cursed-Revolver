@@ -45,7 +45,6 @@ export class BackgroundTriggerTile extends Tile {
           (entity) => entity instanceof Background
         );
         if (background) {
-          console.log("yes")
           background.nextBackground(); // Move to the next background
         }
       }
