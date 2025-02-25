@@ -41,6 +41,9 @@ export class Map extends GameMap {
       window.ASSET_MANAGER.getAsset(
         "./assets/map/SpawnPoints/CowboySpawnPoint.png"
       ),
+      window.ASSET_MANAGER.getAsset(
+        "./assets/map/SpawnPoints/BirdSpawnPoint.png"
+      ),
     ];
 
     let gameMap;
@@ -65,6 +68,7 @@ export class Map extends GameMap {
     } else {
       this.addCactusEnemies(gameMap);
       this.addCowboyEnemies(gameMap);
+      this.addBirdEnemies(gameMap);
       this.addNewMapEnemies();
       this.addNewMapObjects();
     }
@@ -85,6 +89,15 @@ export class Map extends GameMap {
     for (let spawn of cowboySpawnPoints) {
       const cowboy = new StaticCowboyEnemy(spawn.x, spawn.y - 10);
       GAME_ENGINE.addEntity(cowboy);
+    }
+  }
+
+  addBirdEnemies(gameMap) {
+    const birdSpawnPoints = gameMap.getBirdSpawnPoints();
+
+    for (let spawn of birdSpawnPoints) {
+      const bird = new Crow(spawn.x, spawn.y - 10);
+      GAME_ENGINE.addEntity(bird);
     }
   }
 
