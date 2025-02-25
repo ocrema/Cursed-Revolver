@@ -99,8 +99,7 @@ export class Player extends Actor {
       if (this.hitTimer > 0) {
         this.hitTimer -= GAME_ENGINE.clockTick;
       } else if (
-        this.currentAnimation === PLAYER_SPRITESHEET.ATTACK1.NAME ||
-        this.currentAnimation === PLAYER_SPRITESHEET.ATTACK2.NAME
+        this.currentAnimation === PLAYER_SPRITESHEET.ATTACK1.NAME 
       ) {
         // Do nothing, let the attack animation play out
       } else {
@@ -125,13 +124,8 @@ export class Player extends Actor {
       this.recieved_attacks.length > 0 &&
       this.currentAnimation !== PLAYER_SPRITESHEET.HIT.NAME
     ) {
-      // console.log(
-      //   "ouch! i took " + this.recieved_attacks[0].damage + " damage"
-      // );
-
       this.setAnimation(PLAYER_SPRITESHEET.HIT.NAME);
-
-      this.hitTimer = 0.3;
+      this.hitTimer = 0.2;
     }
 
     this.recieveAttacks();
@@ -402,14 +396,7 @@ export class Player extends Actor {
       // Calculate direction to mouse
       const mouseX = GAME_ENGINE.mouse.x + GAME_ENGINE.camera.x;
       this.flip = mouseX < this.x; // Flip player based on mouse position
-      if (this.attackState === 1) {
-        this.setAnimation(PLAYER_SPRITESHEET.ATTACK1.NAME, false);
-        this.attackState = 2;
-      } else {
-        this.setAnimation(PLAYER_SPRITESHEET.ATTACK2.NAME, false);
-        this.attackState = 1;
-      }
-
+      this.setAnimation(PLAYER_SPRITESHEET.ATTACK1.NAME, false);
       this.spellCooldowns[this.selectedSpell] = this.maxSpellCooldown;
       window.ASSET_MANAGER.playAsset("./assets/sfx/revolver_shot.ogg", 1);
 

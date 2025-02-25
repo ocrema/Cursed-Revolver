@@ -41,8 +41,7 @@ export class AssetDownloader {
     this.assetManager.queueDownload("./assets/player/Death.png");
     this.assetManager.queueDownload("./assets/player/Fall.png");
     this.assetManager.queueDownload("./assets/player/Hit.png");
-    this.assetManager.queueDownload("./assets/player/Attack1.png");
-    this.assetManager.queueDownload("./assets/player/Attack2.png");
+    this.assetManager.queueDownload("./assets/player/Attack.png");
   }
 
   downloadEnemyAssets() {
