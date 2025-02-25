@@ -144,8 +144,6 @@ export class Cactus extends Actor {
     else if (this.seesPlayer && this.currentAnimation !== "attack") {
       this.setAnimation("aggressive", false);
     }    
-
-    console.log(this.currentAnimation);
   }
 
   attemptAttack() {
