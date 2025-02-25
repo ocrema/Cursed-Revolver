@@ -74,7 +74,7 @@ export class Tumbleweed extends Entity {
 
     for (let e of GAME_ENGINE.entities) {
       if (e instanceof Tile && this.colliding(e)) {
-        if (e.tileID === 7) {
+        if (e.tileID >= 5 && e.tileID <= 11) {
           this.bounceOffObject(e); // Bounce off walls
         } else {
           this.bounceOffGround(e); // Bounce off ground
