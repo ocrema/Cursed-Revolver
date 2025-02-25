@@ -94,8 +94,19 @@ export class Spider extends Actor {
   }
 
   update() {
-    this.attackCooldown += GAME_ENGINE.clockTick;
+    // apply attack damage
+    this.recieveAttacks();
     this.recieveEffects();
+
+    // if spider loses all health
+    if (this.health <= 0) {
+      this.removeFromWorld = true;
+    }
+
+    if (this.effects.frozen > 0 || this.effects.stun > 0) return;
+
+    this.attackCooldown += GAME_ENGINE.clockTick;
+    
     this.onGround = false;
     this.onWall = false;
 
@@ -125,16 +136,6 @@ export class Spider extends Actor {
       this.flip = 1;
     }
 
-    // apply attack damage
-    for (let attack of this.recieved_attacks) {
-      this.health -= attack.damage;
-    }
-    this.recieved_attacks = [];
-
-    // if spider loses all health
-    if (this.health <= 0) {
-      this.removeFromWorld = true;
-    }
 
     // debug statement, delete this eventually ^_^
     if (this.y > 490) {
@@ -291,5 +292,6 @@ export class Spider extends Actor {
     } else {
       super.draw(ctx);
     }
+    this.drawEffects(ctx);
   }
 }

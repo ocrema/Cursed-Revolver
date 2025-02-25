@@ -1,3 +1,4 @@
+import { EFFECTS_SPRITESHEET } from "../Globals/Constants.js";
 import { GAME_ENGINE } from "../main.js";
 import * as Util from "../Utils/Util.js";
 
@@ -241,8 +242,10 @@ export class Actor extends Entity {
       rooted: true,
       stun: true,
       void: true,
+      void_delay: true,
     };
     this.isLaunchable = false;
+    this.effect_anim_timer = 0;
   }
 
   // Since actor classes might need more functionalities, we can add them here
@@ -275,11 +278,31 @@ export class Actor extends Entity {
           this.x_velocity += v * Math.cos(angle);
           this.y_velocity += v * Math.sin(angle);
         } else if (k === "x" || k === "y") {
-        } else {
+        } else if (this.validEffects[k]) {
           this.effects[k] = Math.max(this.effects[k] || 0, v);
         }
       }
     }
+    // extra logic
+    if (this.effects.soaked > 0) {
+      this.effects.burn = 0;
+    }
+    if (this.effects.frozen > 0) {
+      this.effects.frozen = Math.max(this.effects.frozen, this.effects.soaked);
+      this.effects.soaked = 0;
+    }
+    if (this.effects.void > 0 && (!this.void_delay || this.effects.void_delay <= 0) && (this.effects.burn > 0 || this.effects.shock > 0)) {
+      this.effects.shock = 0;
+      this.effects.burn = 0;
+      this.effects.void_delay = 5;
+      // void explosion
+    }
+    if (this.effects.burn > 0 && this.effects.frozen > 0) {
+      this.frozen = 0;
+      this.burn = 0;
+      this.health -= 40;
+    }
+
     this.clearQueuedAttacks();
   }
   /**
@@ -300,7 +323,7 @@ export class Actor extends Entity {
       this.effects.burn -= GAME_ENGINE.clockTick;
     }
     if (this.validEffects.shock && this.effects.shock > 0) {
-      this.health -= 5 * GAME_ENGINE.clockTick;
+      this.health -= 5 * GAME_ENGINE.clockTick * (this.effects.soaked > 0 ? 3 : 0);
       this.effects.shock -= GAME_ENGINE.clockTick;
     }
     if (this.validEffects.soaked && this.effects.soaked > 0) {
@@ -318,6 +341,86 @@ export class Actor extends Entity {
     if (this.validEffects.void && this.effects.void > 0) {
       this.effects.void -= GAME_ENGINE.clockTick;
     }
+    if (this.validEffects.void_delay && this.effects.void_delay > 0) {
+      this.effects.void_delay -= GAME_ENGINE.clockTick;
+    }
+  }
+
+  drawEffects(ctx) {
+    if (this.health <= 0) return;
+    this.effect_anim_timer = Math.max(GAME_ENGINE.clockTick, this.effect_anim_timer + GAME_ENGINE.clockTick);
+    
+    ctx.save();
+    ctx.translate(this.x - GAME_ENGINE.camera.x, this.y - GAME_ENGINE.camera.y);
+    if (this.effects.burn > 0) {
+      ctx.drawImage(
+        window.ASSET_MANAGER.getAsset(EFFECTS_SPRITESHEET.BURNING_EFFECT.URL), 
+        EFFECTS_SPRITESHEET.BURNING_EFFECT.FRAME_WIDTH * Math.floor((this.effect_anim_timer * 10) % EFFECTS_SPRITESHEET.BURNING_EFFECT.FRAME_COUNT),
+        0,
+        EFFECTS_SPRITESHEET.BURNING_EFFECT.FRAME_WIDTH,
+      EFFECTS_SPRITESHEET.BURNING_EFFECT.FRAME_HEIGHT,
+        -75,
+        -75,
+        150,
+        150
+      )
+    }
+    if (this.effects.shock > 0) {
+      ctx.drawImage(
+        window.ASSET_MANAGER.getAsset(EFFECTS_SPRITESHEET.SHOCK_EFFECT.URL), 
+        EFFECTS_SPRITESHEET.SHOCK_EFFECT.FRAME_WIDTH * Math.floor((this.effect_anim_timer * 10) % EFFECTS_SPRITESHEET.SHOCK_EFFECT.FRAME_COUNT),
+        0,
+        EFFECTS_SPRITESHEET.SHOCK_EFFECT.FRAME_WIDTH,
+      EFFECTS_SPRITESHEET.SHOCK_EFFECT.FRAME_HEIGHT,
+        -75,
+        -75,
+        150,
+        150
+      )
+    }
+    if (this.effects.soaked > 0) {
+      ctx.drawImage(
+        window.ASSET_MANAGER.getAsset(EFFECTS_SPRITESHEET.SOAKED_EFFECT.URL), 
+        EFFECTS_SPRITESHEET.SOAKED_EFFECT.FRAME_WIDTH * Math.floor((this.effect_anim_timer * 8) % EFFECTS_SPRITESHEET.SOAKED_EFFECT.FRAME_COUNT),
+        0,
+        EFFECTS_SPRITESHEET.SOAKED_EFFECT.FRAME_WIDTH,
+      EFFECTS_SPRITESHEET.SOAKED_EFFECT.FRAME_HEIGHT,
+        -75,
+        -75,
+        150,
+        150
+      )
+    }
+    if (this.effects.frozen > 0) {
+      ctx.drawImage(
+        window.ASSET_MANAGER.getAsset(EFFECTS_SPRITESHEET.ICE_EFFECT.URL), 
+        0,
+        0,
+        EFFECTS_SPRITESHEET.ICE_EFFECT.FRAME_WIDTH,
+      EFFECTS_SPRITESHEET.ICE_EFFECT.FRAME_HEIGHT,
+        -150,
+        -100,
+        300,
+        200
+      )
+    }
+    if (this.effects.void > 0) {
+      //ctx.rotate((this.effect_anim_timer * 30) % (Math.PI*2));
+      ctx.shadowColor = "purple";
+      ctx.shadowBlur = 20;
+      ctx.drawImage(
+        window.ASSET_MANAGER.getAsset(EFFECTS_SPRITESHEET.VOID_EFFECT.URL), 
+        EFFECTS_SPRITESHEET.VOID_EFFECT.FRAME_WIDTH * Math.floor((this.effect_anim_timer * 5) % EFFECTS_SPRITESHEET.VOID_EFFECT.FRAME_COUNT),
+        0,
+        EFFECTS_SPRITESHEET.VOID_EFFECT.FRAME_WIDTH,
+      EFFECTS_SPRITESHEET.VOID_EFFECT.FRAME_HEIGHT,
+        -100,
+        -100,
+        200,
+        200
+      )
+    }
+    ctx.restore();
   }
 }
 

@@ -42,7 +42,16 @@ export class Cactus extends Actor {
   }
 
   update() {
+    // apply attack damage
+    this.recieveAttacks();
     this.recieveEffects();
+
+    if (this.health <= 0) {
+      this.removeFromWorld = true;
+    }
+
+    if (this.effects.frozen > 0 || this.effects.stun > 0) return;
+
     this.attackTime += GAME_ENGINE.clockTick;
 
     for (let entity of GAME_ENGINE.entities) {
@@ -60,15 +69,7 @@ export class Cactus extends Actor {
       }
     }
 
-    // apply attack damage
-    for (let attack of this.recieved_attacks) {
-      this.health -= attack.damage;
-    }
-    this.recieved_attacks = [];
-
-    if (this.health <= 0) {
-      this.removeFromWorld = true;
-    }
+    
   }
 
   draw(ctx) {
@@ -87,5 +88,6 @@ export class Cactus extends Actor {
     } else {
       super.draw(ctx);
     }
+    this.drawEffects(ctx);
   }
 }

@@ -153,6 +153,10 @@ export class AssetDownloader {
     );
     this.assetManager.queueDownload("./assets/effects/dust/landingdust.png");
     this.assetManager.queueDownload("./assets/effects/dust/dashdust.png");
+    this.assetManager.queueDownload("./assets/effects/shock.png");
+    this.assetManager.queueDownload("./assets/effects/soaked.png");
+    this.assetManager.queueDownload("./assets/effects/ice_cube.png");
+    this.assetManager.queueDownload("./assets/effects/void.png");
   }
 
   downloadSFXAssets() {

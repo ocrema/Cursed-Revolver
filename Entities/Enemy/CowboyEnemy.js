@@ -107,15 +107,26 @@ export class CowboyEnemy extends Actor {
     } else {
       super.draw(ctx);
     }
+    this.drawEffects(ctx);
   }
 
 
 update() {
+  
+  this.applyDamage();
+
+  if (this.health <= 0) {
+    this.spawnHealingBottle();
+    this.removeFromWorld = true;
+    this.collider = null;
+  }
+  
+  if (this.effects.frozen > 0 || this.effects.stun > 0) return;
+  
   this.attackCooldown += GAME_ENGINE.clockTick;
-  this.recieveEffects();
 
   let playerDetected = false;
-  let playerTarget = null;
+   let playerTarget = null;
 
   if (!this.onGround) {
       this.velocity.y += this.gravity * GAME_ENGINE.clockTick;
@@ -147,7 +158,6 @@ update() {
       this.setAnimation("idle");
   }
 
-  this.applyDamage();
   this.handleCollisions();
 
   // **Prevent Cowboy From Sliding Past Player**
@@ -158,11 +168,7 @@ update() {
   this.x += this.velocity.x * GAME_ENGINE.clockTick;
   this.y += this.velocity.y * GAME_ENGINE.clockTick;
 
-  if (this.health <= 0) {
-      this.spawnHealingBottle();
-      this.removeFromWorld = true;
-      this.collider = null;
-  }
+  
 }
 
 
@@ -256,10 +262,8 @@ update() {
 
 
   applyDamage() {
-    for (let attack of this.recieved_attacks) {
-      this.health -= attack.damage;
-    }
-    this.recieved_attacks = [];
+    this.recieveAttacks();
+    this.recieveEffects();
   }
 
   handleCollisions() {
