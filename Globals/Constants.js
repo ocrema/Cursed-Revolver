@@ -172,6 +172,14 @@ export const MAP_CONSTANTS = {
     FRAME_COUNT: 8,
     FRAME_DURATION: 0.25,
   },
+  SPIDERWEB: {
+    NAME: "SPIDERWEB",
+    URL: "./assets/map/Spiderweb.png",
+    FRAME_WIDTH: 32,
+    FRAME_HEIGHT: 32,
+    FRAME_COUNT: 15,
+    FRAME_DURATION: 0.25,
+  },
 };
 
 export const ENEMY_SPRITESHEET = {

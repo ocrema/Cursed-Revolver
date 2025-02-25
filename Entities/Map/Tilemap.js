@@ -6,6 +6,7 @@ import { SaloonTile } from "./Tiles/SaloonTile.js";
 import { SpawnPointTile } from "./Tiles/SpawnPointTile.js";
 import { TreeTile } from "./Tiles/TreeTile.js";
 import { BackgroundTriggerTile } from "./Tiles/BackgroundTriggerTile.js";
+import { SpiderwebTile } from "./Tiles/SpiderwebTile.js";
 
 export class Tilemap {
   constructor(
@@ -32,6 +33,7 @@ export class Tilemap {
     this.barrelSpawnPoints = [];
     this.backgroundTriggerPoints = [];
     this.tumbleweedTriggerPoints = [];
+    this.spiderwebTriggerPoints = [];
   }
 
   async load() {
@@ -140,6 +142,10 @@ export class Tilemap {
             case 112:
               this.tumbleweedTriggerPoints.push({ x: worldX, y: worldY });
               break;
+            case 113:
+              tileClass = SpiderwebTile;
+              this.spiderwebTriggerPoints.push({ x: worldX, y: worldY });
+              break;
             default:
               break;
           }
@@ -183,5 +189,9 @@ export class Tilemap {
 
   getTumbleweedTriggerPoints() {
     return this.tumbleweedTriggerPoints;
+  }
+
+  getSpiderwebTriggerPoints() {
+    return this.spiderwebTriggerPoints;
   }
 }

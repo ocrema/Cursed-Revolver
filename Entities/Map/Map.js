@@ -15,6 +15,8 @@ import { GrowingTree } from "../Objects/GrowingTree.js";
 import { HealingBottle } from "../../Entities/Enemy/HealingBottle.js";
 import { BackgroundTriggerTile } from "./Tiles/BackgroundTriggerTile.js";
 import { BACKGROUND_SPRITESHEET } from "../../Globals/Constants.js";
+import { SpiderwebTile } from "./Tiles/SpiderwebTile.js";
+import { SpiderwebVisual } from "../Objects/TileVisuals/SpiderwebVisual.js";
 
 export class Map extends GameMap {
   async load() {
@@ -56,6 +58,9 @@ export class Map extends GameMap {
       ),
       window.ASSET_MANAGER.getAsset(
         "./assets/map/SpawnPoints/TumbleweedSpawnPoint.png"
+      ),
+      window.ASSET_MANAGER.getAsset(
+        "./assets/map/SpawnPoints/SpiderwebSpawnPoint.png"
       ),
     ];
 
