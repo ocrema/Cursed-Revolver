@@ -155,6 +155,15 @@ export class Map extends GameMap {
     }
   }
 
+  addBarrelObjects(gameMap) {
+    const barrelSpawnPoints = gameMap.getBarrelSpawnPoints();
+
+    for (let spawn of barrelSpawnPoints) {
+      const barrel = new Barrel(spawn.x, spawn.y - 10);
+      GAME_ENGINE.addEntity(barrel);
+    }
+  }
+
   addOldMapEnemies() {
     // Crow
     GAME_ENGINE.addEntity(new Crow(2500, -500));
