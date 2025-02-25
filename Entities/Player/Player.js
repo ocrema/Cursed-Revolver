@@ -19,6 +19,8 @@ export class Player extends Actor {
     this.scale = 0.3;
     this.x = x;
     this.y = y;
+    this.spawnX = x;
+    this.spawnY = y;
 
     this.isPlayer = true;
 
@@ -45,6 +47,7 @@ export class Player extends Actor {
 
     this.x_velocity = 0;
     this.y_velocity = 0;
+    this.jumpForce = -1500;
     this.isGrounded = 0; // values above 0 indicate that the player is grounded, so the player can still jump for a little bit after falling off a platform
 
     this.selectedSpell = 0;
@@ -68,7 +71,35 @@ export class Player extends Actor {
     this.groundSlamSpeed = 3000;
   }
 
+  heal(amount) {
+    console.log(`Healing Player: +${amount} HP`);
+
+    // Forcefully increase health
+    let oldHealth = this.health;
+    this.health = Math.min(this.maxHealth, this.health + amount);
+
+    //console.log(` Player Health Before: ${oldHealth}, After: ${this.health}`);
+
+    // Ensure the update is visible in the HUD (if applicable)
+    if (this.hud) {
+      this.hud.updateHealth(this.health);
+    }
+  }
+
+  setSpawnPoint(x, y) {
+    this.spawnX = x;
+    this.spawnY = y;
+  }
+
   update() {
+    if (GAME_ENGINE.debug_colliders) {
+      this.health = 1000000;
+      this.jumpForce = -2100;
+      this.speed = 1000;
+    } else {
+      this.speed = 600;
+      this.jumpForce = -1500;
+    }
     this.isMoving = false;
     this.isJumping = false;
 
@@ -76,8 +107,8 @@ export class Player extends Actor {
     if (GAME_ENGINE.keys["h"]) {
       this.isDead = false;
       this.health = 200;
-      this.x = 0;
-      this.y = 0;
+      this.x = this.spawnX;
+      this.y = this.spawnY;
       this.setAnimation(PLAYER_SPRITESHEET.IDLE.NAME);
     }
 
@@ -164,13 +195,13 @@ export class Player extends Actor {
     if (this.x_velocity > 0) {
       this.x_velocity = Math.max(
         this.x_velocity -
-        GAME_ENGINE.clockTick * (this.isGrounded == 0.2 ? 9000 : 1000),
+          GAME_ENGINE.clockTick * (this.isGrounded == 0.2 ? 9000 : 1000),
         0
       );
     } else {
       this.x_velocity = Math.min(
         this.x_velocity +
-        GAME_ENGINE.clockTick * (this.isGrounded == 0.2 ? 9000 : 1000),
+          GAME_ENGINE.clockTick * (this.isGrounded == 0.2 ? 9000 : 1000),
         0
       );
     }
@@ -198,7 +229,9 @@ export class Player extends Actor {
       this.isDashing = this.dashTime;
       this.dashCooldown = 0.5;
       window.ASSET_MANAGER.playAsset("./assets/sfx/jump.ogg");
-      GAME_ENGINE.addEntity(new DashDust(this.x, this.y + this.collider.height / 2, true));
+      GAME_ENGINE.addEntity(
+        new DashDust(this.x, this.y + this.collider.height / 2, true)
+      );
     } else if (
       GAME_ENGINE.keys["d"] &&
       !GAME_ENGINE.keys["a"] &&
@@ -209,7 +242,9 @@ export class Player extends Actor {
       this.isDashing = this.dashTime;
       this.dashCooldown = 0.5;
       window.ASSET_MANAGER.playAsset("./assets/sfx/jump.ogg");
-      GAME_ENGINE.addEntity(new DashDust(this.x, this.y + this.collider.height / 2));
+      GAME_ENGINE.addEntity(
+        new DashDust(this.x, this.y + this.collider.height / 2)
+      );
     }
 
     this.dashCooldown = Math.max(this.dashCooldown - GAME_ENGINE.clockTick, 0);
@@ -224,7 +259,7 @@ export class Player extends Actor {
     ) {
       this.isGrounded = 0;
       this.jumpCooldown = 0.4;
-      this.y_velocity = -1500; // Jumping velocity
+      this.y_velocity = this.jumpForce; // Jumping velocity
       this.setAnimation(PLAYER_SPRITESHEET.JUMP.NAME);
       this.isJumping = true;
       window.ASSET_MANAGER.playAsset("./assets/sfx/jump.ogg");
@@ -284,7 +319,8 @@ export class Player extends Actor {
           e.isEnemy ||
           e.isEffect ||
           e.isDestructibleObject ||
-          e.isSpike
+          e.isSpike ||
+          e.isSpawnPoint
         )
           continue;
         if (e.isWater) {
@@ -331,7 +367,8 @@ export class Player extends Actor {
         e.isAttack ||
         e.isEnemy ||
         e.isDestructibleObject ||
-        e.isSpike
+        e.isSpike ||
+        e.isSpawnPoint
       )
         continue;
 
@@ -352,7 +389,9 @@ export class Player extends Actor {
       }
       if (this.y_velocity > 300) {
         window.ASSET_MANAGER.playAsset("./assets/sfx/landing.wav", 1.5);
-        GAME_ENGINE.addEntity(new LandingDust(this.x, this.y + this.collider.height / 2));
+        GAME_ENGINE.addEntity(
+          new LandingDust(this.x, this.y + this.collider.height / 2)
+        );
       }
       this.y_velocity = 0; // if hit something cancel velocity
     }
@@ -373,15 +412,18 @@ export class Player extends Actor {
         window.ASSET_MANAGER.playAsset("./assets/sfx/click1.ogg");
       }
     }
-    if (GAME_ENGINE.keys["q"]) {
+    console.log(GAME_ENGINE.keys)
+    if (GAME_ENGINE.keys["q"] || GAME_ENGINE.keys["wheelUp"]) {
       GAME_ENGINE.keys["q"] = false;
+      GAME_ENGINE.keys["wheelUp"] = false;
       this.selectedSpell--;
       if (this.selectedSpell < 0) this.selectedSpell = 5;
       console.log(this.selectedSpell);
       window.ASSET_MANAGER.playAsset("./assets/sfx/click1.ogg");
     }
-    if (GAME_ENGINE.keys["e"]) {
+    if (GAME_ENGINE.keys["e"] || GAME_ENGINE.keys["wheelDown"]) {
       GAME_ENGINE.keys["e"] = false;
+      GAME_ENGINE.keys["wheelDown"] = false;
       this.selectedSpell++;
       if (this.selectedSpell > 5) this.selectedSpell = 0;
       window.ASSET_MANAGER.playAsset("./assets/sfx/click1.ogg");
@@ -436,7 +478,9 @@ class LandingDust extends Entity {
     this.time = 0;
     this.end = 0.5;
     this.entityOrder = 3;
-    this.image = window.ASSET_MANAGER.getAsset("./assets/effects/dust/landingdust.png");
+    this.image = window.ASSET_MANAGER.getAsset(
+      "./assets/effects/dust/landingdust.png"
+    );
     this.scale = 5;
   }
   update() {
@@ -448,10 +492,7 @@ class LandingDust extends Entity {
   draw(ctx) {
     const frame = Math.floor((this.time / this.end) * 7);
     ctx.save();
-    ctx.translate(
-      this.x - GAME_ENGINE.camera.x,
-      this.y - GAME_ENGINE.camera.y
-    );
+    ctx.translate(this.x - GAME_ENGINE.camera.x, this.y - GAME_ENGINE.camera.y);
 
     ctx.drawImage(
       this.image,
@@ -460,7 +501,7 @@ class LandingDust extends Entity {
       32,
       16,
       (-32 * this.scale) / 2,
-      (-16 * this.scale),
+      -16 * this.scale,
       32 * this.scale,
       16 * this.scale
     );
@@ -477,7 +518,9 @@ class DashDust extends Entity {
     this.time = 0;
     this.end = 0.5;
     this.entityOrder = 3;
-    this.image = window.ASSET_MANAGER.getAsset("./assets/effects/dust/dashdust.png");
+    this.image = window.ASSET_MANAGER.getAsset(
+      "./assets/effects/dust/dashdust.png"
+    );
     this.scale = 3;
     this.flip = flip;
   }
@@ -490,10 +533,7 @@ class DashDust extends Entity {
   draw(ctx) {
     const frame = Math.floor((this.time / this.end) * 8);
     ctx.save();
-    ctx.translate(
-      this.x - GAME_ENGINE.camera.x,
-      this.y - GAME_ENGINE.camera.y
-    );
+    ctx.translate(this.x - GAME_ENGINE.camera.x, this.y - GAME_ENGINE.camera.y);
     if (this.flip) {
       ctx.scale(-1, 1);
       //ctx.translate(-this.x * 2, 0);
@@ -506,7 +546,7 @@ class DashDust extends Entity {
       48,
       32,
       (-48 * this.scale) / 2,
-      (-32 * this.scale),
+      -32 * this.scale,
       48 * this.scale,
       32 * this.scale
     );

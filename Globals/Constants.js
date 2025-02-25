@@ -107,7 +107,7 @@ export const PLAYER_COLLIDER = {
 export const CROW_SPRITESHEET = {
   FLY: {
     NAME: "CROWFLY",
-    URL: "./assets/enemy/Crow/Fly/Left.png",
+    URL: "./assets/enemy/Crow/Fly/noshadow.png",
     FRAME_WIDTH: 40,
     FRAME_HEIGHT: 40,
     FRAME_COUNT: 5,
@@ -115,7 +115,7 @@ export const CROW_SPRITESHEET = {
   },
   ATTACK: {
     NAME: "CROWATTACK",
-    URL: "./assets/enemy/Crow/Attack/Left.png",
+    URL: "./assets/enemy/Crow/Attack/noshadow.png",
     FRAME_WIDTH: 40,
     FRAME_HEIGHT: 40,
     FRAME_COUNT: 5,
@@ -123,7 +123,7 @@ export const CROW_SPRITESHEET = {
   },
   HURT: {
     NAME: "CROWHURT",
-    URL: "./assets/enemy/Crow/Hurt/Left.png",
+    URL: "./assets/enemy/Crow/Hurt/noshadow.png",
     FRAME_WIDTH: 40,
     FRAME_HEIGHT: 40,
     FRAME_COUNT: 5,
@@ -131,7 +131,7 @@ export const CROW_SPRITESHEET = {
   },
   DEATH: {
     NAME: "CROWDEATH",
-    URL: "./assets/enemy/Crow/Die/Left.png",
+    URL: "./assets/enemy/Crow/Die/noshadow.png",
     FRAME_WIDTH: 40,
     FRAME_HEIGHT: 40,
     FRAME_COUNT: 5,
@@ -155,7 +155,16 @@ export const GROUND_SPRITESHEET = {
 
 // Map Object Constants
 
-export const MAP_CONSTANTS = {};
+export const MAP_CONSTANTS = {
+  CAMPFIRE: {
+    NAME: "CAMPFIRE",
+    URL: "./assets/map/Campfire.png",
+    FRAME_WIDTH: 32,
+    FRAME_HEIGHT: 64,
+    FRAME_COUNT: 8,
+    FRAME_DURATION: 0.25,
+  },
+};
 
 export const ENEMY_SPRITESHEET = {
   CACTUS: {

@@ -70,10 +70,13 @@ export class AssetDownloader {
     this.assetManager.queueDownload("./assets/cowboy/CowBoyBullet.png");
 
     // Crow Enemy
-    this.assetManager.queueDownload("./assets/enemy/Crow/Fly/Left.png");
-    this.assetManager.queueDownload("./assets/enemy/Crow/Hurt/Left.png");
-    this.assetManager.queueDownload("./assets/enemy/Crow/Die/Left.png");
-    this.assetManager.queueDownload("./assets/enemy/Crow/Attack/Left.png");
+    this.assetManager.queueDownload("./assets/enemy/Crow/Fly/noshadow.png");
+    this.assetManager.queueDownload("./assets/enemy/Crow/Hurt/noshadow.png");
+    this.assetManager.queueDownload("./assets/enemy/Crow/Die/noshadow.png");
+    this.assetManager.queueDownload("./assets/enemy/Crow/Attack/noshadow.png");
+
+    // Earth Golem
+    this.assetManager.queueDownload("./assets/enemy/golem/golem_walk.png");
   }
 
   downloadEnemyAttackAssets() {
@@ -96,16 +99,20 @@ export class AssetDownloader {
   }
 
   downloadMapObjectAssets() {
-    this.assetManager.queueDownload("./assets/map/props/rocks1.png");
+    this.assetManager.queueDownload("./assets/map/Rock1.png");
     this.assetManager.queueDownload("./assets/map/props/rocks2.png");
     this.assetManager.queueDownload("./assets/map/props/rocks3.png");
     this.assetManager.queueDownload("./assets/map/props/rocks4.png");
-    this.assetManager.queueDownload("./assets/map/props/rocks5.png");
     this.assetManager.queueDownload("./assets/map/props/tree01.png");
     this.assetManager.queueDownload("./assets/map/props/tree02.png");
     this.assetManager.queueDownload("./assets/map/props/tree03.png");
     this.assetManager.queueDownload("./assets/map/props/tree04.png");
     this.assetManager.queueDownload("./assets/map/Spikes.png");
+    this.assetManager.queueDownload("./assets/map/CactusSpikes.png");
+    this.assetManager.queueDownload("./assets/map/Saloon.png");
+    this.assetManager.queueDownload("./assets/map/SpawnPoint.png");
+    this.assetManager.queueDownload("./assets/map/Signs.png");
+    this.assetManager.queueDownload("./assets/map/Campfire.png");
   }
 
   downloadSpellAssets() {
@@ -123,6 +130,7 @@ export class AssetDownloader {
     this.assetManager.queueDownload("./assets/objects/barrel.png");
     this.assetManager.queueDownload("./assets/objects/tumbleweed.png");
     this.assetManager.queueDownload("./assets/objects/growing_tree.png");
+    this.assetManager.queueDownload("./assets/objects/health_potion.png");
   }
 
   downloadEnvironmentalAssets() {
@@ -165,6 +173,7 @@ export class AssetDownloader {
   downloadPauseMenuButtons() {
     this.assetManager.queueDownload("./assets/ui/menu/buttonResume.png");
     this.assetManager.queueDownload("./assets/ui/menu/buttonSettings.png");
+    this.assetManager.queueDownload("./assets/ui/menu/buttonHelp.png");
     this.assetManager.queueDownload("./assets/ui/menu/buttonQuit.png");
     this.assetManager.queueDownload("./assets/ui/menu/buttonStart.png");
     this.assetManager.queueDownload("./assets/ui/menu/menuBackground.png");
