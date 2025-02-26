@@ -1,29 +1,29 @@
-import { Entity } from "../Entities.js";
-import { Collider } from "../Collider.js";
-import { Player } from "../Player/Player.js";
-import { MAP_CONSTANTS } from "../../Globals/Constants.js";
+import { Entity } from "../../Entities.js";
+import { Collider } from "../../Collider.js";
+import { Player } from "../../Player/Player.js";
+import { MAP_CONSTANTS } from "../../../Globals/Constants.js";
 
-export class SpawnPoint extends Entity {
+export class SpiderwebVisual extends Entity {
   constructor(x, y, scale = 1) {
     super();
-    this.x = x + 2;
-    this.y = y - 45;
+    this.x = x;
+    this.y = y;
     this.scale = scale;
     this.entityOrder = -9;
     this.isSpawnPoint = true;
-    this.scale = 3.5;
+    this.scale = 10;
 
     // Add animated campfire sprite
     this.addAnimation(
-      MAP_CONSTANTS.CAMPFIRE.NAME,
-      window.ASSET_MANAGER.getAsset(MAP_CONSTANTS.CAMPFIRE.URL),
-      MAP_CONSTANTS.CAMPFIRE.FRAME_WIDTH,
-      MAP_CONSTANTS.CAMPFIRE.FRAME_HEIGHT,
-      MAP_CONSTANTS.CAMPFIRE.FRAME_COUNT,
-      MAP_CONSTANTS.CAMPFIRE.FRAME_DURATION
+      MAP_CONSTANTS.SPIDERWEB.NAME,
+      window.ASSET_MANAGER.getAsset(MAP_CONSTANTS.SPIDERWEB.URL),
+      MAP_CONSTANTS.SPIDERWEB.FRAME_WIDTH,
+      MAP_CONSTANTS.SPIDERWEB.FRAME_HEIGHT,
+      MAP_CONSTANTS.SPIDERWEB.FRAME_COUNT,
+      MAP_CONSTANTS.SPIDERWEB.FRAME_DURATION
     );
 
-    this.setAnimation(MAP_CONSTANTS.CAMPFIRE.NAME, true);
+    this.setAnimation(MAP_CONSTANTS.SPIDERWEB.NAME, true);
   }
 
   update() {
