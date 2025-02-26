@@ -28,7 +28,7 @@ export class Cactus extends Actor {
       160, // Frame width
       160, // Frame height
       3, // Frame count
-      0.25 // Frame duration (slower for idle)
+      0.1 // Frame duration (slower for idle)
     );
     this.addAnimation(
       "default",
@@ -109,9 +109,6 @@ export class Cactus extends Actor {
 
     this.attemptAttack();
 
-    // apply attack damage
-    
-
     if (this.health <= 0) {
       this.dead = true;
     }
@@ -129,25 +126,28 @@ export class Cactus extends Actor {
       this.idleTimer = 0;
       this.setAnimation("idle", false);
     }
+    
+    if (this.tookDamage) {
+      this.idleTimer = 0;
+      this.setAnimation("damage", false);
+    }
+
+    if (this.currentAnimation != "damage") {
+      if (this.attacking) {
+        this.idleTimer = 0;
+        this.setAnimation("attack", false);
+      }
+
+      else if (this.seesPlayer) {
+        this.idleTimer = 0;
+        this.setAnimation("aggressive", false);
+      }  
+    }
 
     if (this.dead && this.currentAnimation !== "die") {
       this.idleTimer = 0;
       this.setAnimation("die", false);
     }
-
-    else if (this.tookDamage && this.currentAnimation !== "damage") {
-      this.idleTimer = 0;
-      this.setAnimation("damage", false);
-    }
-
-    else if (this.attacking) {
-      this.idleTimer = 0;
-      this.setAnimation("attack", false);
-    }
-
-    else if (this.seesPlayer && this.currentAnimation !== "attack") {
-      this.setAnimation("aggressive", false);
-    }    
   }
 
   attemptAttack() {
