@@ -79,8 +79,6 @@ export class Entity {
 
     if (!spritesheet) return;
 
-    this.updateAnimation(GAME_ENGINE.clockTick);
-
     ctx.save(); // Save the current transformation state
     ctx.translate(-GAME_ENGINE.camera.x, -GAME_ENGINE.camera.y);
     // Apply horizontal flipping and scaling

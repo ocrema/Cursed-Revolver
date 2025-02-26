@@ -1,7 +1,7 @@
 import { GameMap } from "../Entities.js";
 import { Player } from "../Player/Player.js";
 import { Background } from "./Background.js";
-import { Cactus } from "../Enemy/Cactus.js";
+import { Cactus, SpitterCactus } from "../Enemy/Cactus.js";
 import { Spider } from "../Enemy/Spider.js";
 import { GAME_ENGINE } from "../../main.js";
 import { Barrel } from "../Objects/Barrel.js";
@@ -13,17 +13,23 @@ import { Crow } from "../Enemy/Crow.js";
 import { Tilemap } from "./Tilemap.js";
 import { GrowingTree } from "../Objects/GrowingTree.js";
 import { HealingBottle } from "../../Entities/Enemy/HealingBottle.js";
+import { BackgroundTriggerTile } from "./Tiles/BackgroundTriggerTile.js";
+import { BACKGROUND_SPRITESHEET } from "../../Globals/Constants.js";
+import { SpiderwebTile } from "./Tiles/SpiderwebTile.js";
+import { SpiderwebVisual } from "../Objects/TileVisuals/SpiderwebVisual.js";
 
 export class Map extends GameMap {
   async load() {
-    let oldMap = true;
+    let oldMap = false;
 
     if (oldMap) {
       GAME_ENGINE.addEntity(new Player(1470, -70));
     } else {
       GAME_ENGINE.addEntity(new Player(763, 1500));
     }
-    GAME_ENGINE.addEntity(new Background());
+
+    const backgroundList = Object.values(BACKGROUND_SPRITESHEET);
+    GAME_ENGINE.addEntity(new Background(backgroundList));
 
     const TILESET_IMAGES = [
       window.ASSET_MANAGER.getAsset("./assets/map/Atlas.png"),
@@ -31,8 +37,31 @@ export class Map extends GameMap {
       window.ASSET_MANAGER.getAsset("./assets/map/Saloon.png"),
       window.ASSET_MANAGER.getAsset("./assets/map/Signs.png"),
       window.ASSET_MANAGER.getAsset("./assets/map/props/tree04.png"),
-      window.ASSET_MANAGER.getAsset("./assets/map/SpawnPoint.png"),
+      window.ASSET_MANAGER.getAsset(
+        "./assets/map/SpawnPoints/PlayerSpawnPoint.png"
+      ),
       window.ASSET_MANAGER.getAsset("./assets/map/Rock1.png"),
+      window.ASSET_MANAGER.getAsset(
+        "./assets/map/SpawnPoints/CactusSpawnPoint.png"
+      ),
+      window.ASSET_MANAGER.getAsset(
+        "./assets/map/SpawnPoints/CowboySpawnPoint.png"
+      ),
+      window.ASSET_MANAGER.getAsset(
+        "./assets/map/SpawnPoints/BirdSpawnPoint.png"
+      ),
+      window.ASSET_MANAGER.getAsset(
+        "./assets/map/SpawnPoints/BarrelSpawnPoint.png"
+      ),
+      window.ASSET_MANAGER.getAsset(
+        "./assets/map/SpawnPoints/BackgroundTrigger.png"
+      ),
+      window.ASSET_MANAGER.getAsset(
+        "./assets/map/SpawnPoints/TumbleweedSpawnPoint.png"
+      ),
+      window.ASSET_MANAGER.getAsset(
+        "./assets/map/SpawnPoints/SpiderwebSpawnPoint.png"
+      ),
     ];
 
     let gameMap;
@@ -55,8 +84,100 @@ export class Map extends GameMap {
       this.addOldMapEnemies();
       this.addOldMapObjects();
     } else {
-      this.addNewMapEnemies();
-      this.addNewMapObjects();
+      this.addCactusEnemies(gameMap);
+      this.addCowboyEnemies(gameMap);
+      this.addBirdEnemies(gameMap);
+      this.addBarrelObjects(gameMap);
+      this.addTumbleweedObjects(gameMap);
+      this.addBackgroundTriggerObjects(gameMap);
+    }
+  }
+
+  addTumbleweedObjects(gameMap) {
+    const tumbleweedTriggerPoints = gameMap.getTumbleweedTriggerPoints();
+    for (let spawn of tumbleweedTriggerPoints) {
+      const tumbleweed = new Tumbleweed(spawn.x, spawn.y, "right");
+      GAME_ENGINE.addEntity(tumbleweed);
+    }
+  }
+
+  addBackgroundTriggerObjects(gameMap) {
+    const backgroundTriggerPoints = gameMap.getBackgroundTriggerPoints();
+    for (let spawn of backgroundTriggerPoints) {
+      const backgroundTrigger = new BackgroundTriggerTile(spawn.x, spawn.y);
+      GAME_ENGINE.addEntity(backgroundTrigger);
+    }
+  }
+
+  addCactusEnemies(gameMap) {
+    const enemySpawnPoints = gameMap.getCactusSpawnPoints();
+
+    for (let spawn of enemySpawnPoints) {
+      const enemy = new Cactus(spawn.x, spawn.y - 10);
+      GAME_ENGINE.addEntity(enemy);
+    }
+  }
+
+  addCowboyEnemies(gameMap) {
+    const cowboySpawnPoints = gameMap.getCowboySpawnPoints();
+
+    for (let spawn of cowboySpawnPoints) {
+      const cowboy = new StaticCowboyEnemy(spawn.x, spawn.y - 10);
+      GAME_ENGINE.addEntity(cowboy);
+    }
+  }
+
+  addBirdEnemies(gameMap) {
+    const birdSpawnPoints = gameMap.getBirdSpawnPoints();
+
+    for (let spawn of birdSpawnPoints) {
+      const bird = new Crow(spawn.x, spawn.y - 10);
+      GAME_ENGINE.addEntity(bird);
+    }
+  }
+
+  addBarrelObjects(gameMap) {
+    const barrelSpawnPoints = gameMap.getBarrelSpawnPoints();
+
+    for (let spawn of barrelSpawnPoints) {
+      const barrel = new Barrel(spawn.x, spawn.y - 10);
+      GAME_ENGINE.addEntity(barrel);
+    }
+  }
+
+  addCactusEnemies(gameMap) {
+    const enemySpawnPoints = gameMap.getCactusSpawnPoints();
+
+    for (let spawn of enemySpawnPoints) {
+      const enemy = new Cactus(spawn.x, spawn.y - 10);
+      GAME_ENGINE.addEntity(enemy);
+    }
+  }
+
+  addCowboyEnemies(gameMap) {
+    const cowboySpawnPoints = gameMap.getCowboySpawnPoints();
+
+    for (let spawn of cowboySpawnPoints) {
+      const cowboy = new StaticCowboyEnemy(spawn.x, spawn.y - 10);
+      GAME_ENGINE.addEntity(cowboy);
+    }
+  }
+
+  addBirdEnemies(gameMap) {
+    const birdSpawnPoints = gameMap.getBirdSpawnPoints();
+
+    for (let spawn of birdSpawnPoints) {
+      const bird = new Crow(spawn.x, spawn.y - 10);
+      GAME_ENGINE.addEntity(bird);
+    }
+  }
+
+  addBarrelObjects(gameMap) {
+    const barrelSpawnPoints = gameMap.getBarrelSpawnPoints();
+
+    for (let spawn of barrelSpawnPoints) {
+      const barrel = new Barrel(spawn.x, spawn.y - 10);
+      GAME_ENGINE.addEntity(barrel);
     }
   }
 
@@ -71,7 +192,7 @@ export class Map extends GameMap {
 
     // Cacti
     GAME_ENGINE.addEntity(new Cactus(2300, 260));
-    GAME_ENGINE.addEntity(new Cactus(3000, 260));
+    GAME_ENGINE.addEntity(new SpitterCactus(3000, 260));
     GAME_ENGINE.addEntity(new Cactus(4200, 260));
 
     // Cowboy Enemy
@@ -91,10 +212,4 @@ export class Map extends GameMap {
     //healing bottle
     GAME_ENGINE.addEntity(new HealingBottle(3200, 275));
   }
-
-  addNewMapEnemies() {
-    GAME_ENGINE.addEntity(new Cactus(3000, 260));
-  }
-
-  addNewMapObjects() {}
 }

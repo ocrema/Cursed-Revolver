@@ -249,7 +249,6 @@ export class Crow extends Actor {
   }
 
   die() {
-    console.log("💀 Crow is dead.");
     this.isDead = true;
     this.setAnimation(CROW_SPRITESHEET.DEATH.NAME, false);
   }

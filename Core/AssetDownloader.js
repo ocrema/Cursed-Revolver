@@ -41,13 +41,25 @@ export class AssetDownloader {
     this.assetManager.queueDownload("./assets/player/Death.png");
     this.assetManager.queueDownload("./assets/player/Fall.png");
     this.assetManager.queueDownload("./assets/player/Hit.png");
-    this.assetManager.queueDownload("./assets/player/Attack1.png");
-    this.assetManager.queueDownload("./assets/player/Attack2.png");
+    this.assetManager.queueDownload("./assets/player/Attack.png");
   }
 
   downloadEnemyAssets() {
-    this.assetManager.queueDownload("./assets/cowboy/walk.png");
+    // Spider Enemy
     this.assetManager.queueDownload("./assets/enemy/spider/Walk.png");
+
+    // Cactus Enemy
+    this.assetManager.queueDownload("./assets/enemy/cactus/cactus.png");
+    this.assetManager.queueDownload("./assets/enemy/cactus/aggro.png");
+    this.assetManager.queueDownload("./assets/enemy/cactus/attack.png");
+    this.assetManager.queueDownload("./assets/enemy/cactus/damage.png");
+    this.assetManager.queueDownload("./assets/enemy/cactus/die.png");
+    this.assetManager.queueDownload("./assets/enemy/cactus/idle.png");
+    this.assetManager.queueDownload("./assets/enemy/cactus/spawn.png");
+
+
+    // Cowboy Enemy
+    this.assetManager.queueDownload("./assets/cowboy/walk.png");
     this.assetManager.queueDownload("./assets/cowboy/CowBoyIdle.png");
     this.assetManager.queueDownload("./assets/cowboy/CowBoyWalking.png");
     this.assetManager.queueDownload("./assets/cowboy/CowBoyDrawWeapon.png");
@@ -56,9 +68,6 @@ export class AssetDownloader {
     this.assetManager.queueDownload("./assets/cowboy/CowBoyShoot.png");
     this.assetManager.queueDownload("./assets/cowboy/CowBoySmokingIdle.png");
     this.assetManager.queueDownload("./assets/cowboy/CowBoyBullet.png");
-    this.assetManager.queueDownload("./assets/enemy/cactus/cactus.png");
-    this.assetManager.queueDownload("./assets/enemy/cactus/newcactus.png");
-    this.assetManager.queueDownload("./assets/enemy/spider/Walk.png");
 
     // Crow Enemy
     this.assetManager.queueDownload("./assets/enemy/Crow/Fly/noshadow.png");
@@ -74,17 +83,6 @@ export class AssetDownloader {
     this.assetManager.queueDownload("./assets/enemy/thorn/thorn.png");
   }
 
-  downloadCowboyAssets() {
-    this.assetManager.queueDownload("./assets/cowboy/CowBoyIdle.png");
-    this.assetManager.queueDownload("./assets/cowboy/CowBoyWalking.png");
-    this.assetManager.queueDownload("./assets/cowboy/CowBoyDrawWeapon.png");
-    this.assetManager.queueDownload("./assets/cowboy/CowBoyQuickDrawShot.png");
-    this.assetManager.queueDownload("./assets/cowboy/CowBoyRapidFire.png");
-    this.assetManager.queueDownload("./assets/cowboy/CowBoyShoot.png");
-    this.assetManager.queueDownload("./assets/cowboy/CowBoySmokingIdle.png");
-    this.assetManager.queueDownload("./assets/cowboy/CowBoyBullet.png");
-  }
-
   downloadBackgroundAssets() {
     this.assetManager.queueDownload("./assets/background/AboveBackground.png");
     this.assetManager.queueDownload(
@@ -93,6 +91,7 @@ export class AssetDownloader {
     this.assetManager.queueDownload(
       "./assets/background/UndergroundBackground1.png"
     );
+    this.assetManager.queueDownload("./assets/background/SpiderBackground.png");
   }
 
   downloadMapGroundAssets() {
@@ -112,7 +111,31 @@ export class AssetDownloader {
     this.assetManager.queueDownload("./assets/map/Spikes.png");
     this.assetManager.queueDownload("./assets/map/CactusSpikes.png");
     this.assetManager.queueDownload("./assets/map/Saloon.png");
-    this.assetManager.queueDownload("./assets/map/SpawnPoint.png");
+    this.assetManager.queueDownload(
+      "./assets/map/SpawnPoints/PlayerSpawnPoint.png"
+    );
+    this.assetManager.queueDownload(
+      "./assets/map/SpawnPoints/CactusSpawnPoint.png"
+    );
+    this.assetManager.queueDownload(
+      "./assets/map/SpawnPoints/CowboySpawnPoint.png"
+    );
+    this.assetManager.queueDownload(
+      "./assets/map/SpawnPoints/BirdSpawnPoint.png"
+    );
+    this.assetManager.queueDownload(
+      "./assets/map/SpawnPoints/BarrelSpawnPoint.png"
+    );
+    this.assetManager.queueDownload(
+      "./assets/map/SpawnPoints/BackgroundTrigger.png"
+    );
+    this.assetManager.queueDownload(
+      "./assets/map/SpawnPoints/TumbleweedSpawnPoint.png"
+    );
+    this.assetManager.queueDownload(
+      "./assets/map/SpawnPoints/SpiderwebSpawnPoint.png"
+    );
+    this.assetManager.queueDownload("./assets/map/Spiderweb.png");
     this.assetManager.queueDownload("./assets/map/Signs.png");
     this.assetManager.queueDownload("./assets/map/Campfire.png");
   }
