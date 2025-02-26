@@ -35,15 +35,6 @@ export class PlayerAnimationLoader {
     );
 
     this.playerObject.addAnimation(
-      PLAYER_SPRITESHEET.ATTACK2.NAME, // Name of the animation
-      this.playerObject.assetManager.getAsset(PLAYER_SPRITESHEET.ATTACK2.URL), // URL for Attack 2 animation
-      PLAYER_SPRITESHEET.ATTACK2.FRAME_WIDTH, // Frame width
-      PLAYER_SPRITESHEET.ATTACK2.FRAME_HEIGHT, // Frame height
-      PLAYER_SPRITESHEET.ATTACK2.FRAME_COUNT, // Frame count
-      PLAYER_SPRITESHEET.ATTACK2.FRAME_DURATION // Frame duration (faster for attacking)
-    );
-
-    this.playerObject.addAnimation(
       PLAYER_SPRITESHEET.JUMP.NAME, // Name of the animation
       this.playerObject.assetManager.getAsset(PLAYER_SPRITESHEET.JUMP.URL), // URL for Jump animation
       PLAYER_SPRITESHEET.JUMP.FRAME_WIDTH, // Frame width
