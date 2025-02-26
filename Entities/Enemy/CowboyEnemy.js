@@ -1,4 +1,4 @@
-import { Actor } from "../Entities.js";
+import { Actor } from "../Actor.js";
 import { Tile } from "../Map/Tiles/Tile.js";
 import { Player } from "../Player/Player.js";
 import { Collider } from "../Collider.js";
@@ -122,7 +122,7 @@ update() {
   }
   
   if (this.effects.frozen > 0 || this.effects.stun > 0) return;
-  
+
   this.attackCooldown += GAME_ENGINE.clockTick;
 
   let playerDetected = false;

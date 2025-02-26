@@ -1,4 +1,5 @@
-import { Actor, Entity } from "../Entities.js";
+import { Entity } from "../Entities.js";
+import { Actor } from "../Actor.js";
 import { PLAYER_SPRITESHEET } from "../../Globals/Constants.js";
 import * as Util from "../../Utils/Util.js";
 import { Fireball } from "../Spells/Fireball.js";

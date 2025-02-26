@@ -1,4 +1,4 @@
-import { Actor } from "../Entities.js";
+import { Actor } from "../Actor.js";
 import { Collider } from "../Collider.js";
 import { GAME_ENGINE } from "../../main.js";
 import { CROW_SPRITESHEET } from "../../Globals/Constants.js";

@@ -1,4 +1,4 @@
-import { Actor } from "../Entities.js";
+import { Actor } from "../Actor.js";
 //import { Platform } from "../Map/Platform.js";
 import { Player } from "../Player/Player.js";
 import { Jaw } from "./Attack.js";
