@@ -17,9 +17,7 @@ export class GameEngine {
     this.width = 2000;
     this.height = 1000;
     this.camera = Camera.getInstance();
-    this.event = Events.getInstance();
     this.addEntity(this.camera);
-    this.addEntity(this.event);
     this.debug_colliders = false;
 
     this.click = null;
