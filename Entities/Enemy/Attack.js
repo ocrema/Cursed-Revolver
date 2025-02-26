@@ -5,7 +5,7 @@ import { Collider } from "../Collider.js";
 import { Tile } from "../Map/Tiles/Tile.js";
 
 export class Thorn extends Entity {
-  constructor(x, y, target) {
+  constructor(x, y, target, maxRange) {
     super();
     Object.assign(this, { x, y, target });
     this.assetManager = window.ASSET_MANAGER;
@@ -18,7 +18,6 @@ export class Thorn extends Entity {
 
     // distance the thorn has travelled
     this.travelled = 0;
-    this.maxRange = 500;
     this.speed = 8;
     this.data = { damage: 20 };
     this.removeFromWorld = false;
