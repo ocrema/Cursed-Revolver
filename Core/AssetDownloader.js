@@ -157,6 +157,7 @@ export class AssetDownloader {
     this.assetManager.queueDownload("./assets/effects/soaked.png");
     this.assetManager.queueDownload("./assets/effects/ice_cube.png");
     this.assetManager.queueDownload("./assets/effects/void.png");
+    this.assetManager.queueDownload("./assets/effects/void_explosion.png");
   }
 
   downloadSFXAssets() {

@@ -1,6 +1,7 @@
 import { EFFECTS_SPRITESHEET } from "../Globals/Constants.js";
 import { GAME_ENGINE } from "../main.js";
 import * as Util from "../Utils/Util.js";
+import { VoidExplosion } from "./Effects/VoidExplosion.js";
 
 export class Entity {
   constructor() {
@@ -296,6 +297,7 @@ export class Actor extends Entity {
       this.effects.burn = 0;
       this.effects.void_delay = 5;
       // void explosion
+      GAME_ENGINE.addEntity(new VoidExplosion(this));
     }
     if (this.effects.burn > 0 && this.effects.frozen > 0) {
       this.frozen = 0;

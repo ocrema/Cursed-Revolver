@@ -304,6 +304,14 @@ export const EFFECTS_SPRITESHEET = {
     FRAME_COUNT: 8,
     FRAME_DURATION: 0.2,
   },
+  VOID_EXPLOSION_EFFECT: {
+    NAME: "VOID_EXPLOSION",
+    URL: "./assets/effects/void_explosion.png",
+    FRAME_WIDTH: 96,
+    FRAME_HEIGHT: 80,
+    FRAME_COUNT: 20,
+    FRAME_DURATION: 0.05,
+  },
 };
 
 // UI Constants
