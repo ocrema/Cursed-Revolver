@@ -1,6 +1,5 @@
 import { Timer } from "../Utils/Timer.js";
 import { Camera } from "../Core/Camera.js";
-import { Events } from "../Core/Event.js";
 import { PauseMenu } from "../Entities/PauseMenu.js";
 import { MainMenu } from "../Entities/MainMenu.js";
 import { GameLogicController } from "../Core/GameLogicController.js";
