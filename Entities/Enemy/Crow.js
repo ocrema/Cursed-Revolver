@@ -1,4 +1,4 @@
-import { Actor } from "../Entities.js";
+import { Actor } from "../Actor.js";
 import { Collider } from "../Collider.js";
 import { GAME_ENGINE } from "../../main.js";
 import { CROW_SPRITESHEET } from "../../Globals/Constants.js";
@@ -111,6 +111,9 @@ export class Crow extends Actor {
     if (this.isDead) {
       return;
     }
+    
+    this.applyDamageLogic();
+    if (this.effects.frozen > 0 || this.effects.stun > 0) return;
 
     if (this.directionX > 0) {
       this.flip = 1; // Facing right
@@ -134,7 +137,6 @@ export class Crow extends Actor {
       this.updateState();
     }
 
-    this.applyDamageLogic();
     this.updateAnimation(GAME_ENGINE.clockTick);
   }
 
@@ -228,26 +230,22 @@ export class Crow extends Actor {
     }
   }
 
+  clearQueuedAttacks() {
+    if (this.recieved_attacks.length > 0) {
+      this.setAnimation(CROW_SPRITESHEET.HURT.NAME);
+      this.isHurt = true;
+      this.hurtTimer = this.hurtDuration;
+    } else if (this.health <= 0) {
+      this.die();
+      return;
+    }
+    this.recieved_attacks = [];
+  }
+
   applyDamageLogic() {
     if (this.isDead) return;
-
-    for (let attack of this.recieved_attacks) {
-      this.health -= attack.damage;
-      // console.log(
-      //   `Crow took ${attack.damage} damage! Health: ${this.health}`
-      // );
-
-      if (this.health > 0) {
-        this.setAnimation(CROW_SPRITESHEET.HURT.NAME);
-        this.isHurt = true;
-        this.hurtTimer = this.hurtDuration;
-      } else {
-        this.die();
-        return;
-      }
-    }
-
-    this.recieved_attacks = [];
+      this.recieveAttacks();
+      this.recieveEffects();
   }
 
   die() {
@@ -271,6 +269,7 @@ export class Crow extends Actor {
     } else {
       super.draw(ctx);
     }
+    this.drawEffects(ctx);
   }
 
   onAnimationComplete() {

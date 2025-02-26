@@ -72,9 +72,9 @@ export class BurningEffect extends Entity {
       ) {
         // Spreads to enemies and tumbleweeds
         if (e.isEnemy && (!e.effects.burn || e.effects.burn <= 0)) {
-          e.isBurning = true;
+          //e.isBurning = true;
           e.effects.burn = 5; // 5 seconds of burn
-          GAME_ENGINE.addEntity(new BurningEffect(e));
+          //GAME_ENGINE.addEntity(new BurningEffect(e));
         } else if (e.isTumbleweed) {
           e.isBurning = true;
           GAME_ENGINE.addEntity(new BurningEffect(e));

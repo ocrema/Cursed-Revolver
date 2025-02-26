@@ -1,4 +1,4 @@
-import { Actor } from "../Entities.js";
+import { Actor } from "../Actor.js";
 import { Player } from "../Player/Player.js";
 import { Thorn } from "./Attack.js";
 import * as Util from "../../Utils/Util.js";
@@ -92,19 +92,25 @@ export class Cactus extends Actor {
     this.idleCooldown = [5, 7, 10, 13, 15];
   }
 
+  clearQueuedAttacks() {
+    if (this.recieved_attacks.length > 0) {
+      this.tookDamage = true;
+    } else {
+      this.tookDamage = false;
+    }
+    this.recieved_attacks = [];
+  }
   update() {
-    if (!this.dead) {
-      if (this.recieved_attacks.length == 0) {
-        this.tookDamage = false;
-      } else {
-        for (let attack of this.recieved_attacks) {
-        this.tookDamage = true;
-        this.health -= attack.damage;
-        }
-      this.recieved_attacks = [];
-      }
-
+    // apply attack damage
+    this.recieveAttacks();
     this.recieveEffects();
+
+    if (this.health <= 0) {
+      this.removeFromWorld = true;
+    }
+
+    if (this.effects.frozen > 0 || this.effects.stun > 0) return;
+
     this.attackTime += GAME_ENGINE.clockTick;
 
     this.attemptAttack();
@@ -117,7 +123,7 @@ export class Cactus extends Actor {
     }
 
     this.changeAnimation();
-    }
+    
     this.updateAnimation(GAME_ENGINE.clockTick);
   }
 
@@ -198,6 +204,7 @@ export class Cactus extends Actor {
     } else {
       super.draw(ctx);
     }
+    this.drawEffects(ctx);
   }
 }
 

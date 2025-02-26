@@ -1,4 +1,5 @@
-import { Entity, Actor } from "../Entities.js";
+import { Entity } from "../Entities.js";
+import { Actor } from "../Actor.js";
 import { Collider } from "../Collider.js";
 import { GAME_ENGINE } from "../../main.js";
 import { BarrelExplosionEffect } from "../Effects/BarrelExplosionEffect.js";

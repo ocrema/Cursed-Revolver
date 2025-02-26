@@ -46,7 +46,7 @@ export class VoidOrb extends Entity {
         
         for (let e of GAME_ENGINE.entities) {
             if (e.isEnemy && this.colliding(e)) {
-                e.queueAttack({ damage: this.dps * GAME_ENGINE.clockTick, void: 5});
+                e.queueAttack({ damage: this.dps * GAME_ENGINE.clockTick, void: 4});
             }
         }
             

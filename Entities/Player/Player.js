@@ -1,4 +1,5 @@
-import { Actor, Entity } from "../Entities.js";
+import { Entity } from "../Entities.js";
+import { Actor } from "../Actor.js";
 import { PLAYER_SPRITESHEET } from "../../Globals/Constants.js";
 import * as Util from "../../Utils/Util.js";
 import { Fireball } from "../Spells/Fireball.js";
@@ -154,8 +155,13 @@ export class Player extends Actor {
       this.recieved_attacks.length > 0 &&
       this.currentAnimation !== PLAYER_SPRITESHEET.HIT.NAME
     ) {
-      this.setAnimation(PLAYER_SPRITESHEET.HIT.NAME);
-      this.hitTimer = 0.2;
+      for (let a of this.recieved_attacks) {
+        if (a.damage) {
+          this.setAnimation(PLAYER_SPRITESHEET.HIT.NAME);
+          this.hitTimer = 0.2;
+          break;
+        }
+      }
     }
 
     this.recieveAttacks();

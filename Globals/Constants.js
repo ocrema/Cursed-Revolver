@@ -280,6 +280,46 @@ export const EFFECTS_SPRITESHEET = {
     FRAME_COUNT: 8,
     FRAME_DURATION: 0.1,
   },
+  SHOCK_EFFECT: {
+    NAME: "SHOCK",
+    URL: "./assets/effects/shock.png",
+    FRAME_WIDTH: 32,
+    FRAME_HEIGHT: 32,
+    FRAME_COUNT: 8,
+    FRAME_DURATION: 0.1,
+  },
+  SOAKED_EFFECT: {
+    NAME: "SOAKED",
+    URL: "./assets/effects/soaked.png",
+    FRAME_WIDTH: 32,
+    FRAME_HEIGHT: 32,
+    FRAME_COUNT: 7,
+    FRAME_DURATION: 0.2,
+  },
+  ICE_EFFECT: {
+    NAME: "ICE",
+    URL: "./assets/effects/ice_cube.png",
+    FRAME_WIDTH: 48,
+    FRAME_HEIGHT: 32,
+    FRAME_COUNT: 1,
+    FRAME_DURATION: 0.2,
+  },
+  VOID_EFFECT: {
+    NAME: "VOID",
+    URL: "./assets/effects/void.png",
+    FRAME_WIDTH: 32,
+    FRAME_HEIGHT: 32,
+    FRAME_COUNT: 8,
+    FRAME_DURATION: 0.2,
+  },
+  VOID_EXPLOSION_EFFECT: {
+    NAME: "VOID_EXPLOSION",
+    URL: "./assets/effects/void_explosion.png",
+    FRAME_WIDTH: 96,
+    FRAME_HEIGHT: 80,
+    FRAME_COUNT: 20,
+    FRAME_DURATION: 0.05,
+  },
 };
 
 // UI Constants

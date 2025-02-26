@@ -1,4 +1,4 @@
-import { Actor } from "../Entities.js";
+import { Actor } from "../Actor.js";
 import { Player } from "../Player/Player.js";
 import * as Util from "../../Utils/Util.js";
 import { Collider } from "../Collider.js";
@@ -66,8 +66,17 @@ export class EarthGolem extends Actor {
   }
 
   update() {
-    this.attackCooldown += GAME_ENGINE.clockTick;
+    // **Apply attack damage**
+    this.recieveAttacks();
     this.recieveEffects();
+
+    if (this.health <= 0) {
+      this.removeFromWorld = true;
+    }
+    if (this.effects.frozen > 0 || this.effects.stun > 0) return;
+    
+    this.attackCooldown += GAME_ENGINE.clockTick;
+    
     this.onGround = false;
 
     // **Check if player is in range**
@@ -88,15 +97,7 @@ export class EarthGolem extends Actor {
       this.flip = 0; // Face right
     }
 
-    // **Apply attack damage**
-    for (let attack of this.recieved_attacks) {
-      this.health -= attack.damage;
-    }
-    this.recieved_attacks = [];
-
-    if (this.health <= 0) {
-      this.removeFromWorld = true;
-    }
+    
   }
 
   // **Golem State Behavior**
@@ -212,6 +213,7 @@ export class EarthGolem extends Actor {
     } else {
       super.draw(ctx);
     }
+    this.drawEffects(ctx);
   }
 
   getBoundingBox() {

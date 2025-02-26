@@ -1,4 +1,4 @@
-import { Actor } from "../Entities.js";
+import { Actor } from "../Actor.js";
 import { Player } from "../Player/Player.js";
 import { Collider } from "../Collider.js";
 import * as Util from "../../Utils/Util.js";
@@ -61,11 +61,15 @@ export class StaticCowboyEnemy extends Actor {
     } else {
       super.draw(ctx);
     }
+    this.drawEffects(ctx);
   }
 
   update() {
+    this.applyDamage();
+    
+    if (this.effects.frozen > 0 || this.effects.stun > 0) return;
     this.attackCooldown += GAME_ENGINE.clockTick;
-    this.recieveEffects();
+    
 
     let playerDetected = false;
     let playerTarget = null;
@@ -90,7 +94,6 @@ export class StaticCowboyEnemy extends Actor {
         console.log(`Static Cowboy hit! Received attacks:`, this.recieved_attacks);
     }
 
-    this.applyDamage();
 
     // **If no player is detected, return to idle animation**
     if (!playerDetected) {
@@ -112,11 +115,8 @@ export class StaticCowboyEnemy extends Actor {
   }
 
   applyDamage() {
-    for (let attack of this.recieved_attacks) {
-      this.health -= attack.damage;
-      console.log(`Static Cowboy takes ${attack.damage} damage! Health: ${this.health}`);
-    }
-    this.recieved_attacks = []; // Clear attacks after processing
+    this.recieveAttacks();
+    this.recieveEffects();
   
     // **Check if the cowboy dies**
     if (this.health <= 0) {
