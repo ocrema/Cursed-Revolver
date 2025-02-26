@@ -1,9 +1,9 @@
-import { Entity } from "../Entities.js";
 import { Actor } from "../Actor.js";
 import { Collider } from "../Collider.js";
 import { GAME_ENGINE } from "../../main.js";
 import { BarrelExplosionEffect } from "../Effects/BarrelExplosionEffect.js";
 import { DESTRUCTIBLE_OBJECTS_SPRITESHEET } from "../../Globals/Constants.js";
+import { FireballExplosionEffect } from "../Effects/FireballExplosionEffect.js";
 
 export class Barrel extends Actor {
   constructor(x, y) {
@@ -40,18 +40,13 @@ export class Barrel extends Actor {
   update() {
     if (this.exploded) return;
 
-    // Check if hit by Fireball
-    /*
     for (let e of GAME_ENGINE.entities) {
-      if (e.isAttack && this.colliding(e)) {
-        this.explode();
-        //e.removeFromWorld = true; <- VERY BAAAAAD NEVER DO PLZ
+      if (e instanceof FireballExplosionEffect && this.colliding(e)) {
+        this.recieveAttacks();
+        if (this.health <= 0) {
+          this.explode();
+        }
       }
-    }
-      */
-    this.recieveAttacks();
-    if (this.health <= 0) {
-      this.explode();
     }
   }
 
