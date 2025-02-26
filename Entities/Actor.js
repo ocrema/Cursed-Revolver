@@ -104,7 +104,7 @@ export class Actor extends Entity {
       this.effects.burn -= GAME_ENGINE.clockTick;
     }
     if (this.validEffects.shock && this.effects.shock > 0) {
-      this.health -= 5 * GAME_ENGINE.clockTick * (this.effects.soaked > 0 ? 3 : 0);
+      this.health -= 5 * GAME_ENGINE.clockTick * (this.effects.soaked > 0 ? 4 : 1);
       this.effects.shock -= GAME_ENGINE.clockTick;
     }
     if (this.validEffects.soaked && this.effects.soaked > 0) {
@@ -134,6 +134,7 @@ export class Actor extends Entity {
     
     ctx.save();
     ctx.translate(this.x - GAME_ENGINE.camera.x, this.y - GAME_ENGINE.camera.y);
+    
     if (this.effects.frozen > 0) {
       ctx.drawImage(
         window.ASSET_MANAGER.getAsset(EFFECTS_SPRITESHEET.ICE_EFFECT.URL), 
