@@ -25,6 +25,14 @@ export const BACKGROUND_SPRITESHEET = {
     FRAME_COUNT: 15,
     FRAME_DURATION: 0.1,
   },
+  SPIDER: {
+    NAME: "SPIDER",
+    URL: "./assets/background/SpiderBackground.png",
+    FRAME_WIDTH: 576,
+    FRAME_HEIGHT: 324,
+    FRAME_COUNT: 1,
+    FRAME_DURATION: 0.1,
+  },
 };
 
 // PLAYER SECTION //
@@ -162,6 +170,14 @@ export const MAP_CONSTANTS = {
     FRAME_WIDTH: 32,
     FRAME_HEIGHT: 64,
     FRAME_COUNT: 8,
+    FRAME_DURATION: 0.25,
+  },
+  SPIDERWEB: {
+    NAME: "SPIDERWEB",
+    URL: "./assets/map/Spiderweb.png",
+    FRAME_WIDTH: 32,
+    FRAME_HEIGHT: 32,
+    FRAME_COUNT: 15,
     FRAME_DURATION: 0.25,
   },
 };

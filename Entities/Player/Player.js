@@ -97,6 +97,7 @@ export class Player extends Actor {
       this.jumpForce = -2100;
       this.speed = 1000;
     } else {
+      this.health = 200;
       this.speed = 600;
       this.jumpForce = -1500;
     }
@@ -129,9 +130,7 @@ export class Player extends Actor {
     if (!this.isDead) {
       if (this.hitTimer > 0) {
         this.hitTimer -= GAME_ENGINE.clockTick;
-      } else if (
-        this.currentAnimation === PLAYER_SPRITESHEET.ATTACK1.NAME 
-      ) {
+      } else if (this.currentAnimation === PLAYER_SPRITESHEET.ATTACK1.NAME) {
         // Do nothing, let the attack animation play out
       } else {
         // Only switch animations if the hit animation is NOT playing
@@ -320,7 +319,8 @@ export class Player extends Actor {
           e.isEffect ||
           e.isDestructibleObject ||
           e.isSpike ||
-          e.isSpawnPoint
+          e.isSpawnPoint ||
+          e.isBackgroundTrigger 
         )
           continue;
         if (e.isWater) {
@@ -368,7 +368,8 @@ export class Player extends Actor {
         e.isEnemy ||
         e.isDestructibleObject ||
         e.isSpike ||
-        e.isSpawnPoint
+        e.isSpawnPoint ||
+        e.isBackgroundTrigger
       )
         continue;
 

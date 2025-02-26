@@ -5,6 +5,8 @@ import { SpikeTile } from "./Tiles/SpikeTile.js";
 import { SaloonTile } from "./Tiles/SaloonTile.js";
 import { SpawnPointTile } from "./Tiles/SpawnPointTile.js";
 import { TreeTile } from "./Tiles/TreeTile.js";
+import { BackgroundTriggerTile } from "./Tiles/BackgroundTriggerTile.js";
+import { SpiderwebTile } from "./Tiles/SpiderwebTile.js";
 
 export class Tilemap {
   constructor(
@@ -25,6 +27,13 @@ export class Tilemap {
     this.tilesets = [];
     this.solidTiles = new Set(solidTileIDs);
     this.scale = scale;
+    this.cactusSpawnPoints = [];
+    this.cowboySpawnPoints = [];
+    this.birdSpawnPoints = [];
+    this.barrelSpawnPoints = [];
+    this.backgroundTriggerPoints = [];
+    this.tumbleweedTriggerPoints = [];
+    this.spiderwebTriggerPoints = [];
   }
 
   async load() {
@@ -90,16 +99,55 @@ export class Tilemap {
 
           let tileClass = Tile;
 
-          if (tileID === 105) {
-            tileClass = SpawnPointTile;
-          } else if (tileID === 74 || tileID === 75) {
-            tileClass = WaterTile;
-          } else if (tileID == 101) {
-            tileClass = SpikeTile;
-          } else if (tileID == 102) {
-            tileClass = SaloonTile;
-          } else if (tileID === 104) {
-            tileClass = TreeTile;
+          switch (tileID) {
+            case 105:
+              tileClass = SpawnPointTile;
+              break;
+
+            case 74:
+            case 75:
+              tileClass = WaterTile;
+              break;
+
+            case 101:
+              tileClass = SpikeTile;
+              break;
+
+            case 102:
+              tileClass = SaloonTile;
+              break;
+
+            case 104:
+              tileClass = TreeTile;
+              break;
+
+            case 107:
+              this.cactusSpawnPoints.push({ x: worldX, y: worldY });
+              break;
+
+            case 108:
+              this.cowboySpawnPoints.push({ x: worldX, y: worldY });
+              break;
+
+            case 109:
+              this.birdSpawnPoints.push({ x: worldX, y: worldY });
+              break;
+            case 110:
+              this.barrelSpawnPoints.push({ x: worldX, y: worldY });
+              break;
+            case 111:
+              tileClass = BackgroundTriggerTile;
+              this.backgroundTriggerPoints.push({ x: worldX, y: worldY });
+              break;
+            case 112:
+              this.tumbleweedTriggerPoints.push({ x: worldX, y: worldY });
+              break;
+            case 113:
+              tileClass = SpiderwebTile;
+              this.spiderwebTriggerPoints.push({ x: worldX, y: worldY });
+              break;
+            default:
+              break;
           }
 
           let tile = new tileClass(
@@ -117,5 +165,33 @@ export class Tilemap {
         }
       }
     }
+  }
+
+  getCactusSpawnPoints() {
+    return this.cactusSpawnPoints;
+  }
+
+  getCowboySpawnPoints() {
+    return this.cowboySpawnPoints;
+  }
+
+  getBirdSpawnPoints() {
+    return this.birdSpawnPoints;
+  }
+
+  getBarrelSpawnPoints() {
+    return this.barrelSpawnPoints;
+  }
+
+  getBackgroundTriggerPoints() {
+    return this.backgroundTriggerPoints;
+  }
+
+  getTumbleweedTriggerPoints() {
+    return this.tumbleweedTriggerPoints;
+  }
+
+  getSpiderwebTriggerPoints() {
+    return this.spiderwebTriggerPoints;
   }
 }

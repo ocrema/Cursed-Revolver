@@ -1,9 +1,8 @@
+import { SpiderwebVisual } from "../../Objects/TileVisuals/SpiderwebVisual.js";
 import { Collider } from "../../Collider.js";
 import { Tile } from "./Tile.js";
-import { Player } from "../../Player/Player.js";
-import { SpawnPoint } from "../../Objects/TileVisuals/SpawnPoint.js"; 
 
-export class SpawnPointTile extends Tile {
+export class SpiderwebTile extends Tile {
   constructor(
     x,
     y,
@@ -28,23 +27,9 @@ export class SpawnPointTile extends Tile {
     this.isGround = true;
     this.isSpawnPoint = true;
 
-    this.collider = new Collider(
-      this.tileSize * this.scale,
-      this.tileSize * this.scale
-    );
-
     // Spawn a SpawnPoint entity for the visual effect
-    this.spawnPointEntity = new SpawnPoint(this.x, this.y, this.scale);
-    GAME_ENGINE.addEntity(this.spawnPointEntity);
-  }
-
-  update() {
-    for (let e of GAME_ENGINE.entities) {
-      if (e instanceof Player && this.colliding(e)) {
-        //console.log("Player hit checkpoint at " + e.x + " " + e.y);
-        e.setSpawnPoint(e.x, e.y);
-      }
-    }
+    this.spiderwebVisual = new SpiderwebVisual(this.x, this.y, this.scale);
+    GAME_ENGINE.addEntity(this.spiderwebVisual);
   }
 
   draw(ctx) {
@@ -59,12 +44,13 @@ export class SpawnPointTile extends Tile {
       this.tilesetImage,
       tilesetX,
       tilesetY,
-      63,
-      63, // Full tile size
-      this.x - GAME_ENGINE.camera.x - 30 * this.scale,
-      this.y - GAME_ENGINE.camera.y - 40 * this.scale, // Move up
-      63 * this.scale,
-      63 * this.scale // Apply scaling
+      32,
+      32,
+      this.x - GAME_ENGINE.camera.x,
+      this.y - GAME_ENGINE.camera.y,
+      32 * this.scale,
+      32 * this.scale // Apply scaling
     );
   }
 }
+6;
