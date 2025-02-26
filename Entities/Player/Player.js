@@ -155,8 +155,13 @@ export class Player extends Actor {
       this.recieved_attacks.length > 0 &&
       this.currentAnimation !== PLAYER_SPRITESHEET.HIT.NAME
     ) {
-      this.setAnimation(PLAYER_SPRITESHEET.HIT.NAME);
-      this.hitTimer = 0.2;
+      for (let a of this.recieved_attacks) {
+        if (a.damage) {
+          this.setAnimation(PLAYER_SPRITESHEET.HIT.NAME);
+          this.hitTimer = 0.2;
+          break;
+        }
+      }
     }
 
     this.recieveAttacks();
