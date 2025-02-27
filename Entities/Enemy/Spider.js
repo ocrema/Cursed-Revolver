@@ -71,13 +71,13 @@ export class Spider extends Actor {
     this.randomRoamLength = [250, 400, 750, 800];
     this.randomRunLength = [550, 600, 700, 750];
 
-    this.walkSpeed = 300;
+    this.walkSpeed = 500;
     this.runSpeed = 900;
-    this.aggroSpeed = 400;
-    this.attackSpeed = 500;
+    this.aggroSpeed = 700;
+    this.attackSpeed = 800;
     this.speed = this.walkSpeed;
-    this.climbSpeed = 5;
-    this.gravity = 800;
+    this.climbSpeed = 2000;
+    this.gravity = 1000;
 
     this.visualRadius = 700;
     this.target = { x: this.x + 200, y: this.y }; // target location of spider
@@ -91,6 +91,8 @@ export class Spider extends Actor {
     // Flags
     this.isEnemy = true;
     this.seesPlayer = false;
+
+    this.isSpider = true;
   }
 
   update() {
@@ -112,14 +114,18 @@ export class Spider extends Actor {
 
     // check LOS on player
     for (let entity of GAME_ENGINE.entities) {
-      if (entity instanceof Player && Util.canSee(this, entity)) {
-        if (
-          this.currentAnimation === "aggressive" ||
-          this.currentAnimation === "attack"
-        ) {
-          this.target = { x: entity.x, y: entity.y };
+      if (entity instanceof Player) {
+        if (Util.canSee(this, entity)) {
+          this.seesPlayer = true;
+          if (
+            (this.currentAnimation === "aggressive" ||
+            this.currentAnimation === "attack")
+          ) {
+            this.target = { x: entity.x, y: entity.y };
+          }
+        } else {
+          this.seesPlayer = false;
         }
-        this.seesPlayer = true;
       }
     }
 
@@ -137,35 +143,34 @@ export class Spider extends Actor {
     }
 
 
-    // debug statement, delete this eventually ^_^
-    if (this.y > 490) {
-      //console.log(this);
-    }
-
     this.updateAnimation(GAME_ENGINE.clockTick);
   }
 
   // cycles through different cases to set animation state
   setState() {
     // if cant see player and close to target location
-    if (!this.seesPlayer && Math.abs(this.x - this.target.x) < 5) {
+    if (!this.seesPlayer && Math.abs(this.x - this.target.x) < 20) {
       // change animation and speed
       this.setAnimation("roam");
       this.speed = this.walkSpeed;
 
       if (this.velocity.x < 0) {
         // approaching target from the left
-        this.target.x +=
+        this.target.x -=
           this.randomRoamLength[Util.randomInt(this.randomRoamLength.length)]; // run to the right
       } else {
         // approaching target from the right
-        this.target.x -=
+        this.target.x +=
           this.randomRoamLength[Util.randomInt(this.randomRoamLength.length)]; // run to the left
       }
     }
 
     if (this.seesPlayer && this.attackCooldown < this.attackRate) {
       this.setAnimation("run");
+      if (this.jaw) {
+        this.jaw.delete();
+        this.jaw = null;
+      }
     }
 
     // if can see player and can attack
@@ -176,6 +181,12 @@ export class Spider extends Actor {
     ) {
       this.setAnimation("aggressive");
       this.speed = this.aggroSpeed;
+      
+      // if no jaw, spawn one in + reset the timer
+      if (!this.jaw || this.jaw.removeFromWorld) {
+        this.jaw = new Jaw(this);
+        GAME_ENGINE.addEntity(this.jaw);
+      }
     }
 
     // if can see player, can attack, and is in attack radius
@@ -187,13 +198,6 @@ export class Spider extends Actor {
       // change animation and speed
       this.setAnimation("attack");
       this.speed = this.attackSpeed;
-
-      // if no jaw, spawn one in + reset the timer
-      if (!this.jaw || this.jaw.removeFromWorld) {
-        this.attackCooldown = 0;
-        this.jaw = new Jaw(this);
-        GAME_ENGINE.addEntity(this.jaw);
-      }
     }
 
     if (
@@ -262,9 +266,7 @@ export class Spider extends Actor {
         if (collideLeft || collideRight) {
           this.target.y = eTop - this.height / 2;
           this.velocity.y =
-            ((this.target.y - this.y) / distance) *
-            this.runSpeed *
-            this.climbSpeed;
+            ((this.target.y - this.y) / distance) * this.climbSpeed;
           this.velocity.x = 0;
           if (collideRight && this.velocity.x > 0) {
             // if colliding with wall on right and moving right
