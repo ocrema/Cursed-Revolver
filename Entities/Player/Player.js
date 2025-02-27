@@ -6,11 +6,11 @@ import { Fireball } from "../Spells/Fireball.js";
 import { ChainLightning } from "../Spells/ChainLightning.js";
 import { Collider } from "../Collider.js";
 import { GAME_ENGINE } from "../../main.js";
-import { PlayerAnimationLoader } from "./PlayerAnimationLoader.js";
 import { WaterWave } from "../Spells/WaterWave.js";
 import { Icicle } from "../Spells/Icicle.js";
 import { VoidOrb } from "../Spells/VoidOrb.js";
 import { VineGrapple } from "../Spells/VineGrapple.js";
+import { AnimationLoader } from "../../Core/AnimationLoader.js";
 
 export class Player extends Actor {
   constructor(x, y) {
@@ -29,9 +29,8 @@ export class Player extends Actor {
     this.attackState = 1;
 
     // Adds all player animations
-    this.playerAnimationLoader = new PlayerAnimationLoader(this);
-
-    this.playerAnimationLoader.loadPlayerAnimations();
+    this.playerAnimationLoader = new AnimationLoader(this);
+    this.playerAnimationLoader.loadAnimations(PLAYER_SPRITESHEET);
 
     this.speed = 500; // Movement speed
     this.isMoving = false; // Whether the player is moving

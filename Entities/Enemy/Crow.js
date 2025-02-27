@@ -4,6 +4,7 @@ import { GAME_ENGINE } from "../../main.js";
 import { CROW_SPRITESHEET } from "../../Globals/Constants.js";
 import { canSee } from "../../Utils/Util.js"; // Import vision check function
 import { Jaw } from "./Attack.js";
+import { AnimationLoader } from "../../Core/AnimationLoader.js";
 
 export class Crow extends Actor {
   constructor(x, y) {
@@ -13,41 +14,8 @@ export class Crow extends Actor {
     this.assetManager = window.ASSET_MANAGER;
 
     // Animations
-    this.addAnimation(
-      CROW_SPRITESHEET.FLY.NAME,
-      this.assetManager.getAsset(CROW_SPRITESHEET.FLY.URL),
-      CROW_SPRITESHEET.FLY.FRAME_WIDTH,
-      CROW_SPRITESHEET.FLY.FRAME_HEIGHT,
-      CROW_SPRITESHEET.FLY.FRAME_COUNT,
-      CROW_SPRITESHEET.FLY.FRAME_DURATION
-    );
-
-    this.addAnimation(
-      CROW_SPRITESHEET.HURT.NAME,
-      this.assetManager.getAsset(CROW_SPRITESHEET.HURT.URL),
-      CROW_SPRITESHEET.HURT.FRAME_WIDTH,
-      CROW_SPRITESHEET.HURT.FRAME_HEIGHT,
-      CROW_SPRITESHEET.HURT.FRAME_COUNT,
-      CROW_SPRITESHEET.HURT.FRAME_DURATION
-    );
-
-    this.addAnimation(
-      CROW_SPRITESHEET.ATTACK.NAME,
-      this.assetManager.getAsset(CROW_SPRITESHEET.ATTACK.URL),
-      CROW_SPRITESHEET.ATTACK.FRAME_WIDTH,
-      CROW_SPRITESHEET.ATTACK.FRAME_HEIGHT,
-      CROW_SPRITESHEET.ATTACK.FRAME_COUNT,
-      CROW_SPRITESHEET.ATTACK.FRAME_DURATION
-    );
-
-    this.addAnimation(
-      CROW_SPRITESHEET.DEATH.NAME,
-      this.assetManager.getAsset(CROW_SPRITESHEET.DEATH.URL),
-      CROW_SPRITESHEET.DEATH.FRAME_WIDTH,
-      CROW_SPRITESHEET.DEATH.FRAME_HEIGHT,
-      CROW_SPRITESHEET.DEATH.FRAME_COUNT,
-      CROW_SPRITESHEET.DEATH.FRAME_DURATION
-    );
+    this.animationLoader = new AnimationLoader(this);
+    this.animationLoader.loadAnimations(CROW_SPRITESHEET);
 
     this.setAnimation(CROW_SPRITESHEET.FLY.NAME);
     this.width = 60;

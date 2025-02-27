@@ -4,6 +4,8 @@ import { Thorn } from "./Attack.js";
 import * as Util from "../../Utils/Util.js";
 import { Collider } from "../Collider.js";
 import { GAME_ENGINE } from "../../main.js";
+import { CACTUS_SPRITESHEET } from "../../Globals/Constants.js";
+import { AnimationLoader } from "../../Core/AnimationLoader.js";
 
 export class Cactus extends Actor {
   constructor(x, y) {
@@ -14,53 +16,8 @@ export class Cactus extends Actor {
     // Animation
     this.assetManager = window.ASSET_MANAGER;
 
-    this.addAnimation(
-      "aggressive",
-      this.assetManager.getAsset("./assets/enemy/cactus/aggro.png"),
-      160, // Frame width
-      160, // Frame height
-      1, // Frame count
-      0.25 // Frame duration (slower for idle) 
-    );
-    this.addAnimation(
-      "attack",
-      this.assetManager.getAsset("./assets/enemy/cactus/attack.png"),
-      160, // Frame width
-      160, // Frame height
-      3, // Frame count
-      0.15 // Frame duration (slower for idle)
-    );
-    this.addAnimation(
-      "default",
-      this.assetManager.getAsset("./assets/enemy/cactus/cactus.png"),
-      160, // Frame width
-      160, // Frame height
-      1, // Frame count
-      0.25 // Frame duration (slower for idle)
-    ); 
-    this.addAnimation(
-      "damage",
-      this.assetManager.getAsset("./assets/enemy/cactus/damage.png"),
-      160, // Frame width
-      160, // Frame height
-      1, // Frame count
-      0.25 // Frame duration (slower for idle) 
-    );
-    this.addAnimation(
-      "die",
-      this.assetManager.getAsset("./assets/enemy/cactus/die.png"),
-      160, // Frame width
-      160, // Frame height
-      4, // Frame count
-      0.2 // Frame duration (slower for idle)
-    );
-    this.addAnimation(
-      "idle",
-      this.assetManager.getAsset("./assets/enemy/cactus/idle.png"),
-      160, // Frame width
-      160, // Frame height
-      8, // Frame count
-      0.25);// Frame duration (slower for idle)
+    this.animationLoader = new AnimationLoader(this);
+    this.animationLoader.loadAnimations(CACTUS_SPRITESHEET);
 
     this.setAnimation("default");
     this.width = 160;
