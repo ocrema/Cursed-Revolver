@@ -180,6 +180,12 @@ export class Spider extends Actor {
     ) {
       this.setAnimation("aggressive");
       this.speed = this.aggroSpeed;
+      
+      // if no jaw, spawn one in + reset the timer
+      if (!this.jaw || this.jaw.removeFromWorld) {
+        this.jaw = new Jaw(this);
+        GAME_ENGINE.addEntity(this.jaw);
+      }
     }
 
     // if can see player, can attack, and is in attack radius
