@@ -142,17 +142,6 @@ export class Spider extends Actor {
       this.flip = 1;
     }
 
-    // apply attack damage
-    for (let attack of this.recieved_attacks) {
-      this.health -= attack.damage;
-    }
-    this.recieved_attacks = [];
-
-    // if spider loses all health
-    if (this.health <= 0) {
-      this.removeFromWorld = true;
-    }
-
     this.updateAnimation(GAME_ENGINE.clockTick);
   }
 

@@ -102,13 +102,10 @@ export class Cactus extends Actor {
     this.recieved_attacks = [];
   }
   update() {
-    // apply attack damage
+    if (!this.dead) {
+      // apply attack damage
     this.recieveAttacks();
     this.recieveEffects();
-
-    if (this.health <= 0) {
-      this.removeFromWorld = true;
-    }
 
     if (this.effects.frozen > 0 || this.effects.stun > 0) return;
 
@@ -121,6 +118,8 @@ export class Cactus extends Actor {
     }
 
     this.changeAnimation();
+    }
+    
     
     this.updateAnimation(GAME_ENGINE.clockTick);
   }
