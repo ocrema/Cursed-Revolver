@@ -142,6 +142,16 @@ export class Spider extends Actor {
       this.flip = 1;
     }
 
+    // apply attack damage
+    for (let attack of this.recieved_attacks) {
+      this.health -= attack.damage;
+    }
+    this.recieved_attacks = [];
+
+    // if spider loses all health
+    if (this.health <= 0) {
+      this.removeFromWorld = true;
+    }
 
     this.updateAnimation(GAME_ENGINE.clockTick);
   }
@@ -181,12 +191,6 @@ export class Spider extends Actor {
     ) {
       this.setAnimation("aggressive");
       this.speed = this.aggroSpeed;
-      
-      // if no jaw, spawn one in + reset the timer
-      if (!this.jaw || this.jaw.removeFromWorld) {
-        this.jaw = new Jaw(this);
-        GAME_ENGINE.addEntity(this.jaw);
-      }
     }
 
     // if can see player, can attack, and is in attack radius

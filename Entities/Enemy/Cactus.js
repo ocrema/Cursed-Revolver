@@ -120,8 +120,6 @@ export class Cactus extends Actor {
       this.dead = true;
     }
 
-    this.attackTime += GAME_ENGINE.clockTick;
-    this.attemptAttack();
     this.changeAnimation();
     
     this.updateAnimation(GAME_ENGINE.clockTick);
