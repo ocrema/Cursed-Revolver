@@ -6,11 +6,11 @@ import { Fireball } from "../Spells/Fireball.js";
 import { ChainLightning } from "../Spells/ChainLightning.js";
 import { Collider } from "../Collider.js";
 import { GAME_ENGINE } from "../../main.js";
-import { PlayerAnimationLoader } from "./PlayerAnimationLoader.js";
 import { WaterWave } from "../Spells/WaterWave.js";
 import { Icicle } from "../Spells/Icicle.js";
 import { VoidOrb } from "../Spells/VoidOrb.js";
 import { VineGrapple } from "../Spells/VineGrapple.js";
+import { AnimationLoader } from "../../Core/AnimationLoader.js";
 
 export class Player extends Actor {
   constructor(x, y) {
@@ -29,9 +29,8 @@ export class Player extends Actor {
     this.attackState = 1;
 
     // Adds all player animations
-    this.playerAnimationLoader = new PlayerAnimationLoader(this);
-
-    this.playerAnimationLoader.loadPlayerAnimations();
+    this.playerAnimationLoader = new AnimationLoader(this);
+    this.playerAnimationLoader.loadAnimations(PLAYER_SPRITESHEET);
 
     this.speed = 500; // Movement speed
     this.isMoving = false; // Whether the player is moving
@@ -92,13 +91,20 @@ export class Player extends Actor {
     this.spawnY = y;
   }
 
+  respawn() {
+    this.isDead = false;
+    this.health = 200;
+    this.x = this.spawnX;
+    this.y = this.spawnY;
+    this.setAnimation(PLAYER_SPRITESHEET.IDLE.NAME);
+  }
+
   update() {
     if (GAME_ENGINE.debug_colliders) {
       this.health = 1000000;
       this.jumpForce = -2100;
       this.speed = 1000;
     } else {
-      this.health = 200;
       this.speed = 600;
       this.jumpForce = -1500;
     }
@@ -107,11 +113,7 @@ export class Player extends Actor {
 
     // Player Reset Button - this is if the player dies, this resets player health and respawns them.
     if (GAME_ENGINE.keys["h"]) {
-      this.isDead = false;
-      this.health = 200;
-      this.x = this.spawnX;
-      this.y = this.spawnY;
-      this.setAnimation(PLAYER_SPRITESHEET.IDLE.NAME);
+      this.respawn();
     }
 
     this.movement();

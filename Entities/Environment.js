@@ -71,6 +71,7 @@ export class Stampede extends Entity {
             this.removeFromWorld = true;
         }
 
+        this.updateAnimation(GAME_ENGINE.clockTick);
     }
 
 }

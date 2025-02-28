@@ -88,7 +88,7 @@ export const PLAYER_SPRITESHEET = {
     URL: "./assets/player/Hit.png",
     FRAME_WIDTH: 600, 
     FRAME_HEIGHT: 600,
-    FRAME_COUNT: 1,
+    FRAME_COUNT: 2,
     FRAME_DURATION: 0.25,
   },
   DEAD: {
@@ -147,6 +147,57 @@ export const CROW_SPRITESHEET = {
   },
 };
 
+export const CACTUS_SPRITESHEET = {
+  AGGRESSIVE: {
+    NAME: "aggressive",
+    URL: "./assets/enemy/cactus/aggro.png",
+    FRAME_WIDTH: 160,
+    FRAME_HEIGHT: 160,
+    FRAME_COUNT: 1,
+    FRAME_DURATION: 0.25,
+  },
+  ATTACK: {
+    NAME: "attack",
+    URL: "./assets/enemy/cactus/attack.png",
+    FRAME_WIDTH: 160,
+    FRAME_HEIGHT: 160,
+    FRAME_COUNT: 3,
+    FRAME_DURATION: 0.15,
+  },
+  DEFAULT: {
+    NAME: "default",
+    URL: "./assets/enemy/cactus/cactus.png",
+    FRAME_WIDTH: 160,
+    FRAME_HEIGHT: 160,
+    FRAME_COUNT: 1,
+    FRAME_DURATION: 0.25,
+  },
+  DAMAGE: {
+    NAME: "damage",
+    URL: "./assets/enemy/cactus/damage.png",
+    FRAME_WIDTH: 160,
+    FRAME_HEIGHT: 160,
+    FRAME_COUNT: 1,
+    FRAME_DURATION: 0.25,
+  },
+  DIE: {
+    NAME: "die",
+    URL: "./assets/enemy/cactus/die.png",
+    FRAME_WIDTH: 160,
+    FRAME_HEIGHT: 160,
+    FRAME_COUNT: 4,
+    FRAME_DURATION: 0.2,
+  },
+  IDLE: {
+    NAME: "idle",
+    URL: "./assets/enemy/cactus/idle.png",
+    FRAME_WIDTH: 160,
+    FRAME_HEIGHT: 160,
+    FRAME_COUNT: 8,
+    FRAME_DURATION: 0.25,
+  },
+};
+
 // Map Ground Constants
 
 export const GROUND_SPRITESHEET = {
@@ -179,12 +230,6 @@ export const MAP_CONSTANTS = {
     FRAME_HEIGHT: 32,
     FRAME_COUNT: 15,
     FRAME_DURATION: 0.25,
-  },
-};
-
-export const ENEMY_SPRITESHEET = {
-  CACTUS: {
-    URL: "./assets/enemy/cactus/newcactus.png",
   },
 };
 
