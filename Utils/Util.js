@@ -123,7 +123,7 @@ export const canAttack = (o1, o2) => {
 
     // if colliding with ANY platform
     for (let entity of GAME_ENGINE.entities) {
-      if (entity.isPlatform &&
+      if (entity.isGround &&
         entity.colliding(tempObject)   
       ) {
         return false;

@@ -22,6 +22,7 @@ export class Thorn extends Entity {
     this.data = { damage: 20 };
     this.removeFromWorld = false;
     this.collider = new Collider(this.width, this.height);
+    this.scale = 2;
 
     var distance = Util.getDistance(this, target);
     this.velocity = {
@@ -32,7 +33,7 @@ export class Thorn extends Entity {
     this.angle = Util.getAngle(this, target);
 
     this.addAnimation(
-      "placeholder",
+      "thorn",
       this.assetManager.getAsset("./assets/enemy/thorn/thorn.png"),
       64, // Frame width
       64, // Frame height
@@ -40,7 +41,7 @@ export class Thorn extends Entity {
       0.25 // Frame duration (slower for idle)
     );
 
-    this.setAnimation("placeholder");
+    this.setAnimation("thorn");
   }
 
   update() {
