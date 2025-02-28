@@ -47,7 +47,8 @@ export class Cactus extends Actor {
     this.seesPlayer = false;
     this.attacking = true;
     this.idleTimer = 0;
-    this.idleCooldown = [5, 7, 10, 13, 15];
+    this.randomIdleCooldown = [2, 3, 4, 5, 6, 7];
+    this.updateIdleCooldown();
   }
 
   clearQueuedAttacks() {
@@ -77,16 +78,20 @@ export class Cactus extends Actor {
     this.changeAnimation();
     }
     
-    
     this.updateAnimation(GAME_ENGINE.clockTick);
+  }
+
+  updateIdleCooldown() {
+    var randomNumber = Util.randomInt(this.randomIdleCooldown.length - 1);
+    this.idleCooldown = this.randomIdleCooldown[randomNumber];
   }
 
   changeAnimation() {
     this.idleTimer += GAME_ENGINE.clockTick;
-    var randomNumber = Util.randomInt(this.idleCooldown.length - 1);
 
-    if (this.idleTimer > this.idleCooldown[randomNumber]) {
+    if (this.idleTimer > this.idleCooldown) {
       this.idleTimer = 0;
+      this.updateIdleCooldown();
       this.setAnimation("idle", false);
     }
     
