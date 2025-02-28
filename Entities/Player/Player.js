@@ -112,7 +112,7 @@ export class Player extends Actor {
     this.isJumping = false;
 
     // Player Reset Button - this is if the player dies, this resets player health and respawns them.
-    if (GAME_ENGINE.keys["h"] || (GAME_ENGINE.keys["r"] && GAME_ENGINE.GAME_CONTROLLER.isGameOver)) {
+    if (GAME_ENGINE.keys["h"]) {
       this.respawn();
     }
 
