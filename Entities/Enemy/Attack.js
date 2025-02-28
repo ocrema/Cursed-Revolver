@@ -7,7 +7,7 @@ import { Tile } from "../Map/Tiles/Tile.js";
 export class Thorn extends Entity {
   constructor(x, y, target, maxRange) {
     super();
-    Object.assign(this, { x, y, target });
+    Object.assign(this, { x, y, target, maxRange });
     this.assetManager = window.ASSET_MANAGER;
 
     this.start = { x: this.x, y: this.y };
