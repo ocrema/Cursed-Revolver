@@ -154,7 +154,7 @@ export class GameEngine {
         event.key.toLowerCase() === "r"
       ) {
         console.log("R key detected!"); //check
-        window.location.reload();
+        this.GAME_CONTROLLER.restartGame();
       }
 
       if (event.key === "Escape") {

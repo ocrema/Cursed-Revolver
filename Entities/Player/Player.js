@@ -91,13 +91,20 @@ export class Player extends Actor {
     this.spawnY = y;
   }
 
+  respawn() {
+    this.isDead = false;
+    this.health = 200;
+    this.x = this.spawnX;
+    this.y = this.spawnY;
+    this.setAnimation(PLAYER_SPRITESHEET.IDLE.NAME);
+  }
+
   update() {
     if (GAME_ENGINE.debug_colliders) {
       this.health = 1000000;
       this.jumpForce = -2100;
       this.speed = 1000;
     } else {
-      this.health = 200;
       this.speed = 600;
       this.jumpForce = -1500;
     }
@@ -105,12 +112,8 @@ export class Player extends Actor {
     this.isJumping = false;
 
     // Player Reset Button - this is if the player dies, this resets player health and respawns them.
-    if (GAME_ENGINE.keys["h"]) {
-      this.isDead = false;
-      this.health = 200;
-      this.x = this.spawnX;
-      this.y = this.spawnY;
-      this.setAnimation(PLAYER_SPRITESHEET.IDLE.NAME);
+    if (GAME_ENGINE.keys["h"] || (GAME_ENGINE.keys["r"] && GAME_ENGINE.GAME_CONTROLLER.isGameOver)) {
+      this.respawn();
     }
 
     this.movement();
