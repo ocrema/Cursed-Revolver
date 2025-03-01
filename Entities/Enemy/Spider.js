@@ -28,7 +28,7 @@ export class Spider extends Actor {
 
     // Health / Attack
     this.health = 30;
-    this.maxHealth = 30;
+    this.maxHealth = this.health;
     this.jaw = null;
     this.attackRadius = 200;
     this.attackCooldown = 0;
@@ -65,6 +65,13 @@ export class Spider extends Actor {
     this.dead = false;
 
     this.isSpider = true;
+  }
+
+  clearQueuedAttacks() {
+    if (this.recieved_attacks.length > 0) {
+      this.setAnimation(SPIDER_SPRITESHEET.HURT.NAME, false);
+    } 
+    this.recieved_attacks = [];
   }
 
   update() {
@@ -113,6 +120,7 @@ export class Spider extends Actor {
       }
     }
     
+    this.angle = this.onWall ? Math.PI * 3 / 2 : 0;
     this.updateAnimation(GAME_ENGINE.clockTick);
   }
 
@@ -121,6 +129,10 @@ export class Spider extends Actor {
     if (this.health < 0) {
       this.dead = true;
       this.setAnimation(SPIDER_SPRITESHEET.DEATH.NAME, false);
+      return;
+    }
+
+    if(this.currentAnimation === SPIDER_SPRITESHEET.HURT.NAME) {
       return;
     }
 
@@ -203,24 +215,16 @@ export class Spider extends Actor {
           this.randomRunLength[Util.randomInt(this.randomRunLength.length)]; 
       }
     }
-
-    if (!this.onWall) {
-      this.undoTurn();
-    }
   }
 
   onAnimationComplete() {
     if (this.currentAnimation === SPIDER_SPRITESHEET.DEATH.NAME) {
       this.removeFromWorld = true;
     }
-  }
 
-  turnClimb() {
-    this.angle = Math.PI * 3 / 2;
-  }
-
-  undoTurn() {
-    this.angle = 0;
+    if (this.currentAnimation === SPIDER_SPRITESHEET.HURT.NAME) {
+      this.setAnimation(SPIDER_SPRITESHEET.ROAM.NAME);
+    }
   }
 
   movement() {
@@ -272,7 +276,6 @@ export class Spider extends Actor {
 
         if ( 1/* entity.tileID !== 5 && entity.tileID !== 7 */ ) {
           this.target.y -= 100;
-          this.turnClimb();
         } else {
           this.target.x = this.x * 2 - this.target.x;
         }
