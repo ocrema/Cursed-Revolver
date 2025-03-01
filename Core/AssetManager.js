@@ -120,7 +120,7 @@ export class AssetManager {
       audio.currentTime = 0;
       audio.play();
     }
-    console.log("Playing " + path);
+    //console.log("Playing " + path);
   }
 
   toggleMute(muted) {
