@@ -113,10 +113,10 @@ export class AssetManager {
     if (audio.currentTime != 0) {
       let bak = audio.cloneNode();
       bak.currentTime = 0;
-      bak.volume = .3 * volumeMult;
+      bak.volume = .2 * volumeMult;
       bak.play();
     } else {
-      audio.volume = .3 * volumeMult;
+      audio.volume = .2 * volumeMult;
       audio.currentTime = 0;
       audio.play();
     }
