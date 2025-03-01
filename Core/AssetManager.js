@@ -107,6 +107,7 @@ export class AssetManager {
 
   playAsset(path, volumeMult = 1) {
     if (this.audioMuted) return;
+    if (volumeMult === 0) return;
     let audio = this.cache[path];
     if (!audio) return;
     if (audio.currentTime != 0) {
@@ -119,6 +120,7 @@ export class AssetManager {
       audio.currentTime = 0;
       audio.play();
     }
+    console.log("Playing " + path);
   }
 
   toggleMute(muted) {

@@ -71,6 +71,7 @@ export class EarthGolem extends Actor {
     this.recieveEffects();
 
     if (this.health <= 0) {
+      window.ASSET_MANAGER.playAsset("./assets/sfx/golem_death.wav", 1 * Util.DFCVM(this));
       this.removeFromWorld = true;
     }
     if (this.effects.frozen > 0 || this.effects.stun > 0) return;
@@ -133,6 +134,7 @@ export class EarthGolem extends Actor {
     for (let entity of GAME_ENGINE.entities) {
       if (entity instanceof Player && Math.abs(this.x - entity.x) < this.attackRadius) {
         entity.queueAttack({ damage: 30 }); // Heavy stomp attack
+        window.ASSET_MANAGER.playAsset("./assets/sfx/golem_attack.wav", 1 * Util.DFCVM(this));
         console.log("Player hit by Earth Golem Stomp!");
       }
     }
