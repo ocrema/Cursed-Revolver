@@ -5,7 +5,7 @@ import { GAME_ENGINE } from "../../main.js";
 import { Camera } from "../../Core/Camera.js";
 
 export class ChainLightning extends Entity {
-  constructor(caster, dir) {
+  constructor(caster, dir, offset) {
     super();
     this.dir = dir; // in radians
     this.entityOrder = 3;
@@ -16,6 +16,7 @@ export class ChainLightning extends Entity {
     this.maxChainLength = 1000;
     this.maxShotAngle = Math.PI / 3;
     this.targets = [caster];
+    this.gun_offset = offset;
     window.ASSET_MANAGER.playAsset("./assets/sfx/lightning.wav");
   }
 
@@ -77,8 +78,8 @@ export class ChainLightning extends Entity {
     ctx.lineWidth = Math.random() * 10 + 5;
     let maxOffset = 120;
     ctx.beginPath();
-    ctx.moveTo(this.targets[0].x - GAME_ENGINE.camera.x + Math.random() * maxOffset - maxOffset / 2,
-      this.targets[0].y - GAME_ENGINE.camera.y + Math.random() * maxOffset - maxOffset / 2
+    ctx.moveTo(this.targets[0].x - GAME_ENGINE.camera.x + Math.random() * maxOffset - maxOffset / 2 + this.gun_offset.x * (this.targets[0].flip ? -1 : 1),
+      this.targets[0].y - GAME_ENGINE.camera.y + Math.random() * maxOffset - maxOffset / 2 + this.gun_offset.y
     );
     for (let i = 1; i < this.targets.length; i++) {
       ctx.lineTo(this.targets[i].x - GAME_ENGINE.camera.x + Math.random() * maxOffset - maxOffset / 2,
@@ -91,8 +92,8 @@ export class ChainLightning extends Entity {
     ctx.lineWidth = Math.random() * 5 + 5;
     maxOffset = 120;
     ctx.beginPath();
-    ctx.moveTo(this.targets[0].x - GAME_ENGINE.camera.x + Math.random() * maxOffset - maxOffset / 2,
-      this.targets[0].y - GAME_ENGINE.camera.y + Math.random() * maxOffset - maxOffset / 2
+    ctx.moveTo(this.targets[0].x - GAME_ENGINE.camera.x + Math.random() * maxOffset - maxOffset / 2 + this.gun_offset.x * (this.targets[0].flip ? -1 : 1),
+      this.targets[0].y - GAME_ENGINE.camera.y + Math.random() * maxOffset - maxOffset / 2 + this.gun_offset.y
     );
     for (let i = 1; i < this.targets.length; i++) {
       ctx.lineTo(this.targets[i].x - GAME_ENGINE.camera.x + Math.random() * maxOffset - maxOffset / 2,

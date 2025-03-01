@@ -10,10 +10,10 @@ import {
 } from "../../Globals/Constants.js";
 
 export class Fireball extends Entity {
-  constructor(pos, dir) {
+  constructor(pos, dir, offset) {
     super();
-    this.x = pos.x;
-    this.y = pos.y;
+    this.x = pos.x + offset.x * (pos.flip ? -1 : 1);
+    this.y = pos.y + offset.y;
     this.dir = dir; // in radians
     this.entityOrder = 3;
     this.speed = 1000;
@@ -36,7 +36,7 @@ export class Fireball extends Entity {
     );
 
     // TODO make this automatically scale with fireball sprite etc since it doesnt match up right now
-    this.collider = new Collider(50, 50);
+    this.collider = new Collider(35, 35);
 
     this.setAnimation(SPELLS_SPRITESHEET.FIREBALL.NAME, true);
   }

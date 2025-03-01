@@ -8,10 +8,10 @@ import {
 import { GAME_ENGINE } from '../../main.js';
 
 export class VoidOrb extends Entity {
-    constructor(pos, dir) {
+    constructor(pos, dir, offset) {
         super();
-        this.x = pos.x;
-        this.y = pos.y;
+        this.x = pos.x + offset.x * (pos.flip ? -1 : 1);
+        this.y = pos.y + offset.y;
         this.dir = dir;
         this.entityOrder = 3;
         this.speed = 150;

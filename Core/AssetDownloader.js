@@ -42,6 +42,7 @@ export class AssetDownloader {
     this.assetManager.queueDownload("./assets/player/Fall.png");
     this.assetManager.queueDownload("./assets/player/Hit.png");
     this.assetManager.queueDownload("./assets/player/Attack.png");
+    this.assetManager.queueDownload("./assets/player/gun.png");
   }
 
   downloadEnemyAssets() {
@@ -198,6 +199,7 @@ export class AssetDownloader {
     this.assetManager.queueDownload("./assets/sfx/waterwave.wav");
     this.assetManager.queueDownload("./assets/sfx/void.wav");
     this.assetManager.queueDownload("./assets/sfx/vine.wav");
+    this.assetManager.queueDownload("./assets/sfx/gunspin.ogg");
   }
 
   downloadPauseMenuButtons() {
