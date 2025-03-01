@@ -147,6 +147,58 @@ export const CROW_SPRITESHEET = {
   },
 };
 
+export const SPIDER_SPRITESHEET = {
+  RUN: {
+    NAME: "run",
+    URL: "./assets/enemy/spider/move.png",
+    FRAME_WIDTH: 400,
+    FRAME_HEIGHT: 500,
+    FRAME_COUNT: 4,
+    FRAME_DURATION: 0.25,
+  },
+  ROAM: {
+    NAME: "roam",
+    URL: "./assets/enemy/spider/move.png",
+    FRAME_WIDTH: 400,
+    FRAME_HEIGHT: 500,
+    FRAME_COUNT: 4,
+    FRAME_DURATION: 0.5,
+  },
+  AGGRESSIVE: {
+    NAME: "aggressive",
+    URL: "./assets/enemy/spider/attack.png",
+    FRAME_WIDTH: 400,
+    FRAME_HEIGHT: 500,
+    FRAME_COUNT: 8,
+    FRAME_DURATION: 0.1,
+  },
+  ATTACK: {
+    NAME: "attack",
+    URL: "./assets/enemy/spider/attack.png",
+    FRAME_WIDTH: 400,
+    FRAME_HEIGHT: 500,
+    FRAME_COUNT: 8,
+    FRAME_DURATION: 0.1,
+  },
+  IDLE: {
+    NAME: "idle",
+    URL: "./assets/enemy/spider/idle.png",
+    FRAME_WIDTH: 400,
+    FRAME_HEIGHT: 500,
+    FRAME_COUNT: 8,
+    FRAME_DURATION: 0.5,
+  },
+  DEATH: {
+    NAME: "death",
+    URL: "./assets/enemy/spider/death.png",
+    FRAME_WIDTH: 400,
+    FRAME_HEIGHT: 500,
+    FRAME_COUNT: 8,
+    FRAME_DURATION: 0.25,
+  },
+};
+
+
 export const CACTUS_SPRITESHEET = {
   AGGRESSIVE: {
     NAME: "aggressive",

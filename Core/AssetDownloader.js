@@ -46,7 +46,11 @@ export class AssetDownloader {
 
   downloadEnemyAssets() {
     // Spider Enemy
-    this.assetManager.queueDownload("./assets/enemy/spider/Walk.png");
+    this.assetManager.queueDownload("./assets/enemy/spider/attack.png");
+    this.assetManager.queueDownload("./assets/enemy/spider/death.png");
+    this.assetManager.queueDownload("./assets/enemy/spider/hurt.png");
+    this.assetManager.queueDownload("./assets/enemy/spider/idle.png");
+    this.assetManager.queueDownload("./assets/enemy/spider/move.png");
 
     // Cactus Enemy
     this.assetManager.queueDownload("./assets/enemy/cactus/cactus.png");
