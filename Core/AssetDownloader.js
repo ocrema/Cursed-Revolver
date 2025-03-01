@@ -66,6 +66,8 @@ export class AssetDownloader {
     this.assetManager.queueDownload("./assets/cowboy/walk.png");
     this.assetManager.queueDownload("./assets/cowboy/CowBoyIdle.png");
     this.assetManager.queueDownload("./assets/cowboy/CowBoyWalking.png");
+    this.assetManager.queueDownload("./assets/cowboy/CowBoyDeath.png");
+    this.assetManager.queueDownload("./assets/cowboy/CowBoyHurt.png");
     this.assetManager.queueDownload("./assets/cowboy/CowBoyDrawWeapon.png");
     this.assetManager.queueDownload("./assets/cowboy/CowBoyQuickDrawShot.png");
     this.assetManager.queueDownload("./assets/cowboy/CowBoyRapidFire.png");
