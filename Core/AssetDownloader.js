@@ -77,6 +77,8 @@ export class AssetDownloader {
 
     // Earth Golem
     this.assetManager.queueDownload("./assets/enemy/golem/golem_walk.png");
+    this.assetManager.queueDownload("./assets/enemy/golem/golem_idle.png");
+    this.assetManager.queueDownload("./assets/enemy/golem/golem_hit.png");
   }
 
   downloadEnemyAttackAssets() {

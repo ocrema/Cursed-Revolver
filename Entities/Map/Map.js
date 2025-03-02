@@ -20,7 +20,7 @@ import { SpiderwebVisual } from "../Objects/TileVisuals/SpiderwebVisual.js";
 
 export class Map extends GameMap {
   async load() {
-    let oldMap = false;
+    let oldMap = true;
 
     if (oldMap) {
       GAME_ENGINE.addEntity(new Player(1470, -70));
@@ -183,11 +183,11 @@ export class Map extends GameMap {
 
   addOldMapEnemies() {
     // Crow
-    GAME_ENGINE.addEntity(new Crow(2500, -500));
+    //GAME_ENGINE.addEntity(new Crow(2500, -500));
     //GAME_ENGINE.addEntity(new Crow(4090, -200));
 
     // Spider
-    GAME_ENGINE.addEntity(new Spider(2600, 200));
+    //GAME_ENGINE.addEntity(new Spider(2600, 200));
     //GAME_ENGINE.addEntity(new Spider(4262, 200));
 
     // Cacti
@@ -196,10 +196,9 @@ export class Map extends GameMap {
     GAME_ENGINE.addEntity(new Cactus(4200, 260));
 
     // Cowboy Enemy
-    GAME_ENGINE.addEntity(new CowboyEnemy(4115, 1330));
-    GAME_ENGINE.addEntity(new StaticCowboyEnemy(836, 1443));
-    GAME_ENGINE.addEntity(new StaticCowboyEnemy(2190, 1375));
-
+    // GAME_ENGINE.addEntity(new CowboyEnemy(4115, 1330));
+    // GAME_ENGINE.addEntity(new StaticCowboyEnemy(836, 1443));
+    // GAME_ENGINE.addEntity(new StaticCowboyEnemy(2190, 1375));
     GAME_ENGINE.addEntity(new EarthGolem(4215, 1330));
   }
 
@@ -210,6 +209,6 @@ export class Map extends GameMap {
     GAME_ENGINE.addEntity(new Barrel(2250, 1375));
     GAME_ENGINE.addEntity(new GrowingTree(1000, 300));
     //healing bottle
-    GAME_ENGINE.addEntity(new HealingBottle(3200, 275));
+    //GAME_ENGINE.addEntity(new HealingBottle(3200, 275));
   }
 }
