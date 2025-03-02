@@ -21,7 +21,7 @@ export class Icicle extends Entity {
         this.thingHit = null;
         this.spritesheet = SPELLS_SPRITESHEET.ICICLE;
 
-        window.ASSET_MANAGER.playAsset("./assets/sfx/icicle.wav");
+        window.ASSET_MANAGER.playAsset("./assets/sfx/icicle.wav", .7);
 
 
         this.addAnimation(
@@ -41,7 +41,7 @@ export class Icicle extends Entity {
             SPELLS_SPRITESHEET.ICICLE_EXPLOSION.FRAME_DURATION
         );
         this.setAnimation(SPELLS_SPRITESHEET.ICICLE.NAME, true);
-        this.collider = new Collider(40, 40);
+        this.collider = new Collider(30, 30);
     }
 
     update() {
@@ -80,7 +80,7 @@ export class Icicle extends Entity {
                 this.stuckYOffset = this.y - e.y;
                 this.collider = null;
                 this.experationTimer = 1;
-                window.ASSET_MANAGER.playAsset("./assets/sfx/icicle_impact.wav", .7);
+                window.ASSET_MANAGER.playAsset("./assets/sfx/icicle_impact.wav", .7 * Util.DFCVM(this));
                 return;
             }
         }

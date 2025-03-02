@@ -17,7 +17,7 @@ export class ChainLightning extends Entity {
     this.maxShotAngle = Math.PI / 3;
     this.targets = [caster];
     this.gun_offset = offset;
-    window.ASSET_MANAGER.playAsset("./assets/sfx/lightning.wav");
+    window.ASSET_MANAGER.playAsset("./assets/sfx/lightning.wav", .7);
   }
 
   update() {

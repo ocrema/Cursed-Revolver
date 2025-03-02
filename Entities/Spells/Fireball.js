@@ -23,7 +23,7 @@ export class Fireball extends Entity {
     this.assetManager = window.ASSET_MANAGER;
     this.fireballSpriteScale = 3;
 
-    window.ASSET_MANAGER.playAsset("./assets/sfx/fireball.wav");
+    window.ASSET_MANAGER.playAsset("./assets/sfx/fireball.wav", .7);
 
     // Load fireball animation
     this.addAnimation(
@@ -92,7 +92,7 @@ export class Fireball extends Entity {
       }
     }
 
-    window.ASSET_MANAGER.playAsset("./assets/sfx/fireball_impact.wav");
+    window.ASSET_MANAGER.playAsset("./assets/sfx/fireball_impact.wav", Util.DFCVM(this));
 
     // Remove fireball after spawning explosion
     this.removeFromWorld = true;
