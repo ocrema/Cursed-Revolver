@@ -154,7 +154,7 @@ export const SPIDER_SPRITESHEET = {
     FRAME_WIDTH: 400,
     FRAME_HEIGHT: 500,
     FRAME_COUNT: 4,
-    FRAME_DURATION: 0.25,
+    FRAME_DURATION: 0.1,
   },
   ROAM: {
     NAME: "roam",
@@ -162,7 +162,7 @@ export const SPIDER_SPRITESHEET = {
     FRAME_WIDTH: 400,
     FRAME_HEIGHT: 500,
     FRAME_COUNT: 4,
-    FRAME_DURATION: 0.5,
+    FRAME_DURATION: 0.25,
   },
   AGGRESSIVE: {
     NAME: "aggressive",
@@ -178,7 +178,7 @@ export const SPIDER_SPRITESHEET = {
     FRAME_WIDTH: 400,
     FRAME_HEIGHT: 500,
     FRAME_COUNT: 8,
-    FRAME_DURATION: 0.1,
+    FRAME_DURATION: 0.15,
   },
   IDLE: {
     NAME: "idle",
@@ -194,6 +194,14 @@ export const SPIDER_SPRITESHEET = {
     FRAME_WIDTH: 400,
     FRAME_HEIGHT: 500,
     FRAME_COUNT: 8,
+    FRAME_DURATION: 0.15,
+  },
+  HURT: {
+    NAME: "hurt",
+    URL: "./assets/enemy/spider/hurt.png",
+    FRAME_WIDTH: 400,
+    FRAME_HEIGHT: 500,
+    FRAME_COUNT: 3,
     FRAME_DURATION: 0.25,
   },
 };

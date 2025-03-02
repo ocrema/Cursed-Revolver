@@ -65,14 +65,14 @@ export class CowboyEnemy extends Actor {
     this.addAnimation(
       "death",
       this.assetManager.getAsset("./assets/cowboy/CowBoyDeath.png"),
-      48, 48, 5, 0.2
+      48, 64, 5, 0.2
     )
 
     this.addAnimation(
       "hurt",
       this.assetManager.getAsset("./assets/cowboy/CowBoyHurt.png"),
       48,
-      48,
+      64,
       2,
       0.2
     );
@@ -84,7 +84,7 @@ export class CowboyEnemy extends Actor {
     this.scale = 3;
     this.speed = 200;
     this.health = 20;
-    this.maxHealth = 20;
+    this.maxHealth = this.health;
     this.fireRate = 2.5;
     this.attackCooldown = 0;
     this.isEnemy = true;
@@ -288,9 +288,6 @@ onAnimationComplete() {
 
 
   applyDamage() {
-    if (this.recieveAttacks.length > 0) {
-      this.setAnimation("hurt");
-    }
     this.recieveAttacks();
     this.recieveEffects();
   }
