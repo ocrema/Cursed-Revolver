@@ -38,7 +38,7 @@ export class Spider extends Actor {
     // Movement
     this.collider = new Collider(this.width, this.height);
     this.randomRoamLength = [600, 800, 900, 1000, 1200, 1300];
-    this.randomRunLength = [550, 600, 700, 750];
+    this.randomRunLength = [200, 550, 600, 700, 750];
 
     this.walkSpeed = 350;
     this.runSpeed = 900;
@@ -62,8 +62,6 @@ export class Spider extends Actor {
     this.isEnemy = true;
     this.seesPlayer = false;
     this.dead = false;
-
-    this.isSpider = true;
   }
 
   update() {
@@ -246,15 +244,9 @@ export class Spider extends Actor {
     for (let entity of GAME_ENGINE.entities) {
       if (entity instanceof Tile && this.colliding(entity)) {
 
-      // moving up --> bump head
-// TODO: update tileID with ID of invis tile
         if (this.velocity.y < 0 ) {
           console.log(this.target);
           this.y = entity.y + (entity.collider.height / 2) + (this.height / 2);
-          if (1/* entity.tileID === 0 */) {
-            hitHead = true;
-          }
-// TODO: remove this if doing invisible
           hitHead = true;
         }
 
@@ -281,8 +273,7 @@ export class Spider extends Actor {
             this.x = entity.x - (entity.collider.width / 2) - (this.width / 2);
           }
 
-          // remove 1 and uncomment for spider climb 
-          if ( 1/* entity.tileID !== 5 && entity.tileID !== 7 */ && !hitHead) {
+          if (!hitHead) {
             this.target.y -= 100;
           } else {
             this.target.x = this.x * 2 - this.target.x;
