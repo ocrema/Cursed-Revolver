@@ -20,7 +20,7 @@ export class Spider extends Actor {
     this.animationLoader = new AnimationLoader(this);
     this.animationLoader.loadAnimations(SPIDER_SPRITESHEET);
     
-    this.setAnimation("roam");
+    this.setAnimation(SPIDER_SPRITESHEET.ROAM.NAME);
 
     this.width = 60;
     this.height = 40;
@@ -45,7 +45,6 @@ export class Spider extends Actor {
     this.aggroSpeed = 700;
     this.attackSpeed = 800;
     this.speed = this.walkSpeed;
-    this.climbSpeed = 2000;
     this.gravity = 1300;
     this.turnTimer = 0;
     this.turnBuffer = 1;
@@ -67,15 +66,9 @@ export class Spider extends Actor {
     this.isSpider = true;
   }
 
-  clearQueuedAttacks() {
-    if (this.recieved_attacks.length > 0) {
-      this.setAnimation(SPIDER_SPRITESHEET.HURT.NAME, false);
-    } 
-    this.recieved_attacks = [];
-  }
-
   update() {
     if (!this.dead) {
+
       // apply attack damage
       this.recieveAttacks();
       this.recieveEffects();
@@ -93,8 +86,8 @@ export class Spider extends Actor {
           if (Util.canSee(this, entity)) {
             this.seesPlayer = true;
             if (
-              (this.currentAnimation === "aggressive" ||
-              this.currentAnimation === "attack")
+              (this.currentAnimation === SPIDER_SPRITESHEET.AGGRESSIVE.NAME ||
+              this.currentAnimation === SPIDER_SPRITESHEET.ATTACK.NAME)
             ) {
               this.target = { x: entity.x, y: entity.y };
             }
@@ -108,7 +101,7 @@ export class Spider extends Actor {
       this.setState();
 
       // moves to target, deals with platform collision
-      if (this.currentAnimation !== "idle") {
+      if (this.currentAnimation !== SPIDER_SPRITESHEET.IDLE.NAME) {
         this.movement();
 
         // flip image according to velocity
@@ -122,6 +115,13 @@ export class Spider extends Actor {
     
     this.angle = this.onWall ? Math.PI * 3 / 2 : 0;
     this.updateAnimation(GAME_ENGINE.clockTick);
+  }
+
+  clearQueuedAttacks() {
+    if (this.recieved_attacks.length > 0) {
+      this.setAnimation(SPIDER_SPRITESHEET.HURT.NAME, false);
+    } 
+    this.recieved_attacks = [];
   }
 
   // cycles through different cases to set animation state
@@ -141,14 +141,14 @@ export class Spider extends Actor {
 
       if (this.turnTimer < this.turnBuffer) {
         this.turnTimer += GAME_ENGINE.clockTick;
-        this.setAnimation("idle");
+        this.setAnimation(SPIDER_SPRITESHEET.IDLE.NAME);
         return;
       }
 
       this.turnTimer = 0;
 
       // change animation and speed
-      this.setAnimation("roam");
+      this.setAnimation(SPIDER_SPRITESHEET.ROAM.NAME);
       this.speed = this.walkSpeed;
 
       if (this.velocity.x > 0) {
@@ -163,7 +163,7 @@ export class Spider extends Actor {
     }
 
     if (this.seesPlayer && this.attackCooldown < this.attackRate) {
-      this.setAnimation("run");
+      this.setAnimation(SPIDER_SPRITESHEET.RUN.NAME);
       this.turnTimer = this.turnBuffer;
       if (this.jaw) {
         this.jaw.delete();
@@ -175,9 +175,9 @@ export class Spider extends Actor {
     if (
       this.seesPlayer &&
       this.attackCooldown > this.attackRate &&
-      this.currentAnimation !== "aggressive"
+      this.currentAnimation !== SPIDER_SPRITESHEET.AGGRESSIVE.NAME
     ) {
-      this.setAnimation("aggressive");
+      this.setAnimation(SPIDER_SPRITESHEET.AGGRESSIVE.NAME);
       this.speed = this.aggroSpeed;
       this.turnTimer = this.turnBuffer;
       
@@ -195,12 +195,12 @@ export class Spider extends Actor {
       Math.abs(this.x - this.target.x) < this.attackRadius
     ) {
       // change animation and speed
-      this.setAnimation("attack");
+      this.setAnimation(SPIDER_SPRITESHEET.ATTACK.NAME);
       this.speed = this.attackSpeed;
     }
 
     if (
-      this.currentAnimation === "run" &&
+      this.currentAnimation === SPIDER_SPRITESHEET.RUN.NAME &&
       Math.abs(this.x - this.target.x) < 20
     ) {
 
@@ -241,25 +241,32 @@ export class Spider extends Actor {
 
     this.onGround = false;
     this.onWall = false;
+    let hitHead = false;
 
     for (let entity of GAME_ENGINE.entities) {
       if (entity instanceof Tile && this.colliding(entity)) {
-        this.onGround = true;
 
       // moving up --> bump head
-        if (this.velocity.y < 0) {
+// TODO: update tileID with ID of invis tile
+        if (this.velocity.y < 0 ) {
+          console.log(this.target);
           this.y = entity.y + (entity.collider.height / 2) + (this.height / 2);
+          if (1/* entity.tileID === 0 */) {
+            hitHead = true;
+          }
+// TODO: remove this if doing invisible
+          hitHead = true;
         }
 
         if (this.velocity.y > 0) {
           this.y = entity.y - (entity.collider.height / 2) - (this.height / 2);
+          this.onGround = true;
         }
       }
       
     }
 
     this.x += this.velocity.x * GAME_ENGINE.clockTick;
-    // update velocity
 
     for (let entity of GAME_ENGINE.entities) {
       if (entity instanceof Tile && this.colliding(entity)) {
@@ -268,19 +275,19 @@ export class Spider extends Actor {
         if (isSimilarY) {
           if (this.velocity.x < 0 && isSimilarY) {
           this.x = entity.x + (entity.collider.width / 2) + (this.width / 2);
-        }
+          }
 
-        if (this.velocity.x > 0 && isSimilarY) {
-          this.x = entity.x - (entity.collider.width / 2) - (this.width / 2);
-        }
+          if (this.velocity.x > 0 && isSimilarY) {
+            this.x = entity.x - (entity.collider.width / 2) - (this.width / 2);
+          }
 
-        if ( 1/* entity.tileID !== 5 && entity.tileID !== 7 */ ) {
-          this.target.y -= 100;
-        } else {
-          this.target.x = this.x * 2 - this.target.x;
+          // remove 1 and uncomment for spider climb 
+          if ( 1/* entity.tileID !== 5 && entity.tileID !== 7 */ && !hitHead) {
+            this.target.y -= 100;
+          } else {
+            this.target.x = this.x * 2 - this.target.x;
+          }
         }
-      }
-        
       }
     }
 

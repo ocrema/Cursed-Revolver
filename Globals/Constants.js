@@ -186,7 +186,7 @@ export const SPIDER_SPRITESHEET = {
     FRAME_WIDTH: 400,
     FRAME_HEIGHT: 500,
     FRAME_COUNT: 8,
-    FRAME_DURATION: 0.5,
+    FRAME_DURATION: 0.35,
   },
   DEATH: {
     NAME: "death",
