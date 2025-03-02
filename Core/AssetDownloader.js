@@ -47,7 +47,11 @@ export class AssetDownloader {
 
   downloadEnemyAssets() {
     // Spider Enemy
-    this.assetManager.queueDownload("./assets/enemy/spider/Walk.png");
+    this.assetManager.queueDownload("./assets/enemy/spider/attack.png");
+    this.assetManager.queueDownload("./assets/enemy/spider/death.png");
+    this.assetManager.queueDownload("./assets/enemy/spider/hurt.png");
+    this.assetManager.queueDownload("./assets/enemy/spider/idle.png");
+    this.assetManager.queueDownload("./assets/enemy/spider/move.png");
 
     // Cactus Enemy
     this.assetManager.queueDownload("./assets/enemy/cactus/cactus.png");
@@ -63,6 +67,8 @@ export class AssetDownloader {
     this.assetManager.queueDownload("./assets/cowboy/walk.png");
     this.assetManager.queueDownload("./assets/cowboy/CowBoyIdle.png");
     this.assetManager.queueDownload("./assets/cowboy/CowBoyWalking.png");
+    this.assetManager.queueDownload("./assets/cowboy/CowBoyDeath.png");
+    this.assetManager.queueDownload("./assets/cowboy/CowBoyHurt.png");
     this.assetManager.queueDownload("./assets/cowboy/CowBoyDrawWeapon.png");
     this.assetManager.queueDownload("./assets/cowboy/CowBoyQuickDrawShot.png");
     this.assetManager.queueDownload("./assets/cowboy/CowBoyRapidFire.png");

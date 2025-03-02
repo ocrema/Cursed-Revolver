@@ -6,6 +6,8 @@ import * as Util from "../../Utils/Util.js";
 import { Collider } from "../Collider.js";
 import { GAME_ENGINE } from "../../main.js";
 import { Tile } from "../Map/Tiles/Tile.js";
+import { AnimationLoader } from "../../Core/AnimationLoader.js";
+import { SPIDER_SPRITESHEET } from "../../Globals/Constants.js";
 
 export class Spider extends Actor {
   constructor(x, y) {
@@ -15,51 +17,18 @@ export class Spider extends Actor {
     // Animation
 
     this.assetManager = window.ASSET_MANAGER;
+    this.animationLoader = new AnimationLoader(this);
+    this.animationLoader.loadAnimations(SPIDER_SPRITESHEET);
+    
+    this.setAnimation(SPIDER_SPRITESHEET.ROAM.NAME);
 
-    this.addAnimation(
-      "run",
-      this.assetManager.getAsset("./assets/enemy/spider/Walk.png"),
-      64, // Frame width
-      64, // Frame height
-      5, // Frame count
-      0.5 // Frame duration (slower for idle)
-    );
-
-    this.addAnimation(
-      "roam",
-      this.assetManager.getAsset("./assets/enemy/spider/Walk.png"),
-      64, // Frame width
-      64, // Frame height
-      5, // Frame count
-      0.5 // Frame duration (slower for idle)
-    );
-
-    this.addAnimation(
-      "aggressive",
-      this.assetManager.getAsset("./assets/enemy/spider/Walk.png"),
-      64, // Frame width
-      64, // Frame height
-      5, // Frame count
-      0.5 // Frame duration (slower for idle)
-    );
-
-    this.addAnimation(
-      "attack",
-      this.assetManager.getAsset("./assets/enemy/spider/Walk.png"),
-      64, // Frame width
-      64, // Frame height
-      5, // Frame count
-      0.5 // Frame duration (slower for idle)
-    );
-
-    this.setAnimation("roam");
     this.width = 60;
     this.height = 40;
-    this.scale = 3;
+    this.scale = 0.25;
 
     // Health / Attack
     this.health = 30;
-    this.maxHealth = 30;
+    this.maxHealth = this.health;
     this.jaw = null;
     this.attackRadius = 200;
     this.attackCooldown = 0;
@@ -68,93 +37,120 @@ export class Spider extends Actor {
 
     // Movement
     this.collider = new Collider(this.width, this.height);
-    this.randomRoamLength = [250, 400, 750, 800];
-    this.randomRunLength = [550, 600, 700, 750];
+    this.randomRoamLength = [600, 800, 900, 1000, 1200, 1300];
+    this.randomRunLength = [200, 550, 600, 700, 750];
 
-    this.walkSpeed = 500;
+    this.walkSpeed = 350;
     this.runSpeed = 900;
     this.aggroSpeed = 700;
     this.attackSpeed = 800;
     this.speed = this.walkSpeed;
-    this.climbSpeed = 2000;
-    this.gravity = 1000;
+    this.gravity = 1300;
+    this.turnTimer = 0;
+    this.turnBuffer = 1;
 
     this.visualRadius = 700;
-    this.target = { x: this.x + 200, y: this.y }; // target location of spider
+    this.target = { x: this.x - 2000, y: this.y - 200}; // target location of spider
 
     var distance = Util.getDistance(this, this.target);
     this.velocity = {
-      x: ((this.target.x - this.x) / distance) * this.walkSpeed,
-      y: ((this.target.y - this.y) / distance) * this.walkSpeed,
+      x: distance ? ((this.target.x - this.x) / distance) * this.speed : 0,
+      y: distance ? ((this.target.y - this.y) / distance) * this.speed : 0,
     };
 
     // Flags
     this.isEnemy = true;
     this.seesPlayer = false;
-
-    this.isSpider = true;
+    this.dead = false;
   }
 
   update() {
-    // apply attack damage
-    this.recieveAttacks();
-    this.recieveEffects();
+    if (!this.dead) {
 
-    // if spider loses all health
-    if (this.health <= 0) {
-      window.ASSET_MANAGER.playAsset("./assets/sfx/spider_death.wav", 1 * Util.DFCVM(this));
-      this.removeFromWorld = true;
-    }
+      // apply attack damage
+      this.recieveAttacks();
+      this.recieveEffects();
 
-    if (this.effects.frozen > 0 || this.effects.stun > 0) return;
+      if (this.effects.frozen > 0 || this.effects.stun > 0) return;
 
-    this.attackCooldown += GAME_ENGINE.clockTick;
-    
-    this.onGround = false;
-    this.onWall = false;
+      this.attackCooldown += GAME_ENGINE.clockTick;
+      
+      this.onGround = false;
+      this.onWall = false;
 
-    // check LOS on player
-    for (let entity of GAME_ENGINE.entities) {
-      if (entity instanceof Player) {
-        if (Util.canSee(this, entity)) {
-          this.seesPlayer = true;
-          if (
-            (this.currentAnimation === "aggressive" ||
-            this.currentAnimation === "attack")
-          ) {
-            this.target = { x: entity.x, y: entity.y };
+      // check LOS on player
+      for (let entity of GAME_ENGINE.entities) {
+        if (entity instanceof Player) {
+          if (Util.canSee(this, entity)) {
+            this.seesPlayer = true;
+            if (
+              (this.currentAnimation === SPIDER_SPRITESHEET.AGGRESSIVE.NAME ||
+              this.currentAnimation === SPIDER_SPRITESHEET.ATTACK.NAME)
+            ) {
+              this.target = { x: entity.x, y: entity.y };
+            }
+          } else {
+            this.seesPlayer = false;
           }
-        } else {
-          this.seesPlayer = false;
+        }
+      }
+
+      // updates what state the spider is in and moves target when state changes
+      this.setState();
+
+      // moves to target, deals with platform collision
+      if (this.currentAnimation !== SPIDER_SPRITESHEET.IDLE.NAME) {
+        this.movement();
+
+        // flip image according to velocity
+        if (this.velocity.x < 0) {
+          this.flip = 1;
+        } else if (this.velocity.x > 0) {
+          this.flip = 0;
         }
       }
     }
-
-    // updates what state the spider is in and moves target when state changes
-    this.setState();
-
-    // moves to target, deals with platform collision
-    this.movement();
-
-    // flip image according to velocity
-    if (this.velocity.x < 0) {
-      this.flip = 0;
-    } else if (this.velocity.x > 0) {
-      this.flip = 1;
-    }
-
+    
+    this.angle = this.onWall ? Math.PI * 3 / 2 : 0;
     this.updateAnimation(GAME_ENGINE.clockTick);
+  }
+
+  clearQueuedAttacks() {
+    if (this.recieved_attacks.length > 0) {
+      this.setAnimation(SPIDER_SPRITESHEET.HURT.NAME, false);
+    } 
+    this.recieved_attacks = [];
   }
 
   // cycles through different cases to set animation state
   setState() {
+    if (this.health < 0) {
+      this.dead = true;
+      this.setAnimation(SPIDER_SPRITESHEET.DEATH.NAME, false);
+      window.ASSET_MANAGER.playAsset("./assets/sfx/spider_death.wav", 1 * Util.DFCVM(this));
+      return;
+    }
+
+    if(this.currentAnimation === SPIDER_SPRITESHEET.HURT.NAME) {
+      return;
+    }
+
     // if cant see player and close to target location
     if (!this.seesPlayer && Math.abs(this.x - this.target.x) < 20) {
+
+      if (this.turnTimer < this.turnBuffer) {
+        this.turnTimer += GAME_ENGINE.clockTick;
+        this.setAnimation(SPIDER_SPRITESHEET.IDLE.NAME);
+        return;
+      }
+
+      this.turnTimer = 0;
+
       // change animation and speed
-      this.setAnimation("roam");
+      this.setAnimation(SPIDER_SPRITESHEET.ROAM.NAME);
       this.speed = this.walkSpeed;
 
-      if (this.velocity.x < 0) {
+      if (this.velocity.x > 0) {
         // approaching target from the left
         this.target.x -=
           this.randomRoamLength[Util.randomInt(this.randomRoamLength.length)]; // run to the right
@@ -166,7 +162,8 @@ export class Spider extends Actor {
     }
 
     if (this.seesPlayer && this.attackCooldown < this.attackRate) {
-      this.setAnimation("run");
+      this.setAnimation(SPIDER_SPRITESHEET.RUN.NAME);
+      this.turnTimer = this.turnBuffer;
       if (this.jaw) {
         this.jaw.delete();
         this.jaw = null;
@@ -177,10 +174,11 @@ export class Spider extends Actor {
     if (
       this.seesPlayer &&
       this.attackCooldown > this.attackRate &&
-      this.currentAnimation !== "aggressive"
+      this.currentAnimation !== SPIDER_SPRITESHEET.AGGRESSIVE.NAME
     ) {
-      this.setAnimation("aggressive");
+      this.setAnimation(SPIDER_SPRITESHEET.AGGRESSIVE.NAME);
       this.speed = this.aggroSpeed;
+      this.turnTimer = this.turnBuffer;
       
       // if no jaw, spawn one in + reset the timer
       if (!this.jaw || this.jaw.removeFromWorld) {
@@ -196,85 +194,102 @@ export class Spider extends Actor {
       Math.abs(this.x - this.target.x) < this.attackRadius
     ) {
       // change animation and speed
-      this.setAnimation("attack");
+      this.setAnimation(SPIDER_SPRITESHEET.ATTACK.NAME);
       this.speed = this.attackSpeed;
     }
 
     if (
-      this.currentAnimation === "run" &&
+      this.currentAnimation === SPIDER_SPRITESHEET.RUN.NAME &&
       Math.abs(this.x - this.target.x) < 20
     ) {
+
       this.speed = this.runSpeed;
-      if (this.velocity.x < 0) {
-        // approaching target from the left
+
+      // run away in random direction
+      if (Util.randomInt(2) > 0) {
         this.target.x +=
-          this.randomRunLength[Util.randomInt(this.randomRunLength.length)]; // run to the right
+          this.randomRunLength[Util.randomInt(this.randomRunLength.length)]; 
       } else {
-        // approaching target from the right
         this.target.x -=
-          this.randomRunLength[Util.randomInt(this.randomRunLength.length)]; // run to the left
+          this.randomRunLength[Util.randomInt(this.randomRunLength.length)]; 
       }
     }
   }
 
-  movement() {
-    // update location
-    this.x += this.velocity.x * GAME_ENGINE.clockTick;
-    this.y += this.velocity.y * GAME_ENGINE.clockTick;
+  onAnimationComplete() {
+    if (this.currentAnimation === SPIDER_SPRITESHEET.DEATH.NAME) {
+      this.removeFromWorld = true;
+    }
 
-    // update velocity
+    if (this.currentAnimation === SPIDER_SPRITESHEET.HURT.NAME) {
+      this.setAnimation(SPIDER_SPRITESHEET.ROAM.NAME);
+    }
+  }
+
+  movement() {
     var distance = Util.getDistance(this, this.target);
 
     this.velocity = {
-      x: ((this.target.x - this.x) / distance) * this.speed,
-      y: this.gravity,
+      x: distance ? ((this.target.x - this.x) / distance) * this.speed : 0,
+      y: distance ? ((this.target.y - this.y) / distance) * this.speed : 0,
     };
 
-    // apply changes to velocity
+    // update location
+
+    this.y += this.velocity.y * GAME_ENGINE.clockTick;
+
+    this.onGround = false;
+    this.onWall = false;
+    let hitHead = false;
+
     for (let entity of GAME_ENGINE.entities) {
-      if (entity instanceof Tile && entity.collider && this.colliding(entity)) {
-        let thisTop = this.y - this.height / 2;
-        let thisBottom = this.y + this.height / 2;
-        let thisLeft = this.x - this.width / 2;
-        let thisRight = this.x + this.width / 2;
+      if (entity instanceof Tile && this.colliding(entity)) {
 
-        let eTop = entity.y - entity.collider.height / 2;
-        let eBottom = entity.y + entity.collider.height / 2;
-        let eLeft = entity.x - entity.collider.width / 2;
-        let eRight = entity.x + entity.collider.width / 2;
-
-        let collideRight = thisRight > eLeft && thisLeft < eLeft; // platform is on right of spider
-        let collideLeft = thisLeft < eRight && thisRight > eRight; // platform is on the left of spider
-
-        let collideBottom =
-          thisBottom > eTop &&
-          thisTop < eTop &&
-          thisRight > eLeft &&
-          thisLeft < eRight;
-        let collideTop =
-          thisTop > eBottom &&
-          thisBottom < eBottom &&
-          thisRight > eLeft &&
-          thisLeft < eRight;
-
-        if (collideBottom && this.velocity.y > 0) {
-          // if colliding ground and moving down
-          this.y = entity.y - entity.collider.height / 2 - this.height / 2;
-          this.velocity.y = 0;
+        if (this.velocity.y < 0 ) {
+          console.log(this.target);
+          this.y = entity.y + (entity.collider.height / 2) + (this.height / 2);
+          hitHead = true;
         }
 
-        if (collideLeft || collideRight) {
-          this.target.y = eTop - this.height / 2;
-          this.velocity.y =
-            ((this.target.y - this.y) / distance) * this.climbSpeed;
-          this.velocity.x = 0;
-          if (collideRight && this.velocity.x > 0) {
-            // if colliding with wall on right and moving right
-            this.x = entity.x - entity.collider.width / 2 - this.width / 2;
-          } else if (collideLeft && this.velocity.x < 0) {
-            // if colliding with wall on left and moving left
-            this.x = entity.x + entity.collider.width / 2 + this.width / 2;
+        if (this.velocity.y > 0) {
+          this.y = entity.y - (entity.collider.height / 2) - (this.height / 2);
+          this.onGround = true;
+        }
+      }
+      
+    }
+
+    this.x += this.velocity.x * GAME_ENGINE.clockTick;
+
+    for (let entity of GAME_ENGINE.entities) {
+      if (entity instanceof Tile && this.colliding(entity)) {
+        let isSimilarY = (this.y > (entity.y - entity.collider.height) && this.y < (entity.y + entity.collider.height));
+        this.onWall = true;
+        if (isSimilarY) {
+          if (this.velocity.x < 0 && isSimilarY) {
+          this.x = entity.x + (entity.collider.width / 2) + (this.width / 2);
           }
+
+          if (this.velocity.x > 0 && isSimilarY) {
+            this.x = entity.x - (entity.collider.width / 2) - (this.width / 2);
+          }
+
+          if (!hitHead) {
+            this.target.y -= 100;
+          } else {
+            this.target.x = this.x * 2 - this.target.x;
+          }
+        }
+      }
+    }
+
+    if (!this.onGround && !this.onWall) {
+      this.y += this.gravity * GAME_ENGINE.clockTick;
+
+      for (let entity of GAME_ENGINE.entities) {
+        if (entity instanceof Tile && this.colliding(entity)) {
+          this.y = entity.y - (entity.collider.height / 2) - (this.height / 2);
+          this.target.y = this.y;
         }
       }
     }

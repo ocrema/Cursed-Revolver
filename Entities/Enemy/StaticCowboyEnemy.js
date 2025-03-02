@@ -4,6 +4,7 @@ import { Collider } from "../Collider.js";
 import * as Util from "../../Utils/Util.js";
 import { CowboyBullet } from "./CowboyEnemy.js"; // Import Cowboy Bullet
 import { HealingBottle } from "../Enemy/HealingBottle.js"; // Ensure this is the correct path
+import { GAME_ENGINE } from "../../main.js";
 
 
 export class StaticCowboyEnemy extends Actor {
@@ -26,6 +27,12 @@ export class StaticCowboyEnemy extends Actor {
       48, 48, 5, 0.2
     );
 
+    this.addAnimation(
+      "death",
+      this.assetManager.getAsset("./assets/cowboy/CowBoyDeath.png"),
+      48, 48, 5, 0.2
+    )
+
     this.setAnimation("idle"); // Default animation
 
     this.width = 50;
@@ -43,6 +50,7 @@ export class StaticCowboyEnemy extends Actor {
     this.visualRadius = 700; // Detection range
     this.attackRadius = 700; // Attack range (Same as visual range since it only shoots)
     this.seesPlayer = false;
+    this.dead = false;
   }
 
   draw(ctx) {
@@ -65,39 +73,52 @@ export class StaticCowboyEnemy extends Actor {
   }
 
   update() {
-    this.applyDamage();
+    if (!this.dead) {
+      this.applyDamage();
     
-    if (this.effects.frozen > 0 || this.effects.stun > 0) return;
-    this.attackCooldown += GAME_ENGINE.clockTick;
-    
+      if (this.effects.frozen > 0 || this.effects.stun > 0) return;
+      this.attackCooldown += GAME_ENGINE.clockTick;
+      
 
-    let playerDetected = false;
-    let playerTarget = null;
+      let playerDetected = false;
+      let playerTarget = null;
 
-    for (let entity of GAME_ENGINE.entities) {
-      if (entity instanceof Player && Util.canSee(this, entity)) {
-        this.seesPlayer = true;
-        playerDetected = true;
-        playerTarget = entity;
+      for (let entity of GAME_ENGINE.entities) {
+        if (entity instanceof Player && Util.canSee(this, entity)) {
+          this.seesPlayer = true;
+          playerDetected = true;
+          playerTarget = entity;
 
-        // **Flip the cowboy based on player's position**
-        this.flip = entity.x < this.x; // Flip if player is on the left
+          // **Flip the cowboy based on player's position**
+          this.flip = entity.x < this.x; // Flip if player is on the left
 
-        if (this.attackCooldown >= this.fireRate) {
-          this.attack(entity);
+          if (this.attackCooldown >= this.fireRate) {
+            this.attack(entity);
+          }
         }
+      }
+
+      // **Debug: Check if attacks are being received**
+      if (this.recieved_attacks.length > 0) {
+          console.log(`Static Cowboy hit! Received attacks:`, this.recieved_attacks);
+      }
+
+
+      // **If no player is detected, return to idle animation**
+      if (!playerDetected) {
+        this.setAnimation("idle");
       }
     }
 
-    // **Debug: Check if attacks are being received**
-    if (this.recieved_attacks.length > 0) {
-        console.log(`Static Cowboy hit! Received attacks:`, this.recieved_attacks);
-    }
+    this.updateAnimation(GAME_ENGINE.clockTick);
+  }
 
-
-    // **If no player is detected, return to idle animation**
-    if (!playerDetected) {
-      this.setAnimation("idle");
+  onAnimationComplete() {
+    if (this.currentAnimation == "death") {
+      this.spawnHealingBottle();
+  
+      this.removeFromWorld = true;
+      this.collider = null;
     }
   }
 
@@ -122,12 +143,8 @@ export class StaticCowboyEnemy extends Actor {
     // **Check if the cowboy dies**
     if (this.health <= 0) {
       console.log("Static Cowboy has died!");
-  
-      // **Spawn a HealingBottle at Cowboy's Position**
-      this.spawnHealingBottle();
-  
-      this.removeFromWorld = true;
-      this.collider = null;
+      this.dead = true;
+      this.setAnimation("death", false);
     }
   }
   

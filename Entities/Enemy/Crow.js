@@ -2,7 +2,7 @@ import { Actor } from "../Actor.js";
 import { Collider } from "../Collider.js";
 import { GAME_ENGINE } from "../../main.js";
 import { CROW_SPRITESHEET } from "../../Globals/Constants.js";
-import { canSee } from "../../Utils/Util.js"; // Import vision check function
+import * as Util from "../../Utils/Util.js";
 import { Jaw } from "./Attack.js";
 import { AnimationLoader } from "../../Core/AnimationLoader.js";
 
@@ -26,7 +26,8 @@ export class Crow extends Actor {
 
     // Movement
     this.patrolSpeed = 150;
-    this.attackSpeed = 300;
+    this.attackSpeed = 400;
+    this.retreatSpeed = 500;
     this.patrolRange = 300;
     this.startX = x;
     this.startY = y;
@@ -74,13 +75,10 @@ export class Crow extends Actor {
   }
 
   update() {
-    //console.log(`🦅 Crow State: ${this.state}`);
+    // console.log(`🦅 Crow State: ${this.state}`);
 
-    if (this.isDead) {
-      return;
-    }
-    
-    this.applyDamageLogic();
+    if (!this.isDead) {
+      this.applyDamageLogic();
     if (this.effects.frozen > 0 || this.effects.stun > 0) return;
 
     if (this.directionX > 0) {
@@ -91,7 +89,6 @@ export class Crow extends Actor {
 
     if (this.retreating) {
       this.retreat();
-      return;
     }
 
     if (this.isHurt) {
@@ -100,11 +97,13 @@ export class Crow extends Actor {
         this.isHurt = false;
         this.setAnimation(CROW_SPRITESHEET.FLY.NAME);
       }
-    } else {
-      this.attackCooldown -= GAME_ENGINE.clockTick;
-      this.updateState();
-    }
+    } 
 
+    this.attackCooldown -= GAME_ENGINE.clockTick;
+    this.updateState();
+    }
+    
+    console.log(this.state);
     this.updateAnimation(GAME_ENGINE.clockTick);
   }
 
@@ -115,8 +114,8 @@ export class Crow extends Actor {
     if (this.state === this.states.PATROL) {
       this.patrol();
 
-      if (this.attackCooldown <= 0 && canSee(this, player)) {
-        //console.log("Crow spotted the player! Preparing to attack!");
+      if (this.attackCooldown <= 0 && Util.canSee(this, player) && Util.canAttack(this, player)) {
+        console.log("Crow spotted the player! Preparing to attack!");
         this.startAttack(player);
       }
     } else if (this.state === this.states.ATTACK) {
@@ -143,28 +142,28 @@ export class Crow extends Actor {
     this.attackStartPosition = { x: this.x, y: this.y };
     this.target = { x: player.x, y: player.y + 50 };
 
+    if (!this.jaw || this.jaw.removeFromWorld) {
+      this.jaw = new Jaw(this);
+      GAME_ENGINE.addEntity(this.jaw);
+    }
+
     // Flip based on target direction
     this.flip = this.target.x > this.x ? 1 : 0;
   }
 
   attack() {
-    let dx = this.target.x - this.x;
-    let dy = this.target.y - this.y;
+    var distance = Util.getDistance(this, this.target);
 
-    this.x += dx * 0.02;
-    this.y += dy * 0.02;
+    if (distance < 10 || (!this.jaw)) {
+      this.resetToPatrol();
+      return;
+    }
+
+    this.x += ((this.target.x - this.x) / distance) * this.attackSpeed * GAME_ENGINE.clockTick;
+    this.y += ((this.target.y - this.y) / distance) * this.attackSpeed * GAME_ENGINE.clockTick;
 
     // Flip based on movement direction
-    this.flip = dx > 0 ? 1 : 0;
-
-    if (Math.abs(dx) < 10 && Math.abs(dy) < 10) {
-      if (!this.jaw || this.jaw.removeFromWorld) {
-        this.attackCooldown = 0;
-        this.jaw = new Jaw(this);
-        GAME_ENGINE.addEntity(this.jaw);
-      }
-      this.resetToPatrol();
-    }
+    this.flip = (this.target.x - this.x) > 0 ? 1 : 0;
   }
 
   resetToPatrol() {
@@ -180,16 +179,15 @@ export class Crow extends Actor {
   }
 
   retreat() {
-    let dx = this.retreatTarget.x - this.x;
-    let dy = this.retreatTarget.y - this.y;
+    var distance = Util.getDistance(this, this.retreatTarget);
 
-    this.x += dx * 0.01;
-    this.y += dy * 0.015;
+    this.x += ((this.retreatTarget.x - this.x) / distance) * this.retreatSpeed * GAME_ENGINE.clockTick;
+    this.y += ((this.retreatTarget.y - this.y) / distance) * this.retreatSpeed * GAME_ENGINE.clockTick;
 
     // Flip based on movement direction
-    this.flip = dx > 0 ? 1 : 0;
+    this.flip = this.retreatTarget.x - this.x > 0 ? 1 : 0;
 
-    if (Math.abs(dx) < 2 && Math.abs(dy) < 2) {
+    if (distance < 20) {
       this.x = this.retreatTarget.x;
       this.y = this.retreatTarget.y;
       this.retreating = false;

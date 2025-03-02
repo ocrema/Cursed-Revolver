@@ -4,6 +4,7 @@ import { Player } from "../Player/Player.js";
 import { Collider } from "../Collider.js";
 import * as Util from "../../Utils/Util.js";
 import { HealingBottle } from "../Enemy/HealingBottle.js"; // Import Healing Bottle
+import { GAME_ENGINE } from "../../main.js";
 
 
 
@@ -61,6 +62,21 @@ export class CowboyEnemy extends Actor {
       0.2
     );
 
+    this.addAnimation(
+      "death",
+      this.assetManager.getAsset("./assets/cowboy/CowBoyDeath.png"),
+      48, 64, 5, 0.2
+    )
+
+    this.addAnimation(
+      "hurt",
+      this.assetManager.getAsset("./assets/cowboy/CowBoyHurt.png"),
+      48,
+      64,
+      2,
+      0.2
+    );
+
     this.setAnimation("idle"); // Default animation
 
     this.width = 50;
@@ -68,7 +84,7 @@ export class CowboyEnemy extends Actor {
     this.scale = 3;
     this.speed = 200;
     this.health = 20;
-    this.maxHealth = 20;
+    this.maxHealth = this.health;
     this.fireRate = 2.5;
     this.attackCooldown = 0;
     this.isEnemy = true;
@@ -87,6 +103,7 @@ export class CowboyEnemy extends Actor {
     this.seesPlayer = false;
 
     this.smokingTimer = 0;
+    this.hitTimer = 0;
 
     this.isDrawingWeapon = false;
   }
@@ -111,66 +128,75 @@ export class CowboyEnemy extends Actor {
   }
 
 
-update() {
-  
-  this.applyDamage();
+  update() {
+    if (!this.dead) {
+      this.applyDamage();
 
-  if (this.health <= 0) {
-    this.spawnHealingBottle();
-    this.removeFromWorld = true;
-    this.collider = null;
-  }
-  
-  if (this.effects.frozen > 0 || this.effects.stun > 0) return;
+      if (this.health <= 0) {
+        this.dead = true;
+        this.setAnimation("death", false);
+        return;
+      }
+      
+      if (this.effects.frozen > 0 || this.effects.stun > 0) return;
 
-  this.attackCooldown += GAME_ENGINE.clockTick;
+      this.attackCooldown += GAME_ENGINE.clockTick;
 
-  let playerDetected = false;
-   let playerTarget = null;
+      let playerDetected = false;
+      let playerTarget = null;
 
-  if (!this.onGround) {
-      this.velocity.y += this.gravity * GAME_ENGINE.clockTick;
-  } else {
-      this.velocity.y = 0;
-  }
+      if (!this.onGround) {
+          this.velocity.y += this.gravity * GAME_ENGINE.clockTick;
+      } else {
+          this.velocity.y = 0;
+      }
 
-  for (let entity of GAME_ENGINE.entities) {
-      if (entity instanceof Player && Util.canSee(this, entity)) {
-          this.seesPlayer = true;
-          playerDetected = true;
-          playerTarget = entity;
+      for (let entity of GAME_ENGINE.entities) {
+          if (entity instanceof Player && Util.canSee(this, entity)) {
+              this.seesPlayer = true;
+              playerDetected = true;
+              playerTarget = entity;
 
-          const distance = Util.getDistance(this, entity);
+              const distance = Util.getDistance(this, entity);
 
-          if (!this.isDrawingWeapon) {
-              if (distance < this.attackRadius && this.attackCooldown > this.fireRate) {
-                  this.attack(entity);
-              } else if (distance < this.visualRadius) {
-                  this.chasePlayer(entity);
+              if (!this.isDrawingWeapon) {
+                  if (distance < this.attackRadius && this.attackCooldown > this.fireRate) {
+                      this.attack(entity);
+                  } else if (distance < this.visualRadius) {
+                      this.chasePlayer(entity);
+                  }
               }
           }
       }
-  }
 
-  // **If No Player Is Detected, Stop Moving**
-  if (!playerDetected) {
-      this.velocity.x = 0;
-      this.setAnimation("idle");
-  }
+      // **If No Player Is Detected, Stop Moving**
+      if (!playerDetected) {
+          this.velocity.x = 0;
+          this.setAnimation("idle");
+      }
 
-  this.handleCollisions();
+      this.handleCollisions();
 
-  // **Prevent Cowboy From Sliding Past Player**
-  if (Math.abs(this.velocity.x) < 5) {
-      this.velocity.x = 0; 
-  }
+      // **Prevent Cowboy From Sliding Past Player**
+      if (Math.abs(this.velocity.x) < 5) {
+          this.velocity.x = 0; 
+      }
 
-  this.x += this.velocity.x * GAME_ENGINE.clockTick;
-  this.y += this.velocity.y * GAME_ENGINE.clockTick;
+      this.x += this.velocity.x * GAME_ENGINE.clockTick;
+      this.y += this.velocity.y * GAME_ENGINE.clockTick;
+    }
 
-  
+  this.updateAnimation(GAME_ENGINE.clockTick);
 }
 
+onAnimationComplete() {
+  if (this.currentAnimation == "death") {
+    this.spawnHealingBottle();
+
+    this.removeFromWorld = true;
+    this.collider = null;
+  }
+}
 
   spawnHealingBottle() {
     let bottle = new HealingBottle(this.x, this.y);
