@@ -42,6 +42,7 @@ export class AssetDownloader {
     this.assetManager.queueDownload("./assets/player/Fall.png");
     this.assetManager.queueDownload("./assets/player/Hit.png");
     this.assetManager.queueDownload("./assets/player/Attack.png");
+    this.assetManager.queueDownload("./assets/player/gun.png");
   }
 
   downloadEnemyAssets() {
@@ -204,6 +205,18 @@ export class AssetDownloader {
     this.assetManager.queueDownload("./assets/sfx/waterwave.wav");
     this.assetManager.queueDownload("./assets/sfx/void.wav");
     this.assetManager.queueDownload("./assets/sfx/vine.wav");
+    this.assetManager.queueDownload("./assets/sfx/gunspin.ogg");
+    this.assetManager.queueDownload("./assets/sfx/cactus_shoot.ogg");
+    this.assetManager.queueDownload("./assets/sfx/frozen.wav");
+    this.assetManager.queueDownload("./assets/sfx/golem_attack.wav");
+    this.assetManager.queueDownload("./assets/sfx/golem_idle.wav");
+    this.assetManager.queueDownload("./assets/sfx/golem_death.wav");
+    this.assetManager.queueDownload("./assets/sfx/hitsound.ogg");
+    this.assetManager.queueDownload("./assets/sfx/spider_attack.wav");
+    this.assetManager.queueDownload("./assets/sfx/spider_idle.wav");
+    this.assetManager.queueDownload("./assets/sfx/spider_death.wav");
+    this.assetManager.queueDownload("./assets/sfx/temp_shock.ogg");
+    this.assetManager.queueDownload("./assets/sfx/void_explosion.wav");
   }
 
   downloadPauseMenuButtons() {

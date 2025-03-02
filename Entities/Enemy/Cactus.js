@@ -126,7 +126,7 @@ export class Cactus extends Actor {
           this.attackTime = 0;
           GAME_ENGINE.addEntity(new Thorn(this.x, this.y, entity, this.thornMaxRange));
           this.setAnimation(CACTUS_SPRITESHEET.ATTACK.NAME, false);
-          console.log("shoot");
+          window.ASSET_MANAGER.playAsset("./assets/sfx/cactus_shoot.ogg", 1 * Util.DFCVM(this));
         } else if (Util.canSee(this, entity)) {
           this.seesPlayer = true;
         } else {

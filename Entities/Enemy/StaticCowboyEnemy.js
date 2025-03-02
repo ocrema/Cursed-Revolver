@@ -128,6 +128,7 @@ export class StaticCowboyEnemy extends Actor {
     console.log(`Static Cowboy shooting at Player at (${player.x}, ${player.y})`);
 
     GAME_ENGINE.addEntity(new CowboyBullet(this.x, this.y, player));
+    window.ASSET_MANAGER.playAsset("./assets/sfx/revolver_shot.ogg", 1);
 
     // **Reset back to idle after shooting**
     setTimeout(() => {

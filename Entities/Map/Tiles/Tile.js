@@ -41,6 +41,7 @@ export class Tile extends Entity {
   }
 
   draw(ctx) {
+    if (Math.abs(this.x - GAME_ENGINE.camera.x) > 1200 || Math.abs(this.y - GAME_ENGINE.camera.y) > 700) return;
     if (!this.tilesetImage || this.tileID < this.firstGID) return;
 
     let tileIndex = this.tileID - this.firstGID;

@@ -8,11 +8,12 @@ import {
 import { GAME_ENGINE } from '../../main.js';
 
 export class VineGrapple extends Entity {
-    constructor(pos, dir) {
+    constructor(pos, dir, offset) {
         super();
         this.shooter = pos;
-        this.x = pos.x;
-        this.y = pos.y;
+        this.x = pos.x + offset.x * (pos.flip ? -1 : 1);
+        this.y = pos.y + offset.y;
+        this.gun_offset = offset;
         this.dir = dir;
         this.entityOrder = 3;
         this.speed = 4000;
@@ -57,8 +58,8 @@ export class VineGrapple extends Entity {
     draw(ctx) {
         ctx.save();
         ctx.translate(
-            this.shooter.x - GAME_ENGINE.camera.x,
-            this.shooter.y - GAME_ENGINE.camera.y
+            this.shooter.x - GAME_ENGINE.camera.x + this.gun_offset.x * (this.shooter.flip ? -1 : 1),
+            this.shooter.y - GAME_ENGINE.camera.y + this.gun_offset.y
         );
 
         ctx.rotate(Util.getAngle(this.shooter, this));

@@ -127,6 +127,7 @@ export class Spider extends Actor {
     if (this.health < 0) {
       this.dead = true;
       this.setAnimation(SPIDER_SPRITESHEET.DEATH.NAME, false);
+      window.ASSET_MANAGER.playAsset("./assets/sfx/spider_death.wav", 1 * Util.DFCVM(this));
       return;
     }
 
