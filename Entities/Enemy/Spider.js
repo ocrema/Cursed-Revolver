@@ -102,6 +102,7 @@ export class Spider extends Actor {
 
     // if spider loses all health
     if (this.health <= 0) {
+      window.ASSET_MANAGER.playAsset("./assets/sfx/spider_death.wav", 1 * Util.DFCVM(this));
       this.removeFromWorld = true;
     }
 

@@ -4,7 +4,7 @@ import { GAME_ENGINE } from "../../main.js";
 import { EFFECTS_SPRITESHEET } from "../../Globals/Constants.js";
 
 export class FireballExplosionEffect extends Entity {
-  constructor(x, y, scale = 5) {
+  constructor(x, y, scale = 8) {
     super();
     this.isEffect = true;
     this.x = x;
