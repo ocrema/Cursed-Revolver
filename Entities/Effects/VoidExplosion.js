@@ -2,6 +2,7 @@ import { GAME_ENGINE } from "../../main.js";
 import { Collider } from "../Collider.js";
 import { EFFECTS_SPRITESHEET } from "../../Globals/Constants.js";
 import { Entity } from "../Entities.js";
+import * as Util from "../../Utils/Util.js";
 
 export class VoidExplosion extends Entity {
     constructor(pos) {
@@ -15,11 +16,11 @@ export class VoidExplosion extends Entity {
         this.collider = new Collider(1000, 1000);
         for (let e of GAME_ENGINE.entities) {
             if (e.isEnemy && e.colliding(this)) {
-                e.queueAttack({ damage: 30, void: 4 });
+                e.queueAttack({ damage: 40, void: 4 });
             }
         }
         this.collider = null;
-        window.ASSET_MANAGER.playAsset("./assets/sfx/explosion.wav");
+        window.ASSET_MANAGER.playAsset("./assets/sfx/void_explosion.wav", 1 * Util.DFCVM(this));
     }
 
     draw(ctx) {

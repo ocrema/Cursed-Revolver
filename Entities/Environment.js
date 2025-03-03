@@ -4,8 +4,10 @@ import { Collider } from "./Collider.js";
 import { Player } from "./Player/Player.js";
 import { GAME_ENGINE } from "../main.js";
 export class Stampede extends Entity {
-    constructor() {
+    constructor(path) {
         super();
+        // this.path = [{x: 2700, y: 160}, {x: -2700, y: 160}];
+        Object.assign(this, { path });
 
         // Animation 
 
@@ -23,13 +25,11 @@ export class Stampede extends Entity {
         this.scale = 4;        
         this.width = 100;
         this.height = 100;
-        this.x = 2700 + (this.width/2);
-        this.y = 160 - (this.height/2);
+        this.x = this.path[0].x + (this.width/2);
+        this.y = this.path[0].y - (this.height/2);
         this.entityOrder = 1;
 
         // Movement
-
-        this.path = [{x: 2700, y: 160}, {x: -2700, y: 160}];
         this.speed = 5;
 
         var distance = Util.getDistance(this, this.path[1]);
@@ -71,6 +71,7 @@ export class Stampede extends Entity {
             this.removeFromWorld = true;
         }
 
+        this.updateAnimation(GAME_ENGINE.clockTick);
     }
 
 }

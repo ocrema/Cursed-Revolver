@@ -1,6 +1,5 @@
 import { Timer } from "../Utils/Timer.js";
 import { Camera } from "../Core/Camera.js";
-import { Events } from "../Core/Event.js";
 import { PauseMenu } from "../Entities/PauseMenu.js";
 import { MainMenu } from "../Entities/MainMenu.js";
 import { GameLogicController } from "../Core/GameLogicController.js";
@@ -17,9 +16,7 @@ export class GameEngine {
     this.width = 2000;
     this.height = 1000;
     this.camera = Camera.getInstance();
-    this.event = Events.getInstance();
     this.addEntity(this.camera);
-    this.addEntity(this.event);
     this.debug_colliders = false;
 
     this.click = null;
@@ -157,7 +154,7 @@ export class GameEngine {
         event.key.toLowerCase() === "r"
       ) {
         console.log("R key detected!"); //check
-        window.location.reload();
+        this.GAME_CONTROLLER.restartGame();
       }
 
       if (event.key === "Escape") {

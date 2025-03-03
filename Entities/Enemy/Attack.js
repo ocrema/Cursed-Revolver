@@ -3,11 +3,12 @@ import { Player } from "../Player/Player.js";
 import * as Util from "../../Utils/Util.js";
 import { Collider } from "../Collider.js";
 import { Tile } from "../Map/Tiles/Tile.js";
+import { Spider } from "./Spider.js";
 
 export class Thorn extends Entity {
-  constructor(x, y, target) {
+  constructor(x, y, target, maxRange) {
     super();
-    Object.assign(this, { x, y, target });
+    Object.assign(this, { x, y, target, maxRange });
     this.assetManager = window.ASSET_MANAGER;
 
     this.start = { x: this.x, y: this.y };
@@ -18,11 +19,11 @@ export class Thorn extends Entity {
 
     // distance the thorn has travelled
     this.travelled = 0;
-    this.maxRange = 500;
     this.speed = 8;
     this.data = { damage: 20 };
     this.removeFromWorld = false;
     this.collider = new Collider(this.width, this.height);
+    this.scale = 2;
 
     var distance = Util.getDistance(this, target);
     this.velocity = {
@@ -33,7 +34,7 @@ export class Thorn extends Entity {
     this.angle = Util.getAngle(this, target);
 
     this.addAnimation(
-      "placeholder",
+      "thorn",
       this.assetManager.getAsset("./assets/enemy/thorn/thorn.png"),
       64, // Frame width
       64, // Frame height
@@ -41,7 +42,7 @@ export class Thorn extends Entity {
       0.25 // Frame duration (slower for idle)
     );
 
-    this.setAnimation("placeholder");
+    this.setAnimation("thorn");
   }
 
   update() {
@@ -80,20 +81,18 @@ export class Jaw extends Entity {
     this.y = this.spider.y;
     this.collider = new Collider(100, 95);
     this.elapsedTime = 0;
-    this.attackDuration = 1;
     this.isAttack = true;
   }
 
   update() {
     this.elapsedTime += GAME_ENGINE.clockTick;
 
-    // remove after duration
-    if (this.elapsedTime > this.attackDuration || this.spider.removeFromWorld) {
+    if (this.spider.removeFromWorld) {
       this.removeFromWorld = true;
     }
 
     // update location
-    if (this.facing === 0) {
+    if (this.spider.flip === 0) {
       // if facing right
       this.x = this.spider.x - this.spider.width / 2;
     } else {
@@ -111,14 +110,20 @@ export class Jaw extends Entity {
             y: this.y,
             launchMagnitude: 100,
           });
+          if (this.spider instanceof Spider) {
+            window.ASSET_MANAGER.playAsset("./assets/sfx/spider_attack.wav", 1);
+          }
 
           // Reset spider attack cooldown when attack hits
           this.spider.attackCooldown = 0;
-          //this.spider.currentAnimation = "run";
           this.spider.jaw = null;
-          this.removeFromWorld = true;
+          this.delete();
         }
       }
     }
+  }
+
+  delete() {
+    this.removeFromWorld = true;
   }
 }

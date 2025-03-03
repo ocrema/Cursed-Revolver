@@ -37,7 +37,23 @@ export class GameLogicController extends Entity {
 
   restartGame() {
     console.log("Reloading game...");
-    window.location.reload(); // Reloads the game (resets everything)
+
+    if (this.hud.gameWon) {
+      window.location.reload(); // Reloads the game (resets everything)
+      return;
+    }
+
+    for (let entity of GAME_ENGINE.entities) {
+      if (entity.isPlayer) {
+        entity.respawn();
+      }
+    }
+
+    this.isGameOver = false;
+    this.isPaused = false;
+
+    
+    // window.location.reload(); // Reloads the game (resets everything)
   }
 
   update() {
