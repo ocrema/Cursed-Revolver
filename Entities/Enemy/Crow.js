@@ -79,31 +79,31 @@ export class Crow extends Actor {
 
     if (!this.isDead) {
       this.applyDamageLogic();
-    if (this.effects.frozen > 0 || this.effects.stun > 0) return;
+      if (this.effects.frozen > 0 || this.effects.stun > 0) return;
 
-    if (this.directionX > 0) {
-      this.flip = 1; // Facing right
-    } else if (this.directionX < 0) {
-      this.flip = 0; // Facing left
-    }
-
-    if (this.retreating) {
-      this.retreat();
-    }
-
-    if (this.isHurt) {
-      this.hurtTimer -= GAME_ENGINE.clockTick;
-      if (this.hurtTimer <= 0) {
-        this.isHurt = false;
-        this.setAnimation(CROW_SPRITESHEET.FLY.NAME);
+      if (this.directionX > 0) {
+        this.flip = 1; // Facing right
+      } else if (this.directionX < 0) {
+        this.flip = 0; // Facing left
       }
-    } 
 
-    this.attackCooldown -= GAME_ENGINE.clockTick;
-    this.updateState();
+      if (this.retreating) {
+        this.retreat();
+      }
+
+      if (this.isHurt) {
+        this.hurtTimer -= GAME_ENGINE.clockTick;
+        if (this.hurtTimer <= 0) {
+          this.isHurt = false;
+          this.setAnimation(CROW_SPRITESHEET.FLY.NAME);
+        }
+      }
+
+      this.attackCooldown -= GAME_ENGINE.clockTick;
+      this.updateState();
     }
-    
-    console.log(this.state);
+
+    //this.state);
     this.updateAnimation(GAME_ENGINE.clockTick);
   }
 
@@ -114,7 +114,11 @@ export class Crow extends Actor {
     if (this.state === this.states.PATROL) {
       this.patrol();
 
-      if (this.attackCooldown <= 0 && Util.canSee(this, player) && Util.canAttack(this, player)) {
+      if (
+        this.attackCooldown <= 0 &&
+        Util.canSee(this, player) &&
+        Util.canAttack(this, player)
+      ) {
         console.log("Crow spotted the player! Preparing to attack!");
         this.startAttack(player);
       }
@@ -154,16 +158,22 @@ export class Crow extends Actor {
   attack() {
     var distance = Util.getDistance(this, this.target);
 
-    if (distance < 10 || (!this.jaw)) {
+    if (distance < 10 || !this.jaw) {
       this.resetToPatrol();
       return;
     }
 
-    this.x += ((this.target.x - this.x) / distance) * this.attackSpeed * GAME_ENGINE.clockTick;
-    this.y += ((this.target.y - this.y) / distance) * this.attackSpeed * GAME_ENGINE.clockTick;
+    this.x +=
+      ((this.target.x - this.x) / distance) *
+      this.attackSpeed *
+      GAME_ENGINE.clockTick;
+    this.y +=
+      ((this.target.y - this.y) / distance) *
+      this.attackSpeed *
+      GAME_ENGINE.clockTick;
 
     // Flip based on movement direction
-    this.flip = (this.target.x - this.x) > 0 ? 1 : 0;
+    this.flip = this.target.x - this.x > 0 ? 1 : 0;
   }
 
   resetToPatrol() {
@@ -181,8 +191,14 @@ export class Crow extends Actor {
   retreat() {
     var distance = Util.getDistance(this, this.retreatTarget);
 
-    this.x += ((this.retreatTarget.x - this.x) / distance) * this.retreatSpeed * GAME_ENGINE.clockTick;
-    this.y += ((this.retreatTarget.y - this.y) / distance) * this.retreatSpeed * GAME_ENGINE.clockTick;
+    this.x +=
+      ((this.retreatTarget.x - this.x) / distance) *
+      this.retreatSpeed *
+      GAME_ENGINE.clockTick;
+    this.y +=
+      ((this.retreatTarget.y - this.y) / distance) *
+      this.retreatSpeed *
+      GAME_ENGINE.clockTick;
 
     // Flip based on movement direction
     this.flip = this.retreatTarget.x - this.x > 0 ? 1 : 0;
@@ -210,8 +226,8 @@ export class Crow extends Actor {
 
   applyDamageLogic() {
     if (this.isDead) return;
-      this.recieveAttacks();
-      this.recieveEffects();
+    this.recieveAttacks();
+    this.recieveEffects();
   }
 
   die() {
