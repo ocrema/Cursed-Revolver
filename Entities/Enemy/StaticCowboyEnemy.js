@@ -145,6 +145,7 @@ export class StaticCowboyEnemy extends Actor {
       console.log("Static Cowboy has died!");
       this.dead = true;
       this.setAnimation("death", false);
+      this.onDeath();
     }
   }
   

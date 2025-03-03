@@ -17,6 +17,11 @@ import { BackgroundTriggerTile } from "./Tiles/BackgroundTriggerTile.js";
 import { BACKGROUND_SPRITESHEET } from "../../Globals/Constants.js";
 
 export class Map extends GameMap {
+  constructor() {
+    super();
+    this.firstStageEnemies = new Set();
+  }
+
   async load() {
     const oldMap = false;
     const playerSpawn = oldMap ? { x: 1470, y: -70 } : { x: 763, y: 1500 };
@@ -64,7 +69,7 @@ export class Map extends GameMap {
   }
 
   spawnEntities(gameMap) {
-    const spawnFunctions = {
+    const enemySpawnFunctions = {
       Cactus: {
         method: gameMap.getCactusSpawnPoints,
         entity: Cactus,
@@ -76,11 +81,15 @@ export class Map extends GameMap {
         offsetY: -10,
       },
       Bird: { method: gameMap.getBirdSpawnPoints, entity: Crow, offsetY: -10 },
-      Barrel: {
-        method: gameMap.getBarrelSpawnPoints,
-        entity: Barrel,
+
+      Spider: {
+        method: gameMap.getSpiderSpawnPoints,
+        entity: Spider,
         offsetY: -10,
       },
+    };
+
+    const objectSpawnFunctions = {
       Tumbleweed: {
         method: gameMap.getTumbleweedTriggerPoints,
         entity: Tumbleweed,
@@ -90,22 +99,66 @@ export class Map extends GameMap {
         method: gameMap.getBackgroundTriggerPoints,
         entity: BackgroundTriggerTile,
       },
-      Spider: {
-        method: gameMap.getSpiderSpawnPoints,
-        entity: Spider,
+      Barrel: {
+        method: gameMap.getBarrelSpawnPoints,
+        entity: Barrel,
         offsetY: -10,
       },
     };
 
-    for (const key in spawnFunctions) {
-      const { method, entity, offsetY = 0, direction } = spawnFunctions[key];
+    for (const key in enemySpawnFunctions) {
+      const {
+        method,
+        entity,
+        offsetY = 0,
+        direction,
+      } = enemySpawnFunctions[key];
       const spawnPoints = method.call(gameMap);
       for (let spawn of spawnPoints) {
-        GAME_ENGINE.addEntity(
-          new entity(spawn.x, spawn.y + offsetY, direction)
-        );
+        const e = new entity(spawn.x, spawn.y + offsetY, direction);
+
+        if (spawn.x < 11700 && spawn.y < 3000) {
+          //console.log(e);
+          console.log("Adding enemy to first stage enemy list.");
+          this.firstStageEnemies.add(e);
+        }
+
+        e.onDeath = () => this.onEnemyDeath(e);
+
+        GAME_ENGINE.addEntity(e);
       }
     }
+
+    for (const key in objectSpawnFunctions) {
+      const {
+        method,
+        entity,
+        offsetY = 0,
+        direction,
+      } = objectSpawnFunctions[key];
+      const spawnPoints = method.call(gameMap);
+      for (let spawn of spawnPoints) {
+        const e = new entity(spawn.x, spawn.y + offsetY, direction);
+        GAME_ENGINE.addEntity(e);
+      }
+    }
+  }
+
+  onEnemyDeath(enemy) {
+    if (this.firstStageEnemies.has(enemy)) {
+      this.firstStageEnemies.delete(enemy);
+      console.log(
+        `Enemy removed from firstStageEnemy list. Remaining: ${this.firstStageEnemies.size}`
+      );
+
+      if (this.firstStageEnemies.size === 0) {
+        this.onFirstStageCleared();
+      }
+    }
+  }
+
+  onFirstStageCleared() {
+    console.log("All enemies on first stage cleared.");
   }
 
   addOldMapEntities() {
