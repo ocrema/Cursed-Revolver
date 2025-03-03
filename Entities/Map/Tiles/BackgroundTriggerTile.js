@@ -32,7 +32,7 @@ export class BackgroundTriggerTile extends Tile {
     this.hasTriggered = false;
 
     this.collider = new Collider(
-      this.tileSize * this.scale,
+      this.tileSize * this.scale * 5,
       this.tileSize * this.scale
     );
   }

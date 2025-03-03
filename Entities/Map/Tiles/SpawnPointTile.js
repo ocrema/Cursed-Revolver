@@ -1,7 +1,7 @@
 import { Collider } from "../../Collider.js";
 import { Tile } from "./Tile.js";
 import { Player } from "../../Player/Player.js";
-import { SpawnPoint } from "../../Objects/TileVisuals/SpawnPoint.js"; 
+import { SpawnPoint } from "../../Objects/TileVisuals/SpawnPoint.js";
 
 export class SpawnPointTile extends Tile {
   constructor(
@@ -41,7 +41,7 @@ export class SpawnPointTile extends Tile {
   update() {
     for (let e of GAME_ENGINE.entities) {
       if (e instanceof Player && this.colliding(e)) {
-        //console.log("Player hit checkpoint at " + e.x + " " + e.y);
+        console.log("Player hit checkpoint at " + e.x + " " + e.y);
         e.setSpawnPoint(e.x, e.y);
       }
     }

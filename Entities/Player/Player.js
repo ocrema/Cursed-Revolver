@@ -333,7 +333,7 @@ export class Player extends Actor {
           e.isDestructibleObject ||
           e.isSpike ||
           e.isSpawnPoint ||
-          e.isBackgroundTrigger 
+          e.isBackgroundTrigger
         )
           continue;
         if (e.isWater) {
@@ -466,7 +466,6 @@ export class Player extends Actor {
       this.setAnimation(PLAYER_SPRITESHEET.ATTACK1.NAME, false);
       this.spellCooldowns[this.selectedSpell] = this.maxSpellCooldown;
       window.ASSET_MANAGER.playAsset("./assets/sfx/revolver_shot.ogg", 1);
-      
 
       this.gun_spin = this.dir;
       this.gun_spin_to = this.dir - Math.PI * 2;
@@ -474,7 +473,9 @@ export class Player extends Actor {
       if (this.selectedSpell === 0) {
         GAME_ENGINE.addEntity(new Fireball(this, this.dir, this.gun_offset));
       } else if (this.selectedSpell === 1) {
-        GAME_ENGINE.addEntity(new ChainLightning(this, this.dir, this.gun_offset));
+        GAME_ENGINE.addEntity(
+          new ChainLightning(this, this.dir, this.gun_offset)
+        );
       } else if (this.selectedSpell === 2) {
         GAME_ENGINE.addEntity(new WaterWave(this, this.dir, this.gun_offset));
       } else if (this.selectedSpell === 3) {
@@ -505,8 +506,10 @@ export class Player extends Actor {
     let dir;
     if (this.gun_spin !== null) dir = this.gun_spin;
     else dir = this.dir;
-    ctx.rotate((this.flip) ? -dir + Math.PI : dir);
-    ctx.shadowColor = (['orange', 'yellow', 'blue', 'white', 'green', 'purple'])[this.selectedSpell];
+    ctx.rotate(this.flip ? -dir + Math.PI : dir);
+    ctx.shadowColor = ["orange", "yellow", "blue", "white", "green", "purple"][
+      this.selectedSpell
+    ];
     ctx.shadowBlur = 30;
     const scale = 2.5;
     ctx.drawImage(
