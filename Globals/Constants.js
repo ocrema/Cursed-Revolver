@@ -17,14 +17,14 @@ export const BACKGROUND_SPRITESHEET = {
     FRAME_COUNT: 12,
     FRAME_DURATION: 0.1,
   },
-  UNDER1: {
-    NAME: "UNDER1",
-    URL: "./assets/background/UndergroundBackground1.png",
-    FRAME_WIDTH: 1305,
-    FRAME_HEIGHT: 720,
-    FRAME_COUNT: 15,
-    FRAME_DURATION: 0.1,
-  },
+  // UNDER1: {
+  //   NAME: "UNDER1",
+  //   URL: "./assets/background/UndergroundBackground1.png",
+  //   FRAME_WIDTH: 1305,
+  //   FRAME_HEIGHT: 720,
+  //   FRAME_COUNT: 15,
+  //   FRAME_DURATION: 0.1,
+  // },
   SPIDER: {
     NAME: "SPIDER",
     URL: "./assets/background/SpiderBackground.png",
@@ -86,7 +86,7 @@ export const PLAYER_SPRITESHEET = {
   HIT: {
     NAME: "HIT",
     URL: "./assets/player/Hit.png",
-    FRAME_WIDTH: 600, 
+    FRAME_WIDTH: 600,
     FRAME_HEIGHT: 600,
     FRAME_COUNT: 2,
     FRAME_DURATION: 0.25,
@@ -205,7 +205,6 @@ export const SPIDER_SPRITESHEET = {
     FRAME_DURATION: 0.25,
   },
 };
-
 
 export const CACTUS_SPRITESHEET = {
   AGGRESSIVE: {

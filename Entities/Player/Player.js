@@ -108,7 +108,7 @@ export class Player extends Actor {
     if (GAME_ENGINE.debug_colliders) {
       this.health = 1000000;
       this.jumpForce = -2100;
-      this.speed = 1000;
+      this.speed = 2000;
     } else {
       this.speed = 600;
       this.jumpForce = -1500;

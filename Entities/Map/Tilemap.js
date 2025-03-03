@@ -35,6 +35,7 @@ export class Tilemap {
     this.tumbleweedTriggerPoints = [];
     this.spiderwebTriggerPoints = [];
     this.spiderSpawnPoints = [];
+    this.growingTreeSpawnPoints = [];
   }
 
   async load() {
@@ -150,6 +151,9 @@ export class Tilemap {
             case 114:
               this.spiderSpawnPoints.push({ x: worldX, y: worldY });
               break;
+            case 115:
+              this.growingTreeSpawnPoints.push({ x: worldX, y: worldY });
+              break;
             default:
               break;
           }
@@ -201,5 +205,9 @@ export class Tilemap {
 
   getSpiderSpawnPoints() {
     return this.spiderSpawnPoints;
+  }
+
+  getGrowingTreeSpawnPoints() {
+    return this.growingTreeSpawnPoints;
   }
 }

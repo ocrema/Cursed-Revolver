@@ -47,6 +47,7 @@ export class Map extends GameMap {
       "SpawnPoints/TumbleweedSpawnPoint.png",
       "SpawnPoints/SpiderwebSpawnPoint.png",
       "SpawnPoints/SpiderSpawnPoint.png",
+      "SpawnPoints/GrowingTreeSpawnPoint.png"
     ];
 
     const TILESET_IMAGES = tilesetNames.map((name) =>
@@ -104,6 +105,10 @@ export class Map extends GameMap {
         entity: Barrel,
         offsetY: -10,
       },
+      GrowingTree: { 
+        method: gameMap.getGrowingTreeSpawnPoints, 
+        entity: GrowingTree 
+      }
     };
 
     for (const key in enemySpawnFunctions) {
