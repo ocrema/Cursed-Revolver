@@ -19,6 +19,7 @@ import { BACKGROUND_SPRITESHEET } from "../../Globals/Constants.js";
 export class Map extends GameMap {
   constructor() {
     super();
+    this.firstStageCleared = false;
     this.firstStageEnemies = new Set();
   }
 
@@ -123,7 +124,6 @@ export class Map extends GameMap {
         const e = new entity(spawn.x, spawn.y + offsetY, direction);
 
         if (spawn.x < 11700 && spawn.y < 3000) {
-          //console.log(e);
           console.log("Adding enemy to first stage enemy list.");
           this.firstStageEnemies.add(e);
         }
@@ -163,6 +163,7 @@ export class Map extends GameMap {
   }
 
   onFirstStageCleared() {
+    this.firstStageCleared = true; // Used to trigger events in the future
     console.log("All enemies on first stage cleared.");
   }
 
