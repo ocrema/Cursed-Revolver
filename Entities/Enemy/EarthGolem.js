@@ -143,6 +143,7 @@ export class EarthGolem extends Actor {
 
             if (!hasDealtDamage && xDistance < this.attackRadius && yDistance < this.height / 2) {
                 entity.queueAttack({ damage: Math.min(50, entity.health) }); 
+                window.ASSET_MANAGER.playAsset("./assets/sfx/golem_attack.wav", 1 * Util.DFCVM(this));
                 console.log("Player hit for up to 50 damage!");
                 hasDealtDamage = true;
             }
