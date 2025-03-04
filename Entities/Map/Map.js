@@ -20,7 +20,7 @@ import { SpiderwebVisual } from "../Objects/TileVisuals/SpiderwebVisual.js";
 
 export class Map extends GameMap {
   async load() {
-    let oldMap = true;
+    let oldMap = false;
 
     if (oldMap) {
       GAME_ENGINE.addEntity(new Player(1470, -70));
