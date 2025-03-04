@@ -69,6 +69,11 @@ export class Player extends Actor {
 
     this.isGroundSlamming = false;
     this.groundSlamSpeed = 3000;
+
+    this.gun_offset = { x: 30, y: 25 };
+    this.gun_spin = null;
+    this.gun_spin_speed = 30;
+    this.gun_spin_to = 0;
   }
 
   heal(amount) {
@@ -440,42 +445,79 @@ export class Player extends Actor {
 
     // cast spell
 
+    this.dir = Util.getAngle(
+      {
+        x: this.x - GAME_ENGINE.camera.x,
+        y: this.y - GAME_ENGINE.camera.y,
+      },
+      {
+        x: GAME_ENGINE.mouse.x,
+        y: GAME_ENGINE.mouse.y,
+      }
+    );
+    this.flip = this.dir > Math.PI / 2 || this.dir < -Math.PI / 2;
+
     if (
       this.spellCooldowns[this.selectedSpell] <= 0 &&
       GAME_ENGINE.keys["m1"]
     ) {
       // Calculate direction to mouse
       const mouseX = GAME_ENGINE.mouse.x + GAME_ENGINE.camera.x;
-      this.flip = mouseX < this.x; // Flip player based on mouse position
+      //this.flip = mouseX < this.x; // Flip player based on mouse position
       this.setAnimation(PLAYER_SPRITESHEET.ATTACK1.NAME, false);
       this.spellCooldowns[this.selectedSpell] = this.maxSpellCooldown;
       window.ASSET_MANAGER.playAsset("./assets/sfx/revolver_shot.ogg", 1);
+      
 
-      let dir = Util.getAngle(
-        {
-          x: this.x - GAME_ENGINE.camera.x,
-          y: this.y - GAME_ENGINE.camera.y,
-        },
-        {
-          x: GAME_ENGINE.mouse.x,
-          y: GAME_ENGINE.mouse.y,
-        }
-      );
+      this.gun_spin = this.dir;
+      this.gun_spin_to = this.dir - Math.PI * 2;
 
       if (this.selectedSpell === 0) {
-        GAME_ENGINE.addEntity(new Fireball(this, dir));
+        GAME_ENGINE.addEntity(new Fireball(this, this.dir, this.gun_offset));
       } else if (this.selectedSpell === 1) {
-        GAME_ENGINE.addEntity(new ChainLightning(this, dir));
+        GAME_ENGINE.addEntity(new ChainLightning(this, this.dir, this.gun_offset));
       } else if (this.selectedSpell === 2) {
-        GAME_ENGINE.addEntity(new WaterWave(this, dir));
+        GAME_ENGINE.addEntity(new WaterWave(this, this.dir, this.gun_offset));
       } else if (this.selectedSpell === 3) {
-        GAME_ENGINE.addEntity(new Icicle(this, dir));
+        GAME_ENGINE.addEntity(new Icicle(this, this.dir, this.gun_offset));
       } else if (this.selectedSpell === 4) {
-        GAME_ENGINE.addEntity(new VineGrapple(this, dir));
+        GAME_ENGINE.addEntity(new VineGrapple(this, this.dir, this.gun_offset));
       } else if (this.selectedSpell === 5) {
-        GAME_ENGINE.addEntity(new VoidOrb(this, dir));
+        GAME_ENGINE.addEntity(new VoidOrb(this, this.dir, this.gun_offset));
       }
     }
+
+    if (this.gun_spin !== null) {
+      this.gun_spin -= this.gun_spin_speed * GAME_ENGINE.clockTick;
+      if (this.gun_spin < this.gun_spin_to) {
+        this.gun_spin = null;
+        window.ASSET_MANAGER.playAsset("./assets/sfx/gunspin.ogg", 3);
+      }
+    }
+  }
+
+  draw(ctx) {
+    super.draw(ctx);
+    // gun
+    ctx.save();
+    ctx.translate(this.x - GAME_ENGINE.camera.x, this.y - GAME_ENGINE.camera.y);
+    ctx.scale(this.flip ? -1 : 1, 1);
+    ctx.translate(this.gun_offset.x, this.gun_offset.y);
+    let dir;
+    if (this.gun_spin !== null) dir = this.gun_spin;
+    else dir = this.dir;
+    ctx.rotate((this.flip) ? -dir + Math.PI : dir);
+    ctx.shadowColor = (['orange', 'yellow', 'blue', 'white', 'green', 'purple'])[this.selectedSpell];
+    ctx.shadowBlur = 30;
+    const scale = 2.5;
+    ctx.drawImage(
+      this.assetManager.getAsset("./assets/player/gun.png"),
+      -3 * scale,
+      -8 * scale,
+      32 * scale,
+      16 * scale
+    );
+    ctx.restore();
   }
 }
 

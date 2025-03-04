@@ -66,6 +66,7 @@ export class EarthGolem extends Actor {
     this.recieveEffects();
 
     if (this.health <= 0) {
+      window.ASSET_MANAGER.playAsset("./assets/sfx/golem_death.wav", 1 * Util.DFCVM(this));
       this.removeFromWorld = true;
       return;
     }

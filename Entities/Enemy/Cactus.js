@@ -19,7 +19,7 @@ export class Cactus extends Actor {
     this.animationLoader = new AnimationLoader(this);
     this.animationLoader.loadAnimations(CACTUS_SPRITESHEET);
 
-    this.setAnimation("default");
+    this.setAnimation(CACTUS_SPRITESHEET.DEFAULT.NAME);
     this.width = 140;
     this.height = 180;
     this.scale = 2;
@@ -47,7 +47,8 @@ export class Cactus extends Actor {
     this.seesPlayer = false;
     this.attacking = true;
     this.idleTimer = 0;
-    this.idleCooldown = [5, 7, 10, 13, 15];
+    this.randomIdleCooldown = [2, 3, 4, 5, 6, 7];
+    this.updateIdleCooldown();
   }
 
   clearQueuedAttacks() {
@@ -58,6 +59,7 @@ export class Cactus extends Actor {
     }
     this.recieved_attacks = [];
   }
+
   update() {
     if (!this.dead) {
       // apply attack damage
@@ -77,32 +79,38 @@ export class Cactus extends Actor {
     this.changeAnimation();
     }
     
-    
     this.updateAnimation(GAME_ENGINE.clockTick);
+  }
+
+  updateIdleCooldown() {
+    var randomNumber = Util.randomInt(this.randomIdleCooldown.length - 1);
+    this.idleCooldown = this.randomIdleCooldown[randomNumber];
   }
 
   changeAnimation() {
     this.idleTimer += GAME_ENGINE.clockTick;
-    var randomNumber = Util.randomInt(this.idleCooldown.length - 1);
 
-    if (this.idleTimer > this.idleCooldown[randomNumber]) {
+    if (this.idleTimer > this.idleCooldown) {
       this.idleTimer = 0;
-      this.setAnimation("idle", false);
+      this.updateIdleCooldown();
+      this.setAnimation(CACTUS_SPRITESHEET.IDLE.NAME, false);
     }
     
     if (this.tookDamage) {
       this.idleTimer = 0;
-      this.setAnimation("damage", false);
+      this.setAnimation(CACTUS_SPRITESHEET.DAMAGE.NAME, false);
     }
 
-    if (this.seesPlayer && this.currentAnimation != "attack" && this.currentAnimation != "damage") {
+    if (this.seesPlayer && 
+      this.currentAnimation != CACTUS_SPRITESHEET.ATTACK.NAME && 
+      this.currentAnimation != CACTUS_SPRITESHEET.DAMAGE.NAME) {
       this.idleTimer = 0;
-      this.setAnimation("aggressive", false);
+      this.setAnimation(CACTUS_SPRITESHEET.AGGRESSIVE.NAME, false);
     }  
 
-    if (this.dead && this.currentAnimation !== "die") {
+    if (this.dead && this.currentAnimation !== CACTUS_SPRITESHEET.DIE.NAME) {
       this.idleTimer = 0;
-      this.setAnimation("die", false);
+      this.setAnimation(CACTUS_SPRITESHEET.DIE.NAME, false);
     }
   }
 
@@ -117,8 +125,8 @@ export class Cactus extends Actor {
         ) {     
           this.attackTime = 0;
           GAME_ENGINE.addEntity(new Thorn(this.x, this.y, entity, this.thornMaxRange));
-          this.setAnimation("attack", false);
-          console.log("shoot");
+          this.setAnimation(CACTUS_SPRITESHEET.ATTACK.NAME, false);
+          window.ASSET_MANAGER.playAsset("./assets/sfx/cactus_shoot.ogg", 1 * Util.DFCVM(this));
         } else if (Util.canSee(this, entity)) {
           this.seesPlayer = true;
         } else {
@@ -130,11 +138,11 @@ export class Cactus extends Actor {
   }
   
   onAnimationComplete() {
-    if (this.currentAnimation == "die") {
+    if (this.currentAnimation == CACTUS_SPRITESHEET.DIE.NAME) {
       this.removeFromWorld = true;
     }
 
-    this.setAnimation("default");
+    this.setAnimation(CACTUS_SPRITESHEET.DEFAULT.NAME);
   }
 
   draw(ctx) {
@@ -199,11 +207,11 @@ export class SpitterCactus extends Cactus {
  }
 
  onAnimationComplete() {
-  if (this.currentAnimation == "die") {
+  if (this.currentAnimation == CACTUS_SPRITESHEET.DIE.NAME) {
     this.removeFromWorld = true;
   }
 
-  this.setAnimation("idle");
+  this.setAnimation(CACTUS_SPRITESHEET.IDLE.NAME);
   }
 
 }

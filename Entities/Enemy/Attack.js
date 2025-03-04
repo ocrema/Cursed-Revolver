@@ -3,11 +3,12 @@ import { Player } from "../Player/Player.js";
 import * as Util from "../../Utils/Util.js";
 import { Collider } from "../Collider.js";
 import { Tile } from "../Map/Tiles/Tile.js";
+import { Spider } from "./Spider.js";
 
 export class Thorn extends Entity {
   constructor(x, y, target, maxRange) {
     super();
-    Object.assign(this, { x, y, target });
+    Object.assign(this, { x, y, target, maxRange });
     this.assetManager = window.ASSET_MANAGER;
 
     this.start = { x: this.x, y: this.y };
@@ -109,6 +110,9 @@ export class Jaw extends Entity {
             y: this.y,
             launchMagnitude: 100,
           });
+          if (this.spider instanceof Spider) {
+            window.ASSET_MANAGER.playAsset("./assets/sfx/spider_attack.wav", 1);
+          }
 
           // Reset spider attack cooldown when attack hits
           this.spider.attackCooldown = 0;
