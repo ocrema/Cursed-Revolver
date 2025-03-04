@@ -327,20 +327,16 @@ export class CowboyBullet extends Actor {
     this.assetManager = window.ASSET_MANAGER;
 
     this.collider = new Collider(20, 10);
-    //this.velocity = Util.getDirection(this, target, this.speed);
 
-    // **Fix: Compute bullet velocity manually**
-    const distance = Util.getDistance(this, target);
+    // **Compute initial direction ONCE and store it**
+    const angle = Math.atan2(target.y - y, target.x - x);
     this.velocity = {
-      x: ((target.x - this.x) / distance) * this.speed,
-      y: ((target.y - this.y) / distance) * this.speed,
+      x: Math.cos(angle) * this.speed,
+      y: Math.sin(angle) * this.speed,
     };
 
-    // Calculate rotation angle in radians
-    this.rotation = Math.atan2(this.velocity.y, this.velocity.x);
-
-    // Determine if the bullet is moving left
-    this.isFlipped = this.velocity.x < 0;
+    // **Store rotation angle (in radians)**
+    this.rotation = angle;
 
     this.addAnimation(
       "bullet",
@@ -355,16 +351,35 @@ export class CowboyBullet extends Actor {
   }
 
   update() {
+    // Move the bullet in its fixed direction
     this.x += this.velocity.x * GAME_ENGINE.clockTick;
     this.y += this.velocity.y * GAME_ENGINE.clockTick;
 
-    //this.rotation = Math.atan2(this.velocity.y, this.velocity.x);
-
+    // Check collision with player
     for (let entity of GAME_ENGINE.entities) {
       if (entity instanceof Player && this.colliding(entity)) {
         entity.queueAttack({ damage: this.damage });
         this.removeFromWorld = true;
       }
     }
+  }
+
+  draw(ctx) {
+    ctx.save();
+
+    // Move to bullet's position and rotate to match trajectory
+    ctx.translate(this.x - GAME_ENGINE.camera.x, this.y - GAME_ENGINE.camera.y);
+    ctx.rotate(this.rotation);
+
+    // Draw the bullet rotated in its initial direction
+    ctx.drawImage(
+      this.assetManager.getAsset("./assets/cowboy/CowBoyBullet.png"),
+      -15, // Center rotation
+      -10,
+      30,
+      20
+    );
+
+    ctx.restore();
   }
 }

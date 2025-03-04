@@ -333,7 +333,8 @@ export class Player extends Actor {
           e.isDestructibleObject ||
           e.isSpike ||
           e.isSpawnPoint ||
-          e.isBackgroundTrigger
+          e.isBackgroundTrigger ||
+          e.isPickup
         )
           continue;
         if (e.isWater) {

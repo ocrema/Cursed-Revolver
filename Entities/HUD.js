@@ -223,11 +223,13 @@ export class HUD extends Entity {
     const healthBarWidth = canvasWidth * this.healthBarWidthRatio;
     const healthBarHeight = canvasHeight * this.healthBarHeightRatio;
     const healthBarMargin = canvasHeight * this.healthBarMarginRatio;
-    const cowboySize = healthBarHeight * 15;
-    const cowboyX = -canvasWidth * 0.05;
-    const cowboyY = canvasHeight - cowboySize / 1.5;
-    const startX = cowboyX + cowboySize / 1.5;
-    const startY = canvasHeight - healthBarHeight - healthBarMargin;
+    const cowboySize = healthBarHeight * 20;
+
+    const cowboyX = -canvasWidth * 0.0005; // Move cowboy to the right
+    const cowboyY = canvasHeight - cowboySize / 1.9; // Move cowboy lower
+
+    const startX = cowboyX + cowboySize / 1.8; // Move health bar closer horizontally
+    const startY = canvasHeight - healthBarHeight - healthBarMargin / 1.5; // Move health bar closer vertically
 
     // Health Ratio and Fill
     const healthRatio = currentHealth / maxHealth;
@@ -263,12 +265,12 @@ export class HUD extends Entity {
 
     ctx.fillStyle = this.healthFlashTimer > 0 ? "red" : "white";
     ctx.font = `${canvasHeight * 0.03}px Texas, Arial`;
-    ctx.fillText(`${Math.round(currentHealth)} / ${maxHealth}`, startX + healthBarWidth / 2, startY - 5);
+    ctx.fillText(`HP: ${Math.round(currentHealth)} / ${maxHealth}`, startX + healthBarWidth / 2, startY - 5);
 
     // === Draw Cowboy Icon ===
     const cowboyImg = ASSET_MANAGER.getAsset(this.currentCowboyImage);
     if (cowboyImg) {
-        ctx.drawImage(cowboyImg, cowboyX, cowboyY, cowboySize, cowboySize);
+        ctx.drawImage(cowboyImg, cowboyX, cowboyY, cowboySize/2, cowboySize/2);
     }
 
     // === Spell UI Setup ===
