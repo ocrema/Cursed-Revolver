@@ -19,8 +19,18 @@ import { BACKGROUND_SPRITESHEET } from "../../Globals/Constants.js";
 export class Map extends GameMap {
   constructor() {
     super();
+    this.currentStage = 0;
+    this.stageEnemies = new Set();
+
     this.firstStageCleared = false;
     this.firstStageEnemies = new Set();
+
+    this.secondStageCleared = false;
+    this.secondStageEnemies = new Set();
+
+    this.currentStage = 1
+    this.totalEnemies = 0;
+    
   }
 
   async load() {
@@ -48,7 +58,7 @@ export class Map extends GameMap {
       "SpawnPoints/TumbleweedSpawnPoint.png",
       "SpawnPoints/SpiderwebSpawnPoint.png",
       "SpawnPoints/SpiderSpawnPoint.png",
-      "SpawnPoints/GrowingTreeSpawnPoint.png"
+      "SpawnPoints/GrowingTreeSpawnPoint.png",
     ];
 
     const TILESET_IMAGES = tilesetNames.map((name) =>
@@ -106,10 +116,10 @@ export class Map extends GameMap {
         entity: Barrel,
         offsetY: -10,
       },
-      GrowingTree: { 
-        method: gameMap.getGrowingTreeSpawnPoints, 
-        entity: GrowingTree 
-      }
+      GrowingTree: {
+        method: gameMap.getGrowingTreeSpawnPoints,
+        entity: GrowingTree,
+      },
     };
 
     for (const key in enemySpawnFunctions) {
@@ -122,10 +132,21 @@ export class Map extends GameMap {
       const spawnPoints = method.call(gameMap);
       for (let spawn of spawnPoints) {
         const e = new entity(spawn.x, spawn.y + offsetY, direction);
+        this.totalEnemies++;
 
         if (spawn.x < 11700 && spawn.y < 3000) {
+          this.totalFirstStageEnemies++;
           console.log("Adding enemy to first stage enemy list.");
           this.firstStageEnemies.add(e);
+        } else if (
+          spawn.x > 11700 &&
+          spawn.y > 3000 &&
+          spawn.x < 30000 &&
+          spawn.y < 5000
+        ) {
+          this.totalSecondStageEnemies++;
+          console.log("Adding enemy to second stage enemy list.");
+          this.secondStageEnemies.add(e);
         }
 
         e.onDeath = () => this.onEnemyDeath(e);
@@ -152,6 +173,7 @@ export class Map extends GameMap {
   onEnemyDeath(enemy) {
     if (this.firstStageEnemies.has(enemy)) {
       this.firstStageEnemies.delete(enemy);
+      this.totalFirstStageEnemies--;
       console.log(
         `Enemy removed from firstStageEnemy list. Remaining: ${this.firstStageEnemies.size}`
       );
@@ -160,11 +182,29 @@ export class Map extends GameMap {
         this.onFirstStageCleared();
       }
     }
+
+    if (this.secondStageEnemies.has(enemy)) {
+      this.secondStageEnemies.delete(enemy);
+      this.totalSecondStageEnemies--;
+      console.log(
+        `Enemy removed from secondStageEnemy list. Remaining: ${this.secondStageEnemies.size}`
+      );
+
+      if (this.secondStageEnemies.size === 0) {
+        this.onSecondStageCleared();
+      }
+    }
   }
 
   onFirstStageCleared() {
     this.firstStageCleared = true; // Used to trigger events in the future
+    this.currentStage = 2; 
     console.log("All enemies on first stage cleared.");
+  }
+
+  onSecondStageCleared() {
+    this.secondStageCleared = true; // Used to trigger events in the future
+    console.log("All enemies on second stage cleared.");
   }
 
   addOldMapEntities() {
