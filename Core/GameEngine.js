@@ -90,12 +90,12 @@ export class GameEngine {
         this.height / 2,
     });
 
-    this.ctx.canvas.addEventListener("mousemove", (e) => {
+    document.addEventListener("mousemove", (e) => {
       this.mouse = getXandY(e);
       //console.log("Mouse moved:", this.mouse);
     });
 
-    this.ctx.canvas.addEventListener("click", (e) => {
+    document.addEventListener("click", (e) => {
       this.click = getXandY(e);
       //console.log("Mouse clicked at:", this.click);
 
@@ -114,23 +114,23 @@ export class GameEngine {
       }
     });
 
-    this.ctx.canvas.addEventListener("mousedown", (e) => {
+    document.addEventListener("mousedown", (e) => {
       if (e.button === 0) {
         this.keys["m1"] = true;
         //console.log("Left mouse button pressed");
       }
     });
 
-    this.ctx.canvas.addEventListener("mouseup", (e) => {
+    document.addEventListener("mouseup", (e) => {
       if (e.button === 0) {
         this.keys["m1"] = false;
         //console.log("Left mouse button released");
       }
     });
 
-    this.ctx.canvas.addEventListener("wheel", (e) => {
+    document.addEventListener("wheel", (e) => {
       this.keys[(e.deltaY < 0 ? "wheelUp" : "wheelDown")] = true;
-      e.preventDefault();
+
       //console.log("Mouse wheel used:", e.deltaY);
     });
 
@@ -138,7 +138,7 @@ export class GameEngine {
       e.preventDefault();
     });
 
-    this.ctx.canvas.addEventListener("blur", (e) => {
+    document.addEventListener("blur", (e) => {
       this.keys = {};
     });
 

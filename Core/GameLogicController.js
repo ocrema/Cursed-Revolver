@@ -22,6 +22,7 @@ export class GameLogicController extends Entity {
 
     // Register this as the game controller
     this.GAME_ENGINE.GAME_CONTROLLER = this;
+
   }
 
   togglePause() {
@@ -60,6 +61,7 @@ export class GameLogicController extends Entity {
     // Initialize the game
     if (this.state === 0) {
       this.state = 1;
+      window.ASSET_MANAGER.playTrack(1);
       const map = new Map();
       this.GAME_ENGINE.addEntity(map);
       map.load();

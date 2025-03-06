@@ -8,7 +8,10 @@ export class AssetManager {
     this.errorCount = 0;
     this.cache = [];
     this.downloadQueue = [];
-    this.audioMuted = false; // flag to control audio muting
+    this.sfxMuted = false; // flag to control audio muting
+    this.musicMuted = false; // flag to control music muting
+    this.activeTrack = 0;
+    this.musicTracks = ["./assets/music/track1.mp3"];
     return window.ASSET_MANAGER;
   }
 
@@ -52,7 +55,6 @@ export class AssetManager {
         case "wav":
         case "mp3":
         case "mp4":
-        case "PNG":
         case "ogg":
           const aud = new Audio();
           aud.addEventListener("loadeddata", () => {
@@ -106,7 +108,7 @@ export class AssetManager {
   }
 
   playAsset(path, volumeMult = 1) {
-    if (this.audioMuted) return;
+    if (this.sfxMuted) return;
     if (volumeMult === 0) return;
     let audio = this.cache[path];
     if (!audio) return;
@@ -124,7 +126,7 @@ export class AssetManager {
   }
 
   toggleMute(muted) {
-    this.audioMuted = muted; // Set mute flag
+    this.sfxMuted = muted; // Set mute flag
     //stop all currently playing audio
     Object.values(this.cache).forEach((asset) => {
       if (asset instanceof Audio) {
@@ -133,4 +135,31 @@ export class AssetManager {
       }
     });
   }
+
+  playTrack(i) {
+    i -= 1;
+    // stop current track
+    if (this.cache[this.musicTracks[this.activeTrack]]) {
+      this.cache[this.musicTracks[this.activeTrack]].pause();
+    }
+    this.activeTrack = i;
+    let audio = this.cache[this.musicTracks[i]];
+    if (!audio) return;
+    if (i !== this.activeTrack) audio.currentTime = 0;
+    audio.loop = true;
+    audio.volume = 0.3;
+    if (!this.musicMuted) audio.play();
+    console.log('Playing track ' + this.musicTracks[i]);
+  }
+
+  toggleMusicMute(muted) {
+    this.musicMuted = muted;
+    if (this.musicMuted) {
+      this.cache[this.musicTracks[this.activeTrack]].pause();
+    } else {
+      this.cache[this.musicTracks[this.activeTrack]].play();
+    }
+  }
+
+
 }
