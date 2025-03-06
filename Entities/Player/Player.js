@@ -83,6 +83,7 @@ export class Player extends Actor {
     // Forcefully increase health
     let oldHealth = this.health;
     this.health = Math.min(this.maxHealth, this.health + amount);
+    GAME_ENGINE.addEntity(new HealDust(this));
 
     //console.log(` Player Health Before: ${oldHealth}, After: ${this.health}`);
 
@@ -612,6 +613,49 @@ class DashDust extends Entity {
       -32 * this.scale,
       48 * this.scale,
       32 * this.scale
+    );
+
+    ctx.restore();
+  }
+}
+
+class HealDust extends Entity {
+  constructor(player) {
+    super();
+    this.player = player;
+    this.x = this.player.x;
+    this.y = this.player.y + this.player.collider.height;
+    this.time = 0;
+    this.end = 1;
+    this.entityOrder = 3;
+    this.image = window.ASSET_MANAGER.getAsset(
+      "./assets/effects/healing/heal.png"
+    );
+    this.scale = 3;
+  }
+  update() {
+    this.x = this.player.x;
+    this.y = this.player.y + this.player.collider.height;
+    this.time += GAME_ENGINE.clockTick;
+    if (this.time >= this.end) {
+      this.removeFromWorld = true;
+    }
+  }
+  draw(ctx) {
+    const frame = Math.floor((this.time / this.end) * 14);
+    ctx.save();
+    ctx.translate(this.x - GAME_ENGINE.camera.x, this.y - GAME_ENGINE.camera.y);
+
+    ctx.drawImage(
+      this.image,
+      frame * 128,
+      0,
+      128,
+      128,
+      (-128 * this.scale) / 2,
+      -128 * this.scale,
+      128 * this.scale,
+      128 * this.scale
     );
 
     ctx.restore();
