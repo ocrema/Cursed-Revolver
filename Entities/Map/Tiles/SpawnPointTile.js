@@ -42,7 +42,7 @@ export class SpawnPointTile extends Tile {
     for (let e of GAME_ENGINE.entities) {
       if (e instanceof Player && this.colliding(e)) {
         //console.log("Player hit checkpoint at " + e.x + " " + e.y);
-        e.setSpawnPoint(e.x, e.y);
+        e.setSpawnPoint(this.x, this.y - e.collider.height / 2 - 1);
       }
     }
   }

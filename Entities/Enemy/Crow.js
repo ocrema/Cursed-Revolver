@@ -103,7 +103,7 @@ export class Crow extends Actor {
     this.updateState();
     }
     
-    console.log(this.state);
+    //console.log(this.state);
     this.updateAnimation(GAME_ENGINE.clockTick);
   }
 

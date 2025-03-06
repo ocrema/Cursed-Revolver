@@ -53,10 +53,10 @@ export class HUD extends Entity {
     // Spells and cylinder setup
     this.spells = [
       { name: "Fireball", icon: "./assets/ui/spells/fireball.png" },
-      { name: "Lightning", icon: "./assets/ui/spells/lightning.png" },
-      { name: "Water Wave", icon: "./assets/ui/spells/water.png" },
+      { name: "Vine Grapple", icon: "./assets/ui/spells/vine.png" },
       { name: "Icicle", icon: "./assets/ui/spells/icicle.png" },
-      { name: "Vine Ball", icon: "./assets/ui/spells/vine.png" },
+      { name: "Water Wave", icon: "./assets/ui/spells/water.png" },
+      { name: "Chain Lightning", icon: "./assets/ui/spells/lightning.png" },
       { name: "Void Orb", icon: "./assets/ui/spells/void.png" },
     ];
 
@@ -71,8 +71,8 @@ export class HUD extends Entity {
 
     this.cylinderRotation = 0; // Current rotation (in radians)
     this.targetRotation = 0; // Target rotation (in radians)
-    this.rotationSpeed = 0; // Speed of rotation (radians per frame)
-    this.rotationTime = 0; // Time remaining for rotation
+    this.rotationSpeed = 8; // Speed of rotation (radians per frame)
+    this.rotationDirection = 0; // Direction of rotation (1 = clockwise, -1 = counter-clockwise)
 
     this.gameWon = false; // Flag that swaps after an enemy is killed
   }
@@ -145,8 +145,11 @@ export class HUD extends Entity {
     }
 
     // Sync HUD with Player's selected spell
-    this.activeSpellIndex = player.selectedSpell;
-    this.rotateCylinder(this.activeSpellIndex, 0.5);
+    if (this.activeSpellIndex !== player.selectedSpell) {
+      this.activeSpellIndex = player.selectedSpell;
+      this.rotateCylinder(this.activeSpellIndex, 0.5);
+    }
+    
 
     // Toggle debug mode
     if (GAME_ENGINE.keys["b"]) {
@@ -158,14 +161,39 @@ export class HUD extends Entity {
     }
 
     // Smooth rotation logic
-    if (this.rotationTime > 0) {
-      this.cylinderRotation += this.rotationSpeed;
-      this.rotationTime -= GAME_ENGINE.clockTick;
+    if (this.rotationDirection !== 0) {
+      let change = (this.cylinderRotation + this.rotationSpeed * this.rotationDirection * GAME_ENGINE.clockTick) % (Math.PI * 2);
+      if (change < 0) change += Math.PI * 2;
+      // Check if the rotation has reached the target for 1-5
+      
+      for (let i = 1; i <= 5; i++) {
+        let angle = i * (Math.PI/3);
+        let a = this.cylinderRotation - angle;
+        let b = change - angle;
+        if (Math.sign(a) !== Math.sign(b) && Math.abs(a) < Math.PI/6 && Math.abs(b) < Math.PI/6) {
+          
+          if (i === player.selectedSpell) {
+            this.rotationDirection = 0;
+            this.cylinderRotation = this.targetRotation;
+          }
+          window.ASSET_MANAGER.playAsset("./assets/sfx/click1.ogg");
+        }
+      }
+      
+      // special logic for 0
+      if (Math.abs(this.cylinderRotation - change) > Math.PI * (11/6)) {
+        if (this.activeSpellIndex === 0) {
+          this.rotationDirection = 0;
+          this.cylinderRotation = this.targetRotation;
+        }
+        window.ASSET_MANAGER.playAsset("./assets/sfx/click1.ogg");
+      }
 
-      if (this.rotationTime <= 0) {
-        this.cylinderRotation = this.targetRotation; // Snap to target
+      if (this.rotationDirection !== 0) {
+        this.cylinderRotation = change;
       }
     }
+
   }
 
   /**
@@ -173,18 +201,20 @@ export class HUD extends Entity {
    * @param {number} pos - The index of the spell to rotate to (0-5).
    * @param {number} time - The duration of the transition (in seconds).
    */
-  rotateCylinder(pos, time) {
-    const totalSpells = this.spells.length;
-    const degreesPerSpell = 360 / totalSpells; // Each spell on circle
-    const newRotation = (pos * degreesPerSpell * Math.PI) / 180; // degrees to radians
-
-    // Cancel any current animation and start from the current location
-    this.targetRotation = newRotation;
-    this.rotationTime = time;
-    this.rotationSpeed =
-      (this.targetRotation - this.cylinderRotation) /
-      (time / GAME_ENGINE.clockTick);
-    this.activeSpellIndex = pos;
+  rotateCylinder(pos) {
+    const target = pos * (Math.PI/3);
+    if (target === this.cylinderRotation) return;
+    if(target < this.cylinderRotation) {
+      if(Math.abs(target - this.cylinderRotation) < Math.PI)
+        this.rotationDirection = -1;
+      else this.rotationDirection = 1;
+    }
+    else {
+      if(Math.abs(target - this.cylinderRotation) < Math.PI)
+        this.rotationDirection = 1;
+      else this.rotationDirection = -1;
+    }
+    this.targetRotation = target;
   }
 
   selectSpell(index) {
@@ -295,18 +325,45 @@ export class HUD extends Entity {
       
       // Position and rotation
       ctx.translate(cylinderX + cylinderSize / 2, cylinderY + cylinderSize / 2);
-      ctx.rotate(this.cylinderRotation);
+      ctx.rotate(-this.cylinderRotation);
 
       // === Glowing Effect Based on Selected Spell ===
-      ctx.shadowBlur = 30; // Glow intensity
-      ctx.shadowColor = this.getSpellGlowColor(this.activeSpellIndex); // Spell-based glow color
+      //ctx.shadowBlur = 30; // Glow intensity
+      //ctx.shadowColor = this.getSpellGlowColor(this.activeSpellIndex); // Spell-based glow color
 
       // Draw the cylinder
       ctx.drawImage(cylinderImage, -cylinderSize / 2, -cylinderSize / 2, cylinderSize, cylinderSize);
 
+      // draw bullets
+      const positions = [{x:0, y:-10}, {x:9, y:-5}, {x:9, y:5}, {x:0, y:10}, {x:-9, y:5}, {x:-9, y:-5}];
+      const colors = ['orange', 'limegreen', 'cyan', 'blue', 'yellow', 'purple'];
+      for (let i = 0; i < 6; i++) {
+
+        //if (player.spellCooldowns[i] > 0) continue;
+
+        ctx.shadowBlur = 10; // Glow intensity
+        ctx.shadowColor = colors[i]; // Spell-based glow color
+        ctx.globalAlpha = 1 - Math.min(player.spellCooldowns[i] * 2 / player.maxSpellCooldown, 1);
+
+        ctx.drawImage(ASSET_MANAGER.getAsset('./assets/ui/revolver/bullets.png'), 
+        8 * i, 0, 8, 8, 
+        ((positions[i].x-4)/32)*cylinderSize, ((positions[i].y-4)/32)*cylinderSize, cylinderSize/4, cylinderSize/4);
+      }
+
       // Reset glow effect after drawing
       ctx.shadowBlur = 0;
+      ctx.globalAlpha = 1;
       ctx.restore();
+
+      // draw crosshair
+      /*
+      ctx.save();
+      ctx.shadowBlur = 0;
+      const crosshairSize = 128;
+      ctx.drawImage(ASSET_MANAGER.getAsset('./assets/ui/aim.png'),
+      -crosshairSize/2 + GAME_ENGINE.mouse.x, -crosshairSize/2 + GAME_ENGINE.mouse.y, crosshairSize, crosshairSize);
+      ctx.restore();
+      */
     }
 
     // === Game Win Screen ===
