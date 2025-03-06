@@ -7,7 +7,7 @@ export const GAME_ENGINE = new GameEngine();
 window.GameEngine = GAME_ENGINE; // Assign to global window object
 
 const ASSET_MANAGER = new AssetManager();
-
+window.ASSET_MANAGER = ASSET_MANAGER; // Assign to global window object
 const ASSET_DOWNLOADER = new AssetDownloader(ASSET_MANAGER);
 
 // Downloads all sprite sheets from asset downloader

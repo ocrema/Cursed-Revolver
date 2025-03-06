@@ -53,6 +53,7 @@ export class Player extends Actor {
     this.selectedSpell = 0;
     this.spellCooldowns = [0, 0, 0, 0, 0, 0];
     this.maxSpellCooldown = 1;
+    this.spellColors = ['orange', 'limegreen', 'cyan', 'blue', 'yellow', 'purple'];
 
     this.timeBetweenFootsteps = 0.4;
     this.timeSinceLastFootstep = 0.4;
@@ -92,6 +93,8 @@ export class Player extends Actor {
   }
 
   setSpawnPoint(x, y) {
+    if (this.spawnX === x && this.spawnY === y) return;
+    window.ASSET_MANAGER.playAsset("./assets/sfx/checkpoint.ogg");
     this.spawnX = x;
     this.spawnY = y;
   }
@@ -102,6 +105,16 @@ export class Player extends Actor {
     this.x = this.spawnX;
     this.y = this.spawnY;
     this.setAnimation(PLAYER_SPRITESHEET.IDLE.NAME);
+    this.selectedSpell = 0;
+    this.spellCooldowns = [0, 0, 0, 0, 0, 0];
+    this.isDashing = 0;
+    this.dashCooldown = 0;
+    this.wallGrabState = 0;
+    this.jumpCooldown = 0;
+    this.isGroundSlamming = false;
+    this.gun_spin = null;
+    this.x_velocity = 0;
+    this.y_velocity = 0;
   }
 
   update() {
@@ -424,7 +437,7 @@ export class Player extends Actor {
       if (GAME_ENGINE.keys[key]) {
         GAME_ENGINE.keys[key] = false;
         this.selectedSpell = i;
-        window.ASSET_MANAGER.playAsset("./assets/sfx/click1.ogg");
+        //window.ASSET_MANAGER.playAsset("./assets/sfx/click1.ogg");
       }
     }
     if (GAME_ENGINE.keys["q"] || GAME_ENGINE.keys["wheelUp"]) {
@@ -433,14 +446,14 @@ export class Player extends Actor {
       this.selectedSpell--;
       if (this.selectedSpell < 0) this.selectedSpell = 5;
       console.log(this.selectedSpell);
-      window.ASSET_MANAGER.playAsset("./assets/sfx/click1.ogg");
+      //window.ASSET_MANAGER.playAsset("./assets/sfx/click1.ogg");
     }
     if (GAME_ENGINE.keys["e"] || GAME_ENGINE.keys["wheelDown"]) {
       GAME_ENGINE.keys["e"] = false;
       GAME_ENGINE.keys["wheelDown"] = false;
       this.selectedSpell++;
       if (this.selectedSpell > 5) this.selectedSpell = 0;
-      window.ASSET_MANAGER.playAsset("./assets/sfx/click1.ogg");
+      //window.ASSET_MANAGER.playAsset("./assets/sfx/click1.ogg");
     }
 
     // cast spell
@@ -475,13 +488,13 @@ export class Player extends Actor {
       if (this.selectedSpell === 0) {
         GAME_ENGINE.addEntity(new Fireball(this, this.dir, this.gun_offset));
       } else if (this.selectedSpell === 1) {
-        GAME_ENGINE.addEntity(new ChainLightning(this, this.dir, this.gun_offset));
-      } else if (this.selectedSpell === 2) {
-        GAME_ENGINE.addEntity(new WaterWave(this, this.dir, this.gun_offset));
-      } else if (this.selectedSpell === 3) {
-        GAME_ENGINE.addEntity(new Icicle(this, this.dir, this.gun_offset));
-      } else if (this.selectedSpell === 4) {
         GAME_ENGINE.addEntity(new VineGrapple(this, this.dir, this.gun_offset));
+      } else if (this.selectedSpell === 2) {
+        GAME_ENGINE.addEntity(new Icicle(this, this.dir, this.gun_offset));
+      } else if (this.selectedSpell === 3) {
+        GAME_ENGINE.addEntity(new WaterWave(this, this.dir, this.gun_offset));
+      } else if (this.selectedSpell === 4) {
+        GAME_ENGINE.addEntity(new ChainLightning(this, this.dir, this.gun_offset));
       } else if (this.selectedSpell === 5) {
         GAME_ENGINE.addEntity(new VoidOrb(this, this.dir, this.gun_offset));
       }
@@ -507,7 +520,7 @@ export class Player extends Actor {
     if (this.gun_spin !== null) dir = this.gun_spin;
     else dir = this.dir;
     ctx.rotate((this.flip) ? -dir + Math.PI : dir);
-    ctx.shadowColor = (['orange', 'yellow', 'blue', 'white', 'green', 'purple'])[this.selectedSpell];
+    ctx.shadowColor = this.spellColors[this.selectedSpell];
     ctx.shadowBlur = 30;
     const scale = 2.5;
     ctx.drawImage(
