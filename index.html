@@ -11,27 +11,33 @@
         body {
             cursor: url("assets/ui/aim.png") 16 16, auto;
         }
+
+        #gameWorld {
+            /* background-image: url('assets/ui/menu/desertbackground.gif'); */
+            /* background-image: url('assets/ui/menu/desertbackground1.gif'); */
+            background-image: url('assets/ui/menu/desertbackground2.gif');
+            background-size: cover;
+            background-position: center center;
+            background-repeat: no-repeat;
+            display: block;
+            margin: auto;
+            padding: 0;
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            image-rendering: optimizeSpeed;
+            image-rendering: -moz-crisp-edges;
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: -o-crisp-edges;
+            image-rendering: pixelated;
+            -ms-interpolation-mode: nearest-neighbor;
+        }
     </style>
 
 </head>
 <body style="background-color: black;">
-    <canvas id="gameWorld" width="1024" height="768" style="background: black; 
-    display: block; 
-    margin: auto; 
-    padding: 0; 
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    outline: none;
-    border: none;
-    image-rendering: optimizeSpeed;             
-    image-rendering: -moz-crisp-edges;      
-    image-rendering: -webkit-optimize-contrast; 
-    image-rendering: -o-crisp-edges;         
-    image-rendering: pixelated;          
-    -ms-interpolation-mode: nearest-neighbor;  "
-    tabindex="0" autofocus></canvas>
+    <canvas id="gameWorld" width="1024" height="768" tabindex="0" autofocus></canvas>
 </body>
 </html>
