@@ -31,8 +31,8 @@ export class Map extends GameMap {
   }
 
   async load() {
-    const oldMap = false;
-    const playerSpawn = oldMap ? { x: 1470, y: -70 } : { x: 763, y: 1500 };
+    const playerSpawn = { x: 763, y: 1500 };
+    // first stage spawn point = { x: 763, y: 1500 }
     // second stage spawn point = { x: 12400, y: 4000 }
     GAME_ENGINE.addEntity(new Player(playerSpawn.x, playerSpawn.y));
 
@@ -63,19 +63,12 @@ export class Map extends GameMap {
       window.ASSET_MANAGER.getAsset(`./assets/map/${name}`)
     );
 
-    const mapFilePath = oldMap
-      ? "./Entities/Map/MapAssets/Map.json"
-      : "./Entities/Map/MapAssets/FinalMap.json";
+    const mapFilePath = "./Entities/Map/MapAssets/FinalMap.json";
 
     const gameMap = new Tilemap(mapFilePath, TILESET_IMAGES);
     await gameMap.load();
     GAME_ENGINE.addEntity(gameMap);
-
-    if (oldMap) {
-      this.addOldMapEntities();
-    } else {
-      this.spawnEntities(gameMap);
-    }
+    this.spawnEntities(gameMap);
   }
 
   spawnEntities(gameMap) {
@@ -194,7 +187,7 @@ export class Map extends GameMap {
     }
   }
 
-  // put logic for breakable objects here - spiderweb, boulder etc 
+  // put logic for breakable objects here - spiderweb, boulder etc
   onFirstStageCleared() {
     this.firstStageCleared = true; // Used to trigger events in the future
     console.log("All enemies on first stage cleared.");
@@ -205,32 +198,5 @@ export class Map extends GameMap {
     this.secondStageCleared = true; // Used to trigger events in the future
     this.currentStage = 3;
     console.log("All enemies on second stage cleared.");
-  }
-
-  addOldMapEntities() {
-    const oldEnemies = [
-      new Crow(2500, -500),
-      new Spider(2600, 200),
-      new Cactus(2300, 260),
-      new SpitterCactus(3000, 260),
-      new Cactus(4200, 260),
-      new CowboyEnemy(4115, 1330),
-      new StaticCowboyEnemy(836, 1443),
-      new StaticCowboyEnemy(2190, 1375),
-      new EarthGolem(4215, 1330),
-    ];
-
-    const oldObjects = [
-      new Tumbleweed(3200, -100, "left"),
-      new Tumbleweed(4750, -100, "right"),
-      new Barrel(2569, 275),
-      new Barrel(2250, 1375),
-      new GrowingTree(1000, 300),
-      new HealingBottle(3200, 275),
-    ];
-
-    [...oldEnemies, ...oldObjects].forEach((entity) =>
-      GAME_ENGINE.addEntity(entity)
-    );
   }
 }
