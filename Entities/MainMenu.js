@@ -59,12 +59,13 @@ export class MainMenu extends Entity {
     const menuX = centerX - menuWidth / 2;
     const menuY = centerY - menuHeight / 2;
 
-    const backgroundImage = ASSET_MANAGER.getAsset(
-      "./assets/ui/menu/background_start2.png"
-    );
-    if (backgroundImage) {
-      ctx.drawImage(backgroundImage, menuX, menuY, menuWidth, menuHeight);
-    }
+    // const backgroundImage = ASSET_MANAGER.getAsset(
+    //   "./assets/ui/menu/background_start2.png"
+    // );
+
+    // if (backgroundImage) {
+    //   ctx.drawImage(backgroundImage, menuX, menuY, menuWidth, menuHeight);
+    // }
 
     const buttonWidth = 280;
     const buttonHeight = 90;
@@ -73,10 +74,10 @@ export class MainMenu extends Entity {
     const startY = menuY + 230;
 
     const quitX = centerX - buttonWidth / 2;
-    const quitY = menuY + 340;
+    const quitY = menuY + 450;
 
     const helpX = centerX - buttonWidth / 2;
-    const helpY = menuY + 450; // Position Help button below Quit
+    const helpY = menuY + 340; 
 
     if (this.showHelp) {
       this.drawSettings(ctx, centerX, centerY);
