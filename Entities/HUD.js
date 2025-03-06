@@ -93,11 +93,11 @@ export class HUD extends Entity {
   update() {
     if (this.mapReference) {
       this.playerCurrentStage = this.mapReference.currentStage;
-      if ((this.playerCurrentStage = 1)) {
+      if (this.playerCurrentStage === 1) {
         this.totalRemainingEnemies = this.mapReference.firstStageEnemies.size;
       } else {
         this.totalRemainingEnemies =
-          this.mapReference.secondStageEnemies.secondStageEnemies.size;
+          this.mapReference.secondStageEnemies.size;
       }
     }
     const player = GAME_ENGINE.entities.find((e) => e.isPlayer);

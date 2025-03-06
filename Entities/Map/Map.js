@@ -35,7 +35,8 @@ export class Map extends GameMap {
 
   async load() {
     const oldMap = false;
-    const playerSpawn = oldMap ? { x: 1470, y: -70 } : { x: 12400, y: 4000 };
+    const playerSpawn = oldMap ? { x: 1470, y: -70 } : { x: 763, y: 1500 };
+    // second stage spawn point = { x: 12400, y: 4000 }
     GAME_ENGINE.addEntity(new Player(playerSpawn.x, playerSpawn.y));
 
     GAME_ENGINE.addEntity(
@@ -198,8 +199,8 @@ export class Map extends GameMap {
 
   onFirstStageCleared() {
     this.firstStageCleared = true; // Used to trigger events in the future
-    this.currentStage = 2; 
     console.log("All enemies on first stage cleared.");
+    this.currentStage = 2; 
   }
 
   onSecondStageCleared() {
