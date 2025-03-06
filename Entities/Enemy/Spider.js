@@ -246,7 +246,7 @@ export class Spider extends Actor {
     for (let entity of GAME_ENGINE.entities) {
       if (entity instanceof Tile && this.colliding(entity)) {
         if (this.velocity.y < 0) {
-          console.log(this.target);
+          //console.log(this.target);
           this.y = entity.y + entity.collider.height / 2 + this.height / 2;
           hitHead = true;
         }

@@ -25,7 +25,7 @@ export class Map extends GameMap {
 
   async load() {
     const oldMap = false;
-    const playerSpawn = oldMap ? { x: 1470, y: -70 } : { x: 763, y: 1500 };
+    const playerSpawn = oldMap ? { x: 1470, y: -70 } : { x: 12400, y: 4000 };
     GAME_ENGINE.addEntity(new Player(playerSpawn.x, playerSpawn.y));
 
     GAME_ENGINE.addEntity(
