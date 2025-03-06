@@ -19,8 +19,6 @@ import { BACKGROUND_SPRITESHEET } from "../../Globals/Constants.js";
 export class Map extends GameMap {
   constructor() {
     super();
-    this.currentStage = 0;
-    this.stageEnemies = new Set();
 
     this.firstStageCleared = false;
     this.firstStageEnemies = new Set();
@@ -28,9 +26,8 @@ export class Map extends GameMap {
     this.secondStageCleared = false;
     this.secondStageEnemies = new Set();
 
-    this.currentStage = 1
+    this.currentStage = 1;
     this.totalEnemies = 0;
-    
   }
 
   async load() {
@@ -197,14 +194,16 @@ export class Map extends GameMap {
     }
   }
 
+  // put logic for breakable objects here - spiderweb, boulder etc 
   onFirstStageCleared() {
     this.firstStageCleared = true; // Used to trigger events in the future
     console.log("All enemies on first stage cleared.");
-    this.currentStage = 2; 
+    this.currentStage = 2;
   }
 
   onSecondStageCleared() {
     this.secondStageCleared = true; // Used to trigger events in the future
+    this.currentStage = 3;
     console.log("All enemies on second stage cleared.");
   }
 
