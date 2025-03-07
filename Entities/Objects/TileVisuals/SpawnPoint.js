@@ -23,11 +23,24 @@ export class SpawnPoint extends Entity {
       MAP_CONSTANTS.CAMPFIRE.FRAME_DURATION
     );
 
+    this.addAnimation(
+      MAP_CONSTANTS.ACTIVATED_CAMPFIRE.NAME,
+      window.ASSET_MANAGER.getAsset(MAP_CONSTANTS.ACTIVATED_CAMPFIRE.URL),
+      MAP_CONSTANTS.ACTIVATED_CAMPFIRE.FRAME_WIDTH,
+      MAP_CONSTANTS.ACTIVATED_CAMPFIRE.FRAME_HEIGHT,
+      MAP_CONSTANTS.ACTIVATED_CAMPFIRE.FRAME_COUNT,
+      MAP_CONSTANTS.ACTIVATED_CAMPFIRE.FRAME_DURATION
+    );
+
     this.setAnimation(MAP_CONSTANTS.CAMPFIRE.NAME, true);
   }
 
   update() {
     this.updateAnimation(GAME_ENGINE.clockTick);
+  }
+
+  activateCampfire() {
+    this.setAnimation(MAP_CONSTANTS.ACTIVATED_CAMPFIRE.NAME, true);
   }
 
   draw(ctx) {
