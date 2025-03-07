@@ -1,7 +1,7 @@
 import { Collider } from "../../Collider.js";
 import { Tile } from "./Tile.js";
 import { Player } from "../../Player/Player.js";
-import { SpawnPoint } from "../../Objects/TileVisuals/SpawnPoint.js"; 
+import { SpawnPoint } from "../../Objects/TileVisuals/SpawnPoint.js";
 
 export class SpawnPointTile extends Tile {
   constructor(

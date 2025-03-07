@@ -64,7 +64,6 @@ export class AssetDownloader {
     this.assetManager.queueDownload("./assets/enemy/cactus/idle.png");
     this.assetManager.queueDownload("./assets/enemy/cactus/spawn.png");
 
-
     // Cowboy Enemy
     this.assetManager.queueDownload("./assets/cowboy/walk.png");
     this.assetManager.queueDownload("./assets/cowboy/CowBoyIdle.png");
@@ -145,6 +144,12 @@ export class AssetDownloader {
     );
     this.assetManager.queueDownload(
       "./assets/map/SpawnPoints/SpiderwebSpawnPoint.png"
+    );
+    this.assetManager.queueDownload(
+      "./assets/map/SpawnPoints/GrowingTreeSpawnPoint.png"
+    );
+    this.assetManager.queueDownload(
+      "./assets/map/SpawnPoints/SpiderSpawnPoint.png"
     );
     this.assetManager.queueDownload("./assets/map/Spiderweb.png");
     this.assetManager.queueDownload("./assets/map/Signs.png");

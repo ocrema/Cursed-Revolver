@@ -12,7 +12,6 @@ export class Cactus extends Actor {
     super();
     Object.assign(this, { x, y });
 
-
     // Animation
     this.assetManager = window.ASSET_MANAGER;
 
@@ -41,7 +40,7 @@ export class Cactus extends Actor {
     // Flags
     this.isEnemy = true;
 
-      // For Animation
+    // For Animation
     this.tookDamage = false;
     this.dead = false;
     this.seesPlayer = false;
@@ -63,22 +62,23 @@ export class Cactus extends Actor {
   update() {
     if (!this.dead) {
       // apply attack damage
-    this.recieveAttacks();
-    this.recieveEffects();
+      this.recieveAttacks();
+      this.recieveEffects();
 
-    if (this.effects.frozen > 0 || this.effects.stun > 0) return;
+      if (this.effects.frozen > 0 || this.effects.stun > 0) return;
 
-    this.attackTime += GAME_ENGINE.clockTick;
+      this.attackTime += GAME_ENGINE.clockTick;
 
-    this.attemptAttack();
+      this.attemptAttack();
 
-    if (this.health <= 0) {
-      this.dead = true;
+      if (this.health <= 0) {
+        this.dead = true;
+        this.onDeath();
+      }
+
+      this.changeAnimation();
     }
 
-    this.changeAnimation();
-    }
-    
     this.updateAnimation(GAME_ENGINE.clockTick);
   }
 
@@ -95,18 +95,20 @@ export class Cactus extends Actor {
       this.updateIdleCooldown();
       this.setAnimation(CACTUS_SPRITESHEET.IDLE.NAME, false);
     }
-    
+
     if (this.tookDamage) {
       this.idleTimer = 0;
       this.setAnimation(CACTUS_SPRITESHEET.DAMAGE.NAME, false);
     }
 
-    if (this.seesPlayer && 
-      this.currentAnimation != CACTUS_SPRITESHEET.ATTACK.NAME && 
-      this.currentAnimation != CACTUS_SPRITESHEET.DAMAGE.NAME) {
+    if (
+      this.seesPlayer &&
+      this.currentAnimation != CACTUS_SPRITESHEET.ATTACK.NAME &&
+      this.currentAnimation != CACTUS_SPRITESHEET.DAMAGE.NAME
+    ) {
       this.idleTimer = 0;
       this.setAnimation(CACTUS_SPRITESHEET.AGGRESSIVE.NAME, false);
-    }  
+    }
 
     if (this.dead && this.currentAnimation !== CACTUS_SPRITESHEET.DIE.NAME) {
       this.idleTimer = 0;
@@ -122,11 +124,16 @@ export class Cactus extends Actor {
           Util.canSee(this, entity) &&
           this.attackTime > this.fireRate &&
           Util.canAttack(new Thorn(this.x, this.y, entity), entity)
-        ) {     
+        ) {
           this.attackTime = 0;
-          GAME_ENGINE.addEntity(new Thorn(this.x, this.y, entity, this.thornMaxRange));
+          GAME_ENGINE.addEntity(
+            new Thorn(this.x, this.y, entity, this.thornMaxRange)
+          );
           this.setAnimation(CACTUS_SPRITESHEET.ATTACK.NAME, false);
-          window.ASSET_MANAGER.playAsset("./assets/sfx/cactus_shoot.ogg", 1 * Util.DFCVM(this));
+          window.ASSET_MANAGER.playAsset(
+            "./assets/sfx/cactus_shoot.ogg",
+            1 * Util.DFCVM(this)
+          );
         } else if (Util.canSee(this, entity)) {
           this.seesPlayer = true;
         } else {
@@ -134,9 +141,8 @@ export class Cactus extends Actor {
         }
       }
     }
-
   }
-  
+
   onAnimationComplete() {
     if (this.currentAnimation == CACTUS_SPRITESHEET.DIE.NAME) {
       this.removeFromWorld = true;
@@ -166,52 +172,57 @@ export class Cactus extends Actor {
 }
 
 export class SpitterCactus extends Cactus {
- constructor ( x, y, isLeft ) {
-  super( x, y );
+  constructor(x, y, isLeft) {
+    super(x, y);
 
-  this.thornMaxRange = 2000;
-  this.cactusOffset = 200;
-  this.leftTarget = {x: this.x - this.cactusOffset, y: this.y};
-  this.rightTarget = {x: this.x + this.cactusOffset, y: this.y};
-  this.currentTarget = isLeft ? this.leftTarget : this.rightTarget;
+    this.thornMaxRange = 2000;
+    this.cactusOffset = 200;
+    this.leftTarget = { x: this.x - this.cactusOffset, y: this.y };
+    this.rightTarget = { x: this.x + this.cactusOffset, y: this.y };
+    this.currentTarget = isLeft ? this.leftTarget : this.rightTarget;
 
-  this.attackTime = 0;
-  // length of burst
-  this.activeFire = 2;
-  // time between first thorn short between bursts
-  this.fireRate = this.activeFire + 2;
-  // time between thorn shots
-  this.thornCooldown = 0.25;
-  // time since last thorn shot
-  this.thornTime = 0;
- } 
+    this.attackTime = 0;
+    // length of burst
+    this.activeFire = 2;
+    // time between first thorn short between bursts
+    this.fireRate = this.activeFire + 2;
+    // time between thorn shots
+    this.thornCooldown = 0.25;
+    // time since last thorn shot
+    this.thornTime = 0;
+  }
 
- attemptAttack() {
-  this.thornTime += GAME_ENGINE.clockTick;
+  attemptAttack() {
+    this.thornTime += GAME_ENGINE.clockTick;
 
-  // ready to attack
-  if (this.attackTime < this.activeFire && 
-    this.attackTime < this.fireRate && 
-    this.thornTime > this.thornCooldown) {
+    // ready to attack
+    if (
+      this.attackTime < this.activeFire &&
+      this.attackTime < this.fireRate &&
+      this.thornTime > this.thornCooldown
+    ) {
       this.thornTime = 0;
       this.attacking = true;
-      GAME_ENGINE.addEntity(new Thorn(this.x, this.y, this.currentTarget, this.thornMaxRange));
-  } else if (this.attackTime > this.activeFire && 
-    this.attackTime < this.fireRate) {
+      GAME_ENGINE.addEntity(
+        new Thorn(this.x, this.y, this.currentTarget, this.thornMaxRange)
+      );
+    } else if (
+      this.attackTime > this.activeFire &&
+      this.attackTime < this.fireRate
+    ) {
       this.attacking = false;
+    }
+
+    if (this.attackTime > this.fireRate) {
+      this.attackTime = 0;
+    }
   }
 
-  if (this.attackTime > this.fireRate) {
-    this.attackTime = 0;
-  }
- }
+  onAnimationComplete() {
+    if (this.currentAnimation == CACTUS_SPRITESHEET.DIE.NAME) {
+      this.removeFromWorld = true;
+    }
 
- onAnimationComplete() {
-  if (this.currentAnimation == CACTUS_SPRITESHEET.DIE.NAME) {
-    this.removeFromWorld = true;
+    this.setAnimation(CACTUS_SPRITESHEET.IDLE.NAME);
   }
-
-  this.setAnimation(CACTUS_SPRITESHEET.IDLE.NAME);
-  }
-
 }

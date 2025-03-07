@@ -12,7 +12,9 @@ export class Background extends Entity {
     this.backgroundList = Object.values(BACKGROUND_SPRITESHEET);
     this.currentIndex = 0;
     this.isTransitioning = false;
-    this.nextBackgroundIndex = null;
+    this.transitionPhase = null; // 'fading_out' → 'switching' → 'fading_in' → null
+    this.fadeAlpha = 1; // 1 = fully visible, 0 = fully transparent
+    this.transitionSpeed = 0.02; // Adjust for faster/slower fade
 
     this.animations = {};
     this.loadBackgroundData();
@@ -47,11 +49,10 @@ export class Background extends Entity {
   }
 
   nextBackground() {
-    if (this.isTransitioning) return;
+    if (this.isTransitioning) return; // Prevent spam
 
-    this.currentIndex = (this.currentIndex + 1) % this.backgroundList.length;
-    this.setCurrentBackground();
-    this.isTransitioning = false;
+    this.isTransitioning = true;
+    this.transitionPhase = "fading_out"; // Start fading out
   }
 
   update() {
@@ -63,14 +64,35 @@ export class Background extends Entity {
           (this.currentFrame + 1) % this.currentBackground.frameCount;
       }
     }
+
+    // Handle Fade Transition
+    if (this.transitionPhase === "fading_out") {
+      this.fadeAlpha -= this.transitionSpeed;
+      if (this.fadeAlpha <= 0) {
+        this.fadeAlpha = 0;
+        this.transitionPhase = "switching";
+      }
+    } else if (this.transitionPhase === "switching") {
+      this.currentIndex = (this.currentIndex + 1) % this.backgroundList.length;
+      this.setCurrentBackground();
+      this.transitionPhase = "fading_in";
+    } else if (this.transitionPhase === "fading_in") {
+      this.fadeAlpha += this.transitionSpeed;
+      if (this.fadeAlpha >= 1) {
+        this.fadeAlpha = 1;
+        this.transitionPhase = null;
+        this.isTransitioning = false;
+      }
+    }
   }
 
   draw(ctx) {
     if (!this.currentBackground) return;
 
     ctx.save();
+    ctx.globalAlpha = this.fadeAlpha; // Apply fading effect
 
-    // Restore Parallax Effect
+    // Parallax Effect
     const parallaxX = -this.camera.x * 0.05;
     const parallaxY = -this.camera.y * 0.0025;
     ctx.translate(parallaxX, parallaxY);

@@ -121,7 +121,7 @@ export class Player extends Actor {
     if (GAME_ENGINE.debug_colliders) {
       this.health = 1000000;
       this.jumpForce = -2100;
-      this.speed = 1000;
+      this.speed = 2000;
     } else {
       this.speed = 600;
       this.jumpForce = -1500;
@@ -480,7 +480,6 @@ export class Player extends Actor {
       this.setAnimation(PLAYER_SPRITESHEET.ATTACK1.NAME, false);
       this.spellCooldowns[this.selectedSpell] = this.maxSpellCooldown;
       window.ASSET_MANAGER.playAsset("./assets/sfx/revolver_shot.ogg", 1);
-      
 
       this.gun_spin = this.dir;
       this.gun_spin_to = this.dir - Math.PI * 2;
