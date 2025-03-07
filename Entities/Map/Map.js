@@ -16,6 +16,8 @@ import { HealingBottle } from "../../Entities/Enemy/HealingBottle.js";
 import { BackgroundTriggerTile } from "./Tiles/BackgroundTriggerTile.js";
 import { BACKGROUND_SPRITESHEET } from "../../Globals/Constants.js";
 import { SpawnPointTile } from "./Tiles/SpawnPointTile.js";
+import { Boulder } from "../Objects/Boulder.js";
+import { WebObstacle } from "../Objects/WebObstacle.js";
 
 export class Map extends GameMap {
   constructor() {
@@ -60,7 +62,10 @@ export class Map extends GameMap {
   async load() {
     //const playerSpawn = { x: 763, y: 1500 };
     //const playerSpawn = { x: 12400, y: 4000 };
+    // spider pit
     const playerSpawn = { x: 23532, y: 4760 };
+    GAME_ENGINE.addEntity(new Boulder(23532, 5000));
+    GAME_ENGINE.addEntity(new WebObstacle(23532, 4760));
     // first stage spawn point = { x: 763, y: 1500 }
     // second stage spawn point = { x: 12400, y: 4000 }
 

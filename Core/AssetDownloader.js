@@ -178,6 +178,8 @@ export class AssetDownloader {
     this.assetManager.queueDownload("./assets/objects/tumbleweed.png");
     this.assetManager.queueDownload("./assets/objects/growing_tree.png");
     this.assetManager.queueDownload("./assets/objects/health_potion.png");
+    this.assetManager.queueDownload("./assets/objects/Boulder.png");
+    this.assetManager.queueDownload("./assets/objects/WebObstacle.png");
   }
 
   downloadEnvironmentalAssets() {
