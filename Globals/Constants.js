@@ -282,6 +282,14 @@ export const MAP_CONSTANTS = {
     FRAME_COUNT: 8,
     FRAME_DURATION: 0.25,
   },
+  ACTIVATED_CAMPFIRE: {
+    NAME: "ACTIVATEDCAMPFIRE",
+    URL: "./assets/map/ActivatedCampfire.png",
+    FRAME_WIDTH: 32,
+    FRAME_HEIGHT: 64,
+    FRAME_COUNT: 8,
+    FRAME_DURATION: 0.25,
+  },
   SPIDERWEB: {
     NAME: "SPIDERWEB",
     URL: "./assets/map/Spiderweb.png",
