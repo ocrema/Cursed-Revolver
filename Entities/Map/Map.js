@@ -28,11 +28,27 @@ export class Map extends GameMap {
 
     this.currentStage = 1;
     this.totalEnemies = 0;
+
+    // Track enemies per stage
+    this.stageEnemyGroups = {
+      1: new Set(),
+      2: new Set(),
+      3: new Set(),
+    };
+
+    // Track enemy counts per stage
+    this.stageEnemyCounts = {
+      1: 0,
+      2: 0,
+      3: 0,
+    };
+
+    this.gameMap = null; // Store reference to game map
   }
 
   async load() {
-    //const playerSpawn = { x: 763, y: 1500 };
-    const playerSpawn = { x: 12400, y: 4000 };
+    const playerSpawn = { x: 763, y: 1500 };
+    //const playerSpawn = { x: 12400, y: 4000 };
     // first stage spawn point = { x: 763, y: 1500 }
     // second stage spawn point = { x: 12400, y: 4000 }
     GAME_ENGINE.addEntity(new Player(playerSpawn.x, playerSpawn.y));
@@ -74,6 +90,12 @@ export class Map extends GameMap {
   }
 
   spawnEntities(gameMap) {
+    this.stageEnemyGroups = {
+      1: new Set(),
+      2: new Set(),
+      3: new Set(),
+    };
+
     const enemySpawnFunctions = {
       Cactus: {
         method: gameMap.getCactusSpawnPoints,
@@ -121,35 +143,20 @@ export class Map extends GameMap {
     };
 
     for (const key in enemySpawnFunctions) {
-      const {
-        method,
-        entity,
-        offsetY = 0,
-        direction,
-      } = enemySpawnFunctions[key];
+      const { method, entity, offsetY = 0 } = enemySpawnFunctions[key];
       const spawnPoints = method.call(gameMap);
+
       for (let spawn of spawnPoints) {
-        const e = new entity(spawn.x, spawn.y + offsetY, direction);
+        const e = new entity(spawn.x, spawn.y + offsetY);
         this.totalEnemies++;
 
-        if (spawn.x < 11700 && spawn.y < 3000) {
-          this.totalFirstStageEnemies++;
-          console.log("Adding enemy to first stage enemy list.");
-          this.firstStageEnemies.add(e);
-        } else if (
-          spawn.x > 11700 &&
-          spawn.y > 3000 &&
-          spawn.x < 30000 &&
-          spawn.y < 5000
-        ) {
-          this.totalSecondStageEnemies++;
-          console.log("Adding enemy to second stage enemy list.");
-          this.secondStageEnemies.add(e);
-        }
+        let stage = this.getStageFromPosition(spawn.x, spawn.y);
+        console.log(`Adding enemy to stage ${stage}.`);
+
+        this.stageEnemyGroups[stage].add(e);
+        this.stageEnemyCounts[stage]++;
 
         e.onDeath = () => this.onEnemyDeath(e);
-
-        GAME_ENGINE.addEntity(e);
       }
     }
 
@@ -166,44 +173,64 @@ export class Map extends GameMap {
         GAME_ENGINE.addEntity(e);
       }
     }
+
+    this.spawnNextStageEnemies();
+  }
+
+  getStageFromPosition(x, y) {
+    if (x < 11700 && y < 3000) {
+      return 1;
+    } else if (x > 11700 && y < 5000) {
+      return 2;
+    } else {
+      return 3;
+    }
+  }
+
+  spawnNextStageEnemies() {
+    if (!this.stageEnemyGroups[this.currentStage]) return;
+
+    console.log(
+      `Spawning ${this.stageEnemyCounts[this.currentStage]} enemies for stage ${
+        this.currentStage
+      }.`
+    );
+
+    for (let enemy of this.stageEnemyGroups[this.currentStage]) {
+      GAME_ENGINE.addEntity(enemy);
+    }
   }
 
   onEnemyDeath(enemy) {
-    if (this.firstStageEnemies.has(enemy)) {
-      this.firstStageEnemies.delete(enemy);
-      this.totalFirstStageEnemies--;
-      console.log(
-        `Enemy removed from firstStageEnemy list. Remaining: ${this.firstStageEnemies.size}`
-      );
+    for (const stage in this.stageEnemyGroups) {
+      if (this.stageEnemyGroups[stage].has(enemy)) {
+        this.stageEnemyGroups[stage].delete(enemy);
+        this.stageEnemyCounts[stage]--;
+        console.log(
+          `Enemy removed from stage ${stage}. Remaining: ${this.stageEnemyCounts[stage]}`
+        );
 
-      if (this.firstStageEnemies.size === 0) {
-        this.onFirstStageCleared();
-      }
-    }
-
-    if (this.secondStageEnemies.has(enemy)) {
-      this.secondStageEnemies.delete(enemy);
-      this.totalSecondStageEnemies--;
-      console.log(
-        `Enemy removed from secondStageEnemy list. Remaining: ${this.secondStageEnemies.size}`
-      );
-
-      if (this.secondStageEnemies.size === 0) {
-        this.onSecondStageCleared();
+        if (this.stageEnemyCounts[stage] === 0) {
+          this.onStageCleared(stage);
+        }
+        break;
       }
     }
   }
 
-  // put logic for breakable objects here - spiderweb, boulder etc
-  onFirstStageCleared() {
-    this.firstStageCleared = true; // Used to trigger events in the future
-    console.log("All enemies on first stage cleared.");
-    this.currentStage = 2;
-  }
+  onStageCleared(stage) {
+    console.log(
+      `Stage ${stage} cleared. Total enemies eliminated: ${
+        this.totalEnemies - this.stageEnemyCounts[stage]
+      }`
+    );
 
-  onSecondStageCleared() {
-    this.secondStageCleared = true; // Used to trigger events in the future
-    this.currentStage = 3;
-    console.log("All enemies on second stage cleared.");
+    this.currentStage++;
+
+    if (this.currentStage <= Object.keys(this.stageEnemyGroups).length) {
+      this.spawnNextStageEnemies();
+    } else {
+      console.log("All stages cleared!");
+    }
   }
 }
