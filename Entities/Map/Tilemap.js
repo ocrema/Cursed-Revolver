@@ -101,7 +101,7 @@ export class Tilemap {
           let worldY = y * this.tileSize * this.scale;
 
           let tileClass = Tile;
-
+          let hideEnemySpawnPoints = false;
           switch (tileID) {
             case 105:
               tileClass = SpawnPointTile;
@@ -125,17 +125,21 @@ export class Tilemap {
 
             case 107:
               this.cactusSpawnPoints.push({ x: worldX, y: worldY });
+              hideEnemySpawnPoints = true;
               break;
 
             case 108:
               this.cowboySpawnPoints.push({ x: worldX, y: worldY });
+              hideEnemySpawnPoints = true;
               break;
 
             case 109:
               this.birdSpawnPoints.push({ x: worldX, y: worldY });
+              hideEnemySpawnPoints = true;
               break;
             case 110:
               this.barrelSpawnPoints.push({ x: worldX, y: worldY });
+              hideEnemySpawnPoints = true;
               break;
             case 111:
               tileClass = BackgroundTriggerTile;
@@ -143,6 +147,7 @@ export class Tilemap {
               break;
             case 112:
               this.tumbleweedTriggerPoints.push({ x: worldX, y: worldY });
+              hideEnemySpawnPoints = true;
               break;
             case 113:
               tileClass = SpiderwebTile;
@@ -150,12 +155,14 @@ export class Tilemap {
               break;
             case 114:
               this.spiderSpawnPoints.push({ x: worldX, y: worldY });
+              hideEnemySpawnPoints = true;
               break;
             case 115:
               this.growingTreeSpawnPoints.push({ x: worldX, y: worldY });
               break;
             case 116:
               this.golemSpawnPoints.push({ x: worldX, y: worldY });
+              hideEnemySpawnPoints = true;
               break;
             default:
               break;
@@ -172,6 +179,9 @@ export class Tilemap {
             this.solidTiles,
             this.scale
           );
+          if (hideEnemySpawnPoints) {
+            tile.entityOrder = -10000;
+          }
           GAME_ENGINE.addEntity(tile);
         }
       }
