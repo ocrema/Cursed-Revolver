@@ -32,25 +32,25 @@ export class SpiderwebTile extends Tile {
     GAME_ENGINE.addEntity(this.spiderwebVisual);
   }
 
-  draw(ctx) {
-    if (!this.tilesetImage || this.tileID < this.firstGID) return;
+  // draw(ctx) {
+  //   if (!this.tilesetImage || this.tileID < this.firstGID) return;
 
-    let tileIndex = this.tileID - this.firstGID;
-    let tilesetX = (tileIndex % this.tilesPerRow) * this.tileSize;
-    let tilesetY = Math.floor(tileIndex / this.tilesPerRow) * this.tileSize;
+  //   let tileIndex = this.tileID - this.firstGID;
+  //   let tilesetX = (tileIndex % this.tilesPerRow) * this.tileSize;
+  //   let tilesetY = Math.floor(tileIndex / this.tilesPerRow) * this.tileSize;
 
-    // Adjust the drawing position to move it UP and RIGHT
-    ctx.drawImage(
-      this.tilesetImage,
-      tilesetX,
-      tilesetY,
-      32,
-      32,
-      this.x - GAME_ENGINE.camera.x,
-      this.y - GAME_ENGINE.camera.y,
-      32 * this.scale,
-      32 * this.scale // Apply scaling
-    );
-  }
+  //   // Adjust the drawing position to move it UP and RIGHT
+  //   ctx.drawImage(
+  //     this.tilesetImage,
+  //     tilesetX,
+  //     tilesetY,
+  //     32,
+  //     32,
+  //     this.x - GAME_ENGINE.camera.x,
+  //     this.y - GAME_ENGINE.camera.y,
+  //     32 * this.scale,
+  //     32 * this.scale // Apply scaling
+  //   );
+  // }
 }
 6;
