@@ -631,11 +631,11 @@ class HealDust extends Entity {
     this.image = window.ASSET_MANAGER.getAsset(
       "./assets/effects/healing/heal.png"
     );
-    this.scale = 3;
+    this.scale = 2;
   }
   update() {
     this.x = this.player.x;
-    this.y = this.player.y + this.player.collider.height;
+    this.y = this.player.y + (this.player.collider.height / 2) * this.scale;
     this.time += GAME_ENGINE.clockTick;
     if (this.time >= this.end) {
       this.removeFromWorld = true;
