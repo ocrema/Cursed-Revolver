@@ -31,7 +31,8 @@ export class Map extends GameMap {
   }
 
   async load() {
-    const playerSpawn = { x: 763, y: 1500 };
+    //const playerSpawn = { x: 763, y: 1500 };
+    const playerSpawn = { x: 12400, y: 4000 };
     // first stage spawn point = { x: 763, y: 1500 }
     // second stage spawn point = { x: 12400, y: 4000 }
     GAME_ENGINE.addEntity(new Player(playerSpawn.x, playerSpawn.y));
