@@ -62,11 +62,12 @@ export class Map extends GameMap {
     //const playerSpawn = { x: 12400, y: 4000 };
     // first stage spawn point = { x: 763, y: 1500 }
     // second stage spawn point = { x: 12400, y: 4000 }
-    GAME_ENGINE.addEntity(new Player(playerSpawn.x, playerSpawn.y));
 
-    GAME_ENGINE.addEntity(
-      new Background(Object.values(BACKGROUND_SPRITESHEET))
+    const player = GAME_ENGINE.addEntity(
+      new Player(playerSpawn.x, playerSpawn.y)
     );
+
+    GAME_ENGINE.addEntity(new Background(player));
 
     const tilesetNames = [
       "Atlas.png",

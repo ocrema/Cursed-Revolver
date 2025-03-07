@@ -1,20 +1,21 @@
 import { Entity } from "../Entities.js";
 import { Camera } from "../../Core/Camera.js";
 import { BACKGROUND_SPRITESHEET } from "../../Globals/Constants.js";
+import { Player } from "../Player/Player.js";
 
 export class Background extends Entity {
-  constructor() {
+  constructor(player) {
     super();
     this.scale = 4;
     this.entityOrder = -10;
     this.camera = Camera.getInstance();
-
     this.backgroundList = Object.values(BACKGROUND_SPRITESHEET);
     this.currentIndex = 0;
     this.isTransitioning = false;
     this.transitionPhase = null; // 'fading_out' → 'switching' → 'fading_in' → null
     this.fadeAlpha = 1; // 1 = fully visible, 0 = fully transparent
     this.transitionSpeed = 0.02; // Adjust for faster/slower fade
+    this.player = player;
 
     this.animations = {};
     this.loadBackgroundData();
@@ -93,9 +94,14 @@ export class Background extends Entity {
     ctx.globalAlpha = this.fadeAlpha; // Apply fading effect
 
     // Parallax Effect
-    const parallaxX = -this.camera.x * 0.05;
-    const parallaxY = -this.camera.y * 0.0025;
-    ctx.translate(parallaxX, parallaxY);
+    let player = GAME_ENGINE.entities.find((e) => e instanceof Player);
+    let playerX = player ? player.x : 0; // Default to 0 if no player
+
+    // Always position the background slightly to the left of the player
+    const bgOffsetX = 0.01;
+    const bgOffsetY = -this.camera.y * -0.0025; // Parallax Effect (Y-axis)
+
+    ctx.translate(bgOffsetX, bgOffsetY);
     ctx.scale(this.scale, this.scale);
 
     this.drawBackground(ctx, this.currentBackground);

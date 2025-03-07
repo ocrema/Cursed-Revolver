@@ -15,7 +15,7 @@ export class SpiderwebTile extends Tile {
     scale = 1
   ) {
     super();
-    this.entityOrder = -9;
+    this.entityOrder = -99999;
     this.x = x;
     this.y = y;
     this.tileID = tileID;
