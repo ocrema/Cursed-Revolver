@@ -19,7 +19,7 @@ export class SpawnPointTile extends Tile {
     super();
     this.entityOrder = -99999;
     this.x = x;
-    this.y = y;
+    this.y = y - 35;
     this.tileID = tileID;
     this.tilesetImage = tilesetImage;
     this.tileSize = tileSize;
@@ -34,8 +34,8 @@ export class SpawnPointTile extends Tile {
     this.isActivated = false;
 
     this.collider = new Collider(
-      this.tileSize * this.scale,
-      this.tileSize * this.scale
+      this.tileSize * this.scale * 2,
+      this.tileSize * this.scale * 2
     );
 
     this.map = window.MAP;
