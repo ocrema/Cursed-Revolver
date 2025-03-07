@@ -58,6 +58,7 @@ export class Map extends GameMap {
       "SpawnPoints/SpiderwebSpawnPoint.png",
       "SpawnPoints/SpiderSpawnPoint.png",
       "SpawnPoints/GrowingTreeSpawnPoint.png",
+      "SpawnPoints/GolemSpawnPoint.png",
     ];
 
     const TILESET_IMAGES = tilesetNames.map((name) =>
@@ -89,6 +90,11 @@ export class Map extends GameMap {
       Spider: {
         method: gameMap.getSpiderSpawnPoints,
         entity: Spider,
+        offsetY: -10,
+      },
+      Golem: {
+        method: gameMap.getGolemSpawnPoints,
+        entity: EarthGolem,
         offsetY: -10,
       },
     };
