@@ -129,7 +129,7 @@ export class GameEngine {
     });
 
     document.addEventListener("wheel", (e) => {
-      this.keys[(e.deltaY < 0 ? "wheelUp" : "wheelDown")] = true;
+      this.keys[e.deltaY < 0 ? "wheelUp" : "wheelDown"] = true;
 
       //console.log("Mouse wheel used:", e.deltaY);
     });
@@ -276,11 +276,10 @@ export class GameEngine {
     for (let i = this.entities.length - 1; i >= 0; --i) {
       if (this.entities[i] && this.entities[i].removeFromWorld) {
         this.entities.splice(i, 1);
-        this.GAME_CONTROLLER.hud.checkWin();
+        //this.GAME_CONTROLLER.hud.checkWin();
       }
     }
-   // console.log("Entities in game:", GAME_ENGINE.entities.map(e => e.constructor.name));
-
+    // console.log("Entities in game:", GAME_ENGINE.entities.map(e => e.constructor.name));
   }
 
   loop() {
