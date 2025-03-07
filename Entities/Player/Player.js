@@ -37,7 +37,6 @@ export class Player extends Actor {
     this.health = 200;
     this.maxHealth = 200;
     this.isLaunchable = true;
-    this.inWater = false;
     this.validEffects = {};
 
     // Start with the idle animation
@@ -53,7 +52,14 @@ export class Player extends Actor {
     this.selectedSpell = 0;
     this.spellCooldowns = [0, 0, 0, 0, 0, 0];
     this.maxSpellCooldown = 1;
-    this.spellColors = ['orange', 'limegreen', 'cyan', 'blue', 'yellow', 'purple'];
+    this.spellColors = [
+      "orange",
+      "limegreen",
+      "cyan",
+      "blue",
+      "yellow",
+      "purple",
+    ];
 
     this.timeBetweenFootsteps = 0.4;
     this.timeSinceLastFootstep = 0.4;
@@ -210,7 +216,6 @@ export class Player extends Actor {
   }
 
   movement() {
-    this.inWater = false;
     //gravity
     this.y_velocity = Math.min(
       this.y_velocity + GAME_ENGINE.clockTick * 3000,
@@ -236,13 +241,6 @@ export class Player extends Actor {
       this.y_velocity = 0;
       this.x_velocity = this.storedDashSpeed;
       this.isDashing -= GAME_ENGINE.clockTick;
-    }
-
-    for (let e of GAME_ENGINE.entities) {
-      if (e.isWater && this.colliding(e)) {
-        this.inWater = true;
-        break;
-      }
     }
 
     if (
@@ -303,11 +301,6 @@ export class Player extends Actor {
       window.ASSET_MANAGER.playAsset("./assets/sfx/jump.ogg");
     }
 
-    let currentSpeed = this.speed;
-    if (this.inWater) {
-      currentSpeed *= 0.5;
-    }
-
     // Movement logic
 
     let velFromKeys = 0;
@@ -315,7 +308,7 @@ export class Player extends Actor {
       GAME_ENGINE.keys["a"] ||
       (this.isDashing > 0 && this.storedDashSpeed < 0)
     ) {
-      velFromKeys -= currentSpeed;
+      velFromKeys -= this.speed;
       this.isMoving = true;
       this.flip = true;
     }
@@ -323,7 +316,7 @@ export class Player extends Actor {
       GAME_ENGINE.keys["d"] ||
       (this.isDashing > 0 && this.storedDashSpeed > 0)
     ) {
-      velFromKeys += currentSpeed;
+      velFromKeys += this.speed;
       this.isMoving = true;
       this.flip = false;
     }
@@ -348,13 +341,10 @@ export class Player extends Actor {
           e.isSpike ||
           e.isSpawnPoint ||
           e.isBackgroundTrigger ||
-          e.isPickup
+          e.isPickup || 
+          e.isWater
         )
           continue;
-        if (e.isWater) {
-          this.inWater = true;
-          continue;
-        }
         if (this.colliding(e)) {
           hitSomething = true;
           this.moveAgainstX(e);
@@ -397,14 +387,10 @@ export class Player extends Actor {
         e.isDestructibleObject ||
         e.isSpike ||
         e.isSpawnPoint ||
-        e.isBackgroundTrigger
+        e.isBackgroundTrigger || 
+        e.isWater
       )
         continue;
-
-      if (e.isWater) {
-        this.inWater = true;
-        continue;
-      }
 
       if (this.colliding(e)) {
         hitSomething = true;
@@ -494,7 +480,9 @@ export class Player extends Actor {
       } else if (this.selectedSpell === 3) {
         GAME_ENGINE.addEntity(new WaterWave(this, this.dir, this.gun_offset));
       } else if (this.selectedSpell === 4) {
-        GAME_ENGINE.addEntity(new ChainLightning(this, this.dir, this.gun_offset));
+        GAME_ENGINE.addEntity(
+          new ChainLightning(this, this.dir, this.gun_offset)
+        );
       } else if (this.selectedSpell === 5) {
         GAME_ENGINE.addEntity(new VoidOrb(this, this.dir, this.gun_offset));
       }
@@ -519,7 +507,7 @@ export class Player extends Actor {
     let dir;
     if (this.gun_spin !== null) dir = this.gun_spin;
     else dir = this.dir;
-    ctx.rotate((this.flip) ? -dir + Math.PI : dir);
+    ctx.rotate(this.flip ? -dir + Math.PI : dir);
     ctx.shadowColor = this.spellColors[this.selectedSpell];
     ctx.shadowBlur = 30;
     const scale = 2.5;

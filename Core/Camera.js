@@ -50,8 +50,6 @@ export class Camera extends Entity {
       this.y += (this.player.y + verticalOffset - this.y) * lerpFactor;
 
       // Clamp the camera within the map boundaries
-
-      console.log(this.x);
       this.x = Math.max(1000, Math.min(this.x, this.maxX));
     }
   }

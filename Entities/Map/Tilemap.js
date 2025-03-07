@@ -107,7 +107,6 @@ export class Tilemap {
               break;
 
             case 74:
-            case 75:
               tileClass = WaterTile;
               break;
 
