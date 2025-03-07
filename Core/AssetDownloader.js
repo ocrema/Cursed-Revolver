@@ -24,6 +24,7 @@ export class AssetDownloader {
 
     // UX
     this.downloadSFXAssets();
+    this.downloadMusicAssets();
 
     // HUD / UI
     this.downloadPauseMenuButtons();
@@ -43,6 +44,7 @@ export class AssetDownloader {
     this.assetManager.queueDownload("./assets/player/Hit.png");
     this.assetManager.queueDownload("./assets/player/Attack.png");
     this.assetManager.queueDownload("./assets/player/gun.png");
+    this.assetManager.queueDownload("./assets/ui/aim.png");
   }
 
   downloadEnemyAssets() {
@@ -61,7 +63,6 @@ export class AssetDownloader {
     this.assetManager.queueDownload("./assets/enemy/cactus/die.png");
     this.assetManager.queueDownload("./assets/enemy/cactus/idle.png");
     this.assetManager.queueDownload("./assets/enemy/cactus/spawn.png");
-
 
     // Cowboy Enemy
     this.assetManager.queueDownload("./assets/cowboy/walk.png");
@@ -144,6 +145,12 @@ export class AssetDownloader {
     this.assetManager.queueDownload(
       "./assets/map/SpawnPoints/SpiderwebSpawnPoint.png"
     );
+    this.assetManager.queueDownload(
+      "./assets/map/SpawnPoints/GrowingTreeSpawnPoint.png"
+    );
+    this.assetManager.queueDownload(
+      "./assets/map/SpawnPoints/SpiderSpawnPoint.png"
+    );
     this.assetManager.queueDownload("./assets/map/Spiderweb.png");
     this.assetManager.queueDownload("./assets/map/Signs.png");
     this.assetManager.queueDownload("./assets/map/Campfire.png");
@@ -220,6 +227,11 @@ export class AssetDownloader {
     this.assetManager.queueDownload("./assets/sfx/spider_death.wav");
     this.assetManager.queueDownload("./assets/sfx/temp_shock.ogg");
     this.assetManager.queueDownload("./assets/sfx/void_explosion.wav");
+    this.assetManager.queueDownload("./assets/sfx/checkpoint.ogg");
+  }
+
+  downloadMusicAssets() {
+    this.assetManager.queueDownload("./assets/music/track1.mp3");
   }
 
   downloadPauseMenuButtons() {
@@ -265,9 +277,8 @@ export class AssetDownloader {
   }
 
   downloadRevolverCylinderSprites() {
-    for (let i = 1; i <= 10; i++) {
-      this.assetManager.queueDownload(`./assets/ui/revolver/cylinder${i}.png`);
-    }
+    this.assetManager.queueDownload(`./assets/ui/revolver/cylinder1.png`);
+    this.assetManager.queueDownload(`./assets/ui/revolver/bullets.png`);
   }
 
   downloadFonts() {

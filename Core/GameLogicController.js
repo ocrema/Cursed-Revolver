@@ -10,7 +10,7 @@ export class GameLogicController extends Entity {
     this.entityOrder = -1; // Ensure it updates early in the loop
     this.state = 0; // Game initialization state
     this.isPaused = false; // Pause state
-    this.isGameOver = false; 
+    this.isGameOver = false;
 
     // Create and add the pause menu
     this.pauseMenu = new PauseMenu();
@@ -52,7 +52,6 @@ export class GameLogicController extends Entity {
     this.isGameOver = false;
     this.isPaused = false;
 
-    
     // window.location.reload(); // Reloads the game (resets everything)
   }
 
@@ -60,10 +59,11 @@ export class GameLogicController extends Entity {
     // Initialize the game
     if (this.state === 0) {
       this.state = 1;
+      window.ASSET_MANAGER.playTrack(1);
       const map = new Map();
       this.GAME_ENGINE.addEntity(map);
       map.load();
-      this.hud = new HUD();
+      this.hud = new HUD(map);
       this.GAME_ENGINE.addEntity(this.hud);
     }
 

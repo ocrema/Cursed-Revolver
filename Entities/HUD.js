@@ -2,7 +2,7 @@ import { Entity } from "../Entities/Entities.js";
 import { GAME_ENGINE } from "../main.js";
 
 export class HUD extends Entity {
-  constructor() {
+  constructor(map) {
     super();
     this.entityOrder = 9999;
     this.healthBarWidthRatio = 0.3;
@@ -44,19 +44,19 @@ export class HUD extends Entity {
     this.attackAnimationTimer = 0;
     this.attackAnimationDuration = 0.8;
     this.isSpellSwitching = false; // Flag to check if spell switching animation is playing
-    this.isAttacking = false; 
-    this.currentCowboyImage = this.cowboyImages[0]; 
-    this.healthFlashTimer = 0; // Timer for flashing effect on hit 
+    this.isAttacking = false;
+    this.currentCowboyImage = this.cowboyImages[0];
+    this.healthFlashTimer = 0; // Timer for flashing effect on hit
     this.healthFlashDuration = 0.5; // Flash duration in seconds
     this.lastHealth = 0; // Stores the previous health value
 
     // Spells and cylinder setup
     this.spells = [
       { name: "Fireball", icon: "./assets/ui/spells/fireball.png" },
-      { name: "Lightning", icon: "./assets/ui/spells/lightning.png" },
-      { name: "Water Wave", icon: "./assets/ui/spells/water.png" },
+      { name: "Vine Grapple", icon: "./assets/ui/spells/vine.png" },
       { name: "Icicle", icon: "./assets/ui/spells/icicle.png" },
-      { name: "Vine Ball", icon: "./assets/ui/spells/vine.png" },
+      { name: "Water Wave", icon: "./assets/ui/spells/water.png" },
+      { name: "Chain Lightning", icon: "./assets/ui/spells/lightning.png" },
       { name: "Void Orb", icon: "./assets/ui/spells/void.png" },
     ];
 
@@ -71,10 +71,19 @@ export class HUD extends Entity {
 
     this.cylinderRotation = 0; // Current rotation (in radians)
     this.targetRotation = 0; // Target rotation (in radians)
-    this.rotationSpeed = 0; // Speed of rotation (radians per frame)
-    this.rotationTime = 0; // Time remaining for rotation
+    this.rotationSpeed = 8; // Speed of rotation (radians per frame)
+    this.rotationDirection = 0; // Direction of rotation (1 = clockwise, -1 = counter-clockwise)
 
     this.gameWon = false; // Flag that swaps after an enemy is killed
+
+    this.mapReference = map;
+
+    if (!this.mapReference) {
+      console.error("HUD could not find a reference to the map entity.");
+    }
+
+    this.playerCurrentStage = 1;
+    this.totalRemainingEnemies = 0;
   }
 
   colliding() {
@@ -82,12 +91,21 @@ export class HUD extends Entity {
   }
 
   update() {
+    if (this.mapReference) {
+      this.playerCurrentStage = this.mapReference.currentStage;
+      if (this.playerCurrentStage === 1) {
+        this.totalRemainingEnemies = this.mapReference.firstStageEnemies.size;
+      } else {
+        this.totalRemainingEnemies =
+          this.mapReference.secondStageEnemies.size;
+      }
+    }
     const player = GAME_ENGINE.entities.find((e) => e.isPlayer);
     if (!player) return; //check that player exists
 
     // Ensure the cowboy image is set on the first frame
     if (!this.currentCowboyImage) {
-        this.currentCowboyImage = this.cowboyImages[0]; // Default cowboy sprite
+      this.currentCowboyImage = this.cowboyImages[0]; // Default cowboy sprite
     }
 
     // Detect if player took damage
@@ -118,11 +136,18 @@ export class HUD extends Entity {
     // Handle Cowboy Animation (Spell & Attack Flash)
     if (this.isSpellSwitching == true || this.isAttacking == true) {
       const flashFrameIndex = Math.floor(
-        ((this.spellAnimationTimer + this.attackAnimationTimer) / this.spellAnimationDuration) * 6);
-        this.currentCowboyImage = `./assets/ui/cowboy_flash${Math.min(flashFrameIndex + 1, 6)}.png`;
+        ((this.spellAnimationTimer + this.attackAnimationTimer) /
+          this.spellAnimationDuration) *
+          6
+      );
+      this.currentCowboyImage = `./assets/ui/cowboy_flash${Math.min(
+        flashFrameIndex + 1,
+        6
+      )}.png`;
 
       // Reduce animation timers
-      if (this.isSpellSwitching) this.spellAnimationTimer -= GAME_ENGINE.clockTick;
+      if (this.isSpellSwitching)
+        this.spellAnimationTimer -= GAME_ENGINE.clockTick;
       if (this.isAttacking) this.attackAnimationTimer -= GAME_ENGINE.clockTick;
 
       // End animations when timers expire
@@ -137,16 +162,19 @@ export class HUD extends Entity {
       // Normal Blinking Animation (Slow & Randomized)
       this.blinkTimer += GAME_ENGINE.clockTick;
       if (this.blinkTimer >= this.blinkInterval) {
-          this.blinkTimer = 0;
-          this.blinkInterval = Math.random() * 3 + 3; // Blink every 3-6 seconds
-          this.cowboyFrameIndex = (this.cowboyFrameIndex + 1) % this.cowboyImages.length;
+        this.blinkTimer = 0;
+        this.blinkInterval = Math.random() * 3 + 3; // Blink every 3-6 seconds
+        this.cowboyFrameIndex =
+          (this.cowboyFrameIndex + 1) % this.cowboyImages.length;
       }
       this.currentCowboyImage = this.cowboyImages[this.cowboyFrameIndex];
     }
 
     // Sync HUD with Player's selected spell
-    this.activeSpellIndex = player.selectedSpell;
-    this.rotateCylinder(this.activeSpellIndex, 0.5);
+    if (this.activeSpellIndex !== player.selectedSpell) {
+      this.activeSpellIndex = player.selectedSpell;
+      this.rotateCylinder(this.activeSpellIndex, 0.5);
+    }
 
     // Toggle debug mode
     if (GAME_ENGINE.keys["b"]) {
@@ -158,12 +186,42 @@ export class HUD extends Entity {
     }
 
     // Smooth rotation logic
-    if (this.rotationTime > 0) {
-      this.cylinderRotation += this.rotationSpeed;
-      this.rotationTime -= GAME_ENGINE.clockTick;
+    if (this.rotationDirection !== 0) {
+      let change =
+        (this.cylinderRotation +
+          this.rotationSpeed * this.rotationDirection * GAME_ENGINE.clockTick) %
+        (Math.PI * 2);
+      if (change < 0) change += Math.PI * 2;
+      // Check if the rotation has reached the target for 1-5
 
-      if (this.rotationTime <= 0) {
-        this.cylinderRotation = this.targetRotation; // Snap to target
+      for (let i = 1; i <= 5; i++) {
+        let angle = i * (Math.PI / 3);
+        let a = this.cylinderRotation - angle;
+        let b = change - angle;
+        if (
+          Math.sign(a) !== Math.sign(b) &&
+          Math.abs(a) < Math.PI / 6 &&
+          Math.abs(b) < Math.PI / 6
+        ) {
+          if (i === player.selectedSpell) {
+            this.rotationDirection = 0;
+            this.cylinderRotation = this.targetRotation;
+          }
+          window.ASSET_MANAGER.playAsset("./assets/sfx/click1.ogg");
+        }
+      }
+
+      // special logic for 0
+      if (Math.abs(this.cylinderRotation - change) > Math.PI * (11 / 6)) {
+        if (this.activeSpellIndex === 0) {
+          this.rotationDirection = 0;
+          this.cylinderRotation = this.targetRotation;
+        }
+        window.ASSET_MANAGER.playAsset("./assets/sfx/click1.ogg");
+      }
+
+      if (this.rotationDirection !== 0) {
+        this.cylinderRotation = change;
       }
     }
   }
@@ -173,18 +231,19 @@ export class HUD extends Entity {
    * @param {number} pos - The index of the spell to rotate to (0-5).
    * @param {number} time - The duration of the transition (in seconds).
    */
-  rotateCylinder(pos, time) {
-    const totalSpells = this.spells.length;
-    const degreesPerSpell = 360 / totalSpells; // Each spell on circle
-    const newRotation = (pos * degreesPerSpell * Math.PI) / 180; // degrees to radians
-
-    // Cancel any current animation and start from the current location
-    this.targetRotation = newRotation;
-    this.rotationTime = time;
-    this.rotationSpeed =
-      (this.targetRotation - this.cylinderRotation) /
-      (time / GAME_ENGINE.clockTick);
-    this.activeSpellIndex = pos;
+  rotateCylinder(pos) {
+    const target = pos * (Math.PI / 3);
+    if (target === this.cylinderRotation) return;
+    if (target < this.cylinderRotation) {
+      if (Math.abs(target - this.cylinderRotation) < Math.PI)
+        this.rotationDirection = -1;
+      else this.rotationDirection = 1;
+    } else {
+      if (Math.abs(target - this.cylinderRotation) < Math.PI)
+        this.rotationDirection = 1;
+      else this.rotationDirection = -1;
+    }
+    this.targetRotation = target;
   }
 
   selectSpell(index) {
@@ -200,6 +259,25 @@ export class HUD extends Entity {
     const canvasWidth = ctx.canvas.width;
     const canvasHeight = ctx.canvas.height;
 
+    // logic for writing number of enemies left
+
+    ctx.fillStyle = "white";
+    ctx.font = `${canvasHeight * 0.03}px Texas, Arial`;
+    ctx.textAlign = "right";
+    if (this.playerCurrentStage === 1) {
+      ctx.fillText(
+        `Desert Enemies Left: ${this.totalRemainingEnemies}`,
+        canvasWidth - 20,
+        50
+      );
+    } else {
+      ctx.fillText(
+        `Underground Enemies Left: ${this.totalRemainingEnemies}`,
+        canvasWidth - 20,
+        50
+      );
+    }
+
     // Get Player
     const player = GAME_ENGINE.entities.find((e) => e.isPlayer);
     if (!player) return; // Ensure player exists
@@ -207,14 +285,16 @@ export class HUD extends Entity {
     // Get Assets
     const customFont = ASSET_MANAGER.getAsset("./assets/fonts/texas.ttf");
     //const cowboyImg = ASSET_MANAGER.getAsset("./assets/ui/cowboy.png");
-    const spellIcon = ASSET_MANAGER.getAsset(this.spells[this.activeSpellIndex].icon);
+    const spellIcon = ASSET_MANAGER.getAsset(
+      this.spells[this.activeSpellIndex].icon
+    );
     const cylinderImage = ASSET_MANAGER.getAsset(this.cylinderImages[0]);
 
     // === Font Setup ===
     ctx.fillStyle = "white";
     ctx.font = this.debugMode
-        ? `${canvasHeight * 0.025}px Arial`
-        : `${canvasHeight * 0.03}px ${customFont || "Arial"}`;
+      ? `${canvasHeight * 0.025}px Arial`
+      : `${canvasHeight * 0.03}px ${customFont || "Arial"}`;
     ctx.textAlign = "center";
 
     // === Health Bar Setup ===
@@ -234,43 +314,65 @@ export class HUD extends Entity {
     // Health Ratio and Fill
     const healthRatio = currentHealth / maxHealth;
     const filledWidth = healthBarWidth * healthRatio;
-    let healthColor = healthRatio > 0.5 ? "limegreen" : healthRatio > 0.2 ? "red" : "red";
+    let healthColor =
+      healthRatio > 0.5 ? "limegreen" : healthRatio > 0.2 ? "red" : "red";
 
     // === Flash Effect When Hit ===
     if (player.health < this.lastHealth) {
-        this.healthFlashTimer = this.healthFlashDuration;
+      this.healthFlashTimer = this.healthFlashDuration;
     }
     this.lastHealth = player.health;
 
     // === Create Gradient for HUD Background ===
-    const hudGradient = ctx.createLinearGradient(0, (canvasHeight - 120), 0, canvasHeight);
+    const hudGradient = ctx.createLinearGradient(
+      0,
+      canvasHeight - 120,
+      0,
+      canvasHeight
+    );
     hudGradient.addColorStop(0, "rgba(0, 0, 0, 0.01)"); // More transparent at top
     hudGradient.addColorStop(1, "rgba(0, 0, 0, 0.8)"); // Darker at bottom
 
     // === Draw Gradient HUD Background ===
     ctx.fillStyle = hudGradient;
     ctx.fillRect(0, canvasHeight - 120, canvasWidth, 120); // Covers bottom HUD area
-        
+
     // === Draw Purple Frame Around Health Bar ===
     const framePadding = 4; // Thickness of frame
     ctx.fillStyle = "rgba(179, 16, 179, 0.8)"; // Purple frame
-    ctx.fillRect(startX - framePadding, startY - framePadding, healthBarWidth + framePadding * 2, healthBarHeight + framePadding * 2);
+    ctx.fillRect(
+      startX - framePadding,
+      startY - framePadding,
+      healthBarWidth + framePadding * 2,
+      healthBarHeight + framePadding * 2
+    );
 
     // === Draw Health Bar ===
     ctx.fillStyle = "rgba(50, 50, 50, 0.8)"; // Background
     ctx.fillRect(startX, startY, healthBarWidth, healthBarHeight);
 
-    ctx.fillStyle = this.healthFlashTimer > 0 ? "rgba(255, 0, 0, 0.6)" : healthColor;
+    ctx.fillStyle =
+      this.healthFlashTimer > 0 ? "rgba(255, 0, 0, 0.6)" : healthColor;
     ctx.fillRect(startX, startY, filledWidth, healthBarHeight);
 
     ctx.fillStyle = this.healthFlashTimer > 0 ? "red" : "white";
     ctx.font = `${canvasHeight * 0.03}px Texas, Arial`;
-    ctx.fillText(`HP: ${Math.round(currentHealth)} / ${maxHealth}`, startX + healthBarWidth / 2, startY - 5);
+    ctx.fillText(
+      `HP: ${Math.round(currentHealth)} / ${maxHealth}`,
+      startX + healthBarWidth / 2,
+      startY - 5
+    );
 
     // === Draw Cowboy Icon ===
     const cowboyImg = ASSET_MANAGER.getAsset(this.currentCowboyImage);
     if (cowboyImg) {
-        ctx.drawImage(cowboyImg, cowboyX, cowboyY, cowboySize/2, cowboySize/2);
+      ctx.drawImage(
+        cowboyImg,
+        cowboyX,
+        cowboyY,
+        cowboySize / 2,
+        cowboySize / 2
+      );
     }
 
     // === Spell UI Setup ===
@@ -282,31 +384,97 @@ export class HUD extends Entity {
     const spellTextY = cylinderY + cylinderSize / 1.05;
 
     // === Draw Spell Name & Icon ===
-    ctx.fillStyle =  "white";
-    ctx.fillText(`Spell: ${this.spells[this.activeSpellIndex].name}`, spellTextX, spellTextY);
+    ctx.fillStyle = "white";
+    ctx.fillText(
+      `Spell: ${this.spells[this.activeSpellIndex].name}`,
+      spellTextX,
+      spellTextY
+    );
     if (spellIcon) {
-        const spellIconSize = 60 * scaleFactor;
-        ctx.drawImage(spellIcon, spellTextX + 90 * scaleFactor, spellTextY - 50 * scaleFactor, spellIconSize, spellIconSize);
+      const spellIconSize = 60 * scaleFactor;
+      ctx.drawImage(
+        spellIcon,
+        spellTextX + 90 * scaleFactor,
+        spellTextY - 50 * scaleFactor,
+        spellIconSize,
+        spellIconSize
+      );
     }
 
     // === Draw Revolver Cylinder (Rotating & Glowing) ===
     if (cylinderImage) {
       ctx.save();
-      
+
       // Position and rotation
       ctx.translate(cylinderX + cylinderSize / 2, cylinderY + cylinderSize / 2);
-      ctx.rotate(this.cylinderRotation);
+      ctx.rotate(-this.cylinderRotation);
 
       // === Glowing Effect Based on Selected Spell ===
-      ctx.shadowBlur = 30; // Glow intensity
-      ctx.shadowColor = this.getSpellGlowColor(this.activeSpellIndex); // Spell-based glow color
+      //ctx.shadowBlur = 30; // Glow intensity
+      //ctx.shadowColor = this.getSpellGlowColor(this.activeSpellIndex); // Spell-based glow color
 
       // Draw the cylinder
-      ctx.drawImage(cylinderImage, -cylinderSize / 2, -cylinderSize / 2, cylinderSize, cylinderSize);
+      ctx.drawImage(
+        cylinderImage,
+        -cylinderSize / 2,
+        -cylinderSize / 2,
+        cylinderSize,
+        cylinderSize
+      );
+
+      // draw bullets
+      const positions = [
+        { x: 0, y: -10 },
+        { x: 9, y: -5 },
+        { x: 9, y: 5 },
+        { x: 0, y: 10 },
+        { x: -9, y: 5 },
+        { x: -9, y: -5 },
+      ];
+      const colors = [
+        "orange",
+        "limegreen",
+        "cyan",
+        "blue",
+        "yellow",
+        "purple",
+      ];
+      for (let i = 0; i < 6; i++) {
+        //if (player.spellCooldowns[i] > 0) continue;
+
+        ctx.shadowBlur = 10; // Glow intensity
+        ctx.shadowColor = colors[i]; // Spell-based glow color
+        ctx.globalAlpha =
+          1 -
+          Math.min((player.spellCooldowns[i] * 2) / player.maxSpellCooldown, 1);
+
+        ctx.drawImage(
+          ASSET_MANAGER.getAsset("./assets/ui/revolver/bullets.png"),
+          8 * i,
+          0,
+          8,
+          8,
+          ((positions[i].x - 4) / 32) * cylinderSize,
+          ((positions[i].y - 4) / 32) * cylinderSize,
+          cylinderSize / 4,
+          cylinderSize / 4
+        );
+      }
 
       // Reset glow effect after drawing
       ctx.shadowBlur = 0;
+      ctx.globalAlpha = 1;
       ctx.restore();
+
+      // draw crosshair
+      /*
+      ctx.save();
+      ctx.shadowBlur = 0;
+      const crosshairSize = 128;
+      ctx.drawImage(ASSET_MANAGER.getAsset('./assets/ui/aim.png'),
+      -crosshairSize/2 + GAME_ENGINE.mouse.x, -crosshairSize/2 + GAME_ENGINE.mouse.y, crosshairSize, crosshairSize);
+      ctx.restore();
+      */
     }
 
     // === Game Win Screen ===
@@ -331,52 +499,78 @@ export class HUD extends Entity {
 
     // === Game Over Screen ===
     if (currentHealth <= 0) {
-        console.log("Player health is 0! Triggering Game Over.");
-        GAME_ENGINE.GAME_CONTROLLER.setGameOver();
+      console.log("Player health is 0! Triggering Game Over.");
+      GAME_ENGINE.GAME_CONTROLLER.setGameOver();
 
-        ctx.fillStyle = "rgba(255, 0, 0, 0.5)"; // Red overlay
-        ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+      ctx.fillStyle = "rgba(255, 0, 0, 0.5)"; // Red overlay
+      ctx.fillRect(0, 0, canvasWidth, canvasHeight);
 
-        ctx.fillStyle = "white";
-        ctx.font = `${canvasHeight * 0.12}px Texas, Arial`;
-        ctx.fillText("GAME OVER", canvasWidth / 2, canvasHeight / 2);
+      ctx.fillStyle = "white";
+      ctx.font = `${canvasHeight * 0.12}px Texas, Arial`;
+      ctx.fillText("GAME OVER", canvasWidth / 2, canvasHeight / 2);
 
-        ctx.font = `${canvasHeight * 0.04}px Texas, Arial`;
-        ctx.fillText("Press R to Restart", canvasWidth / 2, canvasHeight / 1.5);
+      ctx.font = `${canvasHeight * 0.04}px Texas, Arial`;
+      ctx.fillText("Press R to Restart", canvasWidth / 2, canvasHeight / 1.5);
 
-        ctx.restore();
-        return;
+      ctx.restore();
+      return;
     }
 
     // === Debug Mode UI ===
     if (this.debugMode) {
-        ctx.fillStyle = "white";
-        ctx.font = `${canvasHeight * 0.025}px Arial`;
+      ctx.fillStyle = "white";
+      ctx.font = `${canvasHeight * 0.025}px Arial`;
 
-        const debugTextX = 90;
-        const debugTextY = 40;
-        const lineSpacing = canvasHeight * 0.03;
-        let debugLine = 0;
+      const debugTextX = 90;
+      const debugTextY = 40;
+      const lineSpacing = canvasHeight * 0.03;
+      let debugLine = 0;
 
-        ctx.fillText("DEBUG MODE: ON", debugTextX, debugTextY + debugLine++ * lineSpacing);
+      ctx.fillText(
+        "DEBUG MODE: ON",
+        debugTextX,
+        debugTextY + debugLine++ * lineSpacing
+      );
 
-        // Get mouse position relative to the game world
-        const mouseX = GAME_ENGINE.mouse.x + GAME_ENGINE.camera.x;
-        const mouseY = GAME_ENGINE.mouse.y + GAME_ENGINE.camera.y;
+      // Get mouse position relative to the game world
+      const mouseX = GAME_ENGINE.mouse.x + GAME_ENGINE.camera.x;
+      const mouseY = GAME_ENGINE.mouse.y + GAME_ENGINE.camera.y;
 
-        if (player) {
-            ctx.fillText(`Player Position: (${Math.floor(player.x)}, ${Math.floor(player.y)})`, debugTextX, debugTextY + debugLine++ * lineSpacing);
-            ctx.fillText(`Player Velocity: (${player.x_velocity.toFixed(2)}, ${player.y_velocity.toFixed(2)})`, debugTextX, debugTextY + debugLine++ * lineSpacing);
-            ctx.fillText(`Active Spell: ${this.spells[this.activeSpellIndex].name}`, debugTextX, debugTextY + debugLine++ * lineSpacing);
-            ctx.fillText(`Health: ${currentHealth} / ${maxHealth}`, debugTextX, debugTextY + debugLine++ * lineSpacing);
-            ctx.fillText(`X: ${Math.floor(mouseX)}, Y: ${Math.floor(mouseY)}`, debugTextX, debugTextY + debugLine++ * lineSpacing);
-        }
+      if (player) {
+        ctx.fillText(
+          `Player Position: (${Math.floor(player.x)}, ${Math.floor(player.y)})`,
+          debugTextX,
+          debugTextY + debugLine++ * lineSpacing
+        );
+        ctx.fillText(
+          `Player Velocity: (${player.x_velocity.toFixed(
+            2
+          )}, ${player.y_velocity.toFixed(2)})`,
+          debugTextX,
+          debugTextY + debugLine++ * lineSpacing
+        );
+        ctx.fillText(
+          `Active Spell: ${this.spells[this.activeSpellIndex].name}`,
+          debugTextX,
+          debugTextY + debugLine++ * lineSpacing
+        );
+        ctx.fillText(
+          `Health: ${currentHealth} / ${maxHealth}`,
+          debugTextX,
+          debugTextY + debugLine++ * lineSpacing
+        );
+        ctx.fillText(
+          `X: ${Math.floor(mouseX)}, Y: ${Math.floor(mouseY)}`,
+          debugTextX,
+          debugTextY + debugLine++ * lineSpacing
+        );
+      }
     }
 
     ctx.restore();
   }
 
-  checkWin(){
+  checkWin() {
     let enemiesDead = true;
     for (let entity of GAME_ENGINE.entities) {
       // if an entity is an enemy and has more than 0 health
@@ -389,15 +583,14 @@ export class HUD extends Entity {
 
   getSpellGlowColor(spellIndex) {
     const spellGlows = [
-        "rgba(255, 68, 0, 0.86)",    // Fireball - Orange Red
-        "rgba(229, 232, 50, 0.8)", // Lightning - Light Blue
-        "rgba(43, 230, 224, 0.8)",  // Water Wave - Dodger Blue
-        "rgba(43, 154, 223, 0.8)", // Icicle - Sky Blue
-        "rgba(34, 139, 34, 0.8)",   // Vine Ball - Forest Green
-        "rgba(138, 43, 226, 0.8)"   // Void Orb - Blue Violet
+      "rgba(255, 68, 0, 0.86)", // Fireball - Orange Red
+      "rgba(229, 232, 50, 0.8)", // Lightning - Light Blue
+      "rgba(43, 230, 224, 0.8)", // Water Wave - Dodger Blue
+      "rgba(43, 154, 223, 0.8)", // Icicle - Sky Blue
+      "rgba(34, 139, 34, 0.8)", // Vine Ball - Forest Green
+      "rgba(138, 43, 226, 0.8)", // Void Orb - Blue Violet
     ];
-    
+
     return spellGlows[spellIndex] || "rgba(255, 255, 255, 0.8)"; // Default glow if index is out of range
   }
-
 }
