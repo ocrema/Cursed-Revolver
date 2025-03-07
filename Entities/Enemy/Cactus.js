@@ -11,6 +11,8 @@ export class Cactus extends Actor {
   constructor(x, y) {
     super();
     Object.assign(this, { x, y });
+    this.spawnX = x;
+    this.spawnY = y;
 
     // Animation
     this.assetManager = window.ASSET_MANAGER;
@@ -48,6 +50,14 @@ export class Cactus extends Actor {
     this.idleTimer = 0;
     this.randomIdleCooldown = [2, 3, 4, 5, 6, 7];
     this.updateIdleCooldown();
+  }
+
+  respawn() {
+    this.health = this.maxHealth; // Restore full health
+    this.dead = false;
+    this.x = this.spawnX;
+    this.y = this.spawnY;
+    console.log(`Enemy respawned at ${this.x}, ${this.y}`);
   }
 
   clearQueuedAttacks() {

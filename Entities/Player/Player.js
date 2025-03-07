@@ -11,6 +11,7 @@ import { Icicle } from "../Spells/Icicle.js";
 import { VoidOrb } from "../Spells/VoidOrb.js";
 import { VineGrapple } from "../Spells/VineGrapple.js";
 import { AnimationLoader } from "../../Core/AnimationLoader.js";
+import { SpawnPointTile } from "../Map/Tiles/SpawnPointTile.js";
 
 export class Player extends Actor {
   constructor(x, y) {
@@ -100,10 +101,18 @@ export class Player extends Actor {
   }
 
   setSpawnPoint(x, y) {
-    if (this.spawnX === x && this.spawnY === y) return;
+    //if (this.spawnX === x && this.spawnY === y) return;
     window.ASSET_MANAGER.playAsset("./assets/sfx/checkpoint.ogg");
     this.spawnX = x;
     this.spawnY = y;
+
+    //console.log(`Player respawn point set at ${x}, ${y}`);
+
+    // for (let entity of GAME_ENGINE.entities) {
+    //   if (entity instanceof SpawnPointTile && entity.x === this.spawnX) {
+    //     entity.respawnEnemies(); // Call respawnEnemies() on respawn
+    //   }
+    // }
   }
 
   respawn() {
@@ -122,6 +131,7 @@ export class Player extends Actor {
     this.gun_spin = null;
     this.x_velocity = 0;
     this.y_velocity = 0;
+    //this.setSpawnPoint(this.x, this.y);
   }
 
   update() {

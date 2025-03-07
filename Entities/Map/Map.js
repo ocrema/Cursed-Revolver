@@ -15,10 +15,14 @@ import { GrowingTree } from "../Objects/GrowingTree.js";
 import { HealingBottle } from "../../Entities/Enemy/HealingBottle.js";
 import { BackgroundTriggerTile } from "./Tiles/BackgroundTriggerTile.js";
 import { BACKGROUND_SPRITESHEET } from "../../Globals/Constants.js";
+import { SpawnPointTile } from "./Tiles/SpawnPointTile.js";
 
 export class Map extends GameMap {
   constructor() {
     super();
+    if (!window.MAP) {
+      window.MAP = this;
+    }
 
     this.firstStageCleared = false;
     this.firstStageEnemies = new Set();
@@ -43,7 +47,14 @@ export class Map extends GameMap {
       3: 0,
     };
 
+    this.enemySpawnData = {
+      1: [], // Store enemy data for each stage
+      2: [],
+      3: [],
+    };
+
     this.gameMap = null; // Store reference to game map
+    return MAP;
   }
 
   async load() {
@@ -90,12 +101,6 @@ export class Map extends GameMap {
   }
 
   spawnEntities(gameMap) {
-    this.stageEnemyGroups = {
-      1: new Set(),
-      2: new Set(),
-      3: new Set(),
-    };
-
     const enemySpawnFunctions = {
       Cactus: {
         method: gameMap.getCactusSpawnPoints,
@@ -153,6 +158,12 @@ export class Map extends GameMap {
         let stage = this.getStageFromPosition(spawn.x, spawn.y);
         console.log(`Adding enemy to stage ${stage}.`);
 
+        this.enemySpawnData[stage].push({
+          type: entity,
+          x: spawn.x,
+          y: spawn.y + offsetY,
+        });
+
         this.stageEnemyGroups[stage].add(e);
         this.stageEnemyCounts[stage]++;
 
@@ -188,32 +199,31 @@ export class Map extends GameMap {
   }
 
   spawnNextStageEnemies() {
-    if (!this.stageEnemyGroups[this.currentStage]) return;
+    if (!this.enemySpawnData[this.currentStage]) return;
 
-    console.log(
-      `Spawning ${this.stageEnemyCounts[this.currentStage]} enemies for stage ${
-        this.currentStage
-      }.`
-    );
+    console.log(`Spawning enemies for stage ${this.currentStage}.`);
 
-    for (let enemy of this.stageEnemyGroups[this.currentStage]) {
+    for (let spawnData of this.enemySpawnData[this.currentStage]) {
+      let enemy = new spawnData.type(spawnData.x, spawnData.y);
+      enemy.onDeath = () => this.onEnemyDeath(enemy);
       GAME_ENGINE.addEntity(enemy);
     }
   }
 
   onEnemyDeath(enemy) {
-    for (const stage in this.stageEnemyGroups) {
-      if (this.stageEnemyGroups[stage].has(enemy)) {
-        this.stageEnemyGroups[stage].delete(enemy);
-        this.stageEnemyCounts[stage]--;
-        console.log(
-          `Enemy removed from stage ${stage}. Remaining: ${this.stageEnemyCounts[stage]}`
-        );
+    for (const stage in this.enemySpawnData) {
+      for (let spawn of this.enemySpawnData[stage]) {
+        if (spawn.x === enemy.x && spawn.y === enemy.y) {
+          console.log(`Enemy removed from stage ${stage}.`);
 
-        if (this.stageEnemyCounts[stage] === 0) {
-          this.onStageCleared(stage);
+          // Simply remove from the world (not tracked for respawn anymore)
+          enemy.removeFromWorld = true;
+
+          if (this.enemySpawnData[stage].length === 0) {
+            this.onStageCleared(stage);
+          }
+          return;
         }
-        break;
       }
     }
   }
