@@ -81,7 +81,7 @@ export class Spider extends Actor {
       // check LOS on player
       for (let entity of GAME_ENGINE.entities) {
         if (entity instanceof Player) {
-          if (Util.canSee(this, entity)) {
+          if (Util.canSee(this, entity) && Util.canAttack(this.entity)) {
             this.seesPlayer = true;
             if (
               (this.currentAnimation === SPIDER_SPRITESHEET.AGGRESSIVE.NAME ||
@@ -246,7 +246,6 @@ export class Spider extends Actor {
       if (entity instanceof Tile && this.colliding(entity)) {
 
         if (this.velocity.y < 0 ) {
-          console.log(this.target);
           this.y = entity.y + (entity.collider.height / 2) + (this.height / 2);
           hitHead = true;
         }
