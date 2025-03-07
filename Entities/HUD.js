@@ -11,6 +11,7 @@ export class HUD extends Entity {
     this.enemyHealthBarWidthRatio = 0.1; // smaller than player's
     this.enemyHealthBarHeightRatio = 0.02; // scaled height
     this.debugMode = false;
+    this.assetManager = window.ASSET_MANAGER;
 
     // Cursor coordinates
     this.cursorX = 0;
@@ -35,6 +36,15 @@ export class HUD extends Entity {
       "./assets/ui/cowboy_spell6.png",
       "./assets/ui/cowboy_spell.png", // Transition end
     ];
+
+    // Game over animations
+    this.gameWinScreen = {
+      image: this.assetManager.getAsset("./assets/ui/gameend/win.png"),
+      width: 648,
+      height: 492,
+      frameCount: 6,
+      frameDuration: 0.75,
+    };
 
     this.cowboyFrameIndex = 0; // Current frame
     this.blinkTimer = 0; // Timer to switch frames
@@ -480,13 +490,13 @@ export class HUD extends Entity {
     // === Game Win Screen ===
 
     if (this.gameWon) {
-      console.log("All enemies are dead! Triggering game over.");
+      // console.log("All enemies are dead! Triggering game over.");
       GAME_ENGINE.GAME_CONTROLLER.setGameOver();
 
-      ctx.fillStyle = "rgba(0, 104, 71, 0.5)"; // Red overlay
-      ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+      //ctx.drawImage(ASSET_MANAGER.getAsset("./assets/ui/menu/desertbackground1.gif"), 0, 0);
+      this.updateGameOverScreen(ctx);
 
-      ctx.fillStyle = "white";
+      ctx.fillStyle = "rgb(22, 129, 0)";
       ctx.font = `${canvasHeight * 0.12}px Texas, Arial`;
       ctx.fillText("GAME WON", canvasWidth / 2, canvasHeight / 2);
 
@@ -504,6 +514,8 @@ export class HUD extends Entity {
 
       ctx.fillStyle = "rgba(255, 0, 0, 0.5)"; // Red overlay
       ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+
+      this.updateGameOverScreen(ctx);
 
       ctx.fillStyle = "white";
       ctx.font = `${canvasHeight * 0.12}px Texas, Arial`;
@@ -568,6 +580,33 @@ export class HUD extends Entity {
     }
 
     ctx.restore();
+  }
+
+  updateGameOverScreen(ctx) {
+    this.elapsedTime += GAME_ENGINE.clockTick;
+    
+    if (this.gameWon) {
+      if (this.elapsedTime > this.gameWinScreen.frameDuration) {
+        this.elapsedTime = 0;
+        this.currentFrame = (this.currentFrame + 1) % this.gameWinScreen.frameCount;
+      }
+
+      ctx.drawImage(
+        this.assetManager.getAsset("./assets/ui/gameend/win.png"),
+        this.currentFrame * this.gameWinScreen.width, 
+        0, 
+        this.gameWinScreen.width, 
+        this.gameWinScreen.height, 
+        0, 
+        0, 
+        ctx.canvas.width, 
+        ctx.canvas.height
+      );
+    }
+
+    else {
+      
+    }
   }
 
   checkWin() {
