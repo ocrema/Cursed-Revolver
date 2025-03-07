@@ -341,10 +341,11 @@ export class Player extends Actor {
           e.isSpike ||
           e.isSpawnPoint ||
           e.isBackgroundTrigger ||
-          e.isPickup || 
+          e.isPickup ||
           e.isWater
         )
           continue;
+
         if (this.colliding(e)) {
           hitSomething = true;
           this.moveAgainstX(e);
@@ -387,7 +388,7 @@ export class Player extends Actor {
         e.isDestructibleObject ||
         e.isSpike ||
         e.isSpawnPoint ||
-        e.isBackgroundTrigger || 
+        e.isBackgroundTrigger ||
         e.isWater
       )
         continue;
