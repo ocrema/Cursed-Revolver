@@ -107,16 +107,22 @@ export class HUD extends Entity {
     return false;
   }
 
+  displayFPS(ctx) {
+    ctx.font = "20px Arial";
+    ctx.fillStyle = "white";
+    ctx.fillText(`FPS: ${GAME_ENGINE.fps}`, ctx.canvas.width - 20, 70);
+  }
+
   update() {
     if (this.mapReference) {
       this.playerCurrentStage = this.mapReference.currentStage;
       if (this.playerCurrentStage === 1) {
         this.totalRemainingEnemies = this.mapReference.firstStageEnemies.size;
       } else {
-        this.totalRemainingEnemies =
-          this.mapReference.secondStageEnemies.size;
+        this.totalRemainingEnemies = this.mapReference.secondStageEnemies.size;
       }
     }
+
     const player = GAME_ENGINE.entities.find((e) => e.isPlayer);
     if (!player) return; //check that player exists
 
@@ -294,6 +300,8 @@ export class HUD extends Entity {
         50
       );
     }
+
+    this.displayFPS(ctx);
 
     // Get Player
     const player = GAME_ENGINE.entities.find((e) => e.isPlayer);

@@ -18,6 +18,8 @@ import { BACKGROUND_SPRITESHEET } from "../../Globals/Constants.js";
 import { SpawnPointTile } from "./Tiles/SpawnPointTile.js";
 import { Boulder } from "../Objects/Boulder.js";
 import { WebObstacle } from "../Objects/WebObstacle.js";
+import { Collider } from "../Collider.js";
+import { SpikeCollider } from "./SpikeCollider.js";
 
 export class Map extends GameMap {
   constructor() {
@@ -60,10 +62,12 @@ export class Map extends GameMap {
   }
 
   async load() {
-    //const playerSpawn = { x: 763, y: 1500 };
+    const playerSpawn = { x: 763, y: 1500 };
+
     //const playerSpawn = { x: 12400, y: 4000 };
     // spider pit
-    const playerSpawn = { x: 23532, y: 4760 };
+    //const playerSpawn = { x: 23532, y: 4760 };
+    GAME_ENGINE.addEntity(new SpikeCollider(763, 1500, 100, 100));
     GAME_ENGINE.addEntity(new Boulder(23532, 5000));
     GAME_ENGINE.addEntity(new WebObstacle(23532, 4760));
     // first stage spawn point = { x: 763, y: 1500 }
