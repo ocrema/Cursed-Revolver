@@ -184,6 +184,7 @@ export class Map extends GameMap {
     if (!enemiesToSpawn) return;
 
     for (let enemy of enemiesToSpawn) {
+      console.log(enemy);
       GAME_ENGINE.addEntity(enemy);
     }
   }

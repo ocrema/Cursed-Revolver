@@ -90,18 +90,32 @@ export class StaticCowboyEnemy extends Actor {
       let playerDetected = false;
       let playerTarget = null;
 
-      for (let entity of GAME_ENGINE.entities) {
-        if (entity instanceof Player && Util.canSee(this, entity)) {
-          this.seesPlayer = true;
-          playerDetected = true;
-          playerTarget = entity;
+      // for (let entity of GAME_ENGINE.entities) {
+      //   if (entity instanceof Player && Util.canSee(this, entity)) {
+      //     this.seesPlayer = true;
+      //     playerDetected = true;
+      //     playerTarget = entity;
 
-          // **Flip the cowboy based on player's position**
-          this.flip = entity.x < this.x; // Flip if player is on the left
+      //     // **Flip the cowboy based on player's position**
+      //     this.flip = entity.x < this.x; // Flip if player is on the left
 
-          if (this.attackCooldown >= this.fireRate) {
-            this.attack(entity);
-          }
+      //     if (this.attackCooldown >= this.fireRate) {
+      //       this.attack(entity);
+      //     }
+      //   }
+      // }
+
+      const player = window.PLAYER;
+      if (player && Util.canSee(this, player)) {
+        this.seesPlayer = true;
+        playerDetected = true;
+        playerTarget = player;
+
+        // **Flip the cowboy based on player's position**
+        this.flip = player.x < this.x; // Flip if player is on the left
+
+        if (this.attackCooldown >= this.fireRate) {
+          this.attack(player);
         }
       }
 
