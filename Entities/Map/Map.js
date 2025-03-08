@@ -13,9 +13,8 @@ import { Crow } from "../Enemy/Crow.js";
 import { Tilemap } from "./Tilemap.js";
 import { GrowingTree } from "../Objects/GrowingTree.js";
 import { BackgroundTriggerTile } from "./Tiles/BackgroundTriggerTile.js";
-import { Boulder } from "../Objects/Boulder.js";
-import { DeathCollider } from "./DeathCollider.js";
-import { SpiderWebObstacle } from "../Objects/SpiderWebObstacle.js";
+import { BACKGROUND_SPRITESHEET } from "../../Globals/Constants.js";
+import { Wizard } from "../Enemy/Wizard.js";
 
 export class Map extends GameMap {
   constructor() {
@@ -97,6 +96,7 @@ export class Map extends GameMap {
     GAME_ENGINE.addEntity(gameMap);
 
     this.spawnEntities(gameMap);
+    GAME_ENGINE.addEntity(new Wizard());
   }
 
   spawnEntities(gameMap) {

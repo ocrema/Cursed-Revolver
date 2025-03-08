@@ -77,26 +77,20 @@ export class Actor extends Entity {
       this.effects.frozen = Math.max(this.effects.frozen, this.effects.soaked);
       this.effects.soaked = 0;
     }
-    if (
-      this.effects.void > 0 &&
-      (!this.void_delay || this.effects.void_delay <= 0) &&
-      (this.effects.burn > 0 || this.effects.shock > 0)
-    ) {
+    if (this.effects.burn > 0 && this.effects.frozen > 0) {
+      this.effects.frozen = 0;
+      this.effects.burn = 0;
+      this.health -= 50;
+      window.ASSET_MANAGER.playAsset("./assets/sfx/temp_shock.ogg", 1 * Util.DFCVM(this));
+    }
+    if (this.effects.void > 0 && (!this.effects.void_delay || this.effects.void_delay <= 0) && (this.effects.burn > 0 || this.effects.shock > 0)) {
       this.effects.shock = 0;
       this.effects.burn = 0;
       this.effects.void_delay = 7;
       // void explosion
       GAME_ENGINE.addEntity(new VoidExplosion(this));
     }
-    if (this.effects.burn > 0 && this.effects.frozen > 0) {
-      this.frozen = 0;
-      this.burn = 0;
-      this.health -= 50;
-      window.ASSET_MANAGER.playAsset(
-        "./assets/sfx/temp_shock.ogg",
-        1 * Util.DFCVM(this)
-      );
-    }
+    
 
     this.clearQueuedAttacks();
   }
@@ -143,7 +137,7 @@ export class Actor extends Entity {
     }
   }
 
-  drawEffects(ctx) {
+  drawEffects(ctx, scale = 1) {
     if (this.health <= 0) return;
     this.effect_anim_timer += GAME_ENGINE.clockTick;
     if (this.effect_anim_timer > 10000) this.effect_anim_timer = 0;
@@ -157,12 +151,12 @@ export class Actor extends Entity {
         0,
         0,
         EFFECTS_SPRITESHEET.ICE_EFFECT.FRAME_WIDTH,
-        EFFECTS_SPRITESHEET.ICE_EFFECT.FRAME_HEIGHT,
-        -150,
-        -100,
-        300,
-        200
-      );
+      EFFECTS_SPRITESHEET.ICE_EFFECT.FRAME_HEIGHT,
+        -150 * scale,
+        -100 * scale,
+        300 * scale,
+        200 * scale
+      )
     }
     if (this.effects.burn > 0) {
       ctx.drawImage(
@@ -174,12 +168,12 @@ export class Actor extends Entity {
           ),
         0,
         EFFECTS_SPRITESHEET.BURNING_EFFECT.FRAME_WIDTH,
-        EFFECTS_SPRITESHEET.BURNING_EFFECT.FRAME_HEIGHT,
-        -75,
-        -75,
-        150,
-        150
-      );
+      EFFECTS_SPRITESHEET.BURNING_EFFECT.FRAME_HEIGHT,
+        -75 * scale,
+        -75 * scale,
+        150 * scale,
+        150 * scale
+      )
     }
     if (this.effects.soaked > 0) {
       ctx.drawImage(
@@ -191,12 +185,12 @@ export class Actor extends Entity {
           ),
         0,
         EFFECTS_SPRITESHEET.SOAKED_EFFECT.FRAME_WIDTH,
-        EFFECTS_SPRITESHEET.SOAKED_EFFECT.FRAME_HEIGHT,
-        -75,
-        -75,
-        150,
-        150
-      );
+      EFFECTS_SPRITESHEET.SOAKED_EFFECT.FRAME_HEIGHT,
+        -75 * scale,
+        -75 * scale,
+        150 * scale,
+        150 * scale
+      )
     }
     if (this.effects.shock > 0) {
       ctx.drawImage(
@@ -208,12 +202,12 @@ export class Actor extends Entity {
           ),
         0,
         EFFECTS_SPRITESHEET.SHOCK_EFFECT.FRAME_WIDTH,
-        EFFECTS_SPRITESHEET.SHOCK_EFFECT.FRAME_HEIGHT,
-        -75,
-        -75,
-        150,
-        150
-      );
+      EFFECTS_SPRITESHEET.SHOCK_EFFECT.FRAME_HEIGHT,
+        -75 * scale,
+        -75 * scale,
+        150 * scale,
+        150 * scale
+      )
     }
     if (this.effects.void > 0) {
       //ctx.rotate((this.effect_anim_timer * 30) % (Math.PI*2));
@@ -228,12 +222,12 @@ export class Actor extends Entity {
           ),
         0,
         EFFECTS_SPRITESHEET.VOID_EFFECT.FRAME_WIDTH,
-        EFFECTS_SPRITESHEET.VOID_EFFECT.FRAME_HEIGHT,
-        -100,
-        -100,
-        200,
-        200
-      );
+      EFFECTS_SPRITESHEET.VOID_EFFECT.FRAME_HEIGHT,
+        -100 * scale,
+        -100 * scale,
+        200 * scale,
+        200 * scale
+      )
     }
     ctx.restore();
   }

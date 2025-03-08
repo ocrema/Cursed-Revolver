@@ -2,6 +2,7 @@ import { Entity } from "../Entities/Entities.js";
 import { Map } from "../Entities/Map/Map.js";
 import { HUD } from "../Entities/HUD.js";
 import { PauseMenu } from "../Entities/PauseMenu.js";
+import { Wizard } from "../Entities/Enemy/Wizard.js";
 
 export class GameLogicController extends Entity {
   constructor() {
@@ -48,6 +49,7 @@ export class GameLogicController extends Entity {
         entity.respawn();
       }
     }
+    
 
     this.isGameOver = false;
     this.isPaused = false;
@@ -65,6 +67,7 @@ export class GameLogicController extends Entity {
       map.load();
       this.hud = new HUD(map);
       this.GAME_ENGINE.addEntity(this.hud);
+      
     }
 
     if (this.isGameOver) {
