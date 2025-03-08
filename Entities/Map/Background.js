@@ -74,9 +74,9 @@ export class Background extends Entity {
         this.transitionPhase = "switching";
       }
     } else if (this.transitionPhase === "switching") {
-      this.transitionPhase = "fading_in"; // ✅ Move to next phase first
       this.currentIndex = (this.currentIndex + 1) % this.backgroundList.length;
       this.setCurrentBackground();
+      this.transitionPhase = "fading_in"; // ✅ Move to next phase first
       // // ✅ Defer setting the background for the next update cycle
       // setTimeout(() => {
       //   this.currentIndex =
