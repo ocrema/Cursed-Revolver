@@ -33,7 +33,7 @@ export const BACKGROUND_SPRITESHEET = {
     FRAME_COUNT: 40,
     FRAME_DURATION: 0.1,
   },
-  ABOVE1: {
+  WIZARD: {
     NAME: "WIZARD",
     URL: "./assets/background/WizardBackground.png",
     FRAME_WIDTH: 640,
