@@ -9,14 +9,6 @@ export const BACKGROUND_SPRITESHEET = {
     FRAME_COUNT: 40,
     FRAME_DURATION: 0.1,
   },
-  ABOVE: {
-    NAME: "ABOVE",
-    URL: "./assets/background/AboveBackground.png",
-    FRAME_WIDTH: 640,
-    FRAME_HEIGHT: 400,
-    FRAME_COUNT: 40,
-    FRAME_DURATION: 0.1,
-  },
   UNDER: {
     NAME: "UNDER",
     URL: "./assets/background/UndergroundBackground.png",
@@ -31,6 +23,14 @@ export const BACKGROUND_SPRITESHEET = {
     FRAME_WIDTH: 576,
     FRAME_HEIGHT: 324,
     FRAME_COUNT: 1,
+    FRAME_DURATION: 0.1,
+  },
+  ABOVE1: {
+    NAME: "ABOVE1",
+    URL: "./assets/background/AboveBackground.png",
+    FRAME_WIDTH: 640,
+    FRAME_HEIGHT: 400,
+    FRAME_COUNT: 40,
     FRAME_DURATION: 0.1,
   },
 };

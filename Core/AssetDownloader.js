@@ -103,9 +103,6 @@ export class AssetDownloader {
     this.assetManager.queueDownload(
       "./assets/background/UndergroundBackground.png"
     );
-    this.assetManager.queueDownload(
-      "./assets/background/UndergroundBackground1.png"
-    );
     this.assetManager.queueDownload("./assets/background/SpiderBackground.png");
     this.assetManager.queueDownload("./assets/ui/gameend/win.png");
     this.assetManager.queueDownload("./assets/ui/gameend/lose.png");
@@ -125,7 +122,6 @@ export class AssetDownloader {
     this.assetManager.queueDownload("./assets/map/props/tree02.png");
     this.assetManager.queueDownload("./assets/map/props/tree03.png");
     this.assetManager.queueDownload("./assets/map/props/tree04.png");
-    this.assetManager.queueDownload("./assets/map/Spikes.png");
     this.assetManager.queueDownload("./assets/map/CactusSpikes.png");
     this.assetManager.queueDownload("./assets/map/Saloon.png");
     this.assetManager.queueDownload(
