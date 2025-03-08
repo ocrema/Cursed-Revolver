@@ -37,6 +37,7 @@ export class Tilemap {
     this.spiderSpawnPoints = [];
     this.growingTreeSpawnPoints = [];
     this.golemSpawnPoints = [];
+    this.boulderSpawnPoints = [];
   }
 
   async load() {
@@ -164,6 +165,10 @@ export class Tilemap {
               this.golemSpawnPoints.push({ x: worldX, y: worldY });
               hideEnemySpawnPoints = true;
               break;
+            case 117:
+              this.boulderSpawnPoints.push({ x: worldX, y: worldY });
+              hideEnemySpawnPoints = true;
+              break;
             default:
               break;
           }
@@ -225,5 +230,9 @@ export class Tilemap {
   }
   getGolemSpawnPoints() {
     return this.golemSpawnPoints;
+  }
+
+  getBoulderSpawnPoints() {
+    return this.boulderSpawnPoints;
   }
 }

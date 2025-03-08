@@ -64,19 +64,17 @@ export class Map extends GameMap {
   async load() {
     const playerSpawn = { x: 763, y: 1500 };
 
-    // underground start 
+    // underground start
     //const playerSpawn = { x: 12400, y: 4000 };
-    // spider pit start 
+    // spider pit start
     //const playerSpawn = { x: 23532, y: 4760 };
-
 
     // first level death collider
     GAME_ENGINE.addEntity(new DeathCollider(2233, 2233, 5000, 50));
 
-    // second level death collider 
+    // second level death collider
     GAME_ENGINE.addEntity(new DeathCollider(12870, 4338, 8000, 50));
 
-    
     GAME_ENGINE.addEntity(new Boulder(23532, 5000));
     GAME_ENGINE.addEntity(new WebObstacle(23532, 4760));
 
@@ -104,6 +102,7 @@ export class Map extends GameMap {
       "SpawnPoints/SpiderSpawnPoint.png",
       "SpawnPoints/GrowingTreeSpawnPoint.png",
       "SpawnPoints/GolemSpawnPoint.png",
+      "SpawnPoints/BoulderSpawnPoint.png",
     ];
 
     const TILESET_IMAGES = tilesetNames.map((name) =>
@@ -162,6 +161,11 @@ export class Map extends GameMap {
       GrowingTree: {
         method: gameMap.getGrowingTreeSpawnPoints,
         entity: GrowingTree,
+      },
+      Boulder: {
+        method: gameMap.getBoulderSpawnPoints,
+        entity: Boulder,
+        offsetY: -50,
       },
     };
 
