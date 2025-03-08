@@ -1,4 +1,5 @@
 import { Entity } from "../Entities/Entities.js";
+import { Player } from "../Entities/Player/Player.js";
 
 export class Camera extends Entity {
   static instance = null;
@@ -24,12 +25,10 @@ export class Camera extends Entity {
   }
 
   update() {
-    if (!this.player) {
-      for (let e of GAME_ENGINE.entities) {
-        if (e.isPlayer) {
-          this.player = e;
-          break;
-        }
+    const player = window.PLAYER;
+    if (player) {
+      if (player instanceof Player) {
+        this.player = player;
       }
     }
 
