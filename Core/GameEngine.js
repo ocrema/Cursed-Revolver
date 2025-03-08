@@ -28,9 +28,13 @@ export class GameEngine {
     this.MAIN_MENU = new MainMenu();
     this.addEntity(this.MAIN_MENU);
 
+    this.frameCounter = 0; 
+    this.lastTime = performance.now(); 
+    this.fps = 0; 
     return window.GAME_ENGINE;
   }
 
+  
   startGame() {
     console.log("Starting game...");
     this.entities = this.entities.filter(
@@ -252,6 +256,18 @@ export class GameEngine {
     if (this.MAIN_MENU.isVisible) {
       this.MAIN_MENU.update();
       return;
+    }
+
+    this.frameCounter++;
+
+    let currentTime = performance.now();
+    let deltaTime = currentTime - this.lastTime;
+
+    if (deltaTime >= 1000) {
+      // Every second
+      this.fps = this.frameCounter;
+      this.frameCounter = 0;
+      this.lastTime = currentTime;
     }
 
     if (this.GAME_CONTROLLER && this.GAME_CONTROLLER.isPaused) {

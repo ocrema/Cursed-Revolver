@@ -32,17 +32,4 @@ export class SpikeTile extends Tile {
       this.tileSize * this.scale // Scale height
     );
   }
-
-  update() {
-    for (let e of GAME_ENGINE.entities) {
-      if (e instanceof Player && this.colliding(e)) {
-        e.queueAttack({
-          damage: 100,
-          x: this.x,
-          y: this.y,
-          launchMagnitude: 0,
-        });
-      }
-    }
-  }
 }

@@ -32,19 +32,6 @@ export class WaterTile extends Entity {
     );
   }
 
-  update() {
-    for (let e of GAME_ENGINE.entities) {
-      if (e instanceof Player && this.colliding(e)) {
-        e.queueAttack({
-          damage: 100,
-          x: this.x,
-          y: this.y,
-          launchMagnitude: 0,
-        });
-      }
-    }
-  }
-
   draw(ctx) {
     if (
       Math.abs(this.x - GAME_ENGINE.camera.x) > 1200 ||
