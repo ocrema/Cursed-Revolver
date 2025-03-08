@@ -14,8 +14,8 @@ import { Tilemap } from "./Tilemap.js";
 import { GrowingTree } from "../Objects/GrowingTree.js";
 import { BackgroundTriggerTile } from "./Tiles/BackgroundTriggerTile.js";
 import { Boulder } from "../Objects/Boulder.js";
-import { WebObstacle } from "../Objects/WebObstacle.js";
 import { DeathCollider } from "./DeathCollider.js";
+import { SpiderWebObstacle } from "../Objects/SpiderWebObstacle.js";
 
 export class Map extends GameMap {
   constructor() {
@@ -27,19 +27,29 @@ export class Map extends GameMap {
     this.currentStage = 1;
     this.totalEnemies = 0;
 
-    this.stageEnemyGroups = { 1: new Set(), 2: new Set(), 3: new Set() };
-    this.stageEnemyCounts = { 1: 0, 2: 0, 3: 0 };
-    this.enemySpawnData = { 1: [], 2: [], 3: [] };
+    this.stageEnemyGroups = {
+      1: new Set(),
+      2: new Set(),
+      3: new Set(),
+      4: new Set(),
+    };
+    this.stageEnemyCounts = { 1: 0, 2: 0, 3: 0, 4: 0 };
+    this.enemySpawnData = { 1: [], 2: [], 3: [], 4: [] };
+    this.spiderwebList = [];
+    this.spiderwebListIndex = 0;
 
     return MAP;
   }
 
   async load() {
-    //const playerSpawn = { x: 763, y: 1500 };
+    let playerSpawn;
+    //playerSpawn = { x: 763, y: 1500 };
     // underground start
-    //const playerSpawn = { x: 12400, y: 4000 };
+    //playerSpawn = { x: 12400, y: 4000 };
     // spider pit start
-    const playerSpawn = { x: 23532, y: 4760 };
+    //playerSpawn = { x: 23532, y: 4760 };
+    // second spider pit start
+    playerSpawn = { x: 23532, y: 6000 };
 
     // Add colliders for death zones
     GAME_ENGINE.addEntity(new DeathCollider(2233, 2233, 5000, 50));
@@ -140,7 +150,7 @@ export class Map extends GameMap {
       },
       SpiderwebObstacle: {
         method: gameMap.getSpiderwebObstacleSpawnPoints,
-        entity: WebObstacle,
+        entity: SpiderWebObstacle,
         offsetY: -50,
       },
     };
@@ -175,6 +185,10 @@ export class Map extends GameMap {
 
       for (let spawn of spawnPoints) {
         const obj = new entity(spawn.x, spawn.y + offsetY, direction);
+
+        if (obj instanceof SpiderWebObstacle) {
+          this.spiderwebList.push(obj);
+        }
         GAME_ENGINE.addEntity(obj);
       }
     }
@@ -183,9 +197,10 @@ export class Map extends GameMap {
   }
 
   getStageFromPosition(x, y) {
-    if (x < 11700 && y < 3000) return 1;
-    if (x > 11700 && y < 5000 && x < 20747) return 2;
-    return 3;
+    if (x < 12000) return 1; // Before Boulder
+    if (x > 11700 && y < 5000 && x < 20747) return 2; // After Boulder, before SpiderWeb 1
+    if (x > 21095 && x < 27000 && y < 5000) return 3; // After SpiderWeb 1, before SpiderWeb 2a
+    return 4; // After SpiderWeb 2, before SpiderWeb 3
   }
 
   spawnNextStageEnemies() {
@@ -231,6 +246,10 @@ export class Map extends GameMap {
         console.log("Stage 1 cleared, activating boulder.");
         boulder.stageCleared();
       }
+    } else {
+      console.log(this.spiderwebList[this.spiderwebListIndex]);
+      this.spiderwebList[this.spiderwebListIndex].stageCleared();
+      this.spiderwebListIndex++;
     }
 
     this.currentStage++;

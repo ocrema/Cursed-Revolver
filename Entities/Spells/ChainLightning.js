@@ -11,13 +11,13 @@ export class ChainLightning extends Entity {
     this.entityOrder = 3;
     this.isAttack = true;
     this.experationTimer = 0.35;
-    this.chains = 4;
+    this.chains = 8;
     this.firstBolt = true;
     this.maxChainLength = 1000;
     this.maxShotAngle = Math.PI / 3;
     this.targets = [caster];
     this.gun_offset = offset;
-    window.ASSET_MANAGER.playAsset("./assets/sfx/lightning.wav", .7);
+    window.ASSET_MANAGER.playAsset("./assets/sfx/lightning.wav", 0.7);
   }
 
   update() {
@@ -57,7 +57,7 @@ export class ChainLightning extends Entity {
       if (target !== null) {
         this.targets.push(target);
         enemies.splice(targetIndex, 1);
-        target.queueAttack({ damage: 10, shock: 5 });
+        target.queueAttack({ damage: 100, shock: 5 });
       }
 
       this.chains--;
@@ -78,12 +78,28 @@ export class ChainLightning extends Entity {
     ctx.lineWidth = Math.random() * 10 + 5;
     let maxOffset = 120;
     ctx.beginPath();
-    ctx.moveTo(this.targets[0].x - GAME_ENGINE.camera.x + Math.random() * maxOffset - maxOffset / 2 + this.gun_offset.x * (this.targets[0].flip ? -1 : 1),
-      this.targets[0].y - GAME_ENGINE.camera.y + Math.random() * maxOffset - maxOffset / 2 + this.gun_offset.y
+    ctx.moveTo(
+      this.targets[0].x -
+        GAME_ENGINE.camera.x +
+        Math.random() * maxOffset -
+        maxOffset / 2 +
+        this.gun_offset.x * (this.targets[0].flip ? -1 : 1),
+      this.targets[0].y -
+        GAME_ENGINE.camera.y +
+        Math.random() * maxOffset -
+        maxOffset / 2 +
+        this.gun_offset.y
     );
     for (let i = 1; i < this.targets.length; i++) {
-      ctx.lineTo(this.targets[i].x - GAME_ENGINE.camera.x + Math.random() * maxOffset - maxOffset / 2,
-        this.targets[i].y - GAME_ENGINE.camera.y + Math.random() * maxOffset - maxOffset / 2
+      ctx.lineTo(
+        this.targets[i].x -
+          GAME_ENGINE.camera.x +
+          Math.random() * maxOffset -
+          maxOffset / 2,
+        this.targets[i].y -
+          GAME_ENGINE.camera.y +
+          Math.random() * maxOffset -
+          maxOffset / 2
       );
     }
     ctx.stroke();
@@ -92,12 +108,28 @@ export class ChainLightning extends Entity {
     ctx.lineWidth = Math.random() * 5 + 5;
     maxOffset = 120;
     ctx.beginPath();
-    ctx.moveTo(this.targets[0].x - GAME_ENGINE.camera.x + Math.random() * maxOffset - maxOffset / 2 + this.gun_offset.x * (this.targets[0].flip ? -1 : 1),
-      this.targets[0].y - GAME_ENGINE.camera.y + Math.random() * maxOffset - maxOffset / 2 + this.gun_offset.y
+    ctx.moveTo(
+      this.targets[0].x -
+        GAME_ENGINE.camera.x +
+        Math.random() * maxOffset -
+        maxOffset / 2 +
+        this.gun_offset.x * (this.targets[0].flip ? -1 : 1),
+      this.targets[0].y -
+        GAME_ENGINE.camera.y +
+        Math.random() * maxOffset -
+        maxOffset / 2 +
+        this.gun_offset.y
     );
     for (let i = 1; i < this.targets.length; i++) {
-      ctx.lineTo(this.targets[i].x - GAME_ENGINE.camera.x + Math.random() * maxOffset - maxOffset / 2,
-        this.targets[i].y - GAME_ENGINE.camera.y + Math.random() * maxOffset - maxOffset / 2
+      ctx.lineTo(
+        this.targets[i].x -
+          GAME_ENGINE.camera.x +
+          Math.random() * maxOffset -
+          maxOffset / 2,
+        this.targets[i].y -
+          GAME_ENGINE.camera.y +
+          Math.random() * maxOffset -
+          maxOffset / 2
       );
     }
     ctx.stroke();

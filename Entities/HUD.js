@@ -179,7 +179,7 @@ export class HUD extends Entity {
         this.isSpellSwitching = false;
       }
       if (this.attackAnimationTimer <= 0) {
-        console.log("ATTACK ANIMATION END!");
+        //console.log("ATTACK ANIMATION END!");
         this.isAttacking = false;
       }
     } else {
