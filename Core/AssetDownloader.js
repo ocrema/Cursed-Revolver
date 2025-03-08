@@ -103,6 +103,7 @@ export class AssetDownloader {
     );
     this.assetManager.queueDownload("./assets/background/SpiderBackground.png");
     this.assetManager.queueDownload("./assets/ui/gameend/win.png");
+    this.assetManager.queueDownload("./assets/ui/gameend/lose.png");
   }
 
   downloadMapGroundAssets() {

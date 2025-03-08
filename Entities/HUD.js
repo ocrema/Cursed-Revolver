@@ -45,7 +45,14 @@ export class HUD extends Entity {
       frameCount: 6,
       frameDuration: 0.75,
     };
-
+    this.gameLoseScreen = {
+      image: this.assetManager.getAsset("./assets/ui/gameend/lose.png"),
+      width: 1920,
+      height: 1080,
+      frameCount: 1,
+      frameDuration: 0.75,
+    };
+  
     this.cowboyFrameIndex = 0; // Current frame
     this.blinkTimer = 0; // Timer to switch frames
     this.blinkInterval = 1.0; // Change every 0.5 seconds
@@ -493,7 +500,6 @@ export class HUD extends Entity {
       // console.log("All enemies are dead! Triggering game over.");
       GAME_ENGINE.GAME_CONTROLLER.setGameOver();
 
-      //ctx.drawImage(ASSET_MANAGER.getAsset("./assets/ui/menu/desertbackground1.gif"), 0, 0);
       this.updateGameOverScreen(ctx);
 
       ctx.fillStyle = "rgb(22, 129, 0)";
@@ -511,9 +517,6 @@ export class HUD extends Entity {
     if (currentHealth <= 0) {
       console.log("Player health is 0! Triggering Game Over.");
       GAME_ENGINE.GAME_CONTROLLER.setGameOver();
-
-      ctx.fillStyle = "rgba(255, 0, 0, 0.5)"; // Red overlay
-      ctx.fillRect(0, 0, canvasWidth, canvasHeight);
 
       this.updateGameOverScreen(ctx);
 
@@ -584,7 +587,7 @@ export class HUD extends Entity {
 
   updateGameOverScreen(ctx) {
     this.elapsedTime += GAME_ENGINE.clockTick;
-    
+
     if (this.gameWon) {
       if (this.elapsedTime > this.gameWinScreen.frameDuration) {
         this.elapsedTime = 0;
@@ -592,7 +595,7 @@ export class HUD extends Entity {
       }
 
       ctx.drawImage(
-        this.assetManager.getAsset("./assets/ui/gameend/win.png"),
+        this.gameWinScreen.image,
         this.currentFrame * this.gameWinScreen.width, 
         0, 
         this.gameWinScreen.width, 
@@ -605,7 +608,18 @@ export class HUD extends Entity {
     }
 
     else {
-      
+      // black background 
+      ctx.drawImage(
+        this.gameLoseScreen.image,
+        0, 
+        0, 
+        this.gameLoseScreen.width, 
+        this.gameLoseScreen.height, 
+        0, 
+        0, 
+        ctx.canvas.width, 
+        ctx.canvas.height
+      );
     }
   }
 
