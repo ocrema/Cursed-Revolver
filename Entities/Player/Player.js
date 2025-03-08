@@ -443,7 +443,7 @@ export class Player extends Actor {
       GAME_ENGINE.keys["wheelUp"] = false;
       this.selectedSpell--;
       if (this.selectedSpell < 0) this.selectedSpell = 5;
-      console.log(this.selectedSpell);
+      //console.log(this.selectedSpell);
       //window.ASSET_MANAGER.playAsset("./assets/sfx/click1.ogg");
     }
     if (GAME_ENGINE.keys["e"] || GAME_ENGINE.keys["wheelDown"]) {
