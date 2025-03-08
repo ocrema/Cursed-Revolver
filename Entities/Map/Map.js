@@ -64,16 +64,21 @@ export class Map extends GameMap {
   async load() {
     const playerSpawn = { x: 763, y: 1500 };
 
+    // underground start 
     //const playerSpawn = { x: 12400, y: 4000 };
-    // spider pit
+    // spider pit start 
     //const playerSpawn = { x: 23532, y: 4760 };
+
+
     // first level death collider
     GAME_ENGINE.addEntity(new DeathCollider(2233, 2233, 5000, 50));
+
+    // second level death collider 
     GAME_ENGINE.addEntity(new DeathCollider(12870, 4338, 8000, 50));
+
+    
     GAME_ENGINE.addEntity(new Boulder(23532, 5000));
     GAME_ENGINE.addEntity(new WebObstacle(23532, 4760));
-    // first stage spawn point = { x: 763, y: 1500 }
-    // second stage spawn point = { x: 12400, y: 4000 }
 
     const player = GAME_ENGINE.addEntity(
       new Player(playerSpawn.x, playerSpawn.y)
