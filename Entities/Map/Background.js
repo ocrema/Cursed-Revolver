@@ -94,7 +94,7 @@ export class Background extends Entity {
     ctx.globalAlpha = this.fadeAlpha; // Apply fading effect
 
     // Parallax Effect
-    let player = GAME_ENGINE.entities.find((e) => e instanceof Player);
+    let player = window.PLAYER;
     let playerX = player ? player.x : 0; // Default to 0 if no player
 
     // Always position the background slightly to the left of the player

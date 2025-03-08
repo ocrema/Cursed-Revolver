@@ -17,6 +17,7 @@ import { Boulder } from "../Objects/Boulder.js";
 import { DeathCollider } from "./DeathCollider.js";
 import { SpiderWebObstacle } from "../Objects/SpiderWebObstacle.js";
 import { Wizard } from "../Enemy/Wizard.js";
+import { Camera } from "../../Core/Camera.js";
 
 export class Map extends GameMap {
   constructor() {
@@ -27,7 +28,6 @@ export class Map extends GameMap {
 
     this.currentStage = 1;
     this.totalEnemies = 0;
-
     this.stageEnemyGroups = {
       1: new Set(),
       2: new Set(),

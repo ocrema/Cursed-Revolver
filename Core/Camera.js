@@ -16,7 +16,7 @@ export class Camera extends Entity {
     this.player = null;
     this.shakeIntensity = 0;
     this.shakeDecay = 0.9; // How fast the shake fades (0.9 = fast, 0.99 = slow)
-
+    this.darknessLevel = 0;
     // Define camera boundaries based on the map size and screen size
     this.minX = 0;
     this.maxX = 100000;
@@ -51,6 +51,22 @@ export class Camera extends Entity {
       // Clamp the camera within the map boundaries
       this.x = Math.max(1000, Math.min(this.x, this.maxX));
     }
+  }
+
+  draw(ctx) {
+    if (this.darknessLevel > 0) {
+      ctx.save(); // Save the current drawing state
+      ctx.setTransform(1, 0, 0, 1, 0, 0); // Reset any transformations (removes camera offset)
+
+      ctx.fillStyle = `rgba(0, 0, 0, ${this.darknessLevel})`; // Black overlay with transparency
+      ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+
+      ctx.restore(); // Restore the original transformation matrix
+    }
+  }
+
+  setDarkness(level) {
+    this.darknessLevel = Math.max(0, Math.min(level, 1)); // Clamp between 0 and 1
   }
 
   static getInstance(
