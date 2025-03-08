@@ -60,10 +60,12 @@ export class SpawnPointTile extends Tile {
     //     }
     //   }
     // }
-    for (let e of GAME_ENGINE.entities) {
-      if (e instanceof Player && this.colliding(e) && GAME_ENGINE.keys["f"]) {
+    const player = window.PLAYER;
+
+    if (player) {
+      if (this.colliding(player) && GAME_ENGINE.keys["f"]) {
         //console.log("Player hit checkpoint at " + e.x + " " + e.y);
-        e.setSpawnPoint(this.x, this.y - e.collider.height / 2 - 1);
+        player.setSpawnPoint(this.x, this.y - player.collider.height / 2 - 1);
         this.spawnPointEntity.activateCampfire();
       }
     }
