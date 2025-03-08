@@ -75,12 +75,17 @@ export class Wizard extends Actor {
       return;
     }
 
+    const player = window.PLAYER;
+
     if (!this.player) {
-      for (let e of GAME_ENGINE.entities) {
-        if (e instanceof Player) {
-          this.player = e;
-        }
+      if (player) {
+        this.player = player;
       }
+      //   for (let e of GAME_ENGINE.entities) {
+      //     if (e instanceof Player) {
+      //       this.player = e;
+      //     }
+      //   }
     }
 
     // spawn in
