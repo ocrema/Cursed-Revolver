@@ -13,7 +13,9 @@ import { Crow } from "../Enemy/Crow.js";
 import { Tilemap } from "./Tilemap.js";
 import { GrowingTree } from "../Objects/GrowingTree.js";
 import { BackgroundTriggerTile } from "./Tiles/BackgroundTriggerTile.js";
-import { BACKGROUND_SPRITESHEET } from "../../Globals/Constants.js";
+import { Boulder } from "../Objects/Boulder.js";
+import { DeathCollider } from "./DeathCollider.js";
+import { SpiderWebObstacle } from "../Objects/SpiderWebObstacle.js";
 import { Wizard } from "../Enemy/Wizard.js";
 
 export class Map extends GameMap {
@@ -50,6 +52,9 @@ export class Map extends GameMap {
     // second spider pit start
     playerSpawn = { x: 23532, y: 6000 };
 
+    //boss arena spawn
+    playerSpawn = { x: 28276, y: 3015 };
+
     // Add colliders for death zones
     GAME_ENGINE.addEntity(new DeathCollider(2233, 2233, 5000, 50));
     GAME_ENGINE.addEntity(new DeathCollider(12870, 4338, 8000, 50));
@@ -60,6 +65,8 @@ export class Map extends GameMap {
 
     // Add background
     GAME_ENGINE.addEntity(new Background(player));
+
+    GAME_ENGINE.addEntity(new Wizard(30827, 2271));
 
     window.PLAYER = player;
 
