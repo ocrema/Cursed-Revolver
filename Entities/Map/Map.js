@@ -146,14 +146,19 @@ export class Map extends GameMap {
 
       for (let spawn of spawnPoints) {
         let stage = this.getStageFromPosition(spawn.x, spawn.y);
+
+        // Store enemy spawn data but only spawn stage 1 initially
         const enemy = new entity(spawn.x, spawn.y + offsetY);
-        enemy.stage = stage; // Associate enemy with stage
+        enemy.stage = stage;
         enemy.onDeath = () => this.onEnemyDeath(enemy);
 
         this.stageEnemyGroups[stage].add(enemy);
         this.stageEnemyCounts[stage]++;
-        this.totalEnemies++;
-        GAME_ENGINE.addEntity(enemy);
+
+        if (stage === 1) {
+          this.totalEnemies++;
+          GAME_ENGINE.addEntity(enemy); 
+        }
       }
     }
 
@@ -184,7 +189,7 @@ export class Map extends GameMap {
     if (!enemiesToSpawn) return;
 
     for (let enemy of enemiesToSpawn) {
-      console.log(enemy);
+      console.log(`Spawning enemy at ${enemy.x}, ${enemy.y}`);
       GAME_ENGINE.addEntity(enemy);
     }
   }
