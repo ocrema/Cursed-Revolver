@@ -3,6 +3,7 @@ import { Camera } from "../Core/Camera.js";
 import { PauseMenu } from "../Entities/PauseMenu.js";
 import { MainMenu } from "../Entities/MainMenu.js";
 import { GameLogicController } from "../Core/GameLogicController.js";
+import { DeathCollider } from "../Entities/Map/DeathCollider.js";
 
 export class GameEngine {
   constructor(options) {
@@ -28,13 +29,12 @@ export class GameEngine {
     this.MAIN_MENU = new MainMenu();
     this.addEntity(this.MAIN_MENU);
 
-    this.frameCounter = 0; 
-    this.lastTime = performance.now(); 
-    this.fps = 0; 
+    this.frameCounter = 0;
+    this.lastTime = performance.now();
+    this.fps = 0;
     return window.GAME_ENGINE;
   }
 
-  
   startGame() {
     console.log("Starting game...");
     this.entities = this.entities.filter(
@@ -235,15 +235,27 @@ export class GameEngine {
       this.ctx.strokeStyle = "limegreen";
       for (let e of this.entities) {
         if (e.collider) {
+          let drawX = e.x - this.camera.x;
+          let drawY = e.y - this.camera.y;
+
+          // Adjust for Collider Growth Direction
+          if (e instanceof DeathCollider) {
+            drawX = e.x - this.camera.x; // Left-aligned
+          } else {
+            drawX -= e.collider.width / 2; // Centered for other entities
+            drawY -= e.collider.height / 2;
+          }
+
           this.ctx.strokeRect(
-            e.x - this.camera.x - e.collider.width / 2,
-            e.y - this.camera.y - e.collider.height / 2,
+            drawX,
+            drawY,
             e.collider.width,
             e.collider.height
           );
+
           this.ctx.strokeRect(
-            e.x - this.camera.x - 2,
-            e.y - this.camera.y - 2,
+            drawX + e.collider.width / 2 - 2,
+            drawY + e.collider.height / 2 - 2,
             4,
             4
           );

@@ -19,7 +19,7 @@ import { SpawnPointTile } from "./Tiles/SpawnPointTile.js";
 import { Boulder } from "../Objects/Boulder.js";
 import { WebObstacle } from "../Objects/WebObstacle.js";
 import { Collider } from "../Collider.js";
-import { SpikeCollider } from "./SpikeCollider.js";
+import { DeathCollider } from "./DeathCollider.js";
 
 export class Map extends GameMap {
   constructor() {
@@ -67,7 +67,9 @@ export class Map extends GameMap {
     //const playerSpawn = { x: 12400, y: 4000 };
     // spider pit
     //const playerSpawn = { x: 23532, y: 4760 };
-    GAME_ENGINE.addEntity(new SpikeCollider(763, 1500, 100, 100));
+    // first level death collider
+    GAME_ENGINE.addEntity(new DeathCollider(2233, 2233, 5000, 50));
+    GAME_ENGINE.addEntity(new DeathCollider(12870, 4338, 8000, 50));
     GAME_ENGINE.addEntity(new Boulder(23532, 5000));
     GAME_ENGINE.addEntity(new WebObstacle(23532, 4760));
     // first stage spawn point = { x: 763, y: 1500 }
