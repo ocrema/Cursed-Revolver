@@ -152,23 +152,42 @@ export class CowboyEnemy extends Actor {
         this.velocity.y = 0;
       }
 
-      for (let entity of GAME_ENGINE.entities) {
-        if (entity instanceof Player && Util.canSee(this, entity)) {
-          this.seesPlayer = true;
-          playerDetected = true;
-          playerTarget = entity;
+      // for (let entity of GAME_ENGINE.entities) {
+      //   if (entity instanceof Player && Util.canSee(this, entity)) {
+      //     this.seesPlayer = true;
+      //     playerDetected = true;
+      //     playerTarget = entity;
 
-          const distance = Util.getDistance(this, entity);
+      //     const distance = Util.getDistance(this, entity);
 
-          if (!this.isDrawingWeapon) {
-            if (
-              distance < this.attackRadius &&
-              this.attackCooldown > this.fireRate
-            ) {
-              this.attack(entity);
-            } else if (distance < this.visualRadius) {
-              this.chasePlayer(entity);
-            }
+      //     if (!this.isDrawingWeapon) {
+      //       if (
+      //         distance < this.attackRadius &&
+      //         this.attackCooldown > this.fireRate
+      //       ) {
+      //         this.attack(entity);
+      //       } else if (distance < this.visualRadius) {
+      //         this.chasePlayer(entity);
+      //       }
+      //     }
+      //   }
+      // }
+      const player = window.PLAYER;
+      if (player && Util.canSee(this, player)) {
+        this.seesPlayer = true;
+        playerDetected = true;
+        playerTarget = player;
+
+        const distance = Util.getDistance(this, player);
+
+        if (!this.isDrawingWeapon) {
+          if (
+            distance < this.attackRadius &&
+            this.attackCooldown > this.fireRate
+          ) {
+            this.attack(player);
+          } else if (distance < this.visualRadius) {
+            this.chasePlayer(player);
           }
         }
       }
@@ -360,11 +379,10 @@ export class CowboyBullet extends Actor {
     this.y += this.velocity.y * GAME_ENGINE.clockTick;
 
     // Check collision with player
-    for (let entity of GAME_ENGINE.entities) {
-      if (entity instanceof Player && this.colliding(entity)) {
-        entity.queueAttack({ damage: this.damage });
-        this.removeFromWorld = true;
-      }
+    const player = window.PLAYER;
+    if (this.colliding(player)) {
+      player.queueAttack({ damage: this.damage });
+      this.removeFromWorld = true;
     }
   }
 
