@@ -151,6 +151,7 @@ export class Tilemap {
               break;
             case 115:
               this.growingTreeSpawnPoints.push({ x: worldX, y: worldY });
+              hideEnemySpawnPoints = true;
               break;
             case 116:
               this.golemSpawnPoints.push({ x: worldX, y: worldY });
