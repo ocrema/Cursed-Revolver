@@ -11,7 +11,7 @@ export class AssetManager {
     this.sfxMuted = false; // flag to control audio muting
     this.musicMuted = false; // flag to control music muting
     this.activeTrack = 0;
-    this.musicTracks = ["./assets/music/track1.mp3"];
+    this.musicTracks = ["./assets/music/track1.mp3", "./assets/music/track2.mp3", "./assets/music/track3.mp3"];
     return window.ASSET_MANAGER;
   }
 

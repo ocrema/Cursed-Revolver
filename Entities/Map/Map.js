@@ -12,34 +12,68 @@ import { StaticCowboyEnemy } from "../Enemy/StaticCowboyEnemy.js";
 import { Crow } from "../Enemy/Crow.js";
 import { Tilemap } from "./Tilemap.js";
 import { GrowingTree } from "../Objects/GrowingTree.js";
-import { HealingBottle } from "../../Entities/Enemy/HealingBottle.js";
 import { BackgroundTriggerTile } from "./Tiles/BackgroundTriggerTile.js";
-import { BACKGROUND_SPRITESHEET } from "../../Globals/Constants.js";
+import { Boulder } from "../Objects/Boulder.js";
+import { DeathCollider } from "./DeathCollider.js";
+import { SpiderWebObstacle } from "../Objects/SpiderWebObstacle.js";
+import { Wizard } from "../Enemy/Wizard.js";
 
 export class Map extends GameMap {
   constructor() {
     super();
-
-    this.firstStageCleared = false;
-    this.firstStageEnemies = new Set();
-
-    this.secondStageCleared = false;
-    this.secondStageEnemies = new Set();
+    if (!window.MAP) {
+      window.MAP = this;
+    }
 
     this.currentStage = 1;
     this.totalEnemies = 0;
+
+    this.stageEnemyGroups = {
+      1: new Set(),
+      2: new Set(),
+      3: new Set(),
+      4: new Set(),
+    };
+    this.stageEnemyCounts = { 1: 0, 2: 0, 3: 0, 4: 0 };
+    this.enemySpawnData = { 1: [], 2: [], 3: [], 4: [] };
+    this.spiderwebList = [];
+    this.spiderwebListIndex = 0;
+
+    return MAP;
   }
 
   async load() {
-    const playerSpawn = { x: 763, y: 1500 };
-    // first stage spawn point = { x: 763, y: 1500 }
-    // second stage spawn point = { x: 12400, y: 4000 }
-    GAME_ENGINE.addEntity(new Player(playerSpawn.x, playerSpawn.y));
+    let playerSpawn;
+    playerSpawn = { x: 763, y: 1500 };
 
-    GAME_ENGINE.addEntity(
-      new Background(Object.values(BACKGROUND_SPRITESHEET))
-    );
+    // underground start
+    //playerSpawn = { x: 12400, y: 4000 };
 
+    // spider pit start
+    //playerSpawn = { x: 23532, y: 4760 };
+
+    // second spider pit start
+    //playerSpawn = { x: 23532, y: 6000 };
+
+    //boss arena spawn
+    //playerSpawn = { x: 28276, y: 3015 };
+
+    // Add colliders for death zones
+    GAME_ENGINE.addEntity(new DeathCollider(2233, 2233, 5000, 50));
+    GAME_ENGINE.addEntity(new DeathCollider(12870, 4338, 8000, 50));
+
+    // Add player
+    const player = new Player(playerSpawn.x, playerSpawn.y);
+    GAME_ENGINE.addEntity(player);
+
+    // Add background
+    GAME_ENGINE.addEntity(new Background(player));
+
+    GAME_ENGINE.addEntity(new Wizard(30827, 2271));
+
+    window.PLAYER = player;
+
+    // Load map and tilesets
     const tilesetNames = [
       "Atlas.png",
       "CactusSpikes.png",
@@ -57,22 +91,26 @@ export class Map extends GameMap {
       "SpawnPoints/SpiderwebSpawnPoint.png",
       "SpawnPoints/SpiderSpawnPoint.png",
       "SpawnPoints/GrowingTreeSpawnPoint.png",
+      "SpawnPoints/GolemSpawnPoint.png",
+      "SpawnPoints/BoulderSpawnPoint.png",
+      "SpawnPoints/SpiderwebObstacleSpawnPoint.png",
     ];
 
     const TILESET_IMAGES = tilesetNames.map((name) =>
       window.ASSET_MANAGER.getAsset(`./assets/map/${name}`)
     );
-
     const mapFilePath = "./Entities/Map/MapAssets/FinalMap.json";
 
     const gameMap = new Tilemap(mapFilePath, TILESET_IMAGES);
     await gameMap.load();
     GAME_ENGINE.addEntity(gameMap);
+
     this.spawnEntities(gameMap);
+    GAME_ENGINE.addEntity(new Wizard());
   }
 
   spawnEntities(gameMap) {
-    const enemySpawnFunctions = {
+    const enemyTypes = {
       Cactus: {
         method: gameMap.getCactusSpawnPoints,
         entity: Cactus,
@@ -84,15 +122,19 @@ export class Map extends GameMap {
         offsetY: -10,
       },
       Bird: { method: gameMap.getBirdSpawnPoints, entity: Crow, offsetY: -10 },
-
       Spider: {
         method: gameMap.getSpiderSpawnPoints,
         entity: Spider,
         offsetY: -10,
       },
+      Golem: {
+        method: gameMap.getGolemSpawnPoints,
+        entity: EarthGolem,
+        offsetY: -10,
+      },
     };
 
-    const objectSpawnFunctions = {
+    const objectTypes = {
       Tumbleweed: {
         method: gameMap.getTumbleweedTriggerPoints,
         entity: Tumbleweed,
@@ -111,92 +153,121 @@ export class Map extends GameMap {
         method: gameMap.getGrowingTreeSpawnPoints,
         entity: GrowingTree,
       },
+      Boulder: {
+        method: gameMap.getBoulderSpawnPoints,
+        entity: Boulder,
+        offsetY: -50,
+      },
+      SpiderwebObstacle: {
+        method: gameMap.getSpiderwebObstacleSpawnPoints,
+        entity: SpiderWebObstacle,
+        offsetY: -50,
+      },
     };
 
-    for (const key in enemySpawnFunctions) {
-      const {
-        method,
-        entity,
-        offsetY = 0,
-        direction,
-      } = enemySpawnFunctions[key];
+    // Spawn enemies
+    for (const key in enemyTypes) {
+      const { method, entity, offsetY = 0 } = enemyTypes[key];
       const spawnPoints = method.call(gameMap);
-      for (let spawn of spawnPoints) {
-        const e = new entity(spawn.x, spawn.y + offsetY, direction);
-        this.totalEnemies++;
 
-        if (spawn.x < 11700 && spawn.y < 3000) {
-          this.totalFirstStageEnemies++;
-          console.log("Adding enemy to first stage enemy list.");
-          this.firstStageEnemies.add(e);
-        } else if (
-          spawn.x > 11700 &&
-          spawn.y > 3000 &&
-          spawn.x < 30000 &&
-          spawn.y < 5000
-        ) {
-          this.totalSecondStageEnemies++;
-          console.log("Adding enemy to second stage enemy list.");
-          this.secondStageEnemies.add(e);
+      for (let spawn of spawnPoints) {
+        let stage = this.getStageFromPosition(spawn.x, spawn.y);
+
+        // Store enemy spawn data but only spawn stage 1 initially
+        const enemy = new entity(spawn.x, spawn.y + offsetY);
+        enemy.stage = stage;
+        enemy.onDeath = () => this.onEnemyDeath(enemy);
+
+        this.stageEnemyGroups[stage].add(enemy);
+        this.stageEnemyCounts[stage]++;
+
+        if (stage === 1) {
+          this.totalEnemies++;
+          GAME_ENGINE.addEntity(enemy);
         }
-
-        e.onDeath = () => this.onEnemyDeath(e);
-
-        GAME_ENGINE.addEntity(e);
       }
     }
 
-    for (const key in objectSpawnFunctions) {
-      const {
-        method,
-        entity,
-        offsetY = 0,
-        direction,
-      } = objectSpawnFunctions[key];
+    // Spawn objects
+    for (const key in objectTypes) {
+      const { method, entity, offsetY = 0, direction } = objectTypes[key];
       const spawnPoints = method.call(gameMap);
+
       for (let spawn of spawnPoints) {
-        const e = new entity(spawn.x, spawn.y + offsetY, direction);
-        GAME_ENGINE.addEntity(e);
+        const obj = new entity(spawn.x, spawn.y + offsetY, direction);
+
+        if (obj instanceof SpiderWebObstacle) {
+          this.spiderwebList.push(obj);
+        }
+        GAME_ENGINE.addEntity(obj);
       }
     }
+
+    this.spawnNextStageEnemies();
+  }
+
+  getStageFromPosition(x, y) {
+    if (x < 12000) return 1; // Before Boulder
+    if (x > 11700 && y < 5000 && x < 20747) return 2; // After Boulder, before SpiderWeb 1
+    if (x > 21095 && x < 27000 && y < 5000) return 3; // After SpiderWeb 1, before SpiderWeb 2a
+    return 4; // After SpiderWeb 2, before SpiderWeb 3
+  }
+
+  spawnNextStageEnemies() {
+    let spawnCounter = 0;
+    console.log(`Spawning enemies for stage ${this.currentStage}.`);
+    const enemiesToSpawn = this.stageEnemyGroups[this.currentStage];
+
+    if (!enemiesToSpawn) return;
+
+    for (let enemy of enemiesToSpawn) {
+      spawnCounter++;
+      console.log(`Spawning enemy at ${enemy.x}, ${enemy.y}`);
+      GAME_ENGINE.addEntity(enemy);
+    }
+    console.log(`Total Spawned Enemy for stage: ${spawnCounter}`);
   }
 
   onEnemyDeath(enemy) {
-    if (this.firstStageEnemies.has(enemy)) {
-      this.firstStageEnemies.delete(enemy);
-      this.totalFirstStageEnemies--;
+    if (!enemy.stage) return;
+
+    const stageGroup = this.stageEnemyGroups[enemy.stage];
+    if (stageGroup.has(enemy)) {
+      stageGroup.delete(enemy);
+      this.stageEnemyCounts[enemy.stage]--; // Always sync with Set size
+      this.totalEnemies--;
+
       console.log(
-        `Enemy removed from firstStageEnemy list. Remaining: ${this.firstStageEnemies.size}`
+        `Enemy from stage ${enemy.stage} eliminated. Remaining: ${stageGroup.size}`
       );
 
-      if (this.firstStageEnemies.size === 0) {
-        this.onFirstStageCleared();
-      }
-    }
-
-    if (this.secondStageEnemies.has(enemy)) {
-      this.secondStageEnemies.delete(enemy);
-      this.totalSecondStageEnemies--;
-      console.log(
-        `Enemy removed from secondStageEnemy list. Remaining: ${this.secondStageEnemies.size}`
-      );
-
-      if (this.secondStageEnemies.size === 0) {
-        this.onSecondStageCleared();
+      if (stageGroup.size === 0) {
+        this.onStageCleared(enemy.stage);
       }
     }
   }
 
-  // put logic for breakable objects here - spiderweb, boulder etc
-  onFirstStageCleared() {
-    this.firstStageCleared = true; // Used to trigger events in the future
-    console.log("All enemies on first stage cleared.");
-    this.currentStage = 2;
-  }
+  onStageCleared(stage) {
+    console.log(`Stage ${stage} cleared.`);
 
-  onSecondStageCleared() {
-    this.secondStageCleared = true; // Used to trigger events in the future
-    this.currentStage = 3;
-    console.log("All enemies on second stage cleared.");
+    if (stage === 1) {
+      const boulder = GAME_ENGINE.entities.find((e) => e instanceof Boulder);
+      if (boulder) {
+        console.log("Stage 1 cleared, activating boulder.");
+        boulder.stageCleared();
+      }
+    } else {
+      console.log(this.spiderwebList[this.spiderwebListIndex]);
+      this.spiderwebList[this.spiderwebListIndex].stageCleared();
+      this.spiderwebListIndex++;
+    }
+
+    this.currentStage++;
+
+    if (this.stageEnemyGroups[this.currentStage]) {
+      this.spawnNextStageEnemies();
+    } else {
+      console.log("All stages cleared!");
+    }
   }
 }

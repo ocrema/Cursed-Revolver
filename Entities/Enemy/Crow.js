@@ -108,7 +108,7 @@ export class Crow extends Actor {
   }
 
   updateState() {
-    const player = GAME_ENGINE.entities.find((e) => e.isPlayer);
+    const player = window.PLAYER;
     if (!player) return;
 
     if (this.state === this.states.PATROL) {

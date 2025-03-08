@@ -142,7 +142,7 @@ export const canAttack = (o1, o2) => {
  * window.ASSET_MANAGER.playAsset("./assets/sfx/lightning.wav", yourVolumeMult * Util.DFCVM(yourEntity));
  */
 export const DFCVM = (e) => {
-  if (!e || !GAME_ENGINE.camera) return 0;
+  if (!e || !GAME_ENGINE.camera || !e.x || !e.y) return 0;
   const maxVolumeDis = 2000;
   const minVolumeDis = 5000;
   const distance = getDistance(e, GAME_ENGINE.camera);

@@ -18,7 +18,7 @@ export class Camera extends Entity {
 
     // Define camera boundaries based on the map size and screen size
     this.minX = 0;
-    this.maxX = mapWidth - screenWidth;
+    this.maxX = 100000;
     this.minY = 0;
     this.maxY = mapHeight - screenHeight;
   }
@@ -43,15 +43,14 @@ export class Camera extends Entity {
       const followSpeed = 5; // Lower values = slower camera movement
       const lerpFactor = Math.min(followSpeed * GAME_ENGINE.clockTick, 1);
 
-      const verticalOffset = 0; // Move the camera 150 pixels upwards
+      const verticalOffset = -150; // Move the camera 150 pixels upwards
 
       // Smoothly interpolate the camera towards the player's position + vertical offset
       this.x += (this.player.x - this.x) * lerpFactor;
       this.y += (this.player.y + verticalOffset - this.y) * lerpFactor;
 
       // Clamp the camera within the map boundaries
-      //this.x = Math.max(this.minX, Math.min(this.x, this.maxX));
-      //this.y = Math.max(this.minY, Math.min(this.y, this.maxY));
+      this.x = Math.max(1000, Math.min(this.x, this.maxX));
     }
   }
 

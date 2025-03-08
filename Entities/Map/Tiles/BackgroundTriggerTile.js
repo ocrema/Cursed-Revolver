@@ -38,16 +38,16 @@ export class BackgroundTriggerTile extends Tile {
   }
 
   update() {
-    for (let e of GAME_ENGINE.entities) {
-      if (e instanceof Player && this.colliding(e) && !this.hasTriggered) {
+    const player = window.PLAYER;
+    if (player)
+      if (this.colliding(player) && !this.hasTriggered) {
         this.hasTriggered = true; // Prevent retriggering immediately
         let background = GAME_ENGINE.entities.find(
-          (entity) => entity instanceof Background
+          (e) => e instanceof Background
         );
         if (background) {
           background.nextBackground(); // Move to the next background
         }
       }
-    }
   }
 }

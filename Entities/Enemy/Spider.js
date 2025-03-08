@@ -8,6 +8,7 @@ import { GAME_ENGINE } from "../../main.js";
 import { Tile } from "../Map/Tiles/Tile.js";
 import { AnimationLoader } from "../../Core/AnimationLoader.js";
 import { SPIDER_SPRITESHEET } from "../../Globals/Constants.js";
+import { SpiderWebObstacle } from "../Objects/SpiderWebObstacle.js";
 
 export class Spider extends Actor {
   constructor(x, y) {
@@ -78,20 +79,34 @@ export class Spider extends Actor {
       this.onWall = false;
 
       // check LOS on player
-      for (let entity of GAME_ENGINE.entities) {
-        if (entity instanceof Player) {
-          if (Util.canSee(this, entity)) {
-            this.seesPlayer = true;
-            if (
-              this.currentAnimation === SPIDER_SPRITESHEET.AGGRESSIVE.NAME ||
-              this.currentAnimation === SPIDER_SPRITESHEET.ATTACK.NAME
-            ) {
-              this.target = { x: entity.x, y: entity.y };
-            }
-          } else {
-            this.seesPlayer = false;
-          }
+      // for (let entity of GAME_ENGINE.entities) {
+      //   if (entity instanceof Player) {
+      //     if (Util.canSee(this, entity)) {
+      //       this.seesPlayer = true;
+      //       if (
+      //         this.currentAnimation === SPIDER_SPRITESHEET.AGGRESSIVE.NAME ||
+      //         this.currentAnimation === SPIDER_SPRITESHEET.ATTACK.NAME
+      //       ) {
+      //         this.target = { x: entity.x, y: entity.y };
+      //       }
+      //     } else {
+      //       this.seesPlayer = false;
+      //     }
+      //   }
+      // }
+
+      // ares optimized here by not looping thru entities every time
+      const player = window.PLAYER;
+      if (Util.canSee(this, window.PLAYER)) {
+        this.seesPlayer = true;
+        if (
+          this.currentAnimation === SPIDER_SPRITESHEET.AGGRESSIVE.NAME ||
+          this.currentAnimation === SPIDER_SPRITESHEET.ATTACK.NAME
+        ) {
+          this.target = { x: player.x, y: player.y };
         }
+      } else {
+        this.seesPlayer = false;
       }
 
       // updates what state the spider is in and moves target when state changes
@@ -244,7 +259,10 @@ export class Spider extends Actor {
     let hitHead = false;
 
     for (let entity of GAME_ENGINE.entities) {
-      if (entity instanceof Tile && this.colliding(entity)) {
+      if (
+        (entity instanceof SpiderWebObstacle || entity instanceof Tile) &&
+        this.colliding(entity)
+      ) {
         if (this.velocity.y < 0) {
           //console.log(this.target);
           this.y = entity.y + entity.collider.height / 2 + this.height / 2;
@@ -261,7 +279,10 @@ export class Spider extends Actor {
     this.x += this.velocity.x * GAME_ENGINE.clockTick;
 
     for (let entity of GAME_ENGINE.entities) {
-      if (entity instanceof Tile && this.colliding(entity)) {
+      if (
+        (entity instanceof SpiderWebObstacle || entity instanceof Tile) &&
+        this.colliding(entity)
+      ) {
         let isSimilarY =
           this.y > entity.y - entity.collider.height &&
           this.y < entity.y + entity.collider.height;
@@ -288,7 +309,10 @@ export class Spider extends Actor {
       this.y += this.gravity * GAME_ENGINE.clockTick;
 
       for (let entity of GAME_ENGINE.entities) {
-        if (entity instanceof Tile && this.colliding(entity)) {
+        if (
+          (entity instanceof SpiderWebObstacle || entity instanceof Tile) &&
+          this.colliding(entity)
+        ) {
           this.y = entity.y - entity.collider.height / 2 - this.height / 2;
           this.target.y = this.y;
         }

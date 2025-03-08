@@ -1,7 +1,5 @@
 import { Tile } from "./Tiles/Tile.js";
 import { GAME_ENGINE } from "../../main.js";
-import { WaterTile } from "./Tiles/WaterTile.js";
-import { SpikeTile } from "./Tiles/SpikeTile.js";
 import { SaloonTile } from "./Tiles/SaloonTile.js";
 import { SpawnPointTile } from "./Tiles/SpawnPointTile.js";
 import { TreeTile } from "./Tiles/TreeTile.js";
@@ -36,6 +34,9 @@ export class Tilemap {
     this.spiderwebTriggerPoints = [];
     this.spiderSpawnPoints = [];
     this.growingTreeSpawnPoints = [];
+    this.golemSpawnPoints = [];
+    this.boulderSpawnPoints = [];
+    this.spiderwebObstacleSpawnPoints = [];
   }
 
   async load() {
@@ -100,19 +101,10 @@ export class Tilemap {
           let worldY = y * this.tileSize * this.scale;
 
           let tileClass = Tile;
-
+          let hideEnemySpawnPoints = false;
           switch (tileID) {
             case 105:
               tileClass = SpawnPointTile;
-              break;
-
-            case 74:
-            case 75:
-              tileClass = WaterTile;
-              break;
-
-            case 101:
-              tileClass = SpikeTile;
               break;
 
             case 102:
@@ -125,17 +117,21 @@ export class Tilemap {
 
             case 107:
               this.cactusSpawnPoints.push({ x: worldX, y: worldY });
+              hideEnemySpawnPoints = true;
               break;
 
             case 108:
               this.cowboySpawnPoints.push({ x: worldX, y: worldY });
+              hideEnemySpawnPoints = true;
               break;
 
             case 109:
               this.birdSpawnPoints.push({ x: worldX, y: worldY });
+              hideEnemySpawnPoints = true;
               break;
             case 110:
               this.barrelSpawnPoints.push({ x: worldX, y: worldY });
+              hideEnemySpawnPoints = true;
               break;
             case 111:
               tileClass = BackgroundTriggerTile;
@@ -143,6 +139,7 @@ export class Tilemap {
               break;
             case 112:
               this.tumbleweedTriggerPoints.push({ x: worldX, y: worldY });
+              hideEnemySpawnPoints = true;
               break;
             case 113:
               tileClass = SpiderwebTile;
@@ -150,9 +147,23 @@ export class Tilemap {
               break;
             case 114:
               this.spiderSpawnPoints.push({ x: worldX, y: worldY });
+              hideEnemySpawnPoints = true;
               break;
             case 115:
               this.growingTreeSpawnPoints.push({ x: worldX, y: worldY });
+              hideEnemySpawnPoints = true;
+              break;
+            case 116:
+              this.golemSpawnPoints.push({ x: worldX, y: worldY });
+              hideEnemySpawnPoints = true;
+              break;
+            case 117:
+              this.boulderSpawnPoints.push({ x: worldX, y: worldY });
+              hideEnemySpawnPoints = true;
+              break;
+            case 118:
+              this.spiderwebObstacleSpawnPoints.push({ x: worldX, y: worldY });
+              hideEnemySpawnPoints = true;
               break;
             default:
               break;
@@ -169,6 +180,9 @@ export class Tilemap {
             this.solidTiles,
             this.scale
           );
+          if (hideEnemySpawnPoints) {
+            tile.entityOrder = -10000;
+          }
           GAME_ENGINE.addEntity(tile);
         }
       }
@@ -209,5 +223,16 @@ export class Tilemap {
 
   getGrowingTreeSpawnPoints() {
     return this.growingTreeSpawnPoints;
+  }
+  getGolemSpawnPoints() {
+    return this.golemSpawnPoints;
+  }
+
+  getBoulderSpawnPoints() {
+    return this.boulderSpawnPoints;
+  }
+
+  getSpiderwebObstacleSpawnPoints() {
+    return this.spiderwebObstacleSpawnPoints;
   }
 }

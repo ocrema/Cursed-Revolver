@@ -24,6 +24,7 @@ export class SaloonTile extends Tile {
       scale
     );
     this.entityOrder = -9;
+    this.scale = 5.5;
   }
 
   draw(ctx) {
@@ -41,7 +42,7 @@ export class SaloonTile extends Tile {
       256,
       144, // Full tile size
       this.x - GAME_ENGINE.camera.x,
-      this.y - GAME_ENGINE.camera.y - 135 * this.scale, // Move up
+      this.y - GAME_ENGINE.camera.y - 137 * this.scale, // Move up
       256 * this.scale,
       144 * this.scale // Apply scaling
     );

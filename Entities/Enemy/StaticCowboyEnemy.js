@@ -6,7 +6,6 @@ import { CowboyBullet } from "./CowboyEnemy.js"; // Import Cowboy Bullet
 import { HealingBottle } from "../Enemy/HealingBottle.js"; // Ensure this is the correct path
 import { GAME_ENGINE } from "../../main.js";
 
-
 export class StaticCowboyEnemy extends Actor {
   constructor(x, y) {
     super();
@@ -18,20 +17,29 @@ export class StaticCowboyEnemy extends Actor {
     this.addAnimation(
       "idle",
       this.assetManager.getAsset("./assets/cowboy/CowBoyIdle.png"),
-      48, 48, 7, 0.15
+      48,
+      48,
+      7,
+      0.15
     );
 
     this.addAnimation(
       "shoot",
       this.assetManager.getAsset("./assets/cowboy/CowBoyShoot.png"),
-      48, 48, 5, 0.2
+      48,
+      48,
+      5,
+      0.2
     );
 
     this.addAnimation(
       "death",
       this.assetManager.getAsset("./assets/cowboy/CowBoyDeath.png"),
-      48, 48, 5, 0.2
-    )
+      48,
+      48,
+      5,
+      0.2
+    );
 
     this.setAnimation("idle"); // Default animation
 
@@ -75,34 +83,50 @@ export class StaticCowboyEnemy extends Actor {
   update() {
     if (!this.dead) {
       this.applyDamage();
-    
+
       if (this.effects.frozen > 0 || this.effects.stun > 0) return;
       this.attackCooldown += GAME_ENGINE.clockTick;
-      
 
       let playerDetected = false;
       let playerTarget = null;
 
-      for (let entity of GAME_ENGINE.entities) {
-        if (entity instanceof Player && Util.canSee(this, entity)) {
-          this.seesPlayer = true;
-          playerDetected = true;
-          playerTarget = entity;
+      // for (let entity of GAME_ENGINE.entities) {
+      //   if (entity instanceof Player && Util.canSee(this, entity)) {
+      //     this.seesPlayer = true;
+      //     playerDetected = true;
+      //     playerTarget = entity;
 
-          // **Flip the cowboy based on player's position**
-          this.flip = entity.x < this.x; // Flip if player is on the left
+      //     // **Flip the cowboy based on player's position**
+      //     this.flip = entity.x < this.x; // Flip if player is on the left
 
-          if (this.attackCooldown >= this.fireRate) {
-            this.attack(entity);
-          }
+      //     if (this.attackCooldown >= this.fireRate) {
+      //       this.attack(entity);
+      //     }
+      //   }
+      // }
+
+      // ares optimized here
+      const player = window.PLAYER;
+      if (player && Util.canSee(this, player)) {
+        this.seesPlayer = true;
+        playerDetected = true;
+        playerTarget = player;
+
+        // **Flip the cowboy based on player's position**
+        this.flip = player.x < this.x; // Flip if player is on the left
+
+        if (this.attackCooldown >= this.fireRate) {
+          this.attack(player);
         }
       }
 
       // **Debug: Check if attacks are being received**
       if (this.recieved_attacks.length > 0) {
-          console.log(`Static Cowboy hit! Received attacks:`, this.recieved_attacks);
+        console.log(
+          `Static Cowboy hit! Received attacks:`,
+          this.recieved_attacks
+        );
       }
-
 
       // **If no player is detected, return to idle animation**
       if (!playerDetected) {
@@ -116,7 +140,7 @@ export class StaticCowboyEnemy extends Actor {
   onAnimationComplete() {
     if (this.currentAnimation == "death") {
       this.spawnHealingBottle();
-  
+
       this.removeFromWorld = true;
       this.collider = null;
     }
@@ -125,7 +149,7 @@ export class StaticCowboyEnemy extends Actor {
   attack(player) {
     this.setAnimation("shoot");
     this.attackCooldown = 0;
-    console.log(`Static Cowboy shooting at Player at (${player.x}, ${player.y})`);
+    //console.log(`Static Cowboy shooting at Player at (${player.x}, ${player.y})`);
 
     GAME_ENGINE.addEntity(new CowboyBullet(this.x, this.y, player));
     window.ASSET_MANAGER.playAsset("./assets/sfx/revolver_shot.ogg", 1);
@@ -139,7 +163,7 @@ export class StaticCowboyEnemy extends Actor {
   applyDamage() {
     this.recieveAttacks();
     this.recieveEffects();
-  
+
     // **Check if the cowboy dies**
     if (this.health <= 0) {
       console.log("Static Cowboy has died!");
@@ -148,12 +172,10 @@ export class StaticCowboyEnemy extends Actor {
       this.onDeath();
     }
   }
-  
+
   spawnHealingBottle() {
     let bottle = new HealingBottle(this.x, this.y); // Spawn at cowboy's position
     GAME_ENGINE.addEntity(bottle);
     console.log(`HealingBottle spawned at (${this.x}, ${this.y})`);
   }
-  
-  
 }

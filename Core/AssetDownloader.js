@@ -87,6 +87,11 @@ export class AssetDownloader {
     this.assetManager.queueDownload("./assets/enemy/golem/golem_walk.png");
     this.assetManager.queueDownload("./assets/enemy/golem/golem_idle.png");
     this.assetManager.queueDownload("./assets/enemy/golem/golem_hit.png");
+
+    // Wizard
+    this.assetManager.queueDownload("./assets/enemy/wizard/Idle.png");
+    this.assetManager.queueDownload("./assets/enemy/wizard/Death.png");
+    this.assetManager.queueDownload("./assets/enemy/wizard/Attack.png");
   }
 
   downloadEnemyAttackAssets() {
@@ -98,10 +103,9 @@ export class AssetDownloader {
     this.assetManager.queueDownload(
       "./assets/background/UndergroundBackground.png"
     );
-    this.assetManager.queueDownload(
-      "./assets/background/UndergroundBackground1.png"
-    );
     this.assetManager.queueDownload("./assets/background/SpiderBackground.png");
+    this.assetManager.queueDownload("./assets/ui/gameend/win.png");
+    this.assetManager.queueDownload("./assets/ui/gameend/lose.png");
   }
 
   downloadMapGroundAssets() {
@@ -118,7 +122,6 @@ export class AssetDownloader {
     this.assetManager.queueDownload("./assets/map/props/tree02.png");
     this.assetManager.queueDownload("./assets/map/props/tree03.png");
     this.assetManager.queueDownload("./assets/map/props/tree04.png");
-    this.assetManager.queueDownload("./assets/map/Spikes.png");
     this.assetManager.queueDownload("./assets/map/CactusSpikes.png");
     this.assetManager.queueDownload("./assets/map/Saloon.png");
     this.assetManager.queueDownload(
@@ -151,9 +154,19 @@ export class AssetDownloader {
     this.assetManager.queueDownload(
       "./assets/map/SpawnPoints/SpiderSpawnPoint.png"
     );
+    this.assetManager.queueDownload(
+      "./assets/map/SpawnPoints/GolemSpawnPoint.png"
+    );
+    this.assetManager.queueDownload(
+      "./assets/map/SpawnPoints/BoulderSpawnPoint.png"
+    );
+    this.assetManager.queueDownload(
+      "./assets/map/SpawnPoints/SpiderwebObstacleSpawnPoint.png"
+    );
     this.assetManager.queueDownload("./assets/map/Spiderweb.png");
     this.assetManager.queueDownload("./assets/map/Signs.png");
     this.assetManager.queueDownload("./assets/map/Campfire.png");
+    this.assetManager.queueDownload("./assets/map/ActivatedCampfire.png");
   }
 
   downloadSpellAssets() {
@@ -172,6 +185,8 @@ export class AssetDownloader {
     this.assetManager.queueDownload("./assets/objects/tumbleweed.png");
     this.assetManager.queueDownload("./assets/objects/growing_tree.png");
     this.assetManager.queueDownload("./assets/objects/health_potion.png");
+    this.assetManager.queueDownload("./assets/objects/Boulder.png");
+    this.assetManager.queueDownload("./assets/objects/WebObstacle.png");
   }
 
   downloadEnvironmentalAssets() {
@@ -190,6 +205,7 @@ export class AssetDownloader {
     this.assetManager.queueDownload(
       "./assets/effects/burning/BurningEffect.png"
     );
+    this.assetManager.queueDownload("./assets/effects/healing/heal.png");
     this.assetManager.queueDownload("./assets/effects/dust/landingdust.png");
     this.assetManager.queueDownload("./assets/effects/dust/dashdust.png");
     this.assetManager.queueDownload("./assets/effects/shock.png");
@@ -227,10 +243,13 @@ export class AssetDownloader {
     this.assetManager.queueDownload("./assets/sfx/temp_shock.ogg");
     this.assetManager.queueDownload("./assets/sfx/void_explosion.wav");
     this.assetManager.queueDownload("./assets/sfx/checkpoint.ogg");
+    this.assetManager.queueDownload("./assets/sfx/wizard_charge.wav");
+    this.assetManager.queueDownload("./assets/sfx/explosion.wav");
   }
 
   downloadMusicAssets() {
     this.assetManager.queueDownload("./assets/music/track1.mp3");
+    this.assetManager.queueDownload("./assets/music/track2.mp3");
   }
 
   downloadPauseMenuButtons() {
@@ -263,7 +282,7 @@ export class AssetDownloader {
     this.assetManager.queueDownload("./assets/ui/cowboy2.png");
     this.assetManager.queueDownload("./assets/ui/cowboy_spell.png");
     for (let i = 1; i <= 6; i++) {
-      this.assetManager.queueDownload(`./assets/ui/cowboy_spell${i}.png`);
+      // this.assetManager.queueDownload(`./assets/ui/cowboy_spell${i}.png`);
     }
     for (let i = 1; i <= 6; i++) {
       this.assetManager.queueDownload(`./assets/ui/cowboy_flash${i}.png`);
@@ -282,5 +301,6 @@ export class AssetDownloader {
 
   downloadFonts() {
     this.assetManager.queueDownload("./assets/fonts/texas.ttf");
+    this.assetManager.queueDownload("./assets/fonts/title.ttf");
   }
 }

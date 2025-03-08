@@ -11,6 +11,7 @@ import { Icicle } from "../Spells/Icicle.js";
 import { VoidOrb } from "../Spells/VoidOrb.js";
 import { VineGrapple } from "../Spells/VineGrapple.js";
 import { AnimationLoader } from "../../Core/AnimationLoader.js";
+import { SpawnPointTile } from "../Map/Tiles/SpawnPointTile.js";
 
 export class Player extends Actor {
   constructor(x, y) {
@@ -37,7 +38,6 @@ export class Player extends Actor {
     this.health = 200;
     this.maxHealth = 200;
     this.isLaunchable = true;
-    this.inWater = false;
     this.validEffects = {};
 
     // Start with the idle animation
@@ -53,7 +53,14 @@ export class Player extends Actor {
     this.selectedSpell = 0;
     this.spellCooldowns = [0, 0, 0, 0, 0, 0];
     this.maxSpellCooldown = 1;
-    this.spellColors = ['orange', 'limegreen', 'cyan', 'blue', 'yellow', 'purple'];
+    this.spellColors = [
+      "orange",
+      "limegreen",
+      "cyan",
+      "blue",
+      "yellow",
+      "purple",
+    ];
 
     this.timeBetweenFootsteps = 0.4;
     this.timeSinceLastFootstep = 0.4;
@@ -83,6 +90,7 @@ export class Player extends Actor {
     // Forcefully increase health
     let oldHealth = this.health;
     this.health = Math.min(this.maxHealth, this.health + amount);
+    GAME_ENGINE.addEntity(new HealDust(this));
 
     //console.log(` Player Health Before: ${oldHealth}, After: ${this.health}`);
 
@@ -93,10 +101,18 @@ export class Player extends Actor {
   }
 
   setSpawnPoint(x, y) {
-    if (this.spawnX === x && this.spawnY === y) return;
+    //if (this.spawnX === x && this.spawnY === y) return;
     window.ASSET_MANAGER.playAsset("./assets/sfx/checkpoint.ogg");
     this.spawnX = x;
     this.spawnY = y;
+
+    //console.log(`Player respawn point set at ${x}, ${y}`);
+
+    // for (let entity of GAME_ENGINE.entities) {
+    //   if (entity instanceof SpawnPointTile && entity.x === this.spawnX) {
+    //     entity.respawnEnemies(); // Call respawnEnemies() on respawn
+    //   }
+    // }
   }
 
   respawn() {
@@ -115,6 +131,7 @@ export class Player extends Actor {
     this.gun_spin = null;
     this.x_velocity = 0;
     this.y_velocity = 0;
+    //this.setSpawnPoint(this.x, this.y);
   }
 
   update() {
@@ -209,7 +226,6 @@ export class Player extends Actor {
   }
 
   movement() {
-    this.inWater = false;
     //gravity
     this.y_velocity = Math.min(
       this.y_velocity + GAME_ENGINE.clockTick * 3000,
@@ -235,13 +251,6 @@ export class Player extends Actor {
       this.y_velocity = 0;
       this.x_velocity = this.storedDashSpeed;
       this.isDashing -= GAME_ENGINE.clockTick;
-    }
-
-    for (let e of GAME_ENGINE.entities) {
-      if (e.isWater && this.colliding(e)) {
-        this.inWater = true;
-        break;
-      }
     }
 
     if (
@@ -302,11 +311,6 @@ export class Player extends Actor {
       window.ASSET_MANAGER.playAsset("./assets/sfx/jump.ogg");
     }
 
-    let currentSpeed = this.speed;
-    if (this.inWater) {
-      currentSpeed *= 0.5;
-    }
-
     // Movement logic
 
     let velFromKeys = 0;
@@ -314,7 +318,7 @@ export class Player extends Actor {
       GAME_ENGINE.keys["a"] ||
       (this.isDashing > 0 && this.storedDashSpeed < 0)
     ) {
-      velFromKeys -= currentSpeed;
+      velFromKeys -= this.speed;
       this.isMoving = true;
       this.flip = true;
     }
@@ -322,7 +326,7 @@ export class Player extends Actor {
       GAME_ENGINE.keys["d"] ||
       (this.isDashing > 0 && this.storedDashSpeed > 0)
     ) {
-      velFromKeys += currentSpeed;
+      velFromKeys += this.speed;
       this.isMoving = true;
       this.flip = false;
     }
@@ -347,13 +351,11 @@ export class Player extends Actor {
           e.isSpike ||
           e.isSpawnPoint ||
           e.isBackgroundTrigger ||
-          e.isPickup
+          e.isPickup ||
+          e.isWater
         )
           continue;
-        if (e.isWater) {
-          this.inWater = true;
-          continue;
-        }
+
         if (this.colliding(e)) {
           hitSomething = true;
           this.moveAgainstX(e);
@@ -396,14 +398,10 @@ export class Player extends Actor {
         e.isDestructibleObject ||
         e.isSpike ||
         e.isSpawnPoint ||
-        e.isBackgroundTrigger
+        e.isBackgroundTrigger ||
+        e.isWater
       )
         continue;
-
-      if (e.isWater) {
-        this.inWater = true;
-        continue;
-      }
 
       if (this.colliding(e)) {
         hitSomething = true;
@@ -445,7 +443,7 @@ export class Player extends Actor {
       GAME_ENGINE.keys["wheelUp"] = false;
       this.selectedSpell--;
       if (this.selectedSpell < 0) this.selectedSpell = 5;
-      console.log(this.selectedSpell);
+      //console.log(this.selectedSpell);
       //window.ASSET_MANAGER.playAsset("./assets/sfx/click1.ogg");
     }
     if (GAME_ENGINE.keys["e"] || GAME_ENGINE.keys["wheelDown"]) {
@@ -493,7 +491,9 @@ export class Player extends Actor {
       } else if (this.selectedSpell === 3) {
         GAME_ENGINE.addEntity(new WaterWave(this, this.dir, this.gun_offset));
       } else if (this.selectedSpell === 4) {
-        GAME_ENGINE.addEntity(new ChainLightning(this, this.dir, this.gun_offset));
+        GAME_ENGINE.addEntity(
+          new ChainLightning(this, this.dir, this.gun_offset)
+        );
       } else if (this.selectedSpell === 5) {
         GAME_ENGINE.addEntity(new VoidOrb(this, this.dir, this.gun_offset));
       }
@@ -518,7 +518,7 @@ export class Player extends Actor {
     let dir;
     if (this.gun_spin !== null) dir = this.gun_spin;
     else dir = this.dir;
-    ctx.rotate((this.flip) ? -dir + Math.PI : dir);
+    ctx.rotate(this.flip ? -dir + Math.PI : dir);
     ctx.shadowColor = this.spellColors[this.selectedSpell];
     ctx.shadowBlur = 30;
     const scale = 2.5;
@@ -612,6 +612,49 @@ class DashDust extends Entity {
       -32 * this.scale,
       48 * this.scale,
       32 * this.scale
+    );
+
+    ctx.restore();
+  }
+}
+
+class HealDust extends Entity {
+  constructor(player) {
+    super();
+    this.player = player;
+    this.x = this.player.x;
+    this.y = this.player.y + this.player.collider.height;
+    this.time = 0;
+    this.end = 1;
+    this.entityOrder = 3;
+    this.image = window.ASSET_MANAGER.getAsset(
+      "./assets/effects/healing/heal.png"
+    );
+    this.scale = 2;
+  }
+  update() {
+    this.x = this.player.x;
+    this.y = this.player.y + (this.player.collider.height / 2) * this.scale;
+    this.time += GAME_ENGINE.clockTick;
+    if (this.time >= this.end) {
+      this.removeFromWorld = true;
+    }
+  }
+  draw(ctx) {
+    const frame = Math.floor((this.time / this.end) * 14);
+    ctx.save();
+    ctx.translate(this.x - GAME_ENGINE.camera.x, this.y - GAME_ENGINE.camera.y);
+
+    ctx.drawImage(
+      this.image,
+      frame * 128,
+      0,
+      128,
+      128,
+      (-128 * this.scale) / 2,
+      -128 * this.scale,
+      128 * this.scale,
+      128 * this.scale
     );
 
     ctx.restore();

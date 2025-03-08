@@ -11,6 +11,7 @@ export class HUD extends Entity {
     this.enemyHealthBarWidthRatio = 0.1; // smaller than player's
     this.enemyHealthBarHeightRatio = 0.02; // scaled height
     this.debugMode = false;
+    this.assetManager = window.ASSET_MANAGER;
 
     // Cursor coordinates
     this.cursorX = 0;
@@ -36,6 +37,22 @@ export class HUD extends Entity {
       "./assets/ui/cowboy_spell.png", // Transition end
     ];
 
+    // Game over animations
+    this.gameWinScreen = {
+      image: this.assetManager.getAsset("./assets/ui/gameend/win.png"),
+      width: 648,
+      height: 492,
+      frameCount: 6,
+      frameDuration: 0.75,
+    };
+    this.gameLoseScreen = {
+      image: this.assetManager.getAsset("./assets/ui/gameend/lose.png"),
+      width: 1920,
+      height: 1080,
+      frameCount: 1,
+      frameDuration: 0.75,
+    };
+  
     this.cowboyFrameIndex = 0; // Current frame
     this.blinkTimer = 0; // Timer to switch frames
     this.blinkInterval = 1.0; // Change every 0.5 seconds
@@ -90,18 +107,25 @@ export class HUD extends Entity {
     return false;
   }
 
+  displayFPS(ctx) {
+    ctx.font = "20px Arial";
+    ctx.fillStyle = "white";
+    ctx.fillText(`FPS: ${GAME_ENGINE.fps}`, ctx.canvas.width - 20, 70);
+  }
+
   update() {
     if (this.mapReference) {
       this.playerCurrentStage = this.mapReference.currentStage;
       if (this.playerCurrentStage === 1) {
-        this.totalRemainingEnemies = this.mapReference.firstStageEnemies.size;
+        this.totalRemainingEnemies = this.mapReference.stageEnemyCounts[1];
       } else {
-        this.totalRemainingEnemies =
-          this.mapReference.secondStageEnemies.size;
+        this.totalRemainingEnemies = this.mapReference.stageEnemyCounts[2];
       }
     }
+
+    //check that player exists
     const player = GAME_ENGINE.entities.find((e) => e.isPlayer);
-    if (!player) return; //check that player exists
+    if (!player) return;
 
     // Ensure the cowboy image is set on the first frame
     if (!this.currentCowboyImage) {
@@ -128,7 +152,7 @@ export class HUD extends Entity {
 
     // Detect Attack (Left Mouse Button / 'm1')
     if (GAME_ENGINE.keys["m1"] && !this.isAttacking) {
-      console.log("ATTACK!!!");
+      //console.log("ATTACK!!!");
       this.isAttacking = true;
       this.attackAnimationTimer = this.spellAnimationDuration; // Set attack animation timer
     }
@@ -155,7 +179,7 @@ export class HUD extends Entity {
         this.isSpellSwitching = false;
       }
       if (this.attackAnimationTimer <= 0) {
-        console.log("ATTACK ANIMATION END!");
+        //console.log("ATTACK ANIMATION END!");
         this.isAttacking = false;
       }
     } else {
@@ -278,6 +302,8 @@ export class HUD extends Entity {
       );
     }
 
+    this.displayFPS(ctx);
+
     // Get Player
     const player = GAME_ENGINE.entities.find((e) => e.isPlayer);
     if (!player) return; // Ensure player exists
@@ -305,8 +331,8 @@ export class HUD extends Entity {
     const healthBarMargin = canvasHeight * this.healthBarMarginRatio;
     const cowboySize = healthBarHeight * 20;
 
-    const cowboyX = -canvasWidth * 0.0005; // Move cowboy to the right
-    const cowboyY = canvasHeight - cowboySize / 1.9; // Move cowboy lower
+    const cowboyX = canvasWidth * 0.02; // Move cowboy to the right
+    const cowboyY = canvasHeight - cowboySize / 2.0; // Move cowboy lower
 
     const startX = cowboyX + cowboySize / 1.8; // Move health bar closer horizontally
     const startY = canvasHeight - healthBarHeight - healthBarMargin / 1.5; // Move health bar closer vertically
@@ -480,13 +506,12 @@ export class HUD extends Entity {
     // === Game Win Screen ===
 
     if (this.gameWon) {
-      console.log("All enemies are dead! Triggering game over.");
+      // console.log("All enemies are dead! Triggering game over.");
       GAME_ENGINE.GAME_CONTROLLER.setGameOver();
 
-      ctx.fillStyle = "rgba(0, 104, 71, 0.5)"; // Red overlay
-      ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+      this.updateGameOverScreen(ctx);
 
-      ctx.fillStyle = "white";
+      ctx.fillStyle = "rgb(22, 129, 0)";
       ctx.font = `${canvasHeight * 0.12}px Texas, Arial`;
       ctx.fillText("GAME WON", canvasWidth / 2, canvasHeight / 2);
 
@@ -502,8 +527,7 @@ export class HUD extends Entity {
       console.log("Player health is 0! Triggering Game Over.");
       GAME_ENGINE.GAME_CONTROLLER.setGameOver();
 
-      ctx.fillStyle = "rgba(255, 0, 0, 0.5)"; // Red overlay
-      ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+      this.updateGameOverScreen(ctx);
 
       ctx.fillStyle = "white";
       ctx.font = `${canvasHeight * 0.12}px Texas, Arial`;
@@ -568,6 +592,44 @@ export class HUD extends Entity {
     }
 
     ctx.restore();
+  }
+
+  updateGameOverScreen(ctx) {
+    this.elapsedTime += GAME_ENGINE.clockTick;
+
+    if (this.gameWon) {
+      if (this.elapsedTime > this.gameWinScreen.frameDuration) {
+        this.elapsedTime = 0;
+        this.currentFrame = (this.currentFrame + 1) % this.gameWinScreen.frameCount;
+      }
+
+      ctx.drawImage(
+        this.gameWinScreen.image,
+        this.currentFrame * this.gameWinScreen.width, 
+        0, 
+        this.gameWinScreen.width, 
+        this.gameWinScreen.height, 
+        0, 
+        0, 
+        ctx.canvas.width, 
+        ctx.canvas.height
+      );
+    }
+
+    else {
+      // black background 
+      ctx.drawImage(
+        this.gameLoseScreen.image,
+        0, 
+        0, 
+        this.gameLoseScreen.width, 
+        this.gameLoseScreen.height, 
+        0, 
+        0, 
+        ctx.canvas.width, 
+        ctx.canvas.height
+      );
+    }
   }
 
   checkWin() {
