@@ -16,10 +16,11 @@ export class DeathCollider extends Entity {
   }
 
   update() {
-    for (let e of GAME_ENGINE.entities) {
-      if (e instanceof Player && this.colliding(e)) {
+    const player = window.PLAYER;
+    if (player) {
+      if (player instanceof Player && this.colliding(player)) {
         console.log("hit player");
-        e.queueAttack({
+        player.queueAttack({
           damage: 0,
           x: this.x,
           y: this.y,
