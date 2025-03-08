@@ -41,6 +41,7 @@ export class BackgroundTriggerTile extends Tile {
     const player = window.PLAYER;
     if (player)
       if (this.colliding(player) && !this.hasTriggered) {
+        console.log("test");
         this.hasTriggered = true; // Prevent retriggering immediately
         let background = GAME_ENGINE.entities.find(
           (e) => e instanceof Background
