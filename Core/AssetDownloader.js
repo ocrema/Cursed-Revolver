@@ -159,6 +159,9 @@ export class AssetDownloader {
     this.assetManager.queueDownload(
       "./assets/map/SpawnPoints/BoulderSpawnPoint.png"
     );
+    this.assetManager.queueDownload(
+      "./assets/map/SpawnPoints/SpiderwebObstacleSpawnPoint.png"
+    );
     this.assetManager.queueDownload("./assets/map/Spiderweb.png");
     this.assetManager.queueDownload("./assets/map/Signs.png");
     this.assetManager.queueDownload("./assets/map/Campfire.png");

@@ -35,11 +35,11 @@ export class Map extends GameMap {
   }
 
   async load() {
-    const playerSpawn = { x: 763, y: 1500 };
+    //const playerSpawn = { x: 763, y: 1500 };
     // underground start
     //const playerSpawn = { x: 12400, y: 4000 };
     // spider pit start
-    //const playerSpawn = { x: 23532, y: 4760 };
+    const playerSpawn = { x: 23532, y: 4760 };
 
     // Add colliders for death zones
     GAME_ENGINE.addEntity(new DeathCollider(2233, 2233, 5000, 50));
@@ -74,6 +74,7 @@ export class Map extends GameMap {
       "SpawnPoints/GrowingTreeSpawnPoint.png",
       "SpawnPoints/GolemSpawnPoint.png",
       "SpawnPoints/BoulderSpawnPoint.png",
+      "SpawnPoints/SpiderwebObstacleSpawnPoint.png",
     ];
 
     const TILESET_IMAGES = tilesetNames.map((name) =>
@@ -137,6 +138,11 @@ export class Map extends GameMap {
         entity: Boulder,
         offsetY: -50,
       },
+      SpiderwebObstacle: {
+        method: gameMap.getSpiderwebObstacleSpawnPoints,
+        entity: WebObstacle,
+        offsetY: -50,
+      },
     };
 
     // Spawn enemies
@@ -157,7 +163,7 @@ export class Map extends GameMap {
 
         if (stage === 1) {
           this.totalEnemies++;
-          GAME_ENGINE.addEntity(enemy); 
+          GAME_ENGINE.addEntity(enemy);
         }
       }
     }
@@ -183,15 +189,18 @@ export class Map extends GameMap {
   }
 
   spawnNextStageEnemies() {
+    let spawnCounter = 0;
     console.log(`Spawning enemies for stage ${this.currentStage}.`);
     const enemiesToSpawn = this.stageEnemyGroups[this.currentStage];
 
     if (!enemiesToSpawn) return;
 
     for (let enemy of enemiesToSpawn) {
+      spawnCounter++;
       console.log(`Spawning enemy at ${enemy.x}, ${enemy.y}`);
       GAME_ENGINE.addEntity(enemy);
     }
+    console.log(`Total Spawned Enemy for stage: ${spawnCounter}`);
   }
 
   onEnemyDeath(enemy) {
