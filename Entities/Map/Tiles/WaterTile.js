@@ -24,12 +24,6 @@ export class WaterTile extends Entity {
     this.tilesPerRow = tilesPerRow;
     this.firstGID = firstGID;
     this.scale = scale; // Scale factor
-    this.isWater = true;
-
-    this.collider = new Collider(
-      this.tileSize * this.scale, // Scale width
-      this.tileSize * this.scale // Scale height
-    );
   }
 
   draw(ctx) {

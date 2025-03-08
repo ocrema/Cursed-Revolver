@@ -25,11 +25,5 @@ export class SpikeTile extends Tile {
     this.firstGID = firstGID;
     this.scale = scale; // Scale factor
     this.isGround = true;
-    this.isSpike = true;
-
-    this.collider = new Collider(
-      this.tileSize * this.scale, // Scale width
-      this.tileSize * this.scale // Scale height
-    );
   }
 }
