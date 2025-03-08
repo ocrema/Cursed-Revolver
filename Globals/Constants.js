@@ -9,6 +9,14 @@ export const BACKGROUND_SPRITESHEET = {
     FRAME_COUNT: 40,
     FRAME_DURATION: 0.1,
   },
+  ABOVE: {
+    NAME: "ABOVE",
+    URL: "./assets/background/AboveBackground.png",
+    FRAME_WIDTH: 640,
+    FRAME_HEIGHT: 400,
+    FRAME_COUNT: 40,
+    FRAME_DURATION: 0.1,
+  },
   UNDER: {
     NAME: "UNDER",
     URL: "./assets/background/UndergroundBackground.png",
@@ -272,7 +280,7 @@ export const MAP_CONSTANTS = {
     FRAME_WIDTH: 32,
     FRAME_HEIGHT: 64,
     FRAME_COUNT: 8,
-    FRAME_DURATION: 0.20,
+    FRAME_DURATION: 0.2,
   },
   ACTIVATED_CAMPFIRE: {
     NAME: "ACTIVATEDCAMPFIRE",
@@ -280,7 +288,7 @@ export const MAP_CONSTANTS = {
     FRAME_WIDTH: 32,
     FRAME_HEIGHT: 64,
     FRAME_COUNT: 8,
-    FRAME_DURATION: 0.20,
+    FRAME_DURATION: 0.2,
   },
   SPIDERWEB: {
     NAME: "SPIDERWEB",
