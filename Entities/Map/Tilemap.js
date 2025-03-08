@@ -1,6 +1,5 @@
 import { Tile } from "./Tiles/Tile.js";
 import { GAME_ENGINE } from "../../main.js";
-import { SpikeTile } from "./Tiles/SpikeTile.js";
 import { SaloonTile } from "./Tiles/SaloonTile.js";
 import { SpawnPointTile } from "./Tiles/SpawnPointTile.js";
 import { TreeTile } from "./Tiles/TreeTile.js";
@@ -105,10 +104,6 @@ export class Tilemap {
           switch (tileID) {
             case 105:
               tileClass = SpawnPointTile;
-              break;
-
-            case 101:
-              tileClass = SpikeTile;
               break;
 
             case 102:
