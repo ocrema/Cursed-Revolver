@@ -46,12 +46,13 @@ export class Map extends GameMap {
     GAME_ENGINE.addEntity(new DeathCollider(12870, 4338, 8000, 50));
 
     // Add player
-    const player = GAME_ENGINE.addEntity(
-      new Player(playerSpawn.x, playerSpawn.y)
-    );
+    const player = new Player(playerSpawn.x, playerSpawn.y);
+    GAME_ENGINE.addEntity(player);
 
     // Add background
     GAME_ENGINE.addEntity(new Background(player));
+
+    window.PLAYER = player;
 
     // Load map and tilesets
     const tilesetNames = [
