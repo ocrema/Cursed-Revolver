@@ -78,20 +78,34 @@ export class Spider extends Actor {
       this.onWall = false;
 
       // check LOS on player
-      for (let entity of GAME_ENGINE.entities) {
-        if (entity instanceof Player) {
-          if (Util.canSee(this, entity) && Util.canAttack(this, entity)) {
-            this.seesPlayer = true;
-            if (
-              this.currentAnimation === SPIDER_SPRITESHEET.AGGRESSIVE.NAME ||
-              this.currentAnimation === SPIDER_SPRITESHEET.ATTACK.NAME
-            ) {
-              this.target = { x: entity.x, y: entity.y };
-            }
-          } else {
-            this.seesPlayer = false;
-          }
+      // for (let entity of GAME_ENGINE.entities) {
+      //   if (entity instanceof Player) {
+      //     if (Util.canSee(this, entity)) {
+      //       this.seesPlayer = true;
+      //       if (
+      //         this.currentAnimation === SPIDER_SPRITESHEET.AGGRESSIVE.NAME ||
+      //         this.currentAnimation === SPIDER_SPRITESHEET.ATTACK.NAME
+      //       ) {
+      //         this.target = { x: entity.x, y: entity.y };
+      //       }
+      //     } else {
+      //       this.seesPlayer = false;
+      //     }
+      //   }
+      // }
+
+      // ares optimized here by not looping thru entities every time
+      const player = window.PLAYER;
+      if (Util.canSee(this, window.PLAYER)) {
+        this.seesPlayer = true;
+        if (
+          this.currentAnimation === SPIDER_SPRITESHEET.AGGRESSIVE.NAME ||
+          this.currentAnimation === SPIDER_SPRITESHEET.ATTACK.NAME
+        ) {
+          this.target = { x: player.x, y: player.y };
         }
+      } else {
+        this.seesPlayer = false;
       }
 
       // updates what state the spider is in and moves target when state changes
