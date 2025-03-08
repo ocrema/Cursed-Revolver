@@ -123,8 +123,9 @@ export class HUD extends Entity {
       }
     }
 
+    //check that player exists
     const player = GAME_ENGINE.entities.find((e) => e.isPlayer);
-    if (!player) return; //check that player exists
+    if (!player) return;
 
     // Ensure the cowboy image is set on the first frame
     if (!this.currentCowboyImage) {
