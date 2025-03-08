@@ -115,12 +115,12 @@ export class HUD extends Entity {
 
   update() {
     if (this.mapReference) {
-      this.playerCurrentStage = this.mapReference.currentStage;
-      if (this.playerCurrentStage === 1) {
-        this.totalRemainingEnemies = this.mapReference.firstStageEnemies.size;
-      } else {
-        this.totalRemainingEnemies = this.mapReference.secondStageEnemies.size;
-      }
+      // this.playerCurrentStage = this.mapReference.currentStage;
+      // if (this.playerCurrentStage === 1) {
+      //   this.totalRemainingEnemies = this.mapReference.firstStageEnemies.size;
+      // } else {
+      //   this.totalRemainingEnemies = this.mapReference.secondStageEnemies.size;
+      // }
     }
 
     const player = GAME_ENGINE.entities.find((e) => e.isPlayer);
@@ -151,7 +151,7 @@ export class HUD extends Entity {
 
     // Detect Attack (Left Mouse Button / 'm1')
     if (GAME_ENGINE.keys["m1"] && !this.isAttacking) {
-      console.log("ATTACK!!!");
+      //console.log("ATTACK!!!");
       this.isAttacking = true;
       this.attackAnimationTimer = this.spellAnimationDuration; // Set attack animation timer
     }
