@@ -105,6 +105,7 @@ export class StaticCowboyEnemy extends Actor {
       //   }
       // }
 
+      // ares optimized here
       const player = window.PLAYER;
       if (player && Util.canSee(this, player)) {
         this.seesPlayer = true;

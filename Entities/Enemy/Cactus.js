@@ -127,28 +127,53 @@ export class Cactus extends Actor {
   }
 
   attemptAttack() {
-    for (let entity of GAME_ENGINE.entities) {
-      if (entity instanceof Player) {
-        // cactus sees player
-        if (
-          Util.canSee(this, entity) &&
-          this.attackTime > this.fireRate &&
-          Util.canAttack(new Thorn(this.x, this.y, entity), entity)
-        ) {
-          this.attackTime = 0;
-          GAME_ENGINE.addEntity(
-            new Thorn(this.x, this.y, entity, this.thornMaxRange)
-          );
-          this.setAnimation(CACTUS_SPRITESHEET.ATTACK.NAME, false);
-          window.ASSET_MANAGER.playAsset(
-            "./assets/sfx/cactus_shoot.ogg",
-            1 * Util.DFCVM(this)
-          );
-        } else if (Util.canSee(this, entity)) {
-          this.seesPlayer = true;
-        } else {
-          this.seesPlayer = false;
-        }
+    // for (let entity of GAME_ENGINE.entities) {
+    //   if (entity instanceof Player) {
+    //     // cactus sees player
+    //     if (
+    //       Util.canSee(this, entity) &&
+    //       this.attackTime > this.fireRate &&
+    //       Util.canAttack(new Thorn(this.x, this.y, entity), entity)
+    //     ) {
+    //       this.attackTime = 0;
+    //       GAME_ENGINE.addEntity(
+    //         new Thorn(this.x, this.y, entity, this.thornMaxRange)
+    //       );
+    //       this.setAnimation(CACTUS_SPRITESHEET.ATTACK.NAME, false);
+    //       window.ASSET_MANAGER.playAsset(
+    //         "./assets/sfx/cactus_shoot.ogg",
+    //         1 * Util.DFCVM(this)
+    //       );
+    //     } else if (Util.canSee(this, entity)) {
+    //       this.seesPlayer = true;
+    //     } else {
+    //       this.seesPlayer = false;
+    //     }
+    //   }
+    // }
+
+    // cactus sees player
+
+    const player = window.PLAYER;
+    if (player) {
+      if (
+        Util.canSee(this, player) &&
+        this.attackTime > this.fireRate &&
+        Util.canAttack(new Thorn(this.x, this.y, player), player)
+      ) {
+        this.attackTime = 0;
+        GAME_ENGINE.addEntity(
+          new Thorn(this.x, this.y, player, this.thornMaxRange)
+        );
+        this.setAnimation(CACTUS_SPRITESHEET.ATTACK.NAME, false);
+        window.ASSET_MANAGER.playAsset(
+          "./assets/sfx/cactus_shoot.ogg",
+          1 * Util.DFCVM(this)
+        );
+      } else if (Util.canSee(this, player)) {
+        this.seesPlayer = true;
+      } else {
+        this.seesPlayer = false;
       }
     }
   }

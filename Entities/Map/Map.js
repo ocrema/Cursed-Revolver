@@ -35,9 +35,9 @@ export class Map extends GameMap {
   }
 
   async load() {
-    //const playerSpawn = { x: 763, y: 1500 };
+    const playerSpawn = { x: 763, y: 1500 };
     // underground start
-    const playerSpawn = { x: 12400, y: 4000 };
+    //const playerSpawn = { x: 12400, y: 4000 };
     // spider pit start
     //const playerSpawn = { x: 23532, y: 4760 };
 
