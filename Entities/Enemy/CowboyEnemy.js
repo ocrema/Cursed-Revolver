@@ -6,8 +6,6 @@ import * as Util from "../../Utils/Util.js";
 import { HealingBottle } from "../Enemy/HealingBottle.js"; // Import Healing Bottle
 import { GAME_ENGINE } from "../../main.js";
 
-
-
 export class CowboyEnemy extends Actor {
   constructor(x, y) {
     super();
@@ -65,8 +63,11 @@ export class CowboyEnemy extends Actor {
     this.addAnimation(
       "death",
       this.assetManager.getAsset("./assets/cowboy/CowBoyDeath.png"),
-      48, 64, 5, 0.2
-    )
+      48,
+      64,
+      5,
+      0.2
+    );
 
     this.addAnimation(
       "hurt",
@@ -127,7 +128,6 @@ export class CowboyEnemy extends Actor {
     this.drawEffects(ctx);
   }
 
-
   update() {
     if (!this.dead) {
       this.applyDamage();
@@ -135,9 +135,10 @@ export class CowboyEnemy extends Actor {
       if (this.health <= 0) {
         this.dead = true;
         this.setAnimation("death", false);
+        this.onDeath();
         return;
       }
-      
+
       if (this.effects.frozen > 0 || this.effects.stun > 0) return;
 
       this.attackCooldown += GAME_ENGINE.clockTick;
@@ -146,57 +147,60 @@ export class CowboyEnemy extends Actor {
       let playerTarget = null;
 
       if (!this.onGround) {
-          this.velocity.y += this.gravity * GAME_ENGINE.clockTick;
+        this.velocity.y += this.gravity * GAME_ENGINE.clockTick;
       } else {
-          this.velocity.y = 0;
+        this.velocity.y = 0;
       }
 
       for (let entity of GAME_ENGINE.entities) {
-          if (entity instanceof Player && Util.canSee(this, entity)) {
-              this.seesPlayer = true;
-              playerDetected = true;
-              playerTarget = entity;
+        if (entity instanceof Player && Util.canSee(this, entity)) {
+          this.seesPlayer = true;
+          playerDetected = true;
+          playerTarget = entity;
 
-              const distance = Util.getDistance(this, entity);
+          const distance = Util.getDistance(this, entity);
 
-              if (!this.isDrawingWeapon) {
-                  if (distance < this.attackRadius && this.attackCooldown > this.fireRate) {
-                      this.attack(entity);
-                  } else if (distance < this.visualRadius) {
-                      this.chasePlayer(entity);
-                  }
-              }
+          if (!this.isDrawingWeapon) {
+            if (
+              distance < this.attackRadius &&
+              this.attackCooldown > this.fireRate
+            ) {
+              this.attack(entity);
+            } else if (distance < this.visualRadius) {
+              this.chasePlayer(entity);
+            }
           }
+        }
       }
 
       // **If No Player Is Detected, Stop Moving**
       if (!playerDetected) {
-          this.velocity.x = 0;
-          this.setAnimation("idle");
+        this.velocity.x = 0;
+        this.setAnimation("idle");
       }
 
       this.handleCollisions();
 
       // **Prevent Cowboy From Sliding Past Player**
       if (Math.abs(this.velocity.x) < 5) {
-          this.velocity.x = 0; 
+        this.velocity.x = 0;
       }
 
       this.x += this.velocity.x * GAME_ENGINE.clockTick;
       this.y += this.velocity.y * GAME_ENGINE.clockTick;
     }
 
-  this.updateAnimation(GAME_ENGINE.clockTick);
-}
-
-onAnimationComplete() {
-  if (this.currentAnimation == "death") {
-    this.spawnHealingBottle();
-
-    this.removeFromWorld = true;
-    this.collider = null;
+    this.updateAnimation(GAME_ENGINE.clockTick);
   }
-}
+
+  onAnimationComplete() {
+    if (this.currentAnimation == "death") {
+      this.spawnHealingBottle();
+
+      this.removeFromWorld = true;
+      this.collider = null;
+    }
+  }
 
   spawnHealingBottle() {
     let bottle = new HealingBottle(this.x, this.y);
@@ -204,12 +208,10 @@ onAnimationComplete() {
     console.log(`HealingBottle spawned at (${this.x}, ${this.y})`);
   }
 
-
   heal(amount) {
     this.health = Math.min(this.maxHealth, this.health + amount); // Ensure health doesn't exceed max
     console.log(`Player healed for ${amount}. Current Health: ${this.health}`);
   }
-
 
   attack(player) {
     this.setAnimation("shoot");
@@ -241,10 +243,10 @@ onAnimationComplete() {
 
   chasePlayer(player) {
     if (this.currentAnimation !== "walk" && this.velocity.x !== 0) {
-        this.setAnimation("walk");
+      this.setAnimation("walk");
     }
 
-    this.flip = player.x < this.x; 
+    this.flip = player.x < this.x;
     const direction = this.flip ? -1 : 1;
 
     // **Accurate Collider-Based Positions**
@@ -262,30 +264,33 @@ onAnimationComplete() {
 
     // **If close enough, stop moving but keep shooting**
     if (distanceToPlayer <= stopDistance) {
-        if (this.velocity.x !== 0) {  // Only log when stopping to avoid spam
-            //console.log("Cowboy Stopping - Close Enough to Player");
-        }
-        this.velocity.x = 0;  
-        this.setAnimation("idle");  
+      if (this.velocity.x !== 0) {
+        // Only log when stopping to avoid spam
+        //console.log("Cowboy Stopping - Close Enough to Player");
+      }
+      this.velocity.x = 0;
+      this.setAnimation("idle");
 
-        // **Ensure continuous shooting**
-        if (this.attackCooldown >= this.fireRate) {
-            //console.log("Cowboy is attacking the player!");
-            this.attack(player);
-        }
-        return; 
+      // **Ensure continuous shooting**
+      if (this.attackCooldown >= this.fireRate) {
+        //console.log("Cowboy is attacking the player!");
+        this.attack(player);
+      }
+      return;
     }
 
     // **Only update velocity if not within stop distance**
-    this.velocity.x = direction * this.speed; 
+    this.velocity.x = direction * this.speed;
 
     // **Attack while moving if within attack range**
-    if (distanceToPlayer <= this.attackRadius && this.attackCooldown >= this.fireRate) {
-        //console.log("Cowboy is attacking while moving!");
-        this.attack(player);
+    if (
+      distanceToPlayer <= this.attackRadius &&
+      this.attackCooldown >= this.fireRate
+    ) {
+      //console.log("Cowboy is attacking while moving!");
+      this.attack(player);
     }
   }
-
 
   applyDamage() {
     this.recieveAttacks();
@@ -294,25 +299,24 @@ onAnimationComplete() {
 
   handleCollisions() {
     for (let entity of GAME_ENGINE.entities) {
-        if (entity instanceof Tile && this.colliding(entity)) {
-            let thisBottom = this.y + this.height / 2;
-            let eTop = entity.y - entity.collider.height / 2;
+      if (entity instanceof Tile && this.colliding(entity)) {
+        let thisBottom = this.y + this.height / 2;
+        let eTop = entity.y - entity.collider.height / 2;
 
-            let collideBottom = 
-                thisBottom > eTop &&
-                this.y < eTop &&
-                this.x + this.width / 2 > entity.x - entity.collider.width / 2 &&
-                this.x - this.width / 2 < entity.x + entity.collider.width / 2;
+        let collideBottom =
+          thisBottom > eTop &&
+          this.y < eTop &&
+          this.x + this.width / 2 > entity.x - entity.collider.width / 2 &&
+          this.x - this.width / 2 < entity.x + entity.collider.width / 2;
 
-            if (collideBottom) {
-                this.y = eTop - this.height / 2;
-                this.velocity.y = 0;
-                this.onGround = true;
-            }
+        if (collideBottom) {
+          this.y = eTop - this.height / 2;
+          this.velocity.y = 0;
+          this.onGround = true;
         }
+      }
     }
   }
-
 }
 
 export class CowboyBullet extends Actor {

@@ -234,6 +234,7 @@ export class Crow extends Actor {
     this.isDead = true;
     this.setAnimation(CROW_SPRITESHEET.DEATH.NAME, false);
     this.onDeath();
+    this.removeFromWorld = true;
   }
 
   draw(ctx) {

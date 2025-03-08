@@ -23,6 +23,12 @@ export class Boulder extends Actor {
 
     this.scale = 12;
 
+    this.gameMap = window.MAP;
+
+    if (!this.gameMap) {
+      console.error("Map not found!");
+    }
+
     // Collider
     this.collider = new Collider(
       this.width * this.scale - this.scale * 5,
@@ -30,12 +36,9 @@ export class Boulder extends Actor {
     );
   }
 
-  update() {
-    this.recieveAttacks();
-
-    if (this.health <= 0) {
-      this.removeFromWorld = true;
-    }
+  stageCleared() {
+    console.log("1st stage cleared, removing boulder");
+    this.removeFromWorld = true;
   }
 
   draw(ctx) {

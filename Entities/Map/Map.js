@@ -12,13 +12,9 @@ import { StaticCowboyEnemy } from "../Enemy/StaticCowboyEnemy.js";
 import { Crow } from "../Enemy/Crow.js";
 import { Tilemap } from "./Tilemap.js";
 import { GrowingTree } from "../Objects/GrowingTree.js";
-import { HealingBottle } from "../../Entities/Enemy/HealingBottle.js";
 import { BackgroundTriggerTile } from "./Tiles/BackgroundTriggerTile.js";
-import { BACKGROUND_SPRITESHEET } from "../../Globals/Constants.js";
-import { SpawnPointTile } from "./Tiles/SpawnPointTile.js";
 import { Boulder } from "../Objects/Boulder.js";
 import { WebObstacle } from "../Objects/WebObstacle.js";
-import { Collider } from "../Collider.js";
 import { DeathCollider } from "./DeathCollider.js";
 
 export class Map extends GameMap {
@@ -28,62 +24,36 @@ export class Map extends GameMap {
       window.MAP = this;
     }
 
-    this.firstStageCleared = false;
-    this.firstStageEnemies = new Set();
-
-    this.secondStageCleared = false;
-    this.secondStageEnemies = new Set();
-
     this.currentStage = 1;
     this.totalEnemies = 0;
 
-    // Track enemies per stage
-    this.stageEnemyGroups = {
-      1: new Set(),
-      2: new Set(),
-      3: new Set(),
-    };
+    this.stageEnemyGroups = { 1: new Set(), 2: new Set(), 3: new Set() };
+    this.stageEnemyCounts = { 1: 0, 2: 0, 3: 0 };
+    this.enemySpawnData = { 1: [], 2: [], 3: [] };
 
-    // Track enemy counts per stage
-    this.stageEnemyCounts = {
-      1: 0,
-      2: 0,
-      3: 0,
-    };
-
-    this.enemySpawnData = {
-      1: [], // Store enemy data for each stage
-      2: [],
-      3: [],
-    };
-
-    this.gameMap = null; // Store reference to game map
     return MAP;
   }
 
   async load() {
     const playerSpawn = { x: 763, y: 1500 };
 
-    // underground start
-    //const playerSpawn = { x: 12400, y: 4000 };
-    // spider pit start
-    //const playerSpawn = { x: 23532, y: 4760 };
-
-    // first level death collider
+    // Add colliders for death zones
     GAME_ENGINE.addEntity(new DeathCollider(2233, 2233, 5000, 50));
-
-    // second level death collider
     GAME_ENGINE.addEntity(new DeathCollider(12870, 4338, 8000, 50));
 
+    // Add static objects
     GAME_ENGINE.addEntity(new Boulder(23532, 5000));
     GAME_ENGINE.addEntity(new WebObstacle(23532, 4760));
 
+    // Add player
     const player = GAME_ENGINE.addEntity(
       new Player(playerSpawn.x, playerSpawn.y)
     );
 
+    // Add background
     GAME_ENGINE.addEntity(new Background(player));
 
+    // Load map and tilesets
     const tilesetNames = [
       "Atlas.png",
       "CactusSpikes.png",
@@ -108,17 +78,17 @@ export class Map extends GameMap {
     const TILESET_IMAGES = tilesetNames.map((name) =>
       window.ASSET_MANAGER.getAsset(`./assets/map/${name}`)
     );
-
     const mapFilePath = "./Entities/Map/MapAssets/FinalMap.json";
 
     const gameMap = new Tilemap(mapFilePath, TILESET_IMAGES);
     await gameMap.load();
     GAME_ENGINE.addEntity(gameMap);
+
     this.spawnEntities(gameMap);
   }
 
   spawnEntities(gameMap) {
-    const enemySpawnFunctions = {
+    const enemyTypes = {
       Cactus: {
         method: gameMap.getCactusSpawnPoints,
         entity: Cactus,
@@ -130,7 +100,6 @@ export class Map extends GameMap {
         offsetY: -10,
       },
       Bird: { method: gameMap.getBirdSpawnPoints, entity: Crow, offsetY: -10 },
-
       Spider: {
         method: gameMap.getSpiderSpawnPoints,
         entity: Spider,
@@ -143,7 +112,7 @@ export class Map extends GameMap {
       },
     };
 
-    const objectSpawnFunctions = {
+    const objectTypes = {
       Tumbleweed: {
         method: gameMap.getTumbleweedTriggerPoints,
         entity: Tumbleweed,
@@ -169,41 +138,37 @@ export class Map extends GameMap {
       },
     };
 
-    for (const key in enemySpawnFunctions) {
-      const { method, entity, offsetY = 0 } = enemySpawnFunctions[key];
+    // Spawn enemies
+    for (const key in enemyTypes) {
+      const { method, entity, offsetY = 0 } = enemyTypes[key];
       const spawnPoints = method.call(gameMap);
 
       for (let spawn of spawnPoints) {
-        const e = new entity(spawn.x, spawn.y + offsetY);
+        const enemy = new entity(spawn.x, spawn.y + offsetY);
         this.totalEnemies++;
 
         let stage = this.getStageFromPosition(spawn.x, spawn.y);
-        console.log(`Adding enemy to stage ${stage}.`);
-
         this.enemySpawnData[stage].push({
           type: entity,
           x: spawn.x,
           y: spawn.y + offsetY,
         });
 
-        this.stageEnemyGroups[stage].add(e);
+        this.stageEnemyGroups[stage].add(enemy);
         this.stageEnemyCounts[stage]++;
 
-        e.onDeath = () => this.onEnemyDeath(e);
+        enemy.onDeath = () => this.onEnemyDeath(enemy);
       }
     }
 
-    for (const key in objectSpawnFunctions) {
-      const {
-        method,
-        entity,
-        offsetY = 0,
-        direction,
-      } = objectSpawnFunctions[key];
+    // Spawn objects
+    for (const key in objectTypes) {
+      const { method, entity, offsetY = 0, direction } = objectTypes[key];
       const spawnPoints = method.call(gameMap);
+
       for (let spawn of spawnPoints) {
-        const e = new entity(spawn.x, spawn.y + offsetY, direction);
-        GAME_ENGINE.addEntity(e);
+        const obj = new entity(spawn.x, spawn.y + offsetY, direction);
+        GAME_ENGINE.addEntity(obj);
       }
     }
 
@@ -211,51 +176,57 @@ export class Map extends GameMap {
   }
 
   getStageFromPosition(x, y) {
-    if (x < 11700 && y < 3000) {
-      return 1;
-    } else if (x > 11700 && y < 5000) {
-      return 2;
-    } else {
-      return 3;
-    }
+    if (x < 11700 && y < 3000) return 1;
+    if (x > 11700 && y < 5000) return 2;
+    return 3;
   }
 
   spawnNextStageEnemies() {
     if (!this.enemySpawnData[this.currentStage]) return;
 
     console.log(`Spawning enemies for stage ${this.currentStage}.`);
-
+    let spawnedCount = 0;
     for (let spawnData of this.enemySpawnData[this.currentStage]) {
       let enemy = new spawnData.type(spawnData.x, spawnData.y);
+      spawnedCount++;
       enemy.onDeath = () => this.onEnemyDeath(enemy);
       GAME_ENGINE.addEntity(enemy);
     }
+
+    console.log(`Stage ${this.currentStage} enemies spawned: ${spawnedCount}`);
   }
 
   onEnemyDeath(enemy) {
     for (const stage in this.enemySpawnData) {
-      for (let spawn of this.enemySpawnData[stage]) {
-        if (spawn.x === enemy.x && spawn.y === enemy.y) {
-          console.log(`Enemy removed from stage ${stage}.`);
+      let index = this.enemySpawnData[stage].findIndex(
+        (spawn) => spawn.x === enemy.x && spawn.y === enemy.y
+      );
+      if (index !== -1) {
+        this.enemySpawnData[stage].splice(index, 1);
+        this.stageEnemyCounts[stage]--;
 
-          // Simply remove from the world (not tracked for respawn anymore)
-          enemy.removeFromWorld = true;
+        console.log(
+          `Enemy at (${enemy.x}, ${enemy.y}) removed from stage ${stage}. Remaining: ${this.stageEnemyCounts[stage]}`
+        );
 
-          if (this.enemySpawnData[stage].length === 0) {
-            this.onStageCleared(stage);
-          }
-          return;
+        if (this.stageEnemyCounts[stage] === 0) {
+          this.onStageCleared(stage);
         }
+        return;
       }
     }
   }
 
   onStageCleared(stage) {
-    console.log(
-      `Stage ${stage} cleared. Total enemies eliminated: ${
-        this.totalEnemies - this.stageEnemyCounts[stage]
-      }`
-    );
+    console.log(`Stage ${stage} cleared.`);
+
+    if (this.currentStage === 1) {
+      const boulder = GAME_ENGINE.entities.find((e) => e instanceof Boulder);
+      if (boulder) {
+        console.log("Stage 1 cleared, activating boulder.");
+        boulder.stageCleared();
+      }
+    }
 
     this.currentStage++;
 

@@ -61,7 +61,11 @@ export class Actor extends Entity {
         } else if (k === "x" || k === "y") {
         } else if (this.validEffects[k]) {
           this.effects[k] = Math.max(this.effects[k] || 0, v);
-          if (k === "frozen") window.ASSET_MANAGER.playAsset("./assets/sfx/frozen.wav", 1 * Util.DFCVM(this));
+          if (k === "frozen")
+            window.ASSET_MANAGER.playAsset(
+              "./assets/sfx/frozen.wav",
+              1 * Util.DFCVM(this)
+            );
         }
       }
     }
@@ -73,7 +77,11 @@ export class Actor extends Entity {
       this.effects.frozen = Math.max(this.effects.frozen, this.effects.soaked);
       this.effects.soaked = 0;
     }
-    if (this.effects.void > 0 && (!this.void_delay || this.effects.void_delay <= 0) && (this.effects.burn > 0 || this.effects.shock > 0)) {
+    if (
+      this.effects.void > 0 &&
+      (!this.void_delay || this.effects.void_delay <= 0) &&
+      (this.effects.burn > 0 || this.effects.shock > 0)
+    ) {
       this.effects.shock = 0;
       this.effects.burn = 0;
       this.effects.void_delay = 7;
@@ -84,7 +92,10 @@ export class Actor extends Entity {
       this.frozen = 0;
       this.burn = 0;
       this.health -= 50;
-      window.ASSET_MANAGER.playAsset("./assets/sfx/temp_shock.ogg", 1 * Util.DFCVM(this));
+      window.ASSET_MANAGER.playAsset(
+        "./assets/sfx/temp_shock.ogg",
+        1 * Util.DFCVM(this)
+      );
     }
 
     this.clearQueuedAttacks();
@@ -107,7 +118,8 @@ export class Actor extends Entity {
       this.effects.burn -= GAME_ENGINE.clockTick;
     }
     if (this.validEffects.shock && this.effects.shock > 0) {
-      this.health -= 3 * GAME_ENGINE.clockTick * (this.effects.soaked > 0 ? 4 : 1);
+      this.health -=
+        50 * GAME_ENGINE.clockTick * (this.effects.soaked > 0 ? 4 : 1);
       this.effects.shock -= GAME_ENGINE.clockTick;
     }
     if (this.validEffects.soaked && this.effects.soaked > 0) {
@@ -135,77 +147,93 @@ export class Actor extends Entity {
     if (this.health <= 0) return;
     this.effect_anim_timer += GAME_ENGINE.clockTick;
     if (this.effect_anim_timer > 10000) this.effect_anim_timer = 0;
-    
+
     ctx.save();
     ctx.translate(this.x - GAME_ENGINE.camera.x, this.y - GAME_ENGINE.camera.y);
-    
+
     if (this.effects.frozen > 0) {
       ctx.drawImage(
-        window.ASSET_MANAGER.getAsset(EFFECTS_SPRITESHEET.ICE_EFFECT.URL), 
+        window.ASSET_MANAGER.getAsset(EFFECTS_SPRITESHEET.ICE_EFFECT.URL),
         0,
         0,
         EFFECTS_SPRITESHEET.ICE_EFFECT.FRAME_WIDTH,
-      EFFECTS_SPRITESHEET.ICE_EFFECT.FRAME_HEIGHT,
+        EFFECTS_SPRITESHEET.ICE_EFFECT.FRAME_HEIGHT,
         -150,
         -100,
         300,
         200
-      )
+      );
     }
     if (this.effects.burn > 0) {
       ctx.drawImage(
-        window.ASSET_MANAGER.getAsset(EFFECTS_SPRITESHEET.BURNING_EFFECT.URL), 
-        EFFECTS_SPRITESHEET.BURNING_EFFECT.FRAME_WIDTH * Math.floor((this.effect_anim_timer * 10) % EFFECTS_SPRITESHEET.BURNING_EFFECT.FRAME_COUNT),
+        window.ASSET_MANAGER.getAsset(EFFECTS_SPRITESHEET.BURNING_EFFECT.URL),
+        EFFECTS_SPRITESHEET.BURNING_EFFECT.FRAME_WIDTH *
+          Math.floor(
+            (this.effect_anim_timer * 10) %
+              EFFECTS_SPRITESHEET.BURNING_EFFECT.FRAME_COUNT
+          ),
         0,
         EFFECTS_SPRITESHEET.BURNING_EFFECT.FRAME_WIDTH,
-      EFFECTS_SPRITESHEET.BURNING_EFFECT.FRAME_HEIGHT,
+        EFFECTS_SPRITESHEET.BURNING_EFFECT.FRAME_HEIGHT,
         -75,
         -75,
         150,
         150
-      )
+      );
     }
     if (this.effects.soaked > 0) {
       ctx.drawImage(
-        window.ASSET_MANAGER.getAsset(EFFECTS_SPRITESHEET.SOAKED_EFFECT.URL), 
-        EFFECTS_SPRITESHEET.SOAKED_EFFECT.FRAME_WIDTH * Math.floor((this.effect_anim_timer * 8) % EFFECTS_SPRITESHEET.SOAKED_EFFECT.FRAME_COUNT),
+        window.ASSET_MANAGER.getAsset(EFFECTS_SPRITESHEET.SOAKED_EFFECT.URL),
+        EFFECTS_SPRITESHEET.SOAKED_EFFECT.FRAME_WIDTH *
+          Math.floor(
+            (this.effect_anim_timer * 8) %
+              EFFECTS_SPRITESHEET.SOAKED_EFFECT.FRAME_COUNT
+          ),
         0,
         EFFECTS_SPRITESHEET.SOAKED_EFFECT.FRAME_WIDTH,
-      EFFECTS_SPRITESHEET.SOAKED_EFFECT.FRAME_HEIGHT,
+        EFFECTS_SPRITESHEET.SOAKED_EFFECT.FRAME_HEIGHT,
         -75,
         -75,
         150,
         150
-      )
+      );
     }
     if (this.effects.shock > 0) {
       ctx.drawImage(
-        window.ASSET_MANAGER.getAsset(EFFECTS_SPRITESHEET.SHOCK_EFFECT.URL), 
-        EFFECTS_SPRITESHEET.SHOCK_EFFECT.FRAME_WIDTH * Math.floor((this.effect_anim_timer * 10) % EFFECTS_SPRITESHEET.SHOCK_EFFECT.FRAME_COUNT),
+        window.ASSET_MANAGER.getAsset(EFFECTS_SPRITESHEET.SHOCK_EFFECT.URL),
+        EFFECTS_SPRITESHEET.SHOCK_EFFECT.FRAME_WIDTH *
+          Math.floor(
+            (this.effect_anim_timer * 10) %
+              EFFECTS_SPRITESHEET.SHOCK_EFFECT.FRAME_COUNT
+          ),
         0,
         EFFECTS_SPRITESHEET.SHOCK_EFFECT.FRAME_WIDTH,
-      EFFECTS_SPRITESHEET.SHOCK_EFFECT.FRAME_HEIGHT,
+        EFFECTS_SPRITESHEET.SHOCK_EFFECT.FRAME_HEIGHT,
         -75,
         -75,
         150,
         150
-      )
+      );
     }
     if (this.effects.void > 0) {
       //ctx.rotate((this.effect_anim_timer * 30) % (Math.PI*2));
       ctx.shadowColor = "purple";
       ctx.shadowBlur = 20;
       ctx.drawImage(
-        window.ASSET_MANAGER.getAsset(EFFECTS_SPRITESHEET.VOID_EFFECT.URL), 
-        EFFECTS_SPRITESHEET.VOID_EFFECT.FRAME_WIDTH * Math.floor((this.effect_anim_timer * 5) % EFFECTS_SPRITESHEET.VOID_EFFECT.FRAME_COUNT),
+        window.ASSET_MANAGER.getAsset(EFFECTS_SPRITESHEET.VOID_EFFECT.URL),
+        EFFECTS_SPRITESHEET.VOID_EFFECT.FRAME_WIDTH *
+          Math.floor(
+            (this.effect_anim_timer * 5) %
+              EFFECTS_SPRITESHEET.VOID_EFFECT.FRAME_COUNT
+          ),
         0,
         EFFECTS_SPRITESHEET.VOID_EFFECT.FRAME_WIDTH,
-      EFFECTS_SPRITESHEET.VOID_EFFECT.FRAME_HEIGHT,
+        EFFECTS_SPRITESHEET.VOID_EFFECT.FRAME_HEIGHT,
         -100,
         -100,
         200,
         200
-      )
+      );
     }
     ctx.restore();
   }
