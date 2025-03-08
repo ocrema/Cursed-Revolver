@@ -59,6 +59,19 @@ export class MainMenu extends Entity {
     const menuX = centerX - menuWidth / 2;
     const menuY = centerY - menuHeight / 2;
 
+    const customFont = ASSET_MANAGER.getAsset("./assets/fonts/title.ttf");
+    const gradient = ctx.createLinearGradient(0, 0, 10, 10);
+    gradient.addColorStop(0, "gray");
+    gradient.addColorStop(0, "white");
+    gradient.addColorStop(1, "gray");
+    ctx.fillStyle = gradient;
+    
+    ctx.fillStyle = "gray";
+    ctx.font = `165px title `;
+    ctx.fillText(`CURSED REVOLVER`, -350, -100);
+
+
+
     // const backgroundImage = ASSET_MANAGER.getAsset(
     //   "./assets/ui/menu/background_start2.png"
     // );

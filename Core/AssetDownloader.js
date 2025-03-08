@@ -285,5 +285,6 @@ export class AssetDownloader {
 
   downloadFonts() {
     this.assetManager.queueDownload("./assets/fonts/texas.ttf");
+    this.assetManager.queueDownload("./assets/fonts/title.ttf");
   }
 }
