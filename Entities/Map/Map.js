@@ -35,9 +35,9 @@ export class Map extends GameMap {
   }
 
   async load() {
-    const playerSpawn = { x: 763, y: 1500 };
+    //const playerSpawn = { x: 763, y: 1500 };
     // underground start
-    //const playerSpawn = { x: 12400, y: 4000 };
+    const playerSpawn = { x: 12400, y: 4000 };
     // spider pit start
     //const playerSpawn = { x: 23532, y: 4760 };
 
@@ -191,21 +191,21 @@ export class Map extends GameMap {
     if (!enemy.stage) return;
 
     const stageGroup = this.stageEnemyGroups[enemy.stage];
-    if (stageGroup) {
+    if (stageGroup.has(enemy)) {
       stageGroup.delete(enemy);
-      this.stageEnemyCounts[enemy.stage]--;
+      this.stageEnemyCounts[enemy.stage]--; // Always sync with Set size
       this.totalEnemies--;
-    }
 
-    console.log(
-      `Enemy from stage ${enemy.stage} eliminated. Remaining: ${stageGroup.size}`
-    );
+      console.log(
+        `Enemy from stage ${enemy.stage} eliminated. Remaining: ${stageGroup.size}`
+      );
 
-    // If stage is cleared, trigger next stage
-    if (stageGroup.size === 0) {
-      this.onStageCleared(enemy.stage);
+      if (stageGroup.size === 0) {
+        this.onStageCleared(enemy.stage);
+      }
     }
   }
+
   onStageCleared(stage) {
     console.log(`Stage ${stage} cleared.`);
 
