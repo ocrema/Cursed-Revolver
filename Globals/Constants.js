@@ -33,6 +33,14 @@ export const BACKGROUND_SPRITESHEET = {
     FRAME_COUNT: 40,
     FRAME_DURATION: 0.1,
   },
+  ABOVE1: {
+    NAME: "WIZARD",
+    URL: "./assets/background/WizardBackground.png",
+    FRAME_WIDTH: 640,
+    FRAME_HEIGHT: 400,
+    FRAME_COUNT: 40,
+    FRAME_DURATION: 0.1,
+  },
 };
 
 // PLAYER SECTION //
