@@ -34,8 +34,8 @@ export class SpawnPointTile extends Tile {
     this.isActivated = false;
 
     this.collider = new Collider(
-      this.tileSize * this.scale * 2,
-      this.tileSize * this.scale * 2
+      this.tileSize * this.scale * 3,
+      this.tileSize * this.scale * 3
     );
 
     this.map = window.MAP;
