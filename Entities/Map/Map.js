@@ -33,9 +33,10 @@ export class Map extends GameMap {
       2: new Set(),
       3: new Set(),
       4: new Set(),
+      5: new Set(),
     };
-    this.stageEnemyCounts = { 1: 0, 2: 0, 3: 0, 4: 0 };
-    this.enemySpawnData = { 1: [], 2: [], 3: [], 4: [] };
+    this.stageEnemyCounts = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+    this.enemySpawnData = { 1: [], 2: [], 3: [], 4: [], 5: [] };
     this.spiderwebList = [];
     this.spiderwebListIndex = 0;
 
@@ -44,16 +45,16 @@ export class Map extends GameMap {
 
   async load() {
     let playerSpawn;
-    playerSpawn = { x: 763, y: 1500 };
+    //playerSpawn = { x: 763, y: 1500 };
 
     // underground start
     //playerSpawn = { x: 12400, y: 4000 };
 
     // spider pit start
-    //playerSpawn = { x: 23532, y: 4760 };
+    playerSpawn = { x: 23532, y: 4760 };
 
     // second spider pit start
-    //playerSpawn = { x: 23532, y: 6000 };
+    // playerSpawn = { x: 23532, y: 6000 };
 
     //boss arena spawn
     //playerSpawn = { x: 28276, y: 3015 };
@@ -209,8 +210,9 @@ export class Map extends GameMap {
   getStageFromPosition(x, y) {
     if (x < 12000) return 1; // Before Boulder
     if (x > 11700 && y < 5000 && x < 20747) return 2; // After Boulder, before SpiderWeb 1
-    if (x > 21095 && x < 27000 && y < 5000) return 3; // After SpiderWeb 1, before SpiderWeb 2a
-    return 4; // After SpiderWeb 2, before SpiderWeb 3
+    if (x > 21095 && x < 24000 && y < 5000) return 3; // After SpiderWeb 1, before SpiderWeb 2
+    if (x > 21095 && x < 24000 && y > 5000) return 4; // After SpiderWeb 2, before SpiderWeb 3
+    return 5;
   }
 
   spawnNextStageEnemies() {
