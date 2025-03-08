@@ -76,6 +76,11 @@ export class Background extends Entity {
     } else if (this.transitionPhase === "switching") {
       this.currentIndex = (this.currentIndex + 1) % this.backgroundList.length;
       this.setCurrentBackground();
+      if (this.currentIndex === 2) {
+        Camera.getInstance().setDarkness(0.25); // 0.6 = semi-dark
+      } else {
+        Camera.getInstance().setDarkness(0); // Reset darkness
+      }
       this.transitionPhase = "fading_in";
     } else if (this.transitionPhase === "fading_in") {
       this.fadeAlpha += this.transitionSpeed;
