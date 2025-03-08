@@ -115,12 +115,12 @@ export class HUD extends Entity {
 
   update() {
     if (this.mapReference) {
-      // this.playerCurrentStage = this.mapReference.currentStage;
-      // if (this.playerCurrentStage === 1) {
-      //   this.totalRemainingEnemies = this.mapReference.firstStageEnemies.size;
-      // } else {
-      //   this.totalRemainingEnemies = this.mapReference.secondStageEnemies.size;
-      // }
+      this.playerCurrentStage = this.mapReference.currentStage;
+      if (this.playerCurrentStage === 1) {
+        this.totalRemainingEnemies = this.mapReference.stageEnemyCounts[1];
+      } else {
+        this.totalRemainingEnemies = this.mapReference.stageEnemyCounts[2];
+      }
     }
 
     const player = GAME_ENGINE.entities.find((e) => e.isPlayer);

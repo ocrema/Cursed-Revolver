@@ -36,14 +36,14 @@ export class Map extends GameMap {
 
   async load() {
     const playerSpawn = { x: 763, y: 1500 };
+    // underground start
+    //const playerSpawn = { x: 12400, y: 4000 };
+    // spider pit start
+    //const playerSpawn = { x: 23532, y: 4760 };
 
     // Add colliders for death zones
     GAME_ENGINE.addEntity(new DeathCollider(2233, 2233, 5000, 50));
     GAME_ENGINE.addEntity(new DeathCollider(12870, 4338, 8000, 50));
-
-    // Add static objects
-    GAME_ENGINE.addEntity(new Boulder(23532, 5000));
-    GAME_ENGINE.addEntity(new WebObstacle(23532, 4760));
 
     // Add player
     const player = GAME_ENGINE.addEntity(
@@ -144,20 +144,15 @@ export class Map extends GameMap {
       const spawnPoints = method.call(gameMap);
 
       for (let spawn of spawnPoints) {
-        const enemy = new entity(spawn.x, spawn.y + offsetY);
-        this.totalEnemies++;
-
         let stage = this.getStageFromPosition(spawn.x, spawn.y);
-        this.enemySpawnData[stage].push({
-          type: entity,
-          x: spawn.x,
-          y: spawn.y + offsetY,
-        });
+        const enemy = new entity(spawn.x, spawn.y + offsetY);
+        enemy.stage = stage; // Associate enemy with stage
+        enemy.onDeath = () => this.onEnemyDeath(enemy);
 
         this.stageEnemyGroups[stage].add(enemy);
         this.stageEnemyCounts[stage]++;
-
-        enemy.onDeath = () => this.onEnemyDeath(enemy);
+        this.totalEnemies++;
+        GAME_ENGINE.addEntity(enemy);
       }
     }
 
@@ -177,50 +172,44 @@ export class Map extends GameMap {
 
   getStageFromPosition(x, y) {
     if (x < 11700 && y < 3000) return 1;
-    if (x > 11700 && y < 5000) return 2;
+    if (x > 11700 && y < 5000 && x < 20747) return 2;
     return 3;
   }
 
   spawnNextStageEnemies() {
-    if (!this.enemySpawnData[this.currentStage]) return;
-
     console.log(`Spawning enemies for stage ${this.currentStage}.`);
-    let spawnedCount = 0;
-    for (let spawnData of this.enemySpawnData[this.currentStage]) {
-      let enemy = new spawnData.type(spawnData.x, spawnData.y);
-      spawnedCount++;
-      enemy.onDeath = () => this.onEnemyDeath(enemy);
+    const enemiesToSpawn = this.stageEnemyGroups[this.currentStage];
+
+    if (!enemiesToSpawn) return;
+
+    for (let enemy of enemiesToSpawn) {
       GAME_ENGINE.addEntity(enemy);
     }
-
-    console.log(`Stage ${this.currentStage} enemies spawned: ${spawnedCount}`);
   }
 
   onEnemyDeath(enemy) {
-    for (const stage in this.enemySpawnData) {
-      let index = this.enemySpawnData[stage].findIndex(
-        (spawn) => spawn.x === enemy.x && spawn.y === enemy.y
-      );
-      if (index !== -1) {
-        this.enemySpawnData[stage].splice(index, 1);
-        this.stageEnemyCounts[stage]--;
+    if (!enemy.stage) return;
 
-        console.log(
-          `Enemy at (${enemy.x}, ${enemy.y}) removed from stage ${stage}. Remaining: ${this.stageEnemyCounts[stage]}`
-        );
+    const stageGroup = this.stageEnemyGroups[enemy.stage];
+    if (stageGroup) {
+      stageGroup.delete(enemy);
+      this.stageEnemyCounts[enemy.stage]--;
+      this.totalEnemies--;
+    }
 
-        if (this.stageEnemyCounts[stage] === 0) {
-          this.onStageCleared(stage);
-        }
-        return;
-      }
+    console.log(
+      `Enemy from stage ${enemy.stage} eliminated. Remaining: ${stageGroup.size}`
+    );
+
+    // If stage is cleared, trigger next stage
+    if (stageGroup.size === 0) {
+      this.onStageCleared(enemy.stage);
     }
   }
-
   onStageCleared(stage) {
     console.log(`Stage ${stage} cleared.`);
 
-    if (this.currentStage === 1) {
+    if (stage === 1) {
       const boulder = GAME_ENGINE.entities.find((e) => e instanceof Boulder);
       if (boulder) {
         console.log("Stage 1 cleared, activating boulder.");
@@ -230,7 +219,7 @@ export class Map extends GameMap {
 
     this.currentStage++;
 
-    if (this.currentStage <= Object.keys(this.stageEnemyGroups).length) {
+    if (this.stageEnemyGroups[this.currentStage]) {
       this.spawnNextStageEnemies();
     } else {
       console.log("All stages cleared!");
