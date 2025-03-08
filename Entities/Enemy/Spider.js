@@ -8,6 +8,7 @@ import { GAME_ENGINE } from "../../main.js";
 import { Tile } from "../Map/Tiles/Tile.js";
 import { AnimationLoader } from "../../Core/AnimationLoader.js";
 import { SPIDER_SPRITESHEET } from "../../Globals/Constants.js";
+import { SpiderWebObstacle } from "../Objects/SpiderWebObstacle.js";
 
 export class Spider extends Actor {
   constructor(x, y) {
@@ -258,10 +259,13 @@ export class Spider extends Actor {
     let hitHead = false;
 
     for (let entity of GAME_ENGINE.entities) {
-      if (entity instanceof Tile && this.colliding(entity)) {
-
-        if (this.velocity.y < 0 ) {
-          this.y = entity.y + (entity.collider.height / 2) + (this.height / 2);
+      if (
+        (entity instanceof SpiderWebObstacle || entity instanceof Tile) &&
+        this.colliding(entity)
+      ) {
+        if (this.velocity.y < 0) {
+          //console.log(this.target);
+          this.y = entity.y + entity.collider.height / 2 + this.height / 2;
           hitHead = true;
         }
 
@@ -275,7 +279,10 @@ export class Spider extends Actor {
     this.x += this.velocity.x * GAME_ENGINE.clockTick;
 
     for (let entity of GAME_ENGINE.entities) {
-      if (entity instanceof Tile && this.colliding(entity)) {
+      if (
+        (entity instanceof SpiderWebObstacle || entity instanceof Tile) &&
+        this.colliding(entity)
+      ) {
         let isSimilarY =
           this.y > entity.y - entity.collider.height &&
           this.y < entity.y + entity.collider.height;
@@ -302,7 +309,10 @@ export class Spider extends Actor {
       this.y += this.gravity * GAME_ENGINE.clockTick;
 
       for (let entity of GAME_ENGINE.entities) {
-        if (entity instanceof Tile && this.colliding(entity)) {
+        if (
+          (entity instanceof SpiderWebObstacle || entity instanceof Tile) &&
+          this.colliding(entity)
+        ) {
           this.y = entity.y - entity.collider.height / 2 - this.height / 2;
           this.target.y = this.y;
         }

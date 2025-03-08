@@ -2,7 +2,7 @@ import { Actor } from "../Actor.js";
 import { Collider } from "../Collider.js";
 import { GAME_ENGINE } from "../../main.js";
 
-export class WebObstacle extends Actor {
+export class SpiderWebObstacle extends Actor {
   constructor(x, y) {
     super();
     Object.assign(this, { x, y });
@@ -23,7 +23,7 @@ export class WebObstacle extends Actor {
     this.health = 50;
     this.maxHealth = 50;
 
-    this.scale = 12;
+    this.scale = 14;
 
     // Collider
     this.collider = new Collider(
@@ -32,11 +32,9 @@ export class WebObstacle extends Actor {
     );
   }
 
-  update() {
-    this.recieveAttacks();
-    if (this.health <= 0) {
-      this.removeFromWorld = true;
-    }
+  stageCleared() {
+    console.log("stage cleared, removing web obstacle");
+    this.removeFromWorld = true;
   }
 
   draw(ctx) {
