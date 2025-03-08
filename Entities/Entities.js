@@ -69,7 +69,7 @@ export class Entity {
 
   draw(ctx) {
     if (!this.currentAnimation) return;
-
+    
     if (this.isEnemy) {
       this.drawHealthBar(ctx);
     }
@@ -78,6 +78,7 @@ export class Entity {
     const { spritesheet, frameWidth, frameHeight } = animation;
 
     if (!spritesheet) return;
+    
 
     ctx.save(); // Save the current transformation state
     ctx.translate(-GAME_ENGINE.camera.x, -GAME_ENGINE.camera.y);
@@ -107,6 +108,7 @@ export class Entity {
       frameWidth, // Destination Width
       frameHeight // Destination Height
     );
+    
 
     ctx.restore(); // Restore the transformation state
   }

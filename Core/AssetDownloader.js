@@ -87,6 +87,11 @@ export class AssetDownloader {
     this.assetManager.queueDownload("./assets/enemy/golem/golem_walk.png");
     this.assetManager.queueDownload("./assets/enemy/golem/golem_idle.png");
     this.assetManager.queueDownload("./assets/enemy/golem/golem_hit.png");
+
+    // Wizard
+    this.assetManager.queueDownload("./assets/enemy/wizard/Idle.png");
+    this.assetManager.queueDownload("./assets/enemy/wizard/Death.png");
+    this.assetManager.queueDownload("./assets/enemy/wizard/Attack.png");
   }
 
   downloadEnemyAttackAssets() {
@@ -227,10 +232,13 @@ export class AssetDownloader {
     this.assetManager.queueDownload("./assets/sfx/temp_shock.ogg");
     this.assetManager.queueDownload("./assets/sfx/void_explosion.wav");
     this.assetManager.queueDownload("./assets/sfx/checkpoint.ogg");
+    this.assetManager.queueDownload("./assets/sfx/wizard_charge.wav");
+    this.assetManager.queueDownload("./assets/sfx/explosion.wav");
   }
 
   downloadMusicAssets() {
     this.assetManager.queueDownload("./assets/music/track1.mp3");
+    this.assetManager.queueDownload("./assets/music/track2.mp3");
   }
 
   downloadPauseMenuButtons() {

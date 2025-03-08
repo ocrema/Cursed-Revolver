@@ -67,7 +67,7 @@ export class FireballExplosionEffect extends Entity {
 
   explode() {
     // Play explosion sound
-    window.ASSET_MANAGER.playAsset("./assets/sfx/explosion.wav");
+    //window.ASSET_MANAGER.playAsset("./assets/sfx/explosion.wav");
   }
 
   onAnimationComplete() {

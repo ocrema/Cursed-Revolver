@@ -15,6 +15,7 @@ import { GrowingTree } from "../Objects/GrowingTree.js";
 import { HealingBottle } from "../../Entities/Enemy/HealingBottle.js";
 import { BackgroundTriggerTile } from "./Tiles/BackgroundTriggerTile.js";
 import { BACKGROUND_SPRITESHEET } from "../../Globals/Constants.js";
+import { Wizard } from "../Enemy/Wizard.js";
 
 export class Map extends GameMap {
   constructor() {
@@ -69,6 +70,7 @@ export class Map extends GameMap {
     await gameMap.load();
     GAME_ENGINE.addEntity(gameMap);
     this.spawnEntities(gameMap);
+    GAME_ENGINE.addEntity(new Wizard());
   }
 
   spawnEntities(gameMap) {
