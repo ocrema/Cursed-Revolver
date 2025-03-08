@@ -17,14 +17,6 @@ export const BACKGROUND_SPRITESHEET = {
     FRAME_COUNT: 12,
     FRAME_DURATION: 0.1,
   },
-  // UNDER1: {
-  //   NAME: "UNDER1",
-  //   URL: "./assets/background/UndergroundBackground1.png",
-  //   FRAME_WIDTH: 1305,
-  //   FRAME_HEIGHT: 720,
-  //   FRAME_COUNT: 15,
-  //   FRAME_DURATION: 0.1,
-  // },
   SPIDER: {
     NAME: "SPIDER",
     URL: "./assets/background/SpiderBackground.png",
