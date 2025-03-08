@@ -74,14 +74,20 @@ export class Background extends Entity {
         this.transitionPhase = "switching";
       }
     } else if (this.transitionPhase === "switching") {
+      this.transitionPhase = "fading_in"; // ✅ Move to next phase first
       this.currentIndex = (this.currentIndex + 1) % this.backgroundList.length;
       this.setCurrentBackground();
-      if (this.currentIndex === 2) {
-        Camera.getInstance().setDarkness(0.25); // 0.6 = semi-dark
-      } else {
-        Camera.getInstance().setDarkness(0); // Reset darkness
-      }
-      this.transitionPhase = "fading_in";
+      // // ✅ Defer setting the background for the next update cycle
+      // setTimeout(() => {
+      //   this.currentIndex =
+      //     (this.currentIndex + 1) % this.backgroundList.length;
+      //   this.setCurrentBackground();
+      //   if (this.currentIndex === 1) {
+      //     Camera.getInstance().setDarkness(0.25); // Apply darkness effect
+      //   } else {
+      //     Camera.getInstance().setDarkness(0); // Reset darkness
+      //   }
+      // }, 10); // Slight delay to ensure smooth transition
     } else if (this.transitionPhase === "fading_in") {
       this.fadeAlpha += this.transitionSpeed;
       if (this.fadeAlpha >= 1) {
