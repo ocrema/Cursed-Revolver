@@ -421,11 +421,11 @@ class EvilVoidOrb extends VoidOrb {
     this.x += Math.cos(this.dir) * this.speed * GAME_ENGINE.clockTick;
     this.y += Math.sin(this.dir) * this.speed * GAME_ENGINE.clockTick;
 
-    for (let e of GAME_ENGINE.entities) {
-      if (e.isPlayer && this.hitCooldown === 0 && this.colliding(e)) {
-        e.queueAttack({ damage: this.dps * this.timeBetweenHits });
+    const player = window.PLAYER;
+    if (player) {
+      if (this.hitCooldown === 0 && this.colliding(player)) {
+        player.queueAttack({ damage: this.dps * this.timeBetweenHits });
         this.hitCooldown = this.timeBetweenHits;
-        break;
       }
     }
 
