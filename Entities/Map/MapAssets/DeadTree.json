@@ -1,0 +1,14 @@
+{ "columns":1,
+ "image":"..\/..\/..\/assets\/map\/props\/tree02.png",
+ "imageheight":64,
+ "imagewidth":48,
+ "margin":0,
+ "name":"tree02",
+ "spacing":0,
+ "tilecount":1,
+ "tiledversion":"1.11.2",
+ "tileheight":48,
+ "tilewidth":32,
+ "type":"tileset",
+ "version":"1.10"
+}

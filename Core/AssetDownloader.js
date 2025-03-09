@@ -169,6 +169,9 @@ export class AssetDownloader {
     this.assetManager.queueDownload(
       "./assets/map/SpawnPoints/MovingCowboySpawnPoint.png"
     );
+    this.assetManager.queueDownload(
+      "./assets/map/SpawnPoints/DeadTreeSpawnPoint.png"
+    );
     this.assetManager.queueDownload("./assets/map/Spiderweb.png");
     this.assetManager.queueDownload("./assets/map/Signs.png");
     this.assetManager.queueDownload("./assets/map/Campfire.png");
@@ -275,12 +278,13 @@ export class AssetDownloader {
     const spells = ["fireball", "vine", "icicle", "water", "lightning", "void"];
     // Queue all animated frames (1-30) for each spell
     for (let spell of spells) {
-        for (let i = 1; i <= 30; i++) {
-            this.assetManager.queueDownload(`./assets/ui/spells/${spell}/${spell}${i}.png`);
-        }
+      for (let i = 1; i <= 30; i++) {
+        this.assetManager.queueDownload(
+          `./assets/ui/spells/${spell}/${spell}${i}.png`
+        );
+      }
     }
-}
-
+  }
 
   downloadHUDCowboyIcon() {
     this.assetManager.queueDownload("./assets/ui/cowboy.png");

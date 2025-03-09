@@ -5,6 +5,7 @@ import { SpawnPointTile } from "./Tiles/SpawnPointTile.js";
 import { TreeTile } from "./Tiles/TreeTile.js";
 import { BackgroundTriggerTile } from "./Tiles/BackgroundTriggerTile.js";
 import { SpiderwebTile } from "./Tiles/SpiderwebTile.js";
+import { DeadTreeTile } from "./Tiles/DeadTreeTile.js";
 
 export class Tilemap {
   constructor(
@@ -169,6 +170,9 @@ export class Tilemap {
             case 119:
               this.movingCowboySpawnPoints.push({ x: worldX, y: worldY });
               hideEnemySpawnPoints = true;
+              break;
+            case 120: 
+               tileClass = DeadTreeTile;
               break;
             default:
               break;

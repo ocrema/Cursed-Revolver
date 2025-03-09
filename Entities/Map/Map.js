@@ -101,6 +101,7 @@ export class Map extends GameMap {
       "SpawnPoints/BoulderSpawnPoint.png",
       "SpawnPoints/SpiderwebObstacleSpawnPoint.png",
       "SpawnPoints/MovingCowboySpawnPoint.png",
+      "props/tree02.png",
     ];
 
     const TILESET_IMAGES = tilesetNames.map((name) =>
