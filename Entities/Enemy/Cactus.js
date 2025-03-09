@@ -79,6 +79,7 @@ export class Cactus extends Actor {
         this.dead = true;
         this.setAnimation(CACTUS_SPRITESHEET.DIE.NAME, false);
         this.onDeath();
+        return;
       }
 
       if (this.effects.frozen > 0 || this.effects.stun > 0) return;
