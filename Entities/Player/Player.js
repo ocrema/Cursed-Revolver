@@ -515,6 +515,7 @@ export class Player extends Actor {
     ctx.translate(this.x - GAME_ENGINE.camera.x, this.y - GAME_ENGINE.camera.y);
     ctx.scale(this.flip ? -1 : 1, 1);
     ctx.translate(this.gun_offset.x, this.gun_offset.y);
+
     let dir;
     if (this.gun_spin !== null) dir = this.gun_spin;
     else dir = this.dir;

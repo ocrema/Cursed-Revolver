@@ -19,7 +19,7 @@ export const BACKGROUND_SPRITESHEET = {
   },
   SPIDER: {
     NAME: "SPIDER",
-    URL: "./assets/background/SpiderBackground.png",
+    URL: "./assets/background/SpiderBackground1.png",
     FRAME_WIDTH: 576,
     FRAME_HEIGHT: 324,
     FRAME_COUNT: 1,
@@ -28,6 +28,14 @@ export const BACKGROUND_SPRITESHEET = {
   ABOVE1: {
     NAME: "ABOVE1",
     URL: "./assets/background/AboveBackground.png",
+    FRAME_WIDTH: 640,
+    FRAME_HEIGHT: 400,
+    FRAME_COUNT: 40,
+    FRAME_DURATION: 0.1,
+  },
+  WIZARD: {
+    NAME: "WIZARD",
+    URL: "./assets/background/WizardBackground.png",
     FRAME_WIDTH: 640,
     FRAME_HEIGHT: 400,
     FRAME_COUNT: 40,

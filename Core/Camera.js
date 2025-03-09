@@ -1,4 +1,5 @@
 import { Entity } from "../Entities/Entities.js";
+import { Player } from "../Entities/Player/Player.js";
 
 export class Camera extends Entity {
   static instance = null;
@@ -15,7 +16,7 @@ export class Camera extends Entity {
     this.player = null;
     this.shakeIntensity = 0;
     this.shakeDecay = 0.9; // How fast the shake fades (0.9 = fast, 0.99 = slow)
-
+    this.darknessLevel = 0;
     // Define camera boundaries based on the map size and screen size
     this.minX = 0;
     this.maxX = 100000;
@@ -24,12 +25,10 @@ export class Camera extends Entity {
   }
 
   update() {
-    if (!this.player) {
-      for (let e of GAME_ENGINE.entities) {
-        if (e.isPlayer) {
-          this.player = e;
-          break;
-        }
+    const player = window.PLAYER;
+    if (player) {
+      if (player instanceof Player) {
+        this.player = player;
       }
     }
 
@@ -43,7 +42,7 @@ export class Camera extends Entity {
       const followSpeed = 5; // Lower values = slower camera movement
       const lerpFactor = Math.min(followSpeed * GAME_ENGINE.clockTick, 1);
 
-      const verticalOffset = -150; // Move the camera 150 pixels upwards
+      const verticalOffset = 0; // Move the camera 150 pixels upwards
 
       // Smoothly interpolate the camera towards the player's position + vertical offset
       this.x += (this.player.x - this.x) * lerpFactor;
@@ -52,6 +51,22 @@ export class Camera extends Entity {
       // Clamp the camera within the map boundaries
       this.x = Math.max(1000, Math.min(this.x, this.maxX));
     }
+  }
+
+  draw(ctx) {
+    if (this.darknessLevel > 0) {
+      ctx.save(); // Save the current drawing state
+      ctx.setTransform(1, 0, 0, 1, 0, 0); // Reset any transformations (removes camera offset)
+
+      ctx.fillStyle = `rgba(0, 0, 0, ${this.darknessLevel})`; // Black overlay with transparency
+      ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+
+      ctx.restore(); // Restore the original transformation matrix
+    }
+  }
+
+  setDarkness(level) {
+    this.darknessLevel = Math.max(0, Math.min(level, 1)); // Clamp between 0 and 1
   }
 
   static getInstance(

@@ -34,8 +34,8 @@ export class SpawnPointTile extends Tile {
     this.isActivated = false;
 
     this.collider = new Collider(
-      this.tileSize * this.scale * 2,
-      this.tileSize * this.scale * 2
+      this.tileSize * this.scale * 3,
+      this.tileSize * this.scale * 3
     );
 
     this.map = window.MAP;
@@ -46,20 +46,6 @@ export class SpawnPointTile extends Tile {
   }
 
   update() {
-    // for (let e of GAME_ENGINE.entities) {
-    //   if (e instanceof Player && this.colliding(e) && GAME_ENGINE.keys["f"]) {
-    //     if (!this.isActivated) {
-    //       this.isActivated = true;
-    //       this.respawnEnemies();
-    //       console.log("Player reached new spawn point at:", this.x);
-    //       this.respawnX = this.x; // Update respawn position
-    //       e.setSpawnPoint(this.x, this.y - e.collider.height / 2 - 1);
-    //       this.respawnedEnemies.clear(); // Allow future respawns
-    //     } else {
-    //       this.isActivated = false;
-    //     }
-    //   }
-    // }
     const player = window.PLAYER;
 
     if (player) {

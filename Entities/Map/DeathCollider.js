@@ -21,7 +21,7 @@ export class DeathCollider extends Entity {
       if (player instanceof Player && this.colliding(player)) {
         console.log("hit player");
         player.queueAttack({
-          damage: 0,
+          damage: 100,
           x: this.x,
           y: this.y,
           launchMagnitude: 0,

@@ -10,11 +10,12 @@ export class Background extends Entity {
     this.entityOrder = -10;
     this.camera = Camera.getInstance();
     this.backgroundList = Object.values(BACKGROUND_SPRITESHEET);
+    console.log(this.backgroundList);
     this.currentIndex = 0;
     this.isTransitioning = false;
     this.transitionPhase = null; // 'fading_out' → 'switching' → 'fading_in' → null
     this.fadeAlpha = 1; // 1 = fully visible, 0 = fully transparent
-    this.transitionSpeed = 0.02; // Adjust for faster/slower fade
+    this.transitionSpeed = 0.025; // Adjust for faster/slower fade
     this.player = player;
 
     this.animations = {};
@@ -76,7 +77,12 @@ export class Background extends Entity {
     } else if (this.transitionPhase === "switching") {
       this.currentIndex = (this.currentIndex + 1) % this.backgroundList.length;
       this.setCurrentBackground();
-      this.transitionPhase = "fading_in";
+      this.transitionPhase = "fading_in"; // ✅ Move to next phase first
+      if (this.currentIndex === 2) {
+        Camera.getInstance().setDarkness(0.25); // Apply darkness effect
+      } else {
+        Camera.getInstance().setDarkness(0); // Reset darkness
+      }
     } else if (this.transitionPhase === "fading_in") {
       this.fadeAlpha += this.transitionSpeed;
       if (this.fadeAlpha >= 1) {
@@ -94,8 +100,8 @@ export class Background extends Entity {
     ctx.globalAlpha = this.fadeAlpha; // Apply fading effect
 
     // Parallax Effect
-    let player = GAME_ENGINE.entities.find((e) => e instanceof Player);
-    let playerX = player ? player.x : 0; // Default to 0 if no player
+    //let player = window.PLAYER;
+    //let playerX = player ? player.x : 0; // Default to 0 if no player
 
     // Always position the background slightly to the left of the player
     const bgOffsetX = 0.01;

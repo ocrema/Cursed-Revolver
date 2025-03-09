@@ -52,7 +52,7 @@ export class HUD extends Entity {
       frameCount: 1,
       frameDuration: 0.75,
     };
-  
+
     this.cowboyFrameIndex = 0; // Current frame
     this.blinkTimer = 0; // Timer to switch frames
     this.blinkInterval = 1.0; // Change every 0.5 seconds
@@ -108,9 +108,8 @@ export class HUD extends Entity {
   }
 
   displayFPS(ctx) {
-    ctx.font = "20px Arial";
     ctx.fillStyle = "white";
-    ctx.fillText(`FPS: ${GAME_ENGINE.fps}`, ctx.canvas.width - 20, 70);
+    ctx.fillText(`FPS: ${GAME_ENGINE.fps}`, 100, 50);
   }
 
   update() {
@@ -118,8 +117,14 @@ export class HUD extends Entity {
       this.playerCurrentStage = this.mapReference.currentStage;
       if (this.playerCurrentStage === 1) {
         this.totalRemainingEnemies = this.mapReference.stageEnemyCounts[1];
-      } else {
+      } else if (this.playerCurrentStage === 2) {
         this.totalRemainingEnemies = this.mapReference.stageEnemyCounts[2];
+      } else if (this.playerCurrentStage === 3) {
+        this.totalRemainingEnemies = this.mapReference.stageEnemyCounts[3];
+      } else if (this.playerCurrentStage === 4) {
+        this.totalRemainingEnemies = this.mapReference.stageEnemyCounts[4];
+      } else {
+        this.totalRemainingEnemies = this.mapReference.stageEnemyCounts[5];
       }
     }
 
@@ -294,9 +299,27 @@ export class HUD extends Entity {
         canvasWidth - 20,
         50
       );
-    } else {
+    } else if (this.playerCurrentStage === 2) {
       ctx.fillText(
         `Underground Enemies Left: ${this.totalRemainingEnemies}`,
+        canvasWidth - 20,
+        50
+      );
+    } else if (this.playerCurrentStage === 3) {
+      ctx.fillText(
+        `Pit Enemies Left: ${this.totalRemainingEnemies}`,
+        canvasWidth - 20,
+        50
+      );
+    } else if (this.playerCurrentStage === 4) {
+      ctx.fillText(
+        `Pit Enemies Left: ${this.totalRemainingEnemies}`,
+        canvasWidth - 20,
+        50
+      );
+    } else {
+      ctx.fillText(
+        `Ascend Enemies Left: ${this.totalRemainingEnemies}`,
         canvasWidth - 20,
         50
       );
@@ -600,33 +623,32 @@ export class HUD extends Entity {
     if (this.gameWon) {
       if (this.elapsedTime > this.gameWinScreen.frameDuration) {
         this.elapsedTime = 0;
-        this.currentFrame = (this.currentFrame + 1) % this.gameWinScreen.frameCount;
+        this.currentFrame =
+          (this.currentFrame + 1) % this.gameWinScreen.frameCount;
       }
 
       ctx.drawImage(
         this.gameWinScreen.image,
-        this.currentFrame * this.gameWinScreen.width, 
-        0, 
-        this.gameWinScreen.width, 
-        this.gameWinScreen.height, 
-        0, 
-        0, 
-        ctx.canvas.width, 
+        this.currentFrame * this.gameWinScreen.width,
+        0,
+        this.gameWinScreen.width,
+        this.gameWinScreen.height,
+        0,
+        0,
+        ctx.canvas.width,
         ctx.canvas.height
       );
-    }
-
-    else {
-      // black background 
+    } else {
+      // black background
       ctx.drawImage(
         this.gameLoseScreen.image,
-        0, 
-        0, 
-        this.gameLoseScreen.width, 
-        this.gameLoseScreen.height, 
-        0, 
-        0, 
-        ctx.canvas.width, 
+        0,
+        0,
+        this.gameLoseScreen.width,
+        this.gameLoseScreen.height,
+        0,
+        0,
+        ctx.canvas.width,
         ctx.canvas.height
       );
     }

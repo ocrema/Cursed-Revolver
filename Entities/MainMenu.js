@@ -65,12 +65,10 @@ export class MainMenu extends Entity {
     gradient.addColorStop(0, "white");
     gradient.addColorStop(1, "gray");
     ctx.fillStyle = gradient;
-    
+
     ctx.fillStyle = "gray";
     ctx.font = `165px title `;
     ctx.fillText(`CURSED REVOLVER`, -350, -100);
-
-
 
     // const backgroundImage = ASSET_MANAGER.getAsset(
     //   "./assets/ui/menu/background_start2.png"
@@ -90,7 +88,7 @@ export class MainMenu extends Entity {
     const quitY = menuY + 450;
 
     const helpX = centerX - buttonWidth / 2;
-    const helpY = menuY + 340; 
+    const helpY = menuY + 340;
 
     if (this.showHelp) {
       this.drawSettings(ctx, centerX, centerY);
@@ -195,6 +193,7 @@ export class MainMenu extends Entity {
 
     if (selectedOption === 0) {
       this.hide();
+      document.getElementById("gameWorld").style.backgroundImage = "none";
       GAME_ENGINE.startGame();
     } else if (selectedOption === 1) {
       window.location.reload();

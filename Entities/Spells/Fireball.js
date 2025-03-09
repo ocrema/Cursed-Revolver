@@ -53,7 +53,7 @@ export class Fireball extends Entity {
     this.y += Math.sin(this.dir) * this.speed * GAME_ENGINE.clockTick;
 
     for (let e of GAME_ENGINE.entities) {
-      if (e.isPlayer || e.isAttack) continue;
+      if (e.isPlayer || e.isAttack || e.isSpawnPoint) continue;
 
       if (this.colliding(e)) {
         // ares moved explosion logic into this method
