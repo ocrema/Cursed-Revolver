@@ -56,6 +56,7 @@ export class HUD extends Entity {
     this.cowboyFrameIndex = 0; // Current frame
     this.blinkTimer = 0; // Timer to switch frames
     this.blinkInterval = 1.0; // Change every 0.5 seconds
+    this.spellAnimationFrame = 1; // Ensure it starts at a valid value
     this.spellAnimationTimer = 0; // Timer for spell switching animation
     this.spellAnimationDuration = 1.2; // Duration of spell selection animation
     this.attackAnimationTimer = 0;
@@ -151,33 +152,71 @@ export class HUD extends Entity {
     }
 
 
+    // // Detect Spell Switching
+    // if (player.selectedSpell !== this.previousSpellIndex) {
+    //   this.isSpellSwitching = true;
+    //   this.spellAnimationTimer = 0; // Reset timer for smooth transition
+    //   this.spellAnimationFrame = 1; // Ensure it starts at 1
+    //   this.previousSpellIndex = player.selectedSpell; // Update previous spell index
+    // }
+
+    // // Ensure spell icon animation runs continuously
+    // this.spellAnimationTimer += GAME_ENGINE.clockTick;
+
+    // if (this.spellAnimationTimer >= 0.05) { // Adjust 0.05s per frame (change for speed)
+    //     this.spellAnimationTimer = 0; // Reset timer
+    //     this.spellAnimationFrame++; // Advance the frame
+
+    //     // Fix the delay when looping back to frame 1
+    //     if (this.spellAnimationFrame >= 29) {
+    //         this.spellAnimationFrame = 1; // Instantly reset to first frame
+    //         this.spellAnimationTimer = -0.01; // Preload a slight offset to eliminate delay
+    //     }
+    // }
+
+    // // Ensure spellAnimationFrame is always valid
+    // if (isNaN(this.spellAnimationFrame) || this.spellAnimationFrame < 1 || this.spellAnimationFrame > 30) {
+    //     console.error("spellAnimationFrame is out of range, resetting...");
+    //     this.spellAnimationFrame = 1;
+    // }
+
     // Detect Spell Switching
-    if (player.selectedSpell !== this.previousSpellIndex) {
-      this.isSpellSwitching = true;
-      this.spellAnimationTimer = 0; // Reset timer for smooth transition
-      this.spellAnimationFrame = 1; // Ensure it starts at 1
-      this.previousSpellIndex = player.selectedSpell; // Update previous spell index
-    }
+if (player.selectedSpell !== this.previousSpellIndex) {
+  console.log(`Spell switched! Previous: ${this.previousSpellIndex}, New: ${player.selectedSpell}`);
+  
+  this.isSpellSwitching = true;
+  this.spellAnimationTimer = 0; // Reset timer for smooth transition
+  this.spellAnimationFrame = 1; // Ensure it starts at 1
+  this.previousSpellIndex = player.selectedSpell; // Update previous spell index
+}
 
-    // Ensure spell icon animation runs continuously
-    this.spellAnimationTimer += GAME_ENGINE.clockTick;
+// Ensure spell icon animation runs continuously
+this.spellAnimationTimer += GAME_ENGINE.clockTick;
 
-    if (this.spellAnimationTimer >= 0.05) { // Adjust 0.05s per frame (change for speed)
-        this.spellAnimationTimer = 0; // Reset timer
-        this.spellAnimationFrame++; // Advance the frame
+if (this.spellAnimationTimer >= 0.05) { // Adjust 0.05s per frame (change for speed)
+  this.spellAnimationTimer = 0; // Reset timer
+  this.spellAnimationFrame++; // Advance the frame
 
-        // Fix the delay when looping back to frame 1
-        if (this.spellAnimationFrame >= 30) {
-            this.spellAnimationFrame = 1; // Instantly reset to first frame
-            this.spellAnimationTimer = -0.01; // Preload a slight offset to eliminate delay
-        }
-    }
+  // Fix the delay when looping back to frame 1
+  if (this.spellAnimationFrame >= 30) { // Ensure reset happens at the correct frame
+      console.log(`Resetting animation frame: ${this.spellAnimationFrame} -> 1`);
+      this.spellAnimationFrame = 1;
+  }
+}
 
-    // Ensure spellAnimationFrame is always valid
-    if (isNaN(this.spellAnimationFrame) || this.spellAnimationFrame < 1 || this.spellAnimationFrame > 30) {
-        console.error("spellAnimationFrame is out of range, resetting...");
-        this.spellAnimationFrame = 1;
-    }
+// Ensure spellAnimationFrame is always valid
+if (isNaN(this.spellAnimationFrame) || this.spellAnimationFrame < 1 || this.spellAnimationFrame > 30) {
+  console.error(`spellAnimationFrame is out of range: ${this.spellAnimationFrame}, resetting...`);
+  this.spellAnimationFrame = 1;
+}
+
+// Debug log to monitor values
+console.log(`Frame: ${this.spellAnimationFrame}, Timer: ${this.spellAnimationTimer}, isSpellSwitching: ${this.isSpellSwitching}`);
+
+
+
+
+
 
     // Detect Attack (Left Mouse Button / 'm1')
     if (GAME_ENGINE.keys["m1"] && !this.isAttacking) {
@@ -492,7 +531,7 @@ export class HUD extends Entity {
 
       // === Glowing Effect Based on Selected Spell ===
       ctx.shadowBlur = 30; // Glow intensity
-      ctx.shadowColor = this.getSpellGlowColor(this.activeSpellIndex); // Spell-based glow color
+      ctx.shadowColor = player.spellColors[this.activeSpellIndex]; // Spell-based glow color
 
       // Draw the cylinder
       ctx.drawImage(
@@ -512,19 +551,11 @@ export class HUD extends Entity {
         { x: -9, y: 5 },
         { x: -9, y: -5 },
       ];
-      const colors = [
-        "orange",
-        "limegreen",
-        "cyan",
-        "blue",
-        "yellow",
-        "purple",
-      ];
+      
       for (let i = 0; i < 6; i++) {
-        //if (player.spellCooldowns[i] > 0) continue;
 
         ctx.shadowBlur = 10; // Glow intensity
-        ctx.shadowColor = colors[i]; // Spell-based glow color
+        ctx.shadowColor = player.spellColors[i]; // Spell-based glow color
         ctx.globalAlpha =
           1 -
           Math.min((player.spellCooldowns[i] * 2) / player.maxSpellCooldown, 1);

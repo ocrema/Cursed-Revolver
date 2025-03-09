@@ -30,7 +30,6 @@ export class AssetDownloader {
     this.downloadPauseMenuButtons();
     this.downloadHUDSpells();
     this.downloadHUDCowboyIcon();
-    this.downloadHealthBarAssets();
     this.downloadRevolverCylinderSprites();
     this.downloadFonts();
   }
@@ -273,20 +272,7 @@ export class AssetDownloader {
 
   // HUD Assets
   downloadHUDSpells() {
-    this.assetManager.queueDownload("./assets/ui/spells/fireballicon.png");
-    this.assetManager.queueDownload("./assets/ui/spells/fireball.png");
-    this.assetManager.queueDownload("./assets/ui/spells/lightning.png");
-    this.assetManager.queueDownload("./assets/ui/spells/water.png");
-    this.assetManager.queueDownload("./assets/ui/spells/icicle.png");
-    this.assetManager.queueDownload("./assets/ui/spells/vine.png");
-    this.assetManager.queueDownload("./assets/ui/spells/void.png");
     const spells = ["fireball", "vine", "icicle", "water", "lightning", "void"];
-
-    // Queue base spell icons
-    for (let spell of spells) {
-        this.assetManager.queueDownload(`./assets/ui/spells/${spell}/${spell}icon.png`);
-    }
-
     // Queue all animated frames (1-30) for each spell
     for (let spell of spells) {
         for (let i = 1; i <= 30; i++) {
@@ -300,18 +286,9 @@ export class AssetDownloader {
     this.assetManager.queueDownload("./assets/ui/cowboy.png");
     this.assetManager.queueDownload("./assets/ui/cowboy1.png");
     this.assetManager.queueDownload("./assets/ui/cowboy2.png");
-    this.assetManager.queueDownload("./assets/ui/cowboy_spell.png");
-    for (let i = 1; i <= 6; i++) {
-      // this.assetManager.queueDownload(`./assets/ui/cowboy_spell${i}.png`);
-    }
     for (let i = 1; i <= 6; i++) {
       this.assetManager.queueDownload(`./assets/ui/cowboy_flash${i}.png`);
     }
-  }
-
-  downloadHealthBarAssets() {
-    this.assetManager.queueDownload("./assets/ui/cowboy.png");
-    this.assetManager.queueDownload("./assets/ui/healthbar.png");
   }
 
   downloadRevolverCylinderSprites() {
