@@ -154,7 +154,7 @@ export class HUD extends Entity {
     }
 
     //check that player exists
-    const player = GAME_ENGINE.entities.find((e) => e.isPlayer);
+    const player = window.PLAYER;
     if (!player) return;
 
     // Ensure the cowboy image is set on the first frame
@@ -205,7 +205,7 @@ export class HUD extends Entity {
     // Detect Spell Switching
     if (player.selectedSpell !== this.previousSpellIndex) {
       //console.log(`Spell switched! Previous: ${this.previousSpellIndex}, New: ${player.selectedSpell}`);
-      
+
       this.isSpellSwitching = true;
       this.spellAnimationTimer = 0; // Reset timer for smooth transition
       this.spellAnimationFrame = 1; // Ensure it starts at 1
@@ -215,14 +215,16 @@ export class HUD extends Entity {
     // Ensure spell icon animation runs continuously
     this.spellAnimationTimer += GAME_ENGINE.clockTick;
 
-    if (this.spellAnimationTimer >= 0.05) { // Adjust 0.05s per frame (change for speed)
+    if (this.spellAnimationTimer >= 0.05) {
+      // Adjust 0.05s per frame (change for speed)
       this.spellAnimationTimer = 0; // Reset timer
       this.spellAnimationFrame++; // Advance the frame
 
       // Fix the delay when looping back to frame 1
-      if (this.spellAnimationFrame >= 30) { // Ensure reset happens at the correct frame
-          //console.log(`Resetting animation frame: ${this.spellAnimationFrame} -> 1`);
-          this.spellAnimationFrame = 1;
+      if (this.spellAnimationFrame >= 30) {
+        // Ensure reset happens at the correct frame
+        //console.log(`Resetting animation frame: ${this.spellAnimationFrame} -> 1`);
+        this.spellAnimationFrame = 1;
       }
     }
 
@@ -368,241 +370,250 @@ export class HUD extends Entity {
   }
 
   draw(ctx) {
-    ctx.save();
-    ctx.setTransform(1, 0, 0, 1, 0, 0); // Reset transformations
-
-    const canvasWidth = ctx.canvas.width;
-    const canvasHeight = ctx.canvas.height;
-
-    // logic for writing number of enemies left
-
-    ctx.fillStyle = "white";
-    ctx.font = `${canvasHeight * 0.03}px Texas, Arial`;
-    ctx.textAlign = "right";
-    if (this.playerCurrentStage === 1) {
-      ctx.fillText(
-        `Desert Enemies Left: ${this.totalRemainingEnemies}`,
-        canvasWidth - 20,
-        50
-      );
-    } else if (this.playerCurrentStage === 2) {
-      ctx.fillText(
-        `Underground Enemies Left: ${this.totalRemainingEnemies}`,
-        canvasWidth - 20,
-        50
-      );
-    } else if (this.playerCurrentStage === 3) {
-      ctx.fillText(
-        `Pit Enemies Left: ${this.totalRemainingEnemies}`,
-        canvasWidth - 20,
-        50
-      );
-    } else if (this.playerCurrentStage === 4) {
-      ctx.fillText(
-        `Pit Enemies Left: ${this.totalRemainingEnemies}`,
-        canvasWidth - 20,
-        50
-      );
-    } else {
-      ctx.fillText(
-        `Ascend Enemies Left: ${this.totalRemainingEnemies}`,
-        canvasWidth - 20,
-        50
-      );
-    }
-
-    this.displayFPS(ctx);
-
-    // Get Player
-    const player = GAME_ENGINE.entities.find((e) => e.isPlayer);
-    if (!player) return; // Ensure player exists
-
-    // Get Assets
-    const customFont = ASSET_MANAGER.getAsset("./assets/fonts/texas.ttf");
-    //const cowboyImg = ASSET_MANAGER.getAsset("./assets/ui/cowboy.png");
-    const spellIcon = ASSET_MANAGER.getAsset(
-      this.spells[this.activeSpellIndex].icon
-    );
-    const cylinderImage = ASSET_MANAGER.getAsset(this.cylinderImages[0]);
-
-    // === Font Setup ===
-    ctx.fillStyle = "white";
-    ctx.font = this.debugMode
-      ? `${canvasHeight * 0.025}px Arial`
-      : `${canvasHeight * 0.03}px ${customFont || "Arial"}`;
-    ctx.textAlign = "center";
-
-    // === Health Bar Setup ===
-    const maxHealth = player.maxHealth;
-    const currentHealth = Math.max(0, player.health);
-    const healthBarWidth = canvasWidth * this.healthBarWidthRatio;
-    const healthBarHeight = canvasHeight * this.healthBarHeightRatio;
-    const healthBarMargin = canvasHeight * this.healthBarMarginRatio;
-    const cowboySize = healthBarHeight * 20;
-
-    const cowboyX = canvasWidth * 0.02; // Move cowboy to the right
-    const cowboyY = canvasHeight - cowboySize / 2.0; // Move cowboy lower
-
-    const startX = cowboyX + cowboySize / 1.8; // Move health bar closer horizontally
-    const startY = canvasHeight - healthBarHeight - healthBarMargin / 1.5; // Move health bar closer vertically
-
-    // Health Ratio and Fill
-    const healthRatio = currentHealth / maxHealth;
-    const filledWidth = healthBarWidth * healthRatio;
-    let healthColor =
-      healthRatio > 0.5 ? "limegreen" : healthRatio > 0.2 ? "red" : "red";
-
-    // === Flash Effect When Hit ===
-    if (player.health < this.lastHealth) {
-      this.healthFlashTimer = this.healthFlashDuration;
-    }
-    this.lastHealth = player.health;
-
-    // === Create Gradient for HUD Background ===
-    const hudGradient = ctx.createLinearGradient(
-      0,
-      canvasHeight - 120,
-      0,
-      canvasHeight
-    );
-    hudGradient.addColorStop(0, "rgba(0, 0, 0, 0.01)"); // More transparent at top
-    hudGradient.addColorStop(1, "rgba(0, 0, 0, 0.8)"); // Darker at bottom
-
-    // === Draw Gradient HUD Background ===
-    ctx.fillStyle = hudGradient;
-    ctx.fillRect(0, canvasHeight - 120, canvasWidth, 120); // Covers bottom HUD area
-
-    // === Draw Purple Frame Around Health Bar ===
-    const framePadding = 4; // Thickness of frame
-    ctx.fillStyle = "rgba(179, 16, 179, 0.8)"; // Purple frame
-    ctx.fillRect(
-      startX - framePadding,
-      startY - framePadding,
-      healthBarWidth + framePadding * 2,
-      healthBarHeight + framePadding * 2
-    );
-
-    // === Draw Health Bar ===
-    ctx.fillStyle = "rgba(50, 50, 50, 0.8)"; // Background
-    ctx.fillRect(startX, startY, healthBarWidth, healthBarHeight);
-
-    ctx.fillStyle =
-      this.healthFlashTimer > 0 ? "rgba(255, 0, 0, 0.6)" : healthColor;
-    ctx.fillRect(startX, startY, filledWidth, healthBarHeight);
-
-    ctx.fillStyle = this.healthFlashTimer > 0 ? "red" : "white";
-    ctx.font = `${canvasHeight * 0.03}px Texas, Arial`;
-    ctx.fillText(
-      `HP: ${Math.round(currentHealth)} / ${maxHealth}`,
-      startX + healthBarWidth / 2,
-      startY - 5
-    );
-
-    // === Draw Cowboy Icon ===
-    const cowboyImg = ASSET_MANAGER.getAsset(this.currentCowboyImage);
-    if (cowboyImg) {
-      ctx.drawImage(
-        cowboyImg,
-        cowboyX,
-        cowboyY,
-        cowboySize / 2,
-        cowboySize / 2
-      );
-    }
-
-    // === Spell UI Setup ===
-    const scaleFactor = canvasHeight / 800;
-    const cylinderSize = 160 * scaleFactor;
-    const cylinderX = canvasWidth - cylinderSize - 25 * scaleFactor;
-    const cylinderY = canvasHeight - cylinderSize - 25 * scaleFactor;
-    const spellTextX = cylinderX - 180 * scaleFactor;
-    const spellTextY = cylinderY + cylinderSize / 1.05;
-
-    // === Draw Spell Name & Icon ===
-    ctx.fillStyle = "white";
-    ctx.fillText(
-      `Spell: ${this.spells[this.activeSpellIndex].name}`,
-      spellTextX,
-      spellTextY
-    );
-
-    const currentSpell = this.spells[this.activeSpellIndex];
-    const animatedIconPath = `./assets/ui/spells/${currentSpell.altName}/${
-      currentSpell.altName
-    }${this.spellAnimationFrame + 1}.png`;
-    const animatedSpellIcon = ASSET_MANAGER.getAsset(animatedIconPath);
-
-    if (animatedSpellIcon) {
-      const spellIconSize = 60 * scaleFactor;
-      ctx.drawImage(
-        animatedSpellIcon,
-        spellTextX + 90 * scaleFactor,
-        spellTextY - 50 * scaleFactor,
-        spellIconSize,
-        spellIconSize
-      );
-    } else {
-        //console.warn(`Spell icon missing: ${animatedIconPath}`);
-    }
-
-    // === Draw Revolver Cylinder (Rotating & Glowing) ===
-    if (cylinderImage) {
+    let film = true;
+    if (film) {
       ctx.save();
+      ctx.setTransform(1, 0, 0, 1, 0, 0); // Reset transformations
 
-      // Position and rotation
-      ctx.translate(cylinderX + cylinderSize / 2, cylinderY + cylinderSize / 2);
-      ctx.rotate(-this.cylinderRotation);
+      const canvasWidth = ctx.canvas.width;
+      const canvasHeight = ctx.canvas.height;
 
-      // === Glowing Effect Based on Selected Spell ===
-      ctx.shadowBlur = 30; // Glow intensity
-      ctx.shadowColor = player.spellColors[this.activeSpellIndex]; // Spell-based glow color
+      // logic for writing number of enemies left
 
-      // Draw the cylinder
-      ctx.drawImage(
-        cylinderImage,
-        -cylinderSize / 2,
-        -cylinderSize / 2,
-        cylinderSize,
-        cylinderSize
-      );
-
-      // draw bullets
-      const positions = [
-        { x: 0, y: -10 },
-        { x: 9, y: -5 },
-        { x: 9, y: 5 },
-        { x: 0, y: 10 },
-        { x: -9, y: 5 },
-        { x: -9, y: -5 },
-      ];
-
-      for (let i = 0; i < 6; i++) {
-        ctx.shadowBlur = 10; // Glow intensity
-        ctx.shadowColor = player.spellColors[i]; // Spell-based glow color
-        ctx.globalAlpha =
-          1 -
-          Math.min((player.spellCooldowns[i] * 2) / player.maxSpellCooldown, 1);
-
-        ctx.drawImage(
-          ASSET_MANAGER.getAsset("./assets/ui/revolver/bullets.png"),
-          8 * i,
-          0,
-          8,
-          8,
-          ((positions[i].x - 4) / 32) * cylinderSize,
-          ((positions[i].y - 4) / 32) * cylinderSize,
-          cylinderSize / 4,
-          cylinderSize / 4
+      ctx.fillStyle = "white";
+      ctx.font = `${canvasHeight * 0.03}px Texas, Arial`;
+      ctx.textAlign = "right";
+      if (this.playerCurrentStage === 1) {
+        ctx.fillText(
+          `Desert Enemies Left: ${this.totalRemainingEnemies}`,
+          canvasWidth - 20,
+          50
+        );
+      } else if (this.playerCurrentStage === 2) {
+        ctx.fillText(
+          `Underground Enemies Left: ${this.totalRemainingEnemies}`,
+          canvasWidth - 20,
+          50
+        );
+      } else if (this.playerCurrentStage === 3) {
+        ctx.fillText(
+          `Pit Enemies Left: ${this.totalRemainingEnemies}`,
+          canvasWidth - 20,
+          50
+        );
+      } else if (this.playerCurrentStage === 4) {
+        ctx.fillText(
+          `Pit Enemies Left: ${this.totalRemainingEnemies}`,
+          canvasWidth - 20,
+          50
+        );
+      } else {
+        ctx.fillText(
+          `Ascend Enemies Left: ${this.totalRemainingEnemies}`,
+          canvasWidth - 20,
+          50
         );
       }
 
-      // Reset glow effect after drawing
-      ctx.shadowBlur = 0;
-      ctx.globalAlpha = 1;
-      ctx.restore();
+      this.displayFPS(ctx);
 
-      // draw crosshair
-      /*
+      // Get Player
+
+      const player = window.PLAYER;
+      if (!player) return; // Ensure player exists
+
+      // Get Assets
+      const customFont = ASSET_MANAGER.getAsset("./assets/fonts/texas.ttf");
+      //const cowboyImg = ASSET_MANAGER.getAsset("./assets/ui/cowboy.png");
+      const spellIcon = ASSET_MANAGER.getAsset(
+        this.spells[this.activeSpellIndex].icon
+      );
+      const cylinderImage = ASSET_MANAGER.getAsset(this.cylinderImages[0]);
+
+      // === Font Setup ===
+      ctx.fillStyle = "white";
+      ctx.font = this.debugMode
+        ? `${canvasHeight * 0.025}px Arial`
+        : `${canvasHeight * 0.03}px ${customFont || "Arial"}`;
+      ctx.textAlign = "center";
+
+      // === Health Bar Setup ===
+      const maxHealth = player.maxHealth;
+      const currentHealth = Math.max(0, player.health);
+      const healthBarWidth = canvasWidth * this.healthBarWidthRatio;
+      const healthBarHeight = canvasHeight * this.healthBarHeightRatio;
+      const healthBarMargin = canvasHeight * this.healthBarMarginRatio;
+      const cowboySize = healthBarHeight * 20;
+
+      const cowboyX = canvasWidth * 0.02; // Move cowboy to the right
+      const cowboyY = canvasHeight - cowboySize / 2.0; // Move cowboy lower
+
+      const startX = cowboyX + cowboySize / 1.8; // Move health bar closer horizontally
+      const startY = canvasHeight - healthBarHeight - healthBarMargin / 1.5; // Move health bar closer vertically
+
+      // Health Ratio and Fill
+      const healthRatio = currentHealth / maxHealth;
+      const filledWidth = healthBarWidth * healthRatio;
+      let healthColor =
+        healthRatio > 0.5 ? "limegreen" : healthRatio > 0.2 ? "red" : "red";
+
+      // === Flash Effect When Hit ===
+      if (player.health < this.lastHealth) {
+        this.healthFlashTimer = this.healthFlashDuration;
+      }
+      this.lastHealth = player.health;
+
+      // === Create Gradient for HUD Background ===
+      const hudGradient = ctx.createLinearGradient(
+        0,
+        canvasHeight - 120,
+        0,
+        canvasHeight
+      );
+      hudGradient.addColorStop(0, "rgba(0, 0, 0, 0.01)"); // More transparent at top
+      hudGradient.addColorStop(1, "rgba(0, 0, 0, 0.8)"); // Darker at bottom
+
+      // === Draw Gradient HUD Background ===
+      ctx.fillStyle = hudGradient;
+      ctx.fillRect(0, canvasHeight - 120, canvasWidth, 120); // Covers bottom HUD area
+
+      // === Draw Purple Frame Around Health Bar ===
+      const framePadding = 4; // Thickness of frame
+      ctx.fillStyle = "rgba(179, 16, 179, 0.8)"; // Purple frame
+      ctx.fillRect(
+        startX - framePadding,
+        startY - framePadding,
+        healthBarWidth + framePadding * 2,
+        healthBarHeight + framePadding * 2
+      );
+
+      // === Draw Health Bar ===
+      ctx.fillStyle = "rgba(50, 50, 50, 0.8)"; // Background
+      ctx.fillRect(startX, startY, healthBarWidth, healthBarHeight);
+
+      ctx.fillStyle =
+        this.healthFlashTimer > 0 ? "rgba(255, 0, 0, 0.6)" : healthColor;
+      ctx.fillRect(startX, startY, filledWidth, healthBarHeight);
+
+      ctx.fillStyle = this.healthFlashTimer > 0 ? "red" : "white";
+      ctx.font = `${canvasHeight * 0.03}px Texas, Arial`;
+      ctx.fillText(
+        `HP: ${Math.round(currentHealth)} / ${maxHealth}`,
+        startX + healthBarWidth / 2,
+        startY - 5
+      );
+
+      // === Draw Cowboy Icon ===
+      const cowboyImg = ASSET_MANAGER.getAsset(this.currentCowboyImage);
+      if (cowboyImg) {
+        ctx.drawImage(
+          cowboyImg,
+          cowboyX,
+          cowboyY,
+          cowboySize / 2,
+          cowboySize / 2
+        );
+      }
+
+      // === Spell UI Setup ===
+      const scaleFactor = canvasHeight / 800;
+      const cylinderSize = 160 * scaleFactor;
+      const cylinderX = canvasWidth - cylinderSize - 25 * scaleFactor;
+      const cylinderY = canvasHeight - cylinderSize - 25 * scaleFactor;
+      const spellTextX = cylinderX - 180 * scaleFactor;
+      const spellTextY = cylinderY + cylinderSize / 1.05;
+
+      // === Draw Spell Name & Icon ===
+      ctx.fillStyle = "white";
+      ctx.fillText(
+        `Spell: ${this.spells[this.activeSpellIndex].name}`,
+        spellTextX,
+        spellTextY
+      );
+
+      const currentSpell = this.spells[this.activeSpellIndex];
+      const animatedIconPath = `./assets/ui/spells/${currentSpell.altName}/${
+        currentSpell.altName
+      }${this.spellAnimationFrame + 1}.png`;
+      const animatedSpellIcon = ASSET_MANAGER.getAsset(animatedIconPath);
+
+      if (animatedSpellIcon) {
+        const spellIconSize = 60 * scaleFactor;
+        ctx.drawImage(
+          animatedSpellIcon,
+          spellTextX + 90 * scaleFactor,
+          spellTextY - 50 * scaleFactor,
+          spellIconSize,
+          spellIconSize
+        );
+      } else {
+        //console.warn(`Spell icon missing: ${animatedIconPath}`);
+      }
+
+      // === Draw Revolver Cylinder (Rotating & Glowing) ===
+      if (cylinderImage) {
+        ctx.save();
+
+        // Position and rotation
+        ctx.translate(
+          cylinderX + cylinderSize / 2,
+          cylinderY + cylinderSize / 2
+        );
+        ctx.rotate(-this.cylinderRotation);
+
+        // === Glowing Effect Based on Selected Spell ===
+        ctx.shadowBlur = 30; // Glow intensity
+        ctx.shadowColor = player.spellColors[this.activeSpellIndex]; // Spell-based glow color
+
+        // Draw the cylinder
+        ctx.drawImage(
+          cylinderImage,
+          -cylinderSize / 2,
+          -cylinderSize / 2,
+          cylinderSize,
+          cylinderSize
+        );
+
+        // draw bullets
+        const positions = [
+          { x: 0, y: -10 },
+          { x: 9, y: -5 },
+          { x: 9, y: 5 },
+          { x: 0, y: 10 },
+          { x: -9, y: 5 },
+          { x: -9, y: -5 },
+        ];
+
+        for (let i = 0; i < 6; i++) {
+          ctx.shadowBlur = 10; // Glow intensity
+          ctx.shadowColor = player.spellColors[i]; // Spell-based glow color
+          ctx.globalAlpha =
+            1 -
+            Math.min(
+              (player.spellCooldowns[i] * 2) / player.maxSpellCooldown,
+              1
+            );
+
+          ctx.drawImage(
+            ASSET_MANAGER.getAsset("./assets/ui/revolver/bullets.png"),
+            8 * i,
+            0,
+            8,
+            8,
+            ((positions[i].x - 4) / 32) * cylinderSize,
+            ((positions[i].y - 4) / 32) * cylinderSize,
+            cylinderSize / 4,
+            cylinderSize / 4
+          );
+        }
+
+        // Reset glow effect after drawing
+        ctx.shadowBlur = 0;
+        ctx.globalAlpha = 1;
+        ctx.restore();
+
+        // draw crosshair
+        /*
       ctx.save();
       ctx.shadowBlur = 0;
       const crosshairSize = 128;
@@ -610,97 +621,100 @@ export class HUD extends Entity {
       -crosshairSize/2 + GAME_ENGINE.mouse.x, -crosshairSize/2 + GAME_ENGINE.mouse.y, crosshairSize, crosshairSize);
       ctx.restore();
       */
-    }
-
-    // === Game Win Screen ===
-
-    if (this.gameWon) {
-      // console.log("All enemies are dead! Triggering game over.");
-      GAME_ENGINE.GAME_CONTROLLER.setGameOver();
-
-      this.updateGameOverScreen(ctx);
-
-      ctx.fillStyle = "rgb(22, 129, 0)";
-      ctx.font = `${canvasHeight * 0.12}px Texas, Arial`;
-      ctx.fillText("GAME WON", canvasWidth / 2, canvasHeight / 2);
-
-      ctx.font = `${canvasHeight * 0.04}px Texas, Arial`;
-      ctx.fillText("Press R to Restart", canvasWidth / 2, canvasHeight / 1.5);
-
-      ctx.restore();
-      return;
-    }
-
-    // === Game Over Screen ===
-    if (currentHealth <= 0) {
-      console.log("Player health is 0! Triggering Game Over.");
-      GAME_ENGINE.GAME_CONTROLLER.setGameOver();
-
-      this.updateGameOverScreen(ctx);
-
-      ctx.fillStyle = "white";
-      ctx.font = `${canvasHeight * 0.12}px Texas, Arial`;
-      ctx.fillText("GAME OVER", canvasWidth / 2, canvasHeight / 2);
-
-      ctx.font = `${canvasHeight * 0.04}px Texas, Arial`;
-      ctx.fillText("Press R to Restart", canvasWidth / 2, canvasHeight / 1.5);
-
-      ctx.restore();
-      return;
-    }
-
-    // === Debug Mode UI ===
-    if (this.debugMode) {
-      ctx.fillStyle = "white";
-      ctx.font = `${canvasHeight * 0.025}px Arial`;
-
-      const debugTextX = 90;
-      const debugTextY = 40;
-      const lineSpacing = canvasHeight * 0.03;
-      let debugLine = 0;
-
-      ctx.fillText(
-        "DEBUG MODE: ON",
-        debugTextX,
-        debugTextY + debugLine++ * lineSpacing
-      );
-
-      // Get mouse position relative to the game world
-      const mouseX = GAME_ENGINE.mouse.x + GAME_ENGINE.camera.x;
-      const mouseY = GAME_ENGINE.mouse.y + GAME_ENGINE.camera.y;
-
-      if (player) {
-        ctx.fillText(
-          `Player Position: (${Math.floor(player.x)}, ${Math.floor(player.y)})`,
-          debugTextX,
-          debugTextY + debugLine++ * lineSpacing
-        );
-        ctx.fillText(
-          `Player Velocity: (${player.x_velocity.toFixed(
-            2
-          )}, ${player.y_velocity.toFixed(2)})`,
-          debugTextX,
-          debugTextY + debugLine++ * lineSpacing
-        );
-        ctx.fillText(
-          `Active Spell: ${this.spells[this.activeSpellIndex].name}`,
-          debugTextX,
-          debugTextY + debugLine++ * lineSpacing
-        );
-        ctx.fillText(
-          `Health: ${currentHealth} / ${maxHealth}`,
-          debugTextX,
-          debugTextY + debugLine++ * lineSpacing
-        );
-        ctx.fillText(
-          `X: ${Math.floor(mouseX)}, Y: ${Math.floor(mouseY)}`,
-          debugTextX,
-          debugTextY + debugLine++ * lineSpacing
-        );
       }
-    }
 
-    ctx.restore();
+      // === Game Win Screen ===
+
+      if (this.gameWon) {
+        // console.log("All enemies are dead! Triggering game over.");
+        GAME_ENGINE.GAME_CONTROLLER.setGameOver();
+
+        this.updateGameOverScreen(ctx);
+
+        ctx.fillStyle = "rgb(22, 129, 0)";
+        ctx.font = `${canvasHeight * 0.12}px Texas, Arial`;
+        ctx.fillText("GAME WON", canvasWidth / 2, canvasHeight / 2);
+
+        ctx.font = `${canvasHeight * 0.04}px Texas, Arial`;
+        ctx.fillText("Press R to Restart", canvasWidth / 2, canvasHeight / 1.5);
+
+        ctx.restore();
+        return;
+      }
+
+      // === Game Over Screen ===
+      if (currentHealth <= 0) {
+        console.log("Player health is 0! Triggering Game Over.");
+        GAME_ENGINE.GAME_CONTROLLER.setGameOver();
+
+        this.updateGameOverScreen(ctx);
+
+        ctx.fillStyle = "white";
+        ctx.font = `${canvasHeight * 0.12}px Texas, Arial`;
+        ctx.fillText("GAME OVER", canvasWidth / 2, canvasHeight / 2);
+
+        ctx.font = `${canvasHeight * 0.04}px Texas, Arial`;
+        ctx.fillText("Press R to Restart", canvasWidth / 2, canvasHeight / 1.5);
+
+        ctx.restore();
+        return;
+      }
+
+      // === Debug Mode UI ===
+      if (this.debugMode) {
+        ctx.fillStyle = "white";
+        ctx.font = `${canvasHeight * 0.025}px Arial`;
+
+        const debugTextX = 90;
+        const debugTextY = 40;
+        const lineSpacing = canvasHeight * 0.03;
+        let debugLine = 0;
+
+        ctx.fillText(
+          "DEBUG MODE: ON",
+          debugTextX,
+          debugTextY + debugLine++ * lineSpacing
+        );
+
+        // Get mouse position relative to the game world
+        const mouseX = GAME_ENGINE.mouse.x + GAME_ENGINE.camera.x;
+        const mouseY = GAME_ENGINE.mouse.y + GAME_ENGINE.camera.y;
+
+        if (player) {
+          ctx.fillText(
+            `Player Position: (${Math.floor(player.x)}, ${Math.floor(
+              player.y
+            )})`,
+            debugTextX,
+            debugTextY + debugLine++ * lineSpacing
+          );
+          ctx.fillText(
+            `Player Velocity: (${player.x_velocity.toFixed(
+              2
+            )}, ${player.y_velocity.toFixed(2)})`,
+            debugTextX,
+            debugTextY + debugLine++ * lineSpacing
+          );
+          ctx.fillText(
+            `Active Spell: ${this.spells[this.activeSpellIndex].name}`,
+            debugTextX,
+            debugTextY + debugLine++ * lineSpacing
+          );
+          ctx.fillText(
+            `Health: ${currentHealth} / ${maxHealth}`,
+            debugTextX,
+            debugTextY + debugLine++ * lineSpacing
+          );
+          ctx.fillText(
+            `X: ${Math.floor(mouseX)}, Y: ${Math.floor(mouseY)}`,
+            debugTextX,
+            debugTextY + debugLine++ * lineSpacing
+          );
+        }
+      }
+
+      ctx.restore();
+    }
   }
 
   updateGameOverScreen(ctx) {

@@ -49,7 +49,6 @@ export class GameLogicController extends Entity {
         entity.respawn();
       }
     }
-    
 
     this.isGameOver = false;
     this.isPaused = false;
@@ -61,13 +60,12 @@ export class GameLogicController extends Entity {
     // Initialize the game
     if (this.state === 0) {
       this.state = 1;
-      window.ASSET_MANAGER.playTrack(1);
+      //window.ASSET_MANAGER.playTrack(1);
       const map = new Map();
       this.GAME_ENGINE.addEntity(map);
       map.load();
       this.hud = new HUD(map);
       this.GAME_ENGINE.addEntity(this.hud);
-      
     }
 
     if (this.isGameOver) {
