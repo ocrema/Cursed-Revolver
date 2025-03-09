@@ -39,6 +39,7 @@ export class Tilemap {
     this.boulderSpawnPoints = [];
     this.spiderwebObstacleSpawnPoints = [];
     this.movingCowboySpawnPoints = [];
+    this.wizardTeleportPoints = [];
   }
 
   async load() {
@@ -174,6 +175,10 @@ export class Tilemap {
             case 120:
               tileClass = DeadTreeTile;
               break;
+            case 123:
+              this.wizardTeleportPoints.push({ x: worldX, y: worldY });
+              hideEnemySpawnPoints = true;
+              break;
             default:
               break;
           }
@@ -247,5 +252,9 @@ export class Tilemap {
 
   getMovingCowboySpawnPoints() {
     return this.movingCowboySpawnPoints;
+  }
+
+  getWizardTeleportPoints() {
+    return this.wizardTeleportPoints;
   }
 }

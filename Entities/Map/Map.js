@@ -35,6 +35,7 @@ export class Map extends GameMap {
       4: new Set(),
       5: new Set(),
     };
+    this.wizardTeleportPoints = [];
     this.stageEnemyCounts = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
     this.enemySpawnData = { 1: [], 2: [], 3: [], 4: [], 5: [] };
     this.spiderwebList = [];
@@ -46,7 +47,7 @@ export class Map extends GameMap {
   async load() {
     let playerSpawn;
     // saloon start
-    //playerSpawn = { x: 763, y: 1500 };
+    playerSpawn = { x: 763, y: 1500 };
 
     // underground start
     //playerSpawn = { x: 12400, y: 4000 };
@@ -58,7 +59,7 @@ export class Map extends GameMap {
     //playerSpawn = { x: 23532, y: 6000 };
 
     // boss arena spawn
-    playerSpawn = { x: 29000, y: 3015 };
+    //playerSpawn = { x: 29000, y: 3015 };
 
     // Add colliders for death zones
     GAME_ENGINE.addEntity(new DeathCollider(2233, 2233, 5000, 50));
@@ -72,8 +73,6 @@ export class Map extends GameMap {
     // Add background
     const background = new Background(player);
     GAME_ENGINE.addEntity(background);
-
-    GAME_ENGINE.addEntity(new Wizard(30827, 2271));
 
     window.PLAYER = player;
 
@@ -102,6 +101,7 @@ export class Map extends GameMap {
       "props/tree02.png",
       "Skull1.png",
       "Skull2.png",
+      "SpawnPoints/WizardTeleportPoint.png",
     ];
 
     const TILESET_IMAGES = tilesetNames.map((name) =>
@@ -177,6 +177,13 @@ export class Map extends GameMap {
         offsetY: -50,
       },
     };
+
+    const points = gameMap.getWizardTeleportPoints();
+    for (let i = 0; i < points.length; i++) {
+      this.wizardTeleportPoints.push(points[i]);
+    }
+
+    GAME_ENGINE.addEntity(new Wizard(30827, 2271));
 
     // Spawn enemies
     for (const key in enemyTypes) {
