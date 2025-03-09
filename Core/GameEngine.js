@@ -14,8 +14,8 @@ export class GameEngine {
     this.ctx = null;
     this.entities = [];
     this.options = options || { debugging: false };
-    this.width = 2000;
-    this.height = 1000;
+    this.width = 2800;
+    this.height = 1400;
     this.camera = Camera.getInstance();
     this.addEntity(this.camera);
     this.debug_colliders = false;
