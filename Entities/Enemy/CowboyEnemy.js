@@ -152,26 +152,6 @@ export class CowboyEnemy extends Actor {
         this.velocity.y = 0;
       }
 
-      // for (let entity of GAME_ENGINE.entities) {
-      //   if (entity instanceof Player && Util.canSee(this, entity)) {
-      //     this.seesPlayer = true;
-      //     playerDetected = true;
-      //     playerTarget = entity;
-
-      //     const distance = Util.getDistance(this, entity);
-
-      //     if (!this.isDrawingWeapon) {
-      //       if (
-      //         distance < this.attackRadius &&
-      //         this.attackCooldown > this.fireRate
-      //       ) {
-      //         this.attack(entity);
-      //       } else if (distance < this.visualRadius) {
-      //         this.chasePlayer(entity);
-      //       }
-      //     }
-      //   }
-      // }
       const player = window.PLAYER;
       if (player && Util.canSee(this, player)) {
         this.seesPlayer = true;

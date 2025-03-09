@@ -88,34 +88,19 @@ export class StaticCowboyEnemy extends Actor {
 
       // **Check if the cowboy dies**
       if (this.health <= 0) {
-      console.log("Static Cowboy has died!");
-      this.dead = true;
-      this.setAnimation("death", false);
+        console.log("Static Cowboy has died!");
+        this.dead = true;
+        this.setAnimation("death", false);
 
-      this.onDeath();
-      return;
-    }
+        this.onDeath();
+        return;
+      }
 
       if (this.effects.frozen > 0 || this.effects.stun > 0) return;
       this.attackCooldown += GAME_ENGINE.clockTick;
 
       let playerDetected = false;
       let playerTarget = null;
-
-      // for (let entity of GAME_ENGINE.entities) {
-      //   if (entity instanceof Player && Util.canSee(this, entity)) {
-      //     this.seesPlayer = true;
-      //     playerDetected = true;
-      //     playerTarget = entity;
-
-      //     // **Flip the cowboy based on player's position**
-      //     this.flip = entity.x < this.x; // Flip if player is on the left
-
-      //     if (this.attackCooldown >= this.fireRate) {
-      //       this.attack(entity);
-      //     }
-      //   }
-      // }
 
       const player = window.PLAYER;
       if (player && Util.canSee(this, player) && Util.canAttack(this, player)) {
