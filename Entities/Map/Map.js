@@ -59,11 +59,12 @@ export class Map extends GameMap {
     // playerSpawn = { x: 23532, y: 6000 };
 
     // boss arena spawn
-    // playerSpawn = { x: 28276, y: 3015 };
+    playerSpawn = { x: 28276, y: 3015 };
 
     // Add colliders for death zones
     GAME_ENGINE.addEntity(new DeathCollider(2233, 2233, 5000, 50));
     GAME_ENGINE.addEntity(new DeathCollider(12870, 4338, 8000, 50));
+    GAME_ENGINE.addEntity(new DeathCollider(25028, 6914, 4000, 50));
 
     // Add player
     const player = new Player(playerSpawn.x, playerSpawn.y);
