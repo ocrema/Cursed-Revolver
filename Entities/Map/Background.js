@@ -6,7 +6,7 @@ import { Player } from "../Player/Player.js";
 export class Background extends Entity {
   constructor(player) {
     super();
-    this.scale = 4;
+    this.scale = 6;
     this.entityOrder = -10;
     this.camera = Camera.getInstance();
     this.backgroundList = Object.values(BACKGROUND_SPRITESHEET);
