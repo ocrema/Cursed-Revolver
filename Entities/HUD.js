@@ -167,7 +167,7 @@ export class HUD extends Entity {
         this.spellAnimationFrame++; // Advance the frame
 
         // Fix the delay when looping back to frame 1
-        if (this.spellAnimationFrame > 30) {
+        if (this.spellAnimationFrame >= 30) {
             this.spellAnimationFrame = 1; // Instantly reset to first frame
             this.spellAnimationTimer = -0.01; // Preload a slight offset to eliminate delay
         }
