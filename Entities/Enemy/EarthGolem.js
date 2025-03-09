@@ -6,7 +6,6 @@ import { GAME_ENGINE } from "../../main.js";
 import { Tile } from "../Map/Tiles/Tile.js";
 import { Entity } from "../Entities.js";
 
-
 export class EarthGolem extends Actor {
   constructor(x, y) {
     super();
@@ -18,19 +17,28 @@ export class EarthGolem extends Actor {
     this.addAnimation(
       "idle",
       this.assetManager.getAsset("./assets/enemy/golem/golem_idle.png"),
-      128, 90, 5, 0.4
+      128,
+      90,
+      5,
+      0.4
     );
 
     this.addAnimation(
       "walk",
       this.assetManager.getAsset("./assets/enemy/golem/golem_walk.png"),
-      384, 90, 8, 0.2
+      384,
+      90,
+      8,
+      0.2
     );
 
     this.addAnimation(
       "hit",
       this.assetManager.getAsset("./assets/enemy/golem/golem_hit.png"),
-      384, 77, 19, 0.05
+      384,
+      77,
+      19,
+      0.05
     );
 
     this.setAnimation("idle");
@@ -150,14 +158,20 @@ export class EarthGolem extends Actor {
     this.setAnimation("hit");
 
     setTimeout(() => {
-      window.ASSET_MANAGER.playAsset("./assets/sfx/golem_attack.wav", 1 * Util.DFCVM(this));
-    }, 400); 
+      window.ASSET_MANAGER.playAsset(
+        "./assets/sfx/golem_attack.wav",
+        1 * Util.DFCVM(this)
+      );
+    }, 400);
     setTimeout(() => {
       for (let entity of GAME_ENGINE.entities) {
         if (entity instanceof Player) {
           let xDistance = Math.abs(this.x - entity.x);
           let yDistance = Math.abs(this.y - entity.y);
-          if (xDistance < this.stompRadius * 1.5 && yDistance < this.height / 2) {
+          if (
+            xDistance < this.stompRadius * 1.5 &&
+            yDistance < this.height / 2
+          ) {
             entity.queueAttack({ damage: Math.min(80, entity.health) });
           }
         }
@@ -169,7 +183,6 @@ export class EarthGolem extends Actor {
       this.setAnimation("walk");
     }, 2000);
   }
-
 
   movement() {
     if (!this.seesPlayer || this.isAttacking) return;
@@ -225,17 +238,19 @@ export class EarthGolem extends Actor {
   }
 
   die() {
+    this.onDeath();
     if (this.dead) return;
     this.dead = true;
 
-
     console.log("Earth Golem has died!");
     this.setAnimation("hit");
-    window.ASSET_MANAGER.playAsset("./assets/sfx/golem_death.wav", 1 * Util.DFCVM(this));
+    window.ASSET_MANAGER.playAsset(
+      "./assets/sfx/golem_death.wav",
+      1 * Util.DFCVM(this)
+    );
 
     setTimeout(() => {
       this.removeFromWorld = true;
     }, 30);
   }
 }
-

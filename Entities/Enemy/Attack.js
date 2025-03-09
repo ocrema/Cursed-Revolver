@@ -91,37 +91,33 @@ export class Jaw extends Entity {
       this.removeFromWorld = true;
     }
 
-    // update location
-    if (this.spider.flip === 0) {
-      // if facing right
-      this.x = this.spider.x - this.spider.width / 2;
-    } else {
-      this.x = this.spider.x + this.spider.width / 2;
-    }
+    // Update position relative to spider
+    this.x =
+      this.spider.x +
+      (this.spider.flip === 0 ? -this.spider.width / 2 : this.spider.width / 2);
     this.y = this.spider.y;
 
     const player = window.PLAYER;
-    if (player) {
-      if (this.colliding(player)) {
-        // If jaw attack collides with player
-        if (player instanceof Player) {
-          player.queueAttack({
-            damage: 20,
-            x: this.x,
-            y: this.y,
-            launchMagnitude: 100,
-          });
-          if (this.spider instanceof Spider) {
-            window.ASSET_MANAGER.playAsset("./assets/sfx/spider_attack.wav", 1);
-          }
-
-          // Reset spider attack cooldown when attack hits
-          this.spider.attackCooldown = 0;
-          this.spider.jaw = null;
-          this.delete();
-        }
-      }
+    if (player && this.colliding(player)) {
+      this.hitPlayer(player);
     }
+  }
+
+  hitPlayer(player) {
+    // If jaw attack collides with player
+    player.queueAttack({
+      damage: 20,
+      x: this.x,
+      y: this.y,
+      launchMagnitude: 100,
+    });
+
+    window.ASSET_MANAGER.playAsset("./assets/sfx/spider_attack.wav", 1);
+
+    // Reset attack state and remove jaw
+    this.spider.attackCooldown = 0;
+    this.spider.jaw = null;
+    this.delete();
   }
 
   delete() {

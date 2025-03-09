@@ -373,9 +373,14 @@ export class CowboyBullet extends Actor {
 
     // Check collision with player
     const player = window.PLAYER;
-    if (this.colliding(player)) {
-      player.queueAttack({ damage: this.damage });
-      this.removeFromWorld = true;
+
+    // **Quick AABB Bounding Box Check First**
+    if (Math.abs(this.x - player.x) < 50 && Math.abs(this.y - player.y) < 50) {
+      // **Only call `colliding()` if player is near**
+      if (this.colliding(player)) {
+        player.queueAttack({ damage: this.damage });
+        this.removeFromWorld = true;
+      }
     }
   }
 
