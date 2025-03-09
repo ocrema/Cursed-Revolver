@@ -37,6 +37,7 @@ export class Tilemap {
     this.golemSpawnPoints = [];
     this.boulderSpawnPoints = [];
     this.spiderwebObstacleSpawnPoints = [];
+    this.movingCowboySpawnPoints = [];
   }
 
   async load() {
@@ -165,6 +166,10 @@ export class Tilemap {
               this.spiderwebObstacleSpawnPoints.push({ x: worldX, y: worldY });
               hideEnemySpawnPoints = true;
               break;
+            case 119:
+              this.movingCowboySpawnPoints.push({ x: worldX, y: worldY });
+              hideEnemySpawnPoints = true;
+              break;
             default:
               break;
           }
@@ -234,5 +239,9 @@ export class Tilemap {
 
   getSpiderwebObstacleSpawnPoints() {
     return this.spiderwebObstacleSpawnPoints;
+  }
+
+  getMovingCowboySpawnPoints() {
+    return this.movingCowboySpawnPoints;
   }
 }

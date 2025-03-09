@@ -7,11 +7,13 @@ import { Camera } from "../../Core/Camera.js";
 export class ChainLightning extends Entity {
   constructor(caster, dir, offset) {
     super();
+    this.debug = false;
     this.dir = dir; // in radians
     this.entityOrder = 3;
     this.isAttack = true;
     this.experationTimer = 0.35;
-    this.chains = 8;
+    this.chains = 3;
+    this.damage = 3;
     this.firstBolt = true;
     this.maxChainLength = 1000;
     this.maxShotAngle = Math.PI / 3;
@@ -21,6 +23,12 @@ export class ChainLightning extends Entity {
   }
 
   update() {
+    this.debug = GAME_ENGINE.debug_colliders;
+
+    if (this.debug) {
+      this.chains = 8;
+      this.damage = 100;
+    }
     if (this.struck) {
       this.experationTimer -= GAME_ENGINE.clockTick;
       //if (this.targets.length > 1) GAME_ENGINE.camera.triggerShake(10);
@@ -57,7 +65,7 @@ export class ChainLightning extends Entity {
       if (target !== null) {
         this.targets.push(target);
         enemies.splice(targetIndex, 1);
-        target.queueAttack({ damage: 100, shock: 5 });
+        target.queueAttack({ damage: this.damage, shock: 5 });
       }
 
       this.chains--;

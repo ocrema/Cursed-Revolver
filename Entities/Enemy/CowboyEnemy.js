@@ -233,6 +233,7 @@ export class CowboyEnemy extends Actor {
   }
 
   attack(player) {
+    if (this.isDrawingWeapon) return; 
     this.setAnimation("shoot");
     this.attackCooldown = 0;
 
@@ -322,16 +323,40 @@ export class CowboyEnemy extends Actor {
         let thisBottom = this.y + this.height / 2;
         let eTop = entity.y - entity.collider.height / 2;
 
+        let thisLeft = this.x - this.width / 2;
+        let thisRight = this.x + this.width / 2;
+        let eLeft = entity.x - entity.collider.width / 2;
+        let eRight = entity.x + entity.collider.width / 2;
+
+        // **Bottom Collision (Ground)**
         let collideBottom =
           thisBottom > eTop &&
           this.y < eTop &&
-          this.x + this.width / 2 > entity.x - entity.collider.width / 2 &&
-          this.x - this.width / 2 < entity.x + entity.collider.width / 2;
+          thisRight > eLeft &&
+          thisLeft < eRight;
 
         if (collideBottom) {
           this.y = eTop - this.height / 2;
           this.velocity.y = 0;
           this.onGround = true;
+        }
+
+        // **Side Collision (Left or Right)**
+        let collideLeft =
+          thisRight > eLeft &&
+          thisLeft < eLeft &&
+          this.y + this.height / 2 > eTop;
+        let collideRight =
+          thisLeft < eRight &&
+          thisRight > eRight &&
+          this.y + this.height / 2 > eTop;
+
+        if (collideLeft) {
+          this.x = eLeft - this.width / 2;
+          this.velocity.x = 0;
+        } else if (collideRight) {
+          this.x = eRight + this.width / 2;
+          this.velocity.x = 0;
         }
       }
     }

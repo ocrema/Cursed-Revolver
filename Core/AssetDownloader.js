@@ -104,7 +104,9 @@ export class AssetDownloader {
       "./assets/background/UndergroundBackground.png"
     );
     this.assetManager.queueDownload("./assets/background/SpiderBackground.png");
-    this.assetManager.queueDownload("./assets/background/SpiderBackground1.png");
+    this.assetManager.queueDownload(
+      "./assets/background/SpiderBackground1.png"
+    );
     this.assetManager.queueDownload("./assets/background/WizardBackground.png");
     this.assetManager.queueDownload("./assets/ui/gameend/win.png");
     this.assetManager.queueDownload("./assets/ui/gameend/lose.png");
@@ -164,6 +166,9 @@ export class AssetDownloader {
     );
     this.assetManager.queueDownload(
       "./assets/map/SpawnPoints/SpiderwebObstacleSpawnPoint.png"
+    );
+    this.assetManager.queueDownload(
+      "./assets/map/SpawnPoints/MovingCowboySpawnPoint.png"
     );
     this.assetManager.queueDownload("./assets/map/Spiderweb.png");
     this.assetManager.queueDownload("./assets/map/Signs.png");

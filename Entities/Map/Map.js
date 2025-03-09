@@ -47,6 +47,7 @@ export class Map extends GameMap {
     let playerSpawn;
     // saloon start
     playerSpawn = { x: 763, y: 1500 };
+    //GAME_ENGINE.addEntity(new CowboyEnemy(763, 1500));
 
     // underground start
     //playerSpawn = { x: 12400, y: 4000 };
@@ -96,6 +97,7 @@ export class Map extends GameMap {
       "SpawnPoints/GolemSpawnPoint.png",
       "SpawnPoints/BoulderSpawnPoint.png",
       "SpawnPoints/SpiderwebObstacleSpawnPoint.png",
+      "SpawnPoints/MovingCowboySpawnPoint.png",
     ];
 
     const TILESET_IMAGES = tilesetNames.map((name) =>
@@ -133,6 +135,11 @@ export class Map extends GameMap {
         method: gameMap.getGolemSpawnPoints,
         entity: EarthGolem,
         offsetY: -10,
+      },
+      MovingCowboy: {
+        method: gameMap.getMovingCowboySpawnPoints,
+        entity: CowboyEnemy,
+        offsetY: -45,
       },
     };
 
