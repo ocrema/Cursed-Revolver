@@ -6,7 +6,6 @@ import * as Util from "../../Utils/Util.js";
 import { HealingBottle } from "../Enemy/HealingBottle.js"; // Import Healing Bottle
 import { GAME_ENGINE } from "../../main.js";
 
-
 export class CowboyEnemy extends Actor {
   constructor(x, y) {
     super();
@@ -141,74 +140,73 @@ export class CowboyEnemy extends Actor {
 
   update() {
     if (!this.dead) {
-        this.applyDamage();
+      this.applyDamage();
 
-        if (this.health <= 0) {
-            this.setAnimation("death", false);
-            this.dead = true;
-            this.onDeath();
-            return;
+      if (this.health <= 0) {
+        this.setAnimation("death", false);
+        this.dead = true;
+        this.onDeath();
+        return;
+      }
+
+      if (this.effects.frozen > 0 || this.effects.stun > 0) return;
+
+      this.attackCooldown += GAME_ENGINE.clockTick;
+
+      let playerDetected = false;
+      let playerTarget = null;
+
+      const player = window.PLAYER;
+      if (player && Util.canSee(this, player)) {
+        this.seesPlayer = true;
+        playerDetected = true;
+        playerTarget = player;
+
+        const distance = Util.getDistance(this, player);
+        this.flip = player.x < this.x; // Flip to face the player
+
+        // **If in attack range, stop moving and shoot**
+        if (distance < this.attackRadius) {
+          this.velocity.x = 0; // Stop moving
+          if (this.attackCooldown >= this.fireRate) {
+            this.attack(player);
+          }
         }
-
-        if (this.effects.frozen > 0 || this.effects.stun > 0) return;
-
-        this.attackCooldown += GAME_ENGINE.clockTick;
-
-        let playerDetected = false;
-        let playerTarget = null;
-
-        const player = window.PLAYER;
-        if (player && Util.canSee(this, player)) {
-            this.seesPlayer = true;
-            playerDetected = true;
-            playerTarget = player;
-
-            const distance = Util.getDistance(this, player);
-            this.flip = player.x < this.x; // Flip to face the player
-
-            // **If in attack range, stop moving and shoot**
-            if (distance < this.attackRadius) {
-                this.velocity.x = 0; // Stop moving
-                if (this.attackCooldown >= this.fireRate) {
-                    this.attack(player);
-                }
-            }
-            // **Else, move towards the player**
-            else if (distance < this.visualRadius) {
-                this.chasePlayer(player);
-            }
+        // **Else, move towards the player**
+        else if (distance < this.visualRadius) {
+          this.chasePlayer(player);
         }
+      }
 
-        // **Only reset to idle when no player is detected and not currently shooting**
-        if (!playerDetected && !this.isShooting) {
-            this.velocity.x = 0;
-            this.setAnimation("idle");
-        }
+      // **Only reset to idle when no player is detected and not currently shooting**
+      if (!playerDetected && !this.isShooting) {
+        this.velocity.x = 0;
+        this.setAnimation("idle");
+      }
 
-        this.handleCollisions();
+      this.handleCollisions();
 
-        // **Prevent Cowboy From Sliding**
-        if (Math.abs(this.velocity.x) < 5) {
-            this.velocity.x = 0;
-        }
+      // **Prevent Cowboy From Sliding**
+      if (Math.abs(this.velocity.x) < 5) {
+        this.velocity.x = 0;
+      }
 
-        this.x += this.velocity.x * GAME_ENGINE.clockTick;
-        this.y += this.velocity.y * GAME_ENGINE.clockTick;
+      this.x += this.velocity.x * GAME_ENGINE.clockTick;
+      this.y += this.velocity.y * GAME_ENGINE.clockTick;
     }
 
     this.updateAnimation(GAME_ENGINE.clockTick);
   }
 
-
   onAnimationComplete() {
     if (this.currentAnimation == "death") {
       this.spawnHealingBottle();
 
+      this.onDeath();
       this.removeFromWorld = true;
       this.collider = null;
     }
   }
-
 
   spawnHealingBottle() {
     let bottle = new HealingBottle(this.x, this.y);
@@ -227,11 +225,9 @@ export class CowboyEnemy extends Actor {
     window.ASSET_MANAGER.playAsset("./assets/sfx/revolver_shot.ogg", 1);
 
     setTimeout(() => {
-        this.isShooting = false; // Allow attacking again
+      this.isShooting = false; // Allow attacking again
     }, this.fireRate * 1000); // Adjust timing based on shooting speed
- }
-
-
+  }
 
   chasePlayer(player) {
     if (this.currentAnimation !== "walk" && this.velocity.x !== 0) {
