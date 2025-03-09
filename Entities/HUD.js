@@ -492,7 +492,7 @@ export class HUD extends Entity {
 
       // === Glowing Effect Based on Selected Spell ===
       ctx.shadowBlur = 30; // Glow intensity
-      ctx.shadowColor = this.getSpellGlowColor(this.activeSpellIndex); // Spell-based glow color
+      ctx.shadowColor = player.spellColors[this.activeSpellIndex]; // Spell-based glow color
 
       // Draw the cylinder
       ctx.drawImage(
@@ -512,19 +512,11 @@ export class HUD extends Entity {
         { x: -9, y: 5 },
         { x: -9, y: -5 },
       ];
-      const colors = [
-        "orange",
-        "limegreen",
-        "cyan",
-        "blue",
-        "yellow",
-        "purple",
-      ];
+      
       for (let i = 0; i < 6; i++) {
-        //if (player.spellCooldowns[i] > 0) continue;
 
         ctx.shadowBlur = 10; // Glow intensity
-        ctx.shadowColor = colors[i]; // Spell-based glow color
+        ctx.shadowColor = player.spellColors[i]; // Spell-based glow color
         ctx.globalAlpha =
           1 -
           Math.min((player.spellCooldowns[i] * 2) / player.maxSpellCooldown, 1);

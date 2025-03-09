@@ -491,9 +491,7 @@ export class Player extends Actor {
       } else if (this.selectedSpell === 3) {
         GAME_ENGINE.addEntity(new WaterWave(this, this.dir, this.gun_offset));
       } else if (this.selectedSpell === 4) {
-        GAME_ENGINE.addEntity(
-          new ChainLightning(this, this.dir, this.gun_offset)
-        );
+        GAME_ENGINE.addEntity(new ChainLightning(this, this.dir, this.gun_offset));
       } else if (this.selectedSpell === 5) {
         GAME_ENGINE.addEntity(new VoidOrb(this, this.dir, this.gun_offset));
       }
