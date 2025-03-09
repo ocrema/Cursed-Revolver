@@ -459,8 +459,8 @@ export class HUD extends Entity {
       ctx.rotate(-this.cylinderRotation);
 
       // === Glowing Effect Based on Selected Spell ===
-      //ctx.shadowBlur = 30; // Glow intensity
-      //ctx.shadowColor = this.getSpellGlowColor(this.activeSpellIndex); // Spell-based glow color
+      ctx.shadowBlur = 30; // Glow intensity
+      ctx.shadowColor = this.getSpellGlowColor(this.activeSpellIndex); // Spell-based glow color
 
       // Draw the cylinder
       ctx.drawImage(
