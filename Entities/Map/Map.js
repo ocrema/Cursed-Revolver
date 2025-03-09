@@ -46,8 +46,7 @@ export class Map extends GameMap {
   async load() {
     let playerSpawn;
     // saloon start
-    //playerSpawn = { x: 763, y: 1500 };
-    //GAME_ENGINE.addEntity(new CowboyEnemy(763, 1500));
+    playerSpawn = { x: 763, y: 1500 };
 
     // underground start
     //playerSpawn = { x: 12400, y: 4000 };
@@ -59,7 +58,7 @@ export class Map extends GameMap {
     //playerSpawn = { x: 23532, y: 6000 };
 
     // boss arena spawn
-    playerSpawn = { x: 29000, y: 3015 };
+    //playerSpawn = { x: 29000, y: 3015 };
 
     // Add colliders for death zones
     GAME_ENGINE.addEntity(new DeathCollider(2233, 2233, 5000, 50));
@@ -73,7 +72,6 @@ export class Map extends GameMap {
     // Add background
     const background = new Background(player);
     GAME_ENGINE.addEntity(background);
-    background.currentIndex = 5;
 
     GAME_ENGINE.addEntity(new Wizard(30827, 2271));
 
@@ -114,7 +112,6 @@ export class Map extends GameMap {
     GAME_ENGINE.addEntity(gameMap);
 
     this.spawnEntities(gameMap);
-    //GAME_ENGINE.addEntity(new Wizard());
   }
 
   spawnEntities(gameMap) {

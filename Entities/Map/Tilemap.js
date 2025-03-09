@@ -171,8 +171,8 @@ export class Tilemap {
               this.movingCowboySpawnPoints.push({ x: worldX, y: worldY });
               hideEnemySpawnPoints = true;
               break;
-            case 120: 
-               tileClass = DeadTreeTile;
+            case 120:
+              tileClass = DeadTreeTile;
               break;
             default:
               break;
