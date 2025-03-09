@@ -19,7 +19,7 @@ export const BACKGROUND_SPRITESHEET = {
   },
   SPIDER: {
     NAME: "SPIDER",
-    URL: "./assets/background/SpiderBackground.png",
+    URL: "./assets/background/SpiderBackground1.png",
     FRAME_WIDTH: 576,
     FRAME_HEIGHT: 324,
     FRAME_COUNT: 1,
