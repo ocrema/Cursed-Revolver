@@ -117,6 +117,11 @@ export class Map extends GameMap {
   }
 
   spawnEntities(gameMap) {
+    //cowboy moving added
+    const cowboy = new CowboyEnemy(9083, 2220); // Adjust X, Y position as needed
+    GAME_ENGINE.addEntity(cowboy);
+
+
     const enemyTypes = {
       Cactus: {
         method: gameMap.getCactusSpawnPoints,
