@@ -138,12 +138,9 @@ export class StaticCowboyEnemy extends Actor {
   }
 
   onAnimationComplete() {
-    if (this.currentAnimation == "death") {
-      this.spawnHealingBottle();
-
-      this.removeFromWorld = true;
-      this.collider = null;
-    }
+    this.spawnHealingBottle();
+    this.removeFromWorld = true;
+    this.collider = null;
   }
 
   attack(player) {
@@ -169,6 +166,11 @@ export class StaticCowboyEnemy extends Actor {
       console.log("Static Cowboy has died!");
       this.dead = true;
       this.setAnimation("death", false);
+
+      setTimeout(() => {
+        this.removeFromWorld = true;
+        this.collider = null;
+      }, 250); // Adjust timing to match death animation length
       this.onDeath();
     }
   }
