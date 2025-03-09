@@ -17,17 +17,17 @@ export class StaticCowboyEnemy extends Actor {
     this.addAnimation(
       "idle",
       this.assetManager.getAsset("./assets/cowboy/CowBoyIdle.png"),
-      48,
-      48,
-      7,
-      0.15
+      48, // Frame width
+      64, // Frame height
+      7, // Frame count
+      0.15 // Frame duration
     );
 
     this.addAnimation(
       "shoot",
       this.assetManager.getAsset("./assets/cowboy/CowBoyShoot.png"),
       48,
-      48,
+      64,
       5,
       0.2
     );
@@ -59,6 +59,7 @@ export class StaticCowboyEnemy extends Actor {
     this.attackRadius = 700; // Attack range (Same as visual range since it only shoots)
     this.seesPlayer = false;
     this.dead = false;
+    this.isShooting = false; // Ensure this is initialized
   }
 
   draw(ctx) {
@@ -88,10 +89,9 @@ export class StaticCowboyEnemy extends Actor {
 
       // **Check if the cowboy dies**
       if (this.health <= 0) {
-        console.log("Static Cowboy has died!");
+        //console.log("Static Cowboy has died!");
         this.dead = true;
         this.setAnimation("death", false);
-
         this.onDeath();
         return;
       }
@@ -102,8 +102,23 @@ export class StaticCowboyEnemy extends Actor {
       let playerDetected = false;
       let playerTarget = null;
 
+      // for (let entity of GAME_ENGINE.entities) {
+      //   if (entity instanceof Player && Util.canSee(this, entity)) {
+      //     this.seesPlayer = true;
+      //     playerDetected = true;
+      //     playerTarget = entity;
+
+      //     // **Flip the cowboy based on player's position**
+      //     this.flip = entity.x < this.x; // Flip if player is on the left
+
+      //     if (this.attackCooldown >= this.fireRate) {
+      //       this.attack(entity);
+      //     }
+      //   }
+      // }
+
       const player = window.PLAYER;
-      if (player && Util.canSee(this, player) && Util.canAttack(this, player)) {
+      if (player && Util.canSee(this, player)) {
         this.seesPlayer = true;
         playerDetected = true;
         playerTarget = player;
@@ -116,16 +131,8 @@ export class StaticCowboyEnemy extends Actor {
         }
       }
 
-      // **Debug: Check if attacks are being received**
-      if (this.recieved_attacks.length > 0) {
-        console.log(
-          `Static Cowboy hit! Received attacks:`,
-          this.recieved_attacks
-        );
-      }
-
-      // **If no player is detected, return to idle animation**
-      if (!playerDetected) {
+      // **If no player is detected and not currently shooting, return to idle**
+      if (!playerDetected && !this.isShooting) {
         this.setAnimation("idle");
       }
     }
@@ -134,28 +141,38 @@ export class StaticCowboyEnemy extends Actor {
   }
 
   onAnimationComplete() {
-    this.spawnHealingBottle();
-    this.removeFromWorld = true;
-    this.collider = null;
+    if (this.currentAnimation == "death") {
+      this.spawnHealingBottle();
+
+      this.onDeath();
+      this.removeFromWorld = true;
+      this.collider = null;
+    }
   }
 
   attack(player) {
-    this.setAnimation("shoot");
+    if (this.isShooting) return; // Prevent spamming attack
+
+    this.isShooting = true; // Set shooting flag
+    this.setAnimation("shoot", true); // Play shooting animation once
     this.attackCooldown = 0;
-    //console.log(`Static Cowboy shooting at Player at (${player.x}, ${player.y})`);
 
     GAME_ENGINE.addEntity(new CowboyBullet(this.x, this.y, player));
     window.ASSET_MANAGER.playAsset("./assets/sfx/revolver_shot.ogg", 1);
 
-    // **Reset back to idle after shooting**
+    // **Wait for the shooting animation to complete before switching back to idle**
     setTimeout(() => {
-      this.setAnimation("idle");
-    }, 200); // Adjust timing based on shoot animation duration
+      this.isShooting = false; // Reset shooting flag
+      if (!Util.canSee(this, player)) {
+        // Ensure the player is truly out of range
+        this.setAnimation("idle");
+      }
+    }, 1000); // Adjust timing to match shoot animation duration
   }
 
   applyDamage() {
-    this.recieveAttacks();
-    this.recieveEffects();
+    this.recieveAttacks(); // Fixed typo from `recieveAttacks()`
+    this.recieveEffects(); // Fixed typo from `recieveEffects()`
   }
 
   spawnHealingBottle() {
