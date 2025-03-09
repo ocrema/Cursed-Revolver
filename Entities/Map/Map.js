@@ -157,7 +157,7 @@ export class Map extends GameMap {
       Barrel: {
         method: gameMap.getBarrelSpawnPoints,
         entity: Barrel,
-        offsetY: -10,
+        offsetY: -25,
       },
       GrowingTree: {
         method: gameMap.getGrowingTreeSpawnPoints,
