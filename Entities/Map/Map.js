@@ -59,7 +59,7 @@ export class Map extends GameMap {
     //playerSpawn = { x: 23532, y: 6000 };
 
     // boss arena spawn
-    //playerSpawn = { x: 28276, y: 3015 };
+    playerSpawn = { x: 28276, y: 3015 };
 
     // Add colliders for death zones
     GAME_ENGINE.addEntity(new DeathCollider(2233, 2233, 5000, 50));
@@ -71,7 +71,9 @@ export class Map extends GameMap {
     GAME_ENGINE.addEntity(player);
 
     // Add background
-    GAME_ENGINE.addEntity(new Background(player));
+    const background = new Background(player);
+    GAME_ENGINE.addEntity(background);
+    background.currentIndex = 5;
 
     GAME_ENGINE.addEntity(new Wizard(30827, 2271));
 
