@@ -121,7 +121,7 @@ export class HUD extends Entity {
     this.mapReference = map;
 
     if (!this.mapReference) {
-      console.error("HUD could not find a reference to the map entity.");
+      //console.error("HUD could not find a reference to the map entity.");
     }
 
     this.playerCurrentStage = 1;
@@ -204,10 +204,8 @@ export class HUD extends Entity {
 
     // Detect Spell Switching
     if (player.selectedSpell !== this.previousSpellIndex) {
-      console.log(
-        `Spell switched! Previous: ${this.previousSpellIndex}, New: ${player.selectedSpell}`
-      );
-
+      //console.log(`Spell switched! Previous: ${this.previousSpellIndex}, New: ${player.selectedSpell}`);
+      
       this.isSpellSwitching = true;
       this.spellAnimationTimer = 0; // Reset timer for smooth transition
       this.spellAnimationFrame = 1; // Ensure it starts at 1
@@ -217,18 +215,14 @@ export class HUD extends Entity {
     // Ensure spell icon animation runs continuously
     this.spellAnimationTimer += GAME_ENGINE.clockTick;
 
-    if (this.spellAnimationTimer >= 0.05) {
-      // Adjust 0.05s per frame (change for speed)
+    if (this.spellAnimationTimer >= 0.05) { // Adjust 0.05s per frame (change for speed)
       this.spellAnimationTimer = 0; // Reset timer
       this.spellAnimationFrame++; // Advance the frame
 
       // Fix the delay when looping back to frame 1
-      if (this.spellAnimationFrame >= 30) {
-        // Ensure reset happens at the correct frame
-        // console.log(
-        //   `Resetting animation frame: ${this.spellAnimationFrame} -> 1`
-        // );
-        this.spellAnimationFrame = 1;
+      if (this.spellAnimationFrame >= 30) { // Ensure reset happens at the correct frame
+          //console.log(`Resetting animation frame: ${this.spellAnimationFrame} -> 1`);
+          this.spellAnimationFrame = 1;
       }
     }
 
@@ -548,7 +542,7 @@ export class HUD extends Entity {
         spellIconSize
       );
     } else {
-      console.warn(`Spell icon missing: ${animatedIconPath}`);
+        //console.warn(`Spell icon missing: ${animatedIconPath}`);
     }
 
     // === Draw Revolver Cylinder (Rotating & Glowing) ===

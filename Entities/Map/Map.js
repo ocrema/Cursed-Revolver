@@ -118,6 +118,10 @@ export class Map extends GameMap {
   }
 
   spawnEntities(gameMap) {
+    //golem added
+    // const golem = new EarthGolem(5486, 2160); // Adjust X, Y position as needed
+    // GAME_ENGINE.addEntity(golem);
+
     const enemyTypes = {
       Cactus: {
         method: gameMap.getCactusSpawnPoints,
