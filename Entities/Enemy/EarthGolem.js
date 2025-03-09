@@ -3,13 +3,16 @@ import { Player } from "../Player/Player.js";
 import * as Util from "../../Utils/Util.js";
 import { Collider } from "../Collider.js";
 import { GAME_ENGINE } from "../../main.js";
+import { Tile } from "../Map/Tiles/Tile.js";
+import { Entity } from "../Entities.js";
+
 
 export class EarthGolem extends Actor {
   constructor(x, y) {
     super();
     Object.assign(this, { x, y });
 
-    // Load Animations
+    // **Load Animations**
     this.assetManager = window.ASSET_MANAGER;
 
     this.addAnimation(
@@ -27,32 +30,39 @@ export class EarthGolem extends Actor {
     this.addAnimation(
       "hit",
       this.assetManager.getAsset("./assets/enemy/golem/golem_hit.png"),
-      384, 90, 17, 0.05
+      384, 77, 19, 0.05
     );
 
     this.setAnimation("idle");
 
     // **Golem Properties**
-    this.scale = 3;
-    this.width = 100;
-    this.height = 200;
+    this.width = 140;
+    this.height = 220;
+    this.scale = 2.5;
     this.collider = new Collider(this.width, this.height);
 
-    this.health = 300;
-    this.maxHealth = 300;
-    this.attackRadius = 150;
+    // **Health & Combat**
+    this.health = 350;
+    this.maxHealth = this.health;
+    this.attackRadius = 100; // Distance for attack
     this.attackCooldown = 0;
-    this.attackRate = 3; // 3 seconds before next attack
+    this.attackRate = 4; // Time between attacks
+    this.walkTriggerDistance = 1000; // Distance to switch to walk
+    this.stompRadius = 100; // Distance to trigger stomp attack
 
     // **Movement**
     this.walkSpeed = 80;
-    this.aggroSpeed = 160;
-    this.speed = 0;
+    this.aggroSpeed = 120;
+    this.speed = 0; // Starts stationary
     this.gravity = 1000;
-
-    this.visualRadius = 600;
+    this.visualRadius = 1000;
     this.target = { x: this.x, y: this.y };
-    this.velocity = { x: 0, y: this.gravity };
+
+    let distance = Util.getDistance(this, this.target);
+    this.velocity = {
+      x: distance ? ((this.target.x - this.x) / distance) * this.speed : 0,
+      y: this.gravity,
+    };
 
     // **Flags**
     this.isEnemy = true;
@@ -60,177 +70,172 @@ export class EarthGolem extends Actor {
     this.isProvoked = false;
     this.isAttacking = false;
     this.isStomping = false;
+    this.dead = false;
   }
 
   update() {
-    this.recieveEffects();
+    if (this.dead) return;
 
-    if (this.health <= 0) {
-      window.ASSET_MANAGER.playAsset("./assets/sfx/golem_death.wav", 1 * Util.DFCVM(this));
-      this.removeFromWorld = true;
-      return;
-    }
+    this.recieveAttacks();
+    this.recieveEffects();
 
     if (this.effects.frozen > 0 || this.effects.stun > 0) return;
 
-    this.recieveAttacks();
     this.attackCooldown += GAME_ENGINE.clockTick;
     this.onGround = false;
 
-    if (this.isProvoked) {
-      for (let entity of GAME_ENGINE.entities) {
-        if (entity instanceof Player && Util.canSee(this, entity)) {
-          this.target = { x: entity.x, y: entity.y };
-          this.seesPlayer = true;
-        }
+    // **Optimized Player Detection**
+    const player = window.PLAYER;
+    if (player) {
+      let distanceToPlayer = Util.getDistance(this, player);
+      this.seesPlayer = distanceToPlayer < this.visualRadius;
+      if (this.seesPlayer) {
+        this.target = { x: player.x, y: player.y };
       }
+    } else {
+      this.seesPlayer = false;
     }
 
     this.setState();
     this.movement();
 
-    this.flip = this.velocity.x < 0 ? 1 : 0;
+    if (this.velocity.x !== 0) {
+      this.flip = this.velocity.x < 0 ? 1 : 0;
+    }
     this.updateAnimation(GAME_ENGINE.clockTick);
   }
 
-  // **Golem State Behavior**
+  clearQueuedAttacks() {
+    if (this.recieved_attacks.length > 0) {
+      this.setAnimation("hit", false);
+    }
+    this.recieved_attacks = [];
+  }
+
+  // **Handles State Switching**
   setState() {
-    if (!this.isProvoked) {
-      this.speed = 0;
-      this.setAnimation("idle");
+    if (this.health <= 0) {
+      this.die();
+      return;
+    }
+
+    if (this.isAttacking || this.isStomping) return;
+
+    let distanceToPlayer = Util.getDistance(this, this.target);
+
+    if (!this.seesPlayer) {
+      if (this.currentAnimation !== "idle") {
+        this.setAnimation("idle");
+        this.speed = 0;
+      }
+      return;
+    }
+
+    if (distanceToPlayer < this.attackRadius) {
+      this.stompAttack();
+    } else if (distanceToPlayer < this.walkTriggerDistance) {
+      this.setAnimation("walk");
+      this.speed = this.walkSpeed;
     } else {
-      if (this.seesPlayer && !this.isAttacking) {
-        this.speed = this.aggroSpeed;
-        this.setAnimation("walk");
-      }
-
-      let xDistance = Math.abs(this.x - this.target.x);
-      let yDistance = Math.abs(this.y - this.target.y);
-
-      if (this.seesPlayer && xDistance < this.attackRadius / 2 && yDistance < this.height / 2) {
-        if (!this.isStomping && this.attackCooldown >= this.attackRate) {
-          this.isAttacking = true;
-          this.setAnimation("hit");
-
-          setTimeout(() => {
-            this.stompAttack();
-          }, 850);
-        }
-      }
+      this.setAnimation("idle");
+      this.speed = 0;
     }
   }
 
-  // **Improved Golem Stomp Attack**
   stompAttack() {
     if (this.isStomping || this.attackCooldown < this.attackRate) return;
 
-    console.log(`Earth Golem Stomps at (${this.x}, ${this.y})!`);
-
     this.isStomping = true;
-    this.attackCooldown = 0; // Reset cooldown
+    this.attackCooldown = 0;
+    this.setAnimation("hit");
 
-    // **Determine direction and apply mirroring**
-    let moveDirection = this.x < this.target.x ? -1 : 1; 
-    this.flip = moveDirection > 0 ? 1 : 0; // Flip left if moving left, right if moving right
-
-    this.setAnimation("hit"); // Play stomp animation in the correct direction
-
-    let hasDealtDamage = false;
-
-    for (let entity of GAME_ENGINE.entities) {
-        if (entity instanceof Player) {
-            let xDistance = Math.abs(this.x - entity.x);
-            let yDistance = Math.abs(this.y - entity.y);
-
-            if (!hasDealtDamage && xDistance < this.attackRadius && yDistance < this.height / 2) {
-                entity.queueAttack({ damage: Math.min(50, entity.health) }); 
-                window.ASSET_MANAGER.playAsset("./assets/sfx/golem_attack.wav", 1 * Util.DFCVM(this));
-                console.log("Player hit for up to 50 damage!");
-                hasDealtDamage = true;
-            }
-        }
-    }
-
-    // **Cooldown before next stomp**
     setTimeout(() => {
-        this.isStomping = false;
-        this.isAttacking = false;
-        this.setAnimation("idle"); // Return to idle state after attack
-    }, 2000); 
+      window.ASSET_MANAGER.playAsset("./assets/sfx/golem_attack.wav", 1 * Util.DFCVM(this));
+    }, 400); 
+    setTimeout(() => {
+      for (let entity of GAME_ENGINE.entities) {
+        if (entity instanceof Player) {
+          let xDistance = Math.abs(this.x - entity.x);
+          let yDistance = Math.abs(this.y - entity.y);
+          if (xDistance < this.stompRadius * 1.5 && yDistance < this.height / 2) {
+            entity.queueAttack({ damage: Math.min(80, entity.health) });
+          }
+        }
+      }
+    }, 600);
 
-    // **Move away after stomping**
-    this.velocity.x = moveDirection * 200; // Move in opposite direction after stomp
-}
+    setTimeout(() => {
+      this.isStomping = false;
+      this.setAnimation("walk");
+    }, 2000);
+  }
 
 
   movement() {
-    if (!this.isProvoked || this.isAttacking) return;
+    if (!this.seesPlayer || this.isAttacking) return;
 
     let distance = Util.getDistance(this, this.target);
+    if (distance > this.walkTriggerDistance) return;
+
     this.velocity = {
-      x: ((this.target.x - this.x) / distance) * this.speed,
+      x: distance ? ((this.target.x - this.x) / distance) * this.speed : 0,
       y: this.gravity,
     };
 
     this.x += this.velocity.x * GAME_ENGINE.clockTick;
 
-    for (let e of GAME_ENGINE.entities) {
-      if (e.isPlayer || e.isAttack || e.isEnemy || e.isEffect || e.isDestructibleObject || e.isSpike || e.isSpawnPoint) continue;
-      if (this.colliding(e)) {
-        this.moveAgainstX(e);
+    for (let entity of GAME_ENGINE.entities) {
+      if (entity instanceof Tile && this.colliding(entity)) {
+        this.moveAgainstX(entity);
       }
     }
-    
+
     this.y += this.velocity.y * GAME_ENGINE.clockTick;
 
-    for (let e of GAME_ENGINE.entities) {
-      if (e.isPlayer || e.isAttack || e.isEnemy || e.isDestructibleObject || e.isSpike || e.isSpawnPoint) continue;
-      if (this.colliding(e)) {
-        this.moveAgainstY(e);
+    for (let entity of GAME_ENGINE.entities) {
+      if (entity instanceof Tile && this.colliding(entity)) {
+        this.moveAgainstY(entity);
       }
+    }
+  }
+
+  onAnimationComplete() {
+    if (this.currentAnimation === "hit") {
+      this.setAnimation("idle");
     }
   }
 
   draw(ctx) {
     super.draw(ctx);
 
-    //Draw state indicator above the Golem
-    ctx.font = "bold 20px Arial";
-    ctx.fillStyle = "white";
-    ctx.textAlign = "center";
-    if(!this.isStomping){
-      let stateText = this.isProvoked ? "AGRHH" : "ZZZZ";
-      ctx.fillText(stateText, this.x - GAME_ENGINE.camera.x + this.width / 2, this.y - GAME_ENGINE.camera.y - 10);
-    }
+    // ctx.font = "bold 20px Arial";
+    // ctx.fillStyle = "white";
+    // ctx.textAlign = "center";
 
-    // **Show Stomp Indicator**
-    if (this.isStomping) {
-      ctx.font = "bold 30px Arial";
-      ctx.fillStyle = "red";
-      ctx.fillText("STOMP!", this.x - GAME_ENGINE.camera.x + this.width / 2, this.y - GAME_ENGINE.camera.y - 30);
-    }
+    // if (!this.isStomping) {
+    //   let stateText = this.seesPlayer ? "GRRRR" : "Zzz...";
+    //   ctx.fillText(stateText, this.x - GAME_ENGINE.camera.x + this.width / 2, this.y - GAME_ENGINE.camera.y - 10);
+    // }
+
+    // if (this.isStomping) {
+    //   ctx.font = "bold 30px Arial";
+    //   ctx.fillStyle = "red";
+    //   ctx.fillText("STOMP!", this.x - GAME_ENGINE.camera.x + this.width / 2, this.y - GAME_ENGINE.camera.y - 30);
+    // }
   }
 
-  getBoundingBox() {
-    return {
-      x: this.x - this.width * 0.25,
-      y: this.y - this.height * 0.5,
-      width: this.width * 0.5,
-      height: this.height * 0.8,
-    };
-  }
+  die() {
+    if (this.dead) return;
+    this.dead = true;
 
-  recieveAttacks() {
-    for (let attack of this.recieved_attacks) {
-      this.health -= attack.damage;
-      console.log(`Golem took ${attack.damage} damage! Health: ${this.health}`);
 
-      if (this.health > 0) {
-        this.isProvoked = true;
-      }
-    }
-    this.recieved_attacks = [];
+    console.log("Earth Golem has died!");
+    this.setAnimation("hit");
+    window.ASSET_MANAGER.playAsset("./assets/sfx/golem_death.wav", 1 * Util.DFCVM(this));
+
+    setTimeout(() => {
+      this.removeFromWorld = true;
+    }, 30);
   }
 }
-
 

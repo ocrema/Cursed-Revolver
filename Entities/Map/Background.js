@@ -17,6 +17,7 @@ export class Background extends Entity {
     this.fadeAlpha = 1; // 1 = fully visible, 0 = fully transparent
     this.transitionSpeed = 0.025; // Adjust for faster/slower fade
     this.player = player;
+    this.yOffset = 0; // used to move wizard background up
 
     this.animations = {};
     this.loadBackgroundData();
@@ -48,6 +49,12 @@ export class Background extends Entity {
 
     this.currentFrame = 0;
     this.elapsedTime = 0;
+
+    if (this.currentIndex === this.backgroundList.length - 1) {
+      console.log("scaling wizard background");
+      this.scale = 5;
+      this.yOffset = -250;
+    }
   }
 
   nextBackground() {
@@ -107,7 +114,7 @@ export class Background extends Entity {
     const bgOffsetX = 0.01;
     const bgOffsetY = -this.camera.y * -0.0025; // Parallax Effect (Y-axis)
 
-    ctx.translate(bgOffsetX, bgOffsetY);
+    ctx.translate(bgOffsetX, bgOffsetY + this.yOffset);
     ctx.scale(this.scale, this.scale);
 
     this.drawBackground(ctx, this.currentBackground);

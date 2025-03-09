@@ -31,13 +31,18 @@ export class Wizard extends Actor {
     this.spell = 2;
 
     this.collider = new Collider(this.width, this.height);
-
-    this.locations = [
-      { x: 29963, y: 2826 },
-      { x: 30862, y: 2853 },
-      { x: 31535, y: 2862 },
-      { x: 32084, y: 2865 },
-    ];
+    this.locations = [];
+    // this.locations = [
+    //   { x: 29963, y: 2826 },
+    //   { x: 30862, y: 2853 },
+    //   { x: 31535, y: 2862 },
+    //   { x: 32084, y: 2865 },
+    // ];
+    const mapPoints = window.MAP.wizardTeleportPoints;
+    for (let i = 0; i < mapPoints.length; i++) {
+      this.locations.push(mapPoints[i]);
+    }
+    //console.log("locations" + this.locations);
     this.locationIndex = -1;
     this.spritesheets = {
       idle: window.ASSET_MANAGER.getAsset("./assets/enemy/wizard/Idle.png"),
@@ -421,11 +426,11 @@ class EvilVoidOrb extends VoidOrb {
     this.x += Math.cos(this.dir) * this.speed * GAME_ENGINE.clockTick;
     this.y += Math.sin(this.dir) * this.speed * GAME_ENGINE.clockTick;
 
-    for (let e of GAME_ENGINE.entities) {
-      if (e.isPlayer && this.hitCooldown === 0 && this.colliding(e)) {
-        e.queueAttack({ damage: this.dps * this.timeBetweenHits });
+    const player = window.PLAYER;
+    if (player) {
+      if (this.hitCooldown === 0 && this.colliding(player)) {
+        player.queueAttack({ damage: this.dps * this.timeBetweenHits });
         this.hitCooldown = this.timeBetweenHits;
-        break;
       }
     }
 

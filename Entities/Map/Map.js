@@ -35,6 +35,7 @@ export class Map extends GameMap {
       4: new Set(),
       5: new Set(),
     };
+    this.wizardTeleportPoints = [];
     this.stageEnemyCounts = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
     this.enemySpawnData = { 1: [], 2: [], 3: [], 4: [], 5: [] };
     this.spiderwebList = [];
@@ -47,19 +48,18 @@ export class Map extends GameMap {
     let playerSpawn;
     // saloon start
     playerSpawn = { x: 763, y: 1500 };
-    //GAME_ENGINE.addEntity(new CowboyEnemy(763, 1500));
 
     // underground start
     //playerSpawn = { x: 12400, y: 4000 };
 
     // spider pit start
-    // playerSpawn = { x: 23532, y: 4760 };
+    //playerSpawn = { x: 23532, y: 4760 };
 
     // second spider pit start
-    // playerSpawn = { x: 23532, y: 6000 };
+    //playerSpawn = { x: 23532, y: 6000 };
 
     // boss arena spawn
-    //playerSpawn = { x: 28276, y: 3015 };
+    //playerSpawn = { x: 29000, y: 3015 };
 
     // Add colliders for death zones
     GAME_ENGINE.addEntity(new DeathCollider(2233, 2233, 5000, 50));
@@ -71,9 +71,8 @@ export class Map extends GameMap {
     GAME_ENGINE.addEntity(player);
 
     // Add background
-    GAME_ENGINE.addEntity(new Background(player));
-
-    GAME_ENGINE.addEntity(new Wizard(30827, 2271));
+    const background = new Background(player);
+    GAME_ENGINE.addEntity(background);
 
     window.PLAYER = player;
 
@@ -99,6 +98,10 @@ export class Map extends GameMap {
       "SpawnPoints/BoulderSpawnPoint.png",
       "SpawnPoints/SpiderwebObstacleSpawnPoint.png",
       "SpawnPoints/MovingCowboySpawnPoint.png",
+      "props/tree02.png",
+      "Skull1.png",
+      "Skull2.png",
+      "SpawnPoints/WizardTeleportPoint.png",
     ];
 
     const TILESET_IMAGES = tilesetNames.map((name) =>
@@ -111,7 +114,6 @@ export class Map extends GameMap {
     GAME_ENGINE.addEntity(gameMap);
 
     this.spawnEntities(gameMap);
-    //GAME_ENGINE.addEntity(new Wizard());
   }
 
   spawnEntities(gameMap) {
@@ -157,7 +159,7 @@ export class Map extends GameMap {
       Barrel: {
         method: gameMap.getBarrelSpawnPoints,
         entity: Barrel,
-        offsetY: -10,
+        offsetY: -25,
       },
       GrowingTree: {
         method: gameMap.getGrowingTreeSpawnPoints,
@@ -175,6 +177,13 @@ export class Map extends GameMap {
         offsetY: -50,
       },
     };
+
+    const points = gameMap.getWizardTeleportPoints();
+    for (let i = 0; i < points.length; i++) {
+      this.wizardTeleportPoints.push(points[i]);
+    }
+
+    GAME_ENGINE.addEntity(new Wizard(30827, 2271));
 
     // Spawn enemies
     for (const key in enemyTypes) {

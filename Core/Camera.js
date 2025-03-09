@@ -45,13 +45,16 @@ export class Camera extends Entity {
       const verticalOffset = 0; // Move the camera 150 pixels upwards
 
       // Smoothly interpolate the camera towards the player's position + vertical offset
-      if (Math.abs(this.player.x - this.x) > 1 || Math.abs(this.player.y + verticalOffset - this.y) > 1) {
+      if (
+        Math.abs(this.player.x - this.x) > 1 ||
+        Math.abs(this.player.y + verticalOffset - this.y) > 1
+      ) {
         this.x += (this.player.x - this.x) * lerpFactor;
         this.y += (this.player.y + verticalOffset - this.y) * lerpFactor;
       }
 
       // Clamp the camera within the map boundaries
-      this.x = Math.max(1400, Math.min(this.x, this.maxX));
+      this.x = Math.max(1300, Math.min(this.x, this.maxX));
     }
   }
 

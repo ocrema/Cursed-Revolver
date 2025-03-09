@@ -14,7 +14,8 @@ export class Barrel extends Actor {
     this.assetManager = window.ASSET_MANAGER;
     this.isBreakable = true;
     this.exploded = false;
-    this.scale = 4;
+    this.scale = 5;
+    this.drawOffsetY = 20;
 
     // Load barrel sprite
     this.sprite = this.assetManager.getAsset(
@@ -32,7 +33,10 @@ export class Barrel extends Actor {
     this.barrelRow = 0;
     this.barrelCol = 0;
 
-    this.collider = new Collider(this.barrelFrameWidth, this.barrelFrameHeight);
+    this.collider = new Collider(
+      (this.barrelFrameWidth * this.scale) / 3.5,
+      (this.barrelFrameHeight * this.scale) / 3.5
+    );
 
     this.health = 1;
   }
@@ -76,7 +80,8 @@ export class Barrel extends Actor {
           (this.barrelFrameWidth * this.scale) / 2,
         this.y -
           GAME_ENGINE.camera.y -
-          (this.barrelFrameHeight * this.scale) / 2,
+          (this.barrelFrameHeight * this.scale) / 2 -
+          this.drawOffsetY,
         this.barrelFrameWidth * this.scale,
         this.barrelFrameHeight * this.scale
       );

@@ -5,6 +5,7 @@ import { SpawnPointTile } from "./Tiles/SpawnPointTile.js";
 import { TreeTile } from "./Tiles/TreeTile.js";
 import { BackgroundTriggerTile } from "./Tiles/BackgroundTriggerTile.js";
 import { SpiderwebTile } from "./Tiles/SpiderwebTile.js";
+import { DeadTreeTile } from "./Tiles/DeadTreeTile.js";
 
 export class Tilemap {
   constructor(
@@ -38,6 +39,7 @@ export class Tilemap {
     this.boulderSpawnPoints = [];
     this.spiderwebObstacleSpawnPoints = [];
     this.movingCowboySpawnPoints = [];
+    this.wizardTeleportPoints = [];
   }
 
   async load() {
@@ -170,6 +172,13 @@ export class Tilemap {
               this.movingCowboySpawnPoints.push({ x: worldX, y: worldY });
               hideEnemySpawnPoints = true;
               break;
+            case 120:
+              tileClass = DeadTreeTile;
+              break;
+            case 123:
+              this.wizardTeleportPoints.push({ x: worldX, y: worldY });
+              hideEnemySpawnPoints = true;
+              break;
             default:
               break;
           }
@@ -243,5 +252,9 @@ export class Tilemap {
 
   getMovingCowboySpawnPoints() {
     return this.movingCowboySpawnPoints;
+  }
+
+  getWizardTeleportPoints() {
+    return this.wizardTeleportPoints;
   }
 }

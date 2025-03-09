@@ -61,12 +61,16 @@ export class MainMenu extends Entity {
 
     const customFont = ASSET_MANAGER.getAsset("./assets/fonts/title.ttf");
     const gradient = ctx.createLinearGradient(0, 0, 10, 10);
-    gradient.addColorStop(0, "gray");
-    gradient.addColorStop(0, "white");
-    gradient.addColorStop(1, "gray");
+    // gradient.addColorStop(0, "gray");
+    // gradient.addColorStop(0, "white");
+    // gradient.addColorStop(1, "gray");
+    gradient.addColorStop(0, "#CFCBA0"); // Slightly darker shade for contrast
+    gradient.addColorStop(0.5, "#F1EDB3"); // Main text color
+    gradient.addColorStop(1, "#CFCBA0"); // Slightly darker shade
     ctx.fillStyle = gradient;
+    //ctx.fillStyle = "#F1EDB3";
 
-    ctx.fillStyle = "gray";
+    //ctx.fillStyle = "gray";
     ctx.font = `165px title `;
     ctx.fillText(`CURSED REVOLVER`, -350, -100);
 

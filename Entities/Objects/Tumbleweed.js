@@ -73,26 +73,24 @@ export class Tumbleweed extends Entity {
     this.rotation += moveX / 50; // Rotate the tumbleweed
 
     for (let e of GAME_ENGINE.entities) {
-      if (e instanceof Tile && this.colliding(e)) {
-        if (e.tileID >= 5 && e.tileID <= 11) {
-          this.bounceOffObject(e); // Bounce off walls
-        } else {
-          this.bounceOffGround(e); // Bounce off ground
+      if (this.colliding(e)) {
+        if (e instanceof Tile) {
+          if (e.tileID >= 5 && e.tileID <= 11) {
+            this.bounceOffObject(e); // Bounce off walls
+          } else {
+            this.bounceOffGround(e); // Bounce off ground
+          }
+          break;
+        } else if (e.isFireballEffect) {
+          this.onFireballHit(e);
+          e.removeFromWorld = true;
         }
-        break;
       }
     }
 
     // Prevent excessive downward speed
     if (this.y_velocity > this.maxBounce) {
       this.y_velocity = this.maxBounce;
-    }
-
-    for (let e of GAME_ENGINE.entities) {
-      if (e.isFireballEffect && this.colliding(e)) {
-        this.onFireballHit(e);
-        e.removeFromWorld = true;
-      }
     }
 
     this.updateAnimation(GAME_ENGINE.clockTick);

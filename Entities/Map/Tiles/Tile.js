@@ -41,7 +41,11 @@ export class Tile extends Entity {
   }
 
   draw(ctx) {
-    if (Math.abs(this.x - GAME_ENGINE.camera.x) > 1600 || Math.abs(this.y - GAME_ENGINE.camera.y) > 900) return;
+    if (
+      Math.abs(this.x - GAME_ENGINE.camera.x) > 1400 ||
+      Math.abs(this.y - GAME_ENGINE.camera.y) > 800
+    )
+      return;
     if (!this.tilesetImage || this.tileID < this.firstGID) return;
 
     let tileIndex = this.tileID - this.firstGID;
@@ -55,12 +59,8 @@ export class Tile extends Entity {
       tilesetY,
       16,
       16, // Source tile size (16x16)
-      this.x -
-        GAME_ENGINE.camera.x -
-        (this.scale * this.tileSize) / 2,
-      this.y -
-        GAME_ENGINE.camera.y -
-        (this.scale * this.tileSize) / 2,
+      this.x - GAME_ENGINE.camera.x - (this.scale * this.tileSize) / 2,
+      this.y - GAME_ENGINE.camera.y - (this.scale * this.tileSize) / 2,
       this.tileSize * this.scale + 1,
       this.tileSize * this.scale + 1 // Apply scaling
     );
