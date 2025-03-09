@@ -27,7 +27,7 @@ export class BackgroundTriggerTile extends Tile {
       solidTiles,
       scale
     );
-    this.entityOrder = -9;
+    this.entityOrder = -99999;
     this.isBackgroundTrigger = true;
     this.hasTriggered = false;
 
