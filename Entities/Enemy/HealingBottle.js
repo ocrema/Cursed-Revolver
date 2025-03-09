@@ -20,9 +20,9 @@ export class HealingBottle extends Actor {
 
     this.setAnimation("idle");
 
-    this.width = 35;
-    this.height = 35;
-    this.scale = 2;
+    this.width = 70;
+    this.height = 70;
+    this.scale = 3;
 
     //  REMOVE COLLIDER COMPLETELY
     this.collider = null;
@@ -37,7 +37,7 @@ export class HealingBottle extends Actor {
           (this.x - player.x) ** 2 + (this.y - player.y) ** 2
         );
 
-        if (distance < 50) {
+        if (distance < 80) {
           //  Pickup when player is close enough
           //console.log(` Healing Bottle Collected! Player gains +${this.healingAmount} HP`);
 
