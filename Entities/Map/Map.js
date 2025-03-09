@@ -46,7 +46,7 @@ export class Map extends GameMap {
   async load() {
     let playerSpawn;
     // saloon start
-    playerSpawn = { x: 763, y: 1500 };
+    //playerSpawn = { x: 763, y: 1500 };
 
     // underground start
     //playerSpawn = { x: 12400, y: 4000 };
@@ -58,7 +58,7 @@ export class Map extends GameMap {
     //playerSpawn = { x: 23532, y: 6000 };
 
     // boss arena spawn
-    //playerSpawn = { x: 29000, y: 3015 };
+    playerSpawn = { x: 29000, y: 3015 };
 
     // Add colliders for death zones
     GAME_ENGINE.addEntity(new DeathCollider(2233, 2233, 5000, 50));
@@ -100,6 +100,8 @@ export class Map extends GameMap {
       "SpawnPoints/SpiderwebObstacleSpawnPoint.png",
       "SpawnPoints/MovingCowboySpawnPoint.png",
       "props/tree02.png",
+      "Skull1.png",
+      "Skull2.png",
     ];
 
     const TILESET_IMAGES = tilesetNames.map((name) =>
@@ -115,10 +117,6 @@ export class Map extends GameMap {
   }
 
   spawnEntities(gameMap) {
-    //golem added
-    // const golem = new EarthGolem(5486, 2160); // Adjust X, Y position as needed
-    // GAME_ENGINE.addEntity(golem);
-
     const enemyTypes = {
       Cactus: {
         method: gameMap.getCactusSpawnPoints,

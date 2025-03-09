@@ -172,6 +172,8 @@ export class AssetDownloader {
     this.assetManager.queueDownload(
       "./assets/map/SpawnPoints/DeadTreeSpawnPoint.png"
     );
+    this.assetManager.queueDownload("./assets/map/Skull2.png");
+    this.assetManager.queueDownload("./assets/map/Skull1.png");
     this.assetManager.queueDownload("./assets/map/Spiderweb.png");
     this.assetManager.queueDownload("./assets/map/Signs.png");
     this.assetManager.queueDownload("./assets/map/Campfire.png");
