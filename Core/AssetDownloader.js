@@ -74,7 +74,10 @@ export class AssetDownloader {
     this.assetManager.queueDownload("./assets/cowboy/CowBoyRapidFire.png");
     this.assetManager.queueDownload("./assets/cowboy/CowBoyShoot.png");
     this.assetManager.queueDownload("./assets/cowboy/CowBoySmokingIdle.png");
-    this.assetManager.queueDownload("./assets/cowboy/CowBoyBullet.png");
+    this.assetManager.queueDownload("./assets/cowboy/CowBoyHolsterWeapon.png");
+    this.assetManager.queueDownload("./assets/cowboy/CowBoyBullet.png"); 
+
+    
 
     // Crow Enemy
     this.assetManager.queueDownload("./assets/enemy/Crow/Fly/noshadow.png");
