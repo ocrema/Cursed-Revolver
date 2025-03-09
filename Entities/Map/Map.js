@@ -111,7 +111,7 @@ export class Map extends GameMap {
     GAME_ENGINE.addEntity(gameMap);
 
     this.spawnEntities(gameMap);
-    GAME_ENGINE.addEntity(new Wizard());
+    //GAME_ENGINE.addEntity(new Wizard());
   }
 
   spawnEntities(gameMap) {
