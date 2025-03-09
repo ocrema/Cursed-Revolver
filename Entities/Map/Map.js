@@ -53,13 +53,13 @@ export class Map extends GameMap {
     //playerSpawn = { x: 12400, y: 4000 };
 
     // spider pit start
-    playerSpawn = { x: 23532, y: 4760 };
+    //playerSpawn = { x: 23532, y: 4760 };
 
     // second spider pit start
     //playerSpawn = { x: 23532, y: 6000 };
 
     // boss arena spawn
-    //playerSpawn = { x: 28276, y: 3015 };
+    playerSpawn = { x: 28276, y: 3015 };
 
     // Add colliders for death zones
     GAME_ENGINE.addEntity(new DeathCollider(2233, 2233, 5000, 50));
