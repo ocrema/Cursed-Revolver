@@ -81,8 +81,8 @@ export class Spider extends Actor {
       // ares optimized here by not looping thru entities every time
       const player = window.PLAYER;
       if (
-        Util.canSee(this, window.PLAYER) &&
-        Util.canAttack(this, window.PLAYER)
+        Util.canSee(this, window.PLAYER)
+        //Util.canAttack(this, window.PLAYER)
       ) {
         this.seesPlayer = true;
         if (
