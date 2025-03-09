@@ -272,7 +272,6 @@ export class AssetDownloader {
   }
 
   // HUD Assets
-
   downloadHUDSpells() {
     this.assetManager.queueDownload("./assets/ui/spells/fireballicon.png");
     this.assetManager.queueDownload("./assets/ui/spells/fireball.png");
@@ -281,7 +280,21 @@ export class AssetDownloader {
     this.assetManager.queueDownload("./assets/ui/spells/icicle.png");
     this.assetManager.queueDownload("./assets/ui/spells/vine.png");
     this.assetManager.queueDownload("./assets/ui/spells/void.png");
-  }
+    const spells = ["fireball", "vine", "icicle", "water", "lightning", "void"];
+
+    // Queue base spell icons
+    for (let spell of spells) {
+        this.assetManager.queueDownload(`./assets/ui/spells/${spell}/${spell}icon.png`);
+    }
+
+    // Queue all animated frames (1-30) for each spell
+    for (let spell of spells) {
+        for (let i = 1; i <= 30; i++) {
+            this.assetManager.queueDownload(`./assets/ui/spells/${spell}/${spell}${i}.png`);
+        }
+    }
+}
+
 
   downloadHUDCowboyIcon() {
     this.assetManager.queueDownload("./assets/ui/cowboy.png");

@@ -69,13 +69,14 @@ export class HUD extends Entity {
 
     // Spells and cylinder setup
     this.spells = [
-      { name: "Fireball", icon: "./assets/ui/spells/fireball.png" },
-      { name: "Vine Grapple", icon: "./assets/ui/spells/vine.png" },
-      { name: "Icicle", icon: "./assets/ui/spells/icicle.png" },
-      { name: "Water Wave", icon: "./assets/ui/spells/water.png" },
-      { name: "Chain Lightning", icon: "./assets/ui/spells/lightning.png" },
-      { name: "Void Orb", icon: "./assets/ui/spells/void.png" },
+      { name: "Fireball", altName: "fireball", icon: "./assets/ui/spells/fireball.png" },
+      { name: "Vine Grapple", altName: "vine", icon: "./assets/ui/spells/vine.png" },
+      { name: "Icicle", altName: "icicle", icon: "./assets/ui/spells/icicle.png" },
+      { name: "Water Wave", altName: "water", icon: "./assets/ui/spells/water.png" },
+      { name: "Chain Lightning", altName: "lightning", icon: "./assets/ui/spells/lightning.png" },
+      { name: "Void Orb", altName: "void", icon: "./assets/ui/spells/void.png" },
     ];
+
 
     this.activeSpellIndex = 0;
     this.previousSpellIndex = 0;
@@ -148,11 +149,34 @@ export class HUD extends Entity {
     if (this.healthFlashTimer > 0) {
       this.healthFlashTimer -= GAME_ENGINE.clockTick;
     }
+
+
     // Detect Spell Switching
     if (player.selectedSpell !== this.previousSpellIndex) {
       this.isSpellSwitching = true;
-      this.spellAnimationTimer = this.spellAnimationDuration; // Start animation timer
+      this.spellAnimationTimer = 0; // Reset timer for smooth transition
+      this.spellAnimationFrame = 1; // Ensure it starts at 1
       this.previousSpellIndex = player.selectedSpell; // Update previous spell index
+    }
+
+    // Ensure spell icon animation runs continuously
+    this.spellAnimationTimer += GAME_ENGINE.clockTick;
+
+    if (this.spellAnimationTimer >= 0.05) { // Adjust 0.05s per frame (change for speed)
+        this.spellAnimationTimer = 0; // Reset timer
+        this.spellAnimationFrame++; // Advance the frame
+
+        // Fix the delay when looping back to frame 1
+        if (this.spellAnimationFrame > 30) {
+            this.spellAnimationFrame = 1; // Instantly reset to first frame
+            this.spellAnimationTimer = -0.01; // Preload a slight offset to eliminate delay
+        }
+    }
+
+    // Ensure spellAnimationFrame is always valid
+    if (isNaN(this.spellAnimationFrame) || this.spellAnimationFrame < 1 || this.spellAnimationFrame > 30) {
+        console.error("spellAnimationFrame is out of range, resetting...");
+        this.spellAnimationFrame = 1;
     }
 
     // Detect Attack (Left Mouse Button / 'm1')
@@ -439,16 +463,24 @@ export class HUD extends Entity {
       spellTextX,
       spellTextY
     );
-    if (spellIcon) {
-      const spellIconSize = 60 * scaleFactor;
-      ctx.drawImage(
-        spellIcon,
-        spellTextX + 90 * scaleFactor,
-        spellTextY - 50 * scaleFactor,
-        spellIconSize,
-        spellIconSize
-      );
+
+    const currentSpell = this.spells[this.activeSpellIndex];
+    const animatedIconPath = `./assets/ui/spells/${currentSpell.altName}/${currentSpell.altName}${this.spellAnimationFrame + 1}.png`;
+    const animatedSpellIcon = ASSET_MANAGER.getAsset(animatedIconPath);
+
+    if (animatedSpellIcon) {
+        const spellIconSize = 60 * scaleFactor;
+        ctx.drawImage(
+            animatedSpellIcon,
+            spellTextX + 90 * scaleFactor,
+            spellTextY - 50 * scaleFactor,
+            spellIconSize,
+            spellIconSize
+        );
+    } else {
+        console.warn(`Spell icon missing: ${animatedIconPath}`);
     }
+
 
     // === Draw Revolver Cylinder (Rotating & Glowing) ===
     if (cylinderImage) {
