@@ -50,7 +50,7 @@ export class Map extends GameMap {
     //GAME_ENGINE.addEntity(new CowboyEnemy(763, 1500));
 
     // underground start
-    //playerSpawn = { x: 12400, y: 4000 };
+    playerSpawn = { x: 12400, y: 4000 };
 
     // spider pit start
     // playerSpawn = { x: 23532, y: 4760 };
