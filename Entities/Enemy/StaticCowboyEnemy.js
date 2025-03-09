@@ -45,7 +45,7 @@ export class StaticCowboyEnemy extends Actor {
 
     this.width = 50;
     this.height = 110;
-    this.scale = 3;
+    this.scale = 3.25;
     this.health = 20;
     this.maxHealth = 20;
     this.fireRate = 2.5;

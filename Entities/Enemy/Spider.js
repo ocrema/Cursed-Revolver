@@ -25,7 +25,7 @@ export class Spider extends Actor {
 
     this.width = 60;
     this.height = 40;
-    this.scale = 0.25;
+    this.scale = 0.35;
 
     // Health / Attack
     this.health = 30;

@@ -20,7 +20,7 @@ export class Crow extends Actor {
     this.setAnimation(CROW_SPRITESHEET.FLY.NAME);
     this.width = 60;
     this.height = 40;
-    this.scale = 6;
+    this.scale = 7;
     this.health = 60;
     this.maxHealth = 60;
 

@@ -116,12 +116,12 @@ export class Map extends GameMap {
       Cactus: {
         method: gameMap.getCactusSpawnPoints,
         entity: Cactus,
-        offsetY: -10,
+        offsetY: -30,
       },
       Cowboy: {
         method: gameMap.getCowboySpawnPoints,
         entity: StaticCowboyEnemy,
-        offsetY: -10,
+        offsetY: -45,
       },
       Bird: { method: gameMap.getBirdSpawnPoints, entity: Crow, offsetY: -10 },
       Spider: {

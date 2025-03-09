@@ -23,7 +23,7 @@ export class Cactus extends Actor {
     this.setAnimation(CACTUS_SPRITESHEET.DEFAULT.NAME);
     this.width = 140;
     this.height = 180;
-    this.scale = 2;
+    this.scale = 1.65;
 
     this.tookDamage = false;
     this.dead = false;
