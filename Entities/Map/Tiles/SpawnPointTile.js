@@ -32,9 +32,10 @@ export class SpawnPointTile extends Tile {
     this.killedEnemies = new Set(); // Track killed enemies
     this.respawnedEnemies = new Set(); // Track enemies that have been respawned
     this.isActivated = false;
+    this.isTriggered = false;
 
     this.collider = new Collider(
-      this.tileSize * this.scale * 3,
+      this.tileSize * this.scale * 4,
       this.tileSize * this.scale * 3
     );
 
@@ -49,8 +50,9 @@ export class SpawnPointTile extends Tile {
     const player = window.PLAYER;
 
     if (player) {
-      if (this.colliding(player) && GAME_ENGINE.keys["f"]) {
-        //console.log("Player hit checkpoint at " + e.x + " " + e.y);
+      if (this.colliding(player) && !this.hasTriggered) {
+        this.hasTriggered = true;
+        console.log("Player hit checkpoint at " + this.x + " " + this.y);
         player.setSpawnPoint(this.x, this.y - player.collider.height / 2 - 1);
         this.spawnPointEntity.activateCampfire();
       }
