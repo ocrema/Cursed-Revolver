@@ -46,13 +46,7 @@ export class VineGrapple extends Entity {
     this.y += Math.sin(this.dir) * this.speed * GAME_ENGINE.clockTick;
 
     for (let e of GAME_ENGINE.entities) {
-      if (
-        !e.isPlayer &&
-        !e.isAttack &&
-        !e.isSpawnPoint &&
-        !e instanceof BackgroundTriggerTile &&
-        this.colliding(e)
-      ) {
+      if (!e.isPlayer && !e.isAttack && this.colliding(e)) {
         this.isHit = true;
         this.experationTimer = 0.2;
         this.shooter.x_velocity = 0;
