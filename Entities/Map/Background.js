@@ -49,8 +49,9 @@ export class Background extends Entity {
 
     this.currentFrame = 0;
     this.elapsedTime = 0;
-    
+
     if (this.currentIndex === this.backgroundList.length - 1) {
+      console.log("scaling wizard background");
       this.scale = 5;
       this.yOffset = -250;
     }
