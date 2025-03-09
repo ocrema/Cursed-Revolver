@@ -115,7 +115,6 @@ export class StaticCowboyEnemy extends Actor {
           this.attack(player);
         }
       }
-      
 
       // const player = window.PLAYER;
       // if (player && Util.canSee(this, player) && Util.canAttack(this, player)) {
@@ -130,7 +129,6 @@ export class StaticCowboyEnemy extends Actor {
       //     this.attack(player);
       //   }
       // }
-      
 
       // **If no player is detected and not currently shooting, return to idle**
       if (!playerDetected && !this.isShooting) {
@@ -163,7 +161,8 @@ export class StaticCowboyEnemy extends Actor {
     // **Wait for the shooting animation to complete before switching back to idle**
     setTimeout(() => {
       this.isShooting = false; // Reset shooting flag
-      if (!Util.canSee(this, player)) { // Ensure the player is truly out of range
+      if (!Util.canSee(this, player)) {
+        // Ensure the player is truly out of range
         this.setAnimation("idle");
       }
     }, 1000); // Adjust timing to match shoot animation duration
@@ -180,4 +179,3 @@ export class StaticCowboyEnemy extends Actor {
     console.log(`HealingBottle spawned at (${this.x}, ${this.y})`);
   }
 }
-

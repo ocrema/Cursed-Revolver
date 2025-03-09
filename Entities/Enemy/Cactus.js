@@ -125,8 +125,6 @@ export class Cactus extends Actor {
       this.idleTimer = 0;
       this.setAnimation(CACTUS_SPRITESHEET.AGGRESSIVE.NAME, false);
     }
-
-    
   }
 
   attemptAttack() {
@@ -161,8 +159,8 @@ export class Cactus extends Actor {
     if (player) {
       if (
         Util.canSee(this, player) &&
-        this.attackTime > this.fireRate &&
-        Util.canAttack(new Thorn(this.x, this.y, player), player)
+        this.attackTime > this.fireRate
+        //Util.canAttack(new Thorn(this.x, this.y, player), player)
       ) {
         this.attackTime = 0;
         GAME_ENGINE.addEntity(
