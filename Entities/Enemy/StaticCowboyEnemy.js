@@ -77,12 +77,24 @@ export class StaticCowboyEnemy extends Actor {
     } else {
       super.draw(ctx);
     }
-    this.drawEffects(ctx);
+    if (!this.dead) {
+      this.drawEffects(ctx);
+    }
   }
 
   update() {
     if (!this.dead) {
       this.applyDamage();
+
+      // **Check if the cowboy dies**
+      if (this.health <= 0) {
+      console.log("Static Cowboy has died!");
+      this.dead = true;
+      this.setAnimation("death", false);
+
+      this.onDeath();
+      return;
+    }
 
       if (this.effects.frozen > 0 || this.effects.stun > 0) return;
       this.attackCooldown += GAME_ENGINE.clockTick;
@@ -105,9 +117,8 @@ export class StaticCowboyEnemy extends Actor {
       //   }
       // }
 
-      // ares optimized here
       const player = window.PLAYER;
-      if (player && Util.canSee(this, player)) {
+      if (player && Util.canSee(this, player) && Util.canAttack(this, player)) {
         this.seesPlayer = true;
         playerDetected = true;
         playerTarget = player;
@@ -160,19 +171,6 @@ export class StaticCowboyEnemy extends Actor {
   applyDamage() {
     this.recieveAttacks();
     this.recieveEffects();
-
-    // **Check if the cowboy dies**
-    if (this.health <= 0) {
-      console.log("Static Cowboy has died!");
-      this.dead = true;
-      this.setAnimation("death", false);
-
-      setTimeout(() => {
-        this.removeFromWorld = true;
-        this.collider = null;
-      }, 250); // Adjust timing to match death animation length
-      this.onDeath();
-    }
   }
 
   spawnHealingBottle() {

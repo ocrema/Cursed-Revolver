@@ -199,7 +199,7 @@ if (this.spellAnimationTimer >= 0.05) { // Adjust 0.05s per frame (change for sp
 
   // Fix the delay when looping back to frame 1
   if (this.spellAnimationFrame >= 30) { // Ensure reset happens at the correct frame
-      console.log(`Resetting animation frame: ${this.spellAnimationFrame} -> 1`);
+      // console.log(`Resetting animation frame: ${this.spellAnimationFrame} -> 1`);
       this.spellAnimationFrame = 1;
   }
 }
@@ -211,7 +211,7 @@ if (isNaN(this.spellAnimationFrame) || this.spellAnimationFrame < 1 || this.spel
 }
 
 // Debug log to monitor values
-console.log(`Frame: ${this.spellAnimationFrame}, Timer: ${this.spellAnimationTimer}, isSpellSwitching: ${this.isSpellSwitching}`);
+// console.log(`Frame: ${this.spellAnimationFrame}, Timer: ${this.spellAnimationTimer}, isSpellSwitching: ${this.isSpellSwitching}`);
 
 
 

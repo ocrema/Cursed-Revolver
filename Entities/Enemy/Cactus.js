@@ -75,17 +75,17 @@ export class Cactus extends Actor {
       this.recieveAttacks();
       this.recieveEffects();
 
+      if (this.health <= 0) {
+        this.dead = true;
+        this.setAnimation(CACTUS_SPRITESHEET.DIE.NAME, false);
+        this.onDeath();
+      }
+
       if (this.effects.frozen > 0 || this.effects.stun > 0) return;
 
       this.attackTime += GAME_ENGINE.clockTick;
 
       this.attemptAttack();
-
-      if (this.health <= 0) {
-        this.dead = true;
-        this.onDeath();
-      }
-
       this.changeAnimation();
     }
 
@@ -99,6 +99,11 @@ export class Cactus extends Actor {
 
   changeAnimation() {
     this.idleTimer += GAME_ENGINE.clockTick;
+
+    if (this.dead && this.currentAnimation !== CACTUS_SPRITESHEET.DIE.NAME) {
+      this.idleTimer = 0;
+      this.setAnimation(CACTUS_SPRITESHEET.DIE.NAME, false);
+    }
 
     if (this.idleTimer > this.idleCooldown) {
       this.idleTimer = 0;
@@ -120,10 +125,7 @@ export class Cactus extends Actor {
       this.setAnimation(CACTUS_SPRITESHEET.AGGRESSIVE.NAME, false);
     }
 
-    if (this.dead && this.currentAnimation !== CACTUS_SPRITESHEET.DIE.NAME) {
-      this.idleTimer = 0;
-      this.setAnimation(CACTUS_SPRITESHEET.DIE.NAME, false);
-    }
+    
   }
 
   attemptAttack() {
@@ -202,7 +204,9 @@ export class Cactus extends Actor {
     } else {
       super.draw(ctx);
     }
-    this.drawEffects(ctx);
+    if (!this.dead) {
+      this.drawEffects(ctx);
+    }
   }
 }
 
