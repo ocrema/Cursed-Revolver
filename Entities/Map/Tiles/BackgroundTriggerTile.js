@@ -48,6 +48,7 @@ export class BackgroundTriggerTile extends Tile {
         if (background) {
           background.nextBackground(); // Move to the next background
         }
+        this.removeFromWorld = true;
       }
   }
 }
