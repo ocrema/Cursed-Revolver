@@ -47,19 +47,41 @@ export class Map extends GameMap {
   async load() {
     let playerSpawn;
     // saloon start
-    //playerSpawn = { x: 763, y: 1500 };
+    playerSpawn = { x: 763, y: 1500 };
 
+    //second campfire on stage 1
+    //playerSpawn = { x: 8001, y: 1104 };
     // underground start
     //playerSpawn = { x: 12400, y: 4000 };
+
+    // right before underground campfire at the end
+    //playerSpawn = { x: 21000, y: 3000 };
 
     // spider pit start
     //playerSpawn = { x: 23532, y: 4760 };
 
+    // GAME_ENGINE.addEntity(new Spider(23532, 4760));
+    // GAME_ENGINE.addEntity(new Spider(23542, 4760));
+    // GAME_ENGINE.addEntity(new Spider(23600, 4765));
+    // GAME_ENGINE.addEntity(new Spider(23700, 4770));
+    // GAME_ENGINE.addEntity(new Spider(23800, 4785));
+    // GAME_ENGINE.addEntity(new Cactus(28025, 5153));
+    // GAME_ENGINE.addEntity(new Spider(23532, 4760));
+    // GAME_ENGINE.addEntity(new Spider(23542, 4760));
+    // GAME_ENGINE.addEntity(new Spider(23600, 4765));
+    // GAME_ENGINE.addEntity(new Spider(23700, 4770));
+    // GAME_ENGINE.addEntity(new Spider(23800, 4785));
+    // GAME_ENGINE.addEntity(new Cactus(28025, 5153));
+
     // second spider pit start
     //playerSpawn = { x: 23532, y: 6000 };
 
+    // ascend start
+    //playerSpawn = { x: 25918, y: 5100 };
     // boss arena spawn
-    playerSpawn = { x: 29000, y: 3015 };
+    //playerSpawn = { x: 29000, y: 3015 };
+
+    //GAME_ENGINE.addEntity(new Crow(26423, 2557));
 
     // Add colliders for death zones
     GAME_ENGINE.addEntity(new DeathCollider(2233, 2233, 5000, 50));
@@ -183,7 +205,7 @@ export class Map extends GameMap {
       this.wizardTeleportPoints.push(points[i]);
     }
 
-    GAME_ENGINE.addEntity(new Wizard(30827, 2271));
+    GAME_ENGINE.addEntity(new Wizard(31437, 2698));
 
     // Spawn enemies
     for (const key in enemyTypes) {
@@ -219,6 +241,7 @@ export class Map extends GameMap {
         if (obj instanceof SpiderWebObstacle) {
           this.spiderwebList.push(obj);
         }
+
         GAME_ENGINE.addEntity(obj);
       }
     }
