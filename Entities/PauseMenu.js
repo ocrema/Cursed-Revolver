@@ -54,7 +54,9 @@ export class PauseMenu extends Entity {
 
     // Navigate menu options
     if (GAME_ENGINE.keys["ArrowUp"]) {
-      this.selectedOption = (this.selectedOption - 1 + this.menuOptions.length) % this.menuOptions.length;
+      this.selectedOption =
+        (this.selectedOption - 1 + this.menuOptions.length) %
+        this.menuOptions.length;
       GAME_ENGINE.keys["ArrowUp"] = false;
     }
 
@@ -91,7 +93,9 @@ export class PauseMenu extends Entity {
     const menuY = centerY - menuHeight / 2;
 
     // Draw Background
-    const backgroundImage = ASSET_MANAGER.getAsset("./assets/ui/menu/menuBackground.png");
+    const backgroundImage = ASSET_MANAGER.getAsset(
+      "./assets/ui/menu/menuBackground.png"
+    );
     if (backgroundImage) {
       ctx.drawImage(backgroundImage, menuX, menuY, menuWidth, menuHeight);
     }
@@ -101,7 +105,7 @@ export class PauseMenu extends Entity {
       Resume: { x: centerX - 125, y: menuY + 100 },
       Settings: { x: centerX - 125, y: menuY + 170 },
       Help: { x: centerX - 125, y: menuY + 240 },
-      Quit: { x: centerX - 125, y: menuY + 310 }
+      Quit: { x: centerX - 125, y: menuY + 310 },
     };
 
     // Draw Buttons
@@ -140,13 +144,19 @@ export class PauseMenu extends Entity {
     ctx.textAlign = "left";
 
     const tutorialText = [
+      "NOTE: Everything is unbalanced right now for development purposes",
       "A  - Move Left",
       "D  - Move Right",
       "Space - Jump",
       "Shift - Dash",
       "Num Keys (1-6) - Switch Spells",
+      "Scroll wheel to switch spells",
       "Click - Shoot",
-      "Enemies drop potions when killed"
+      "Cowboy Enemies drop health potions when killed",
+      "Tumbleweeds can be set on fire using fireball",
+      "Fireball detonates barrels",
+      "Water wave can grow trees",
+      "Campfires act as checkpoints - press H to respawn",
     ];
 
     tutorialText.forEach((text, index) => {
@@ -167,8 +177,10 @@ export class PauseMenu extends Entity {
     // Handle menu clicks
     Object.entries(this.buttonPositions).forEach(([label, pos], index) => {
       if (
-        mouseX >= pos.x && mouseX <= pos.x + 250 &&
-        mouseY >= pos.y && mouseY <= pos.y + 60
+        mouseX >= pos.x &&
+        mouseX <= pos.x + 250 &&
+        mouseY >= pos.y &&
+        mouseY <= pos.y + 60
       ) {
         this.selectedOption = index;
         this.executeSelectedOption();
@@ -191,5 +203,3 @@ export class PauseMenu extends Entity {
     }
   }
 }
-
-

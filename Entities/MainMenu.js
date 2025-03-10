@@ -220,15 +220,19 @@ export class MainMenu extends Entity {
     ctx.textAlign = "left";
 
     const tutorialText = [
+      "NOTE: Everything is unbalanced right now for development purposes",
       "A  - Move Left",
       "D  - Move Right",
       "Space - Jump",
       "Shift - Dash",
       "Num Keys (1-6) - Switch Spells",
+      "Scroll wheel to switch spells",
       "Click - Shoot",
       "Cowboy Enemies drop health potions when killed",
       "Tumbleweeds can be set on fire using fireball",
       "Fireball detonates barrels",
+      "Water wave can grow trees",
+      "Campfires act as checkpoints - press H to respawn",
     ];
 
     tutorialText.forEach((text, index) => {
