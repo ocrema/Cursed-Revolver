@@ -22,15 +22,20 @@ export class Camera extends Entity {
     this.maxX = 100000;
     this.minY = 0;
     this.maxY = mapHeight - screenHeight;
+    this.bossCoor = { x: 31300, y: 2500 };
   }
 
   update() {
     const player = window.PLAYER;
     if (player) {
       if (player instanceof Player) {
-        this.player = player;
+        if (Math.abs(player.x - this.bossCoor.x) > 1300 || Math.abs(player.y - this.bossCoor.y) > 650) 
+          this.coor = player;
+        else 
+          this.coor = this.bossCoor;
       }
     }
+
 
     if (this.shakeIntensity > 0) {
       this.x += (Math.random() - 0.5) * this.shakeIntensity;
@@ -38,7 +43,7 @@ export class Camera extends Entity {
       this.shakeIntensity *= this.shakeDecay; // Reduce shake over time
     }
 
-    if (this.player) {
+    if (this.coor) {
       const followSpeed = 5; // Lower values = slower camera movement
       const lerpFactor = Math.min(followSpeed * GAME_ENGINE.clockTick, 1);
 
@@ -46,11 +51,11 @@ export class Camera extends Entity {
 
       // Smoothly interpolate the camera towards the player's position + vertical offset
       if (
-        Math.abs(this.player.x - this.x) > 1 ||
-        Math.abs(this.player.y + verticalOffset - this.y) > 1
+        Math.abs(this.coor.x - this.x) > 1 ||
+        Math.abs(this.coor.y + verticalOffset - this.y) > 1
       ) {
-        this.x += (this.player.x - this.x) * lerpFactor;
-        this.y += (this.player.y + verticalOffset - this.y) * lerpFactor;
+        this.x += (this.coor.x - this.x) * lerpFactor;
+        this.y += (this.coor.y + verticalOffset - this.y) * lerpFactor;
       }
 
       // Clamp the camera within the map boundaries
