@@ -42,7 +42,8 @@ export class GameEngine {
     );
     this.GAME_CONTROLLER = new GameLogicController();
     this.addEntity(this.GAME_CONTROLLER);
-    window.dispatchEvent(new Event("resize"));
+    //window.dispatchEvent(new Event("resize"));
+    this.resize();
   }
 
   start() {
@@ -59,7 +60,7 @@ export class GameEngine {
     this.startInput();
     this.timer = new Timer();
 
-    const resize = () => {
+    this.resize = () => {
       const current_aspect_ratio = window.innerWidth / window.innerHeight;
       const desired_aspect_ratio = this.width / this.height;
 
@@ -78,8 +79,8 @@ export class GameEngine {
       ctx.translate(this.width / 2, this.height / 2);
     };
 
-    window.addEventListener("resize", resize);
-    resize();
+    window.addEventListener("resize", this.resize);
+    this.resize();
   }
 
   startInput() {

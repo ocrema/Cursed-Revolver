@@ -1,5 +1,6 @@
 import { Entity } from "../Entities/Entities.js";
 import { Player } from "../Entities/Player/Player.js";
+import { GAME_ENGINE } from "../main.js";
 
 export class Camera extends Entity {
   static instance = null;
@@ -22,17 +23,29 @@ export class Camera extends Entity {
     this.maxX = 100000;
     this.minY = 0;
     this.maxY = mapHeight - screenHeight;
-    this.bossCoor = { x: 31300, y: 2500 };
+    this.bossCoor = { x: 31300, y: 2420 };
   }
 
   update() {
     const player = window.PLAYER;
     if (player) {
       if (player instanceof Player) {
-        if (Math.abs(player.x - this.bossCoor.x) > 1300 || Math.abs(player.y - this.bossCoor.y) > 650) 
+        if (Math.abs(player.x - this.bossCoor.x) > 1500 || Math.abs(player.y - this.bossCoor.y) > 800) {
           this.coor = player;
-        else 
+          if (GAME_ENGINE.width === 3000) {
+            GAME_ENGINE.width = 2600;
+            GAME_ENGINE.height = 1300;
+            GAME_ENGINE.resize();
+          }
+        }
+        else {
           this.coor = this.bossCoor;
+          if (GAME_ENGINE.width === 2600) {
+            GAME_ENGINE.width = 3000;
+            GAME_ENGINE.height = 1500;
+            GAME_ENGINE.resize();
+          }
+        }
       }
     }
 
