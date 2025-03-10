@@ -101,7 +101,7 @@ export class CowboyEnemy extends Actor {
     this.flip = false;
     this.gravity = 800;
 
-    this.collider = new Collider(this.width, this.height);
+    this.collider = new Collider(this.width, this.height - 20);
 
     // Roaming behavior
     this.randomRoamLength = [250, 400, 750, 800];
