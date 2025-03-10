@@ -53,7 +53,7 @@ export class StaticCowboyEnemy extends Actor {
     this.isEnemy = true;
     this.flip = false; // False = facing right, True = facing left
 
-    this.collider = new Collider(this.width, this.height);
+    this.collider = new Collider(this.width, this.height - 20);
 
     this.visualRadius = 700; // Detection range
     this.attackRadius = 700; // Attack range (Same as visual range since it only shoots)
