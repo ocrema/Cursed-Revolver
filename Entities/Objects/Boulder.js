@@ -34,6 +34,8 @@ export class Boulder extends Actor {
       this.width * this.scale - this.scale * 5,
       this.height * this.scale - this.scale * 8
     );
+    this.isObject = true;
+    console.log("Boulder created at x: " + this.x + " y: " + this.y);
   }
 
   stageCleared() {
@@ -50,4 +52,5 @@ export class Boulder extends Actor {
       this.height * this.scale
     );
   }
+
 }
