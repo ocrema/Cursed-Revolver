@@ -212,13 +212,20 @@ export class Tilemap {
           if (
             tile.tileID != 6 &&
             tile.tileID != 75 &&
-            tile.tileID != 76
-            // (tile.tileID > 101 || tile.tileID < 121)
+            tile.tileID != 76 &&
+            (tile.tileID > 101 || tile.tileID < 121)
           ) {
             window.SOLID_TILES.push(tile);
           }
 
-          GAME_ENGINE.addEntity(tile);
+          if (tile.tileID == 6) {
+            GAME_ENGINE.addTile(tile);
+          } else {
+            GAME_ENGINE.addEntity(tile);
+          }
+          // console.log("entity length " + GAME_ENGINE.entities.length);
+          // console.log("tiles length " + GAME_ENGINE.tiles.length);
+          //GAME_ENGINE.addEntity(tile);
         }
       }
     }
