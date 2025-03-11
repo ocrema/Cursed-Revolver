@@ -138,6 +138,34 @@ export const canAttack = (o1, o2) => {
   }
 };
 
+export const isCollidingWithTile = (entity) => {
+  if (!window.TILEMAP || typeof window.TILEMAP.getTileAt !== "function") {
+    console.error("TILEMAP is not initialized or getTileAt() is undefined.");
+    return false;
+  }
+  // Check the tiles at different points
+  //console.log(window.TILEMAP);
+  let bottomTile = window.TILEMAP.getTileAt(
+    entity.x,
+    entity.y + entity.height / 2
+  ); // Bottom center
+  let leftTile = window.TILEMAP.getTileAt(
+    entity.x - entity.width / 2,
+    entity.y
+  ); // Left side
+  let rightTile = window.TILEMAP.getTileAt(
+    entity.x + entity.width / 2,
+    entity.y
+  ); // Right side
+
+  // Check if the entity is colliding with any of these tiles
+  return (
+    (bottomTile && entity.colliding(bottomTile)) ||
+    (leftTile && entity.colliding(leftTile)) ||
+    (rightTile && entity.colliding(rightTile))
+  );
+};
+
 /**
  * Distance From Camera Volume Multiplier
  * returns a value between 0 and 1 that represents how loud a sound should be based on distance from camera
@@ -211,27 +239,4 @@ export const handleTileCollisions = (entity) => {
       entity.velocity.x = 0;
     }
   }
-};
-
-export const isCollidingWithTile = (entity) => {
-  // Check the tiles at different points
-  let bottomTile = window.TILEMAP.getTileAt(
-    entity.x,
-    entity.y + entity.height / 2
-  ); // Bottom center
-  let leftTile = window.TILEMAP.getTileAt(
-    entity.x - entity.width / 2,
-    entity.y
-  ); // Left side
-  let rightTile = window.TILEMAP.getTileAt(
-    entity.x + entity.width / 2,
-    entity.y
-  ); // Right side
-
-  // Check if the entity is colliding with any of these tiles
-  return (
-    (bottomTile && entity.colliding(bottomTile)) ||
-    (leftTile && entity.colliding(leftTile)) ||
-    (rightTile && entity.colliding(rightTile))
-  );
 };

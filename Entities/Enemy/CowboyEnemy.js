@@ -285,6 +285,7 @@ export class CowboyEnemy extends Actor {
     this.recieveEffects();
   }
 
+  //unused now
   handleCollisions() {
     for (let entity of GAME_ENGINE.entities) {
       if (entity instanceof Tile && this.colliding(entity)) {
@@ -430,6 +431,12 @@ export class CowboyBullet extends Actor {
       // **Only call `colliding()` if player is near**
       if (this.colliding(player)) {
         player.queueAttack({ damage: this.damage });
+        this.removeFromWorld = true;
+      }
+    }
+
+    for (let entity of window.SOLID_TILES) {
+      if (entity.collider && this.colliding(entity)) {
         this.removeFromWorld = true;
       }
     }

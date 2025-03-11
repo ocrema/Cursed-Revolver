@@ -6,6 +6,7 @@ import { TreeTile } from "./Tiles/TreeTile.js";
 import { BackgroundTriggerTile } from "./Tiles/BackgroundTriggerTile.js";
 import { SpiderwebTile } from "./Tiles/SpiderwebTile.js";
 import { DeadTreeTile } from "./Tiles/DeadTreeTile.js";
+import { SpiderWebObstacle } from "../Objects/SpiderWebObstacle.js";
 
 export class Tilemap {
   constructor(
@@ -17,6 +18,7 @@ export class Tilemap {
     scale = 4
   ) {
     window.TILEMAP = this;
+    window.SOLID_TILES = [];
     this.mapPath = mapPath;
     this.tilesetImages = tilesetImages; // Store all tileset images
     this.tileSize = tileSize;
@@ -205,6 +207,16 @@ export class Tilemap {
             tile.entityOrder = -10000;
           }
           this.tileGrid[y][x] = tile;
+
+          if (
+            tile.tileID != 6 &&
+            tile.tileID != 75 &&
+            tile.tileID != 76 &&
+            tile.tileID > 101 &&
+            tile.tileID < 121
+          ) {
+            window.SOLID_TILES.push(tile);
+          }
 
           GAME_ENGINE.addEntity(tile);
         }

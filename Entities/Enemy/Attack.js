@@ -68,10 +68,10 @@ export class Thorn extends Entity {
         this.removeFromWorld = true;
       }
     }
-    if (Util.isCollidingWithTile(this)) {
-      console.log("hit ground");
-      this.removeFromWorld = true;
-    }
+    // if (Util.isCollidingWithTile(this)) {
+    //   console.log("hit ground");
+    //   this.removeFromWorld = true;
+    // }
 
     // for (let entity of GAME_ENGINE.entities) {
     //   if (entity.collider && this.colliding(entity)) {
@@ -80,6 +80,12 @@ export class Thorn extends Entity {
     //     }
     //   }
     // }
+
+    for (let entity of window.SOLID_TILES) {
+      if (entity.collider && this.colliding(entity)) {
+        this.removeFromWorld = true;
+      }
+    }
   }
 }
 

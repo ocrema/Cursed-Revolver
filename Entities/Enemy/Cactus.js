@@ -160,7 +160,7 @@ export class Cactus extends Actor {
       if (
         Util.canSee(this, player) &&
         this.attackTime > this.fireRate
-        //Util.canAttack(new Thorn(this.x, this.y, player), player)
+        //Util.newCanAttack(new Thorn(this.x, this.y, player), player)
       ) {
         this.attackTime = 0;
         GAME_ENGINE.addEntity(
