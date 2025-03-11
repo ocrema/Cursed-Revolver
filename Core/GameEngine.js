@@ -260,13 +260,8 @@ export class GameEngine {
           let drawX = e.x - this.camera.x;
           let drawY = e.y - this.camera.y;
 
-          // Adjust for Collider Growth Direction
-          if (e instanceof DeathCollider) {
-            drawX = e.x - this.camera.x; // Left-aligned
-          } else {
-            drawX -= e.collider.width / 2; // Centered for other entities
-            drawY -= e.collider.height / 2;
-          }
+          drawX -= e.collider.width / 2; // Centered for other entities
+          drawY -= e.collider.height / 2;
 
           this.ctx.strokeRect(
             drawX,
