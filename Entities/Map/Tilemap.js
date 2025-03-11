@@ -6,6 +6,7 @@ import { TreeTile } from "./Tiles/TreeTile.js";
 import { BackgroundTriggerTile } from "./Tiles/BackgroundTriggerTile.js";
 import { SpiderwebTile } from "./Tiles/SpiderwebTile.js";
 import { DeadTreeTile } from "./Tiles/DeadTreeTile.js";
+import { SpiderWebObstacle } from "../Objects/SpiderWebObstacle.js";
 
 export class Tilemap {
   constructor(
@@ -16,6 +17,9 @@ export class Tilemap {
     solidTileIDs = [],
     scale = 4
   ) {
+    window.TILEMAP = this;
+    window.ENEMY_LIST = [];
+    window.SOLID_TILES = [];
     this.mapPath = mapPath;
     this.tilesetImages = tilesetImages; // Store all tileset images
     this.tileSize = tileSize;
@@ -40,6 +44,7 @@ export class Tilemap {
     this.spiderwebObstacleSpawnPoints = [];
     this.movingCowboySpawnPoints = [];
     this.wizardTeleportPoints = [];
+    this.tileGrid = [];
   }
 
   async load() {
@@ -63,14 +68,19 @@ export class Tilemap {
     this.mapWidth = tileLayer.width;
     this.mapHeight = tileLayer.height;
 
+    // Initialize tileGrid
+    this.tileGrid = Array.from({ length: this.mapHeight }, () =>
+      new Array(this.mapWidth).fill(null)
+    );
+
     // Store tilesets with their firstGID
     this.tilesets = data.tilesets.map((tileset, index) => ({
       firstGID: tileset.firstgid,
       image: this.tilesetImages[index], // Map to corresponding image
     }));
 
-    console.log(this.tilesetImages);
-    console.log(this.tilesets);
+    // console.log(this.tilesetImages);
+    // console.log(this.tilesets);
 
     this.generateTiles();
   }
@@ -197,10 +207,46 @@ export class Tilemap {
           if (hideEnemySpawnPoints) {
             tile.entityOrder = -10000;
           }
-          GAME_ENGINE.addEntity(tile);
+          this.tileGrid[y][x] = tile;
+
+          // excludes interior tile, water tiles, and any spawnpoint tiles
+          if (
+            tile.tileID != 6 &&
+            tile.tileID != 75 &&
+            tile.tileID != 76 &&
+            tile.tileID < 101
+          ) {
+            window.SOLID_TILES.push(tile);
+          }
+
+          if (
+            tile.tileID == 6 ||
+            tile.tileID == 75 ||
+            tile.tileID == 76 ||
+            (tile.tileID >= 101 && tile.tileID <= 123)
+          ) {
+            GAME_ENGINE.addTile(tile);
+          } else {
+            GAME_ENGINE.addEntity(tile);
+          }
         }
       }
     }
+  }
+
+  getTileAt(x, y) {
+    let gridX = Math.floor(x / (this.tileSize * this.scale));
+    let gridY = Math.floor(y / (this.tileSize * this.scale));
+
+    if (
+      gridX < 0 ||
+      gridX >= this.mapWidth ||
+      gridY < 0 ||
+      gridY >= this.mapHeight
+    ) {
+      return null;
+    }
+    return this.tileGrid[gridY][gridX];
   }
 
   getCactusSpawnPoints() {

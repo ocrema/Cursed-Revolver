@@ -42,9 +42,7 @@ export class BackgroundTriggerTile extends Tile {
     if (player)
       if (this.colliding(player) && !this.hasTriggered) {
         this.hasTriggered = true; // Prevent retriggering immediately
-        let background = GAME_ENGINE.entities.find(
-          (e) => e instanceof Background
-        );
+        let background = GAME_ENGINE.tiles.find((e) => e instanceof Background);
         if (background) {
           background.nextBackground(); // Move to the next background
         }

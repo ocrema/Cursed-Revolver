@@ -184,7 +184,7 @@ export class CowboyEnemy extends Actor {
         this.setAnimation("idle");
       }
 
-      this.handleCollisions();
+      this.newHandleCollisions();
 
       // **Prevent Cowboy From Sliding**
       if (Math.abs(this.velocity.x) < 5) {
@@ -287,9 +287,10 @@ export class CowboyEnemy extends Actor {
     this.recieveEffects();
   }
 
+  //unused now
   handleCollisions() {
     for (let entity of GAME_ENGINE.entities) {
-      if (entity instanceof Tile && this.colliding(entity)) {
+      if (entity.isGround && this.colliding(entity)) {
         let thisBottom = this.y + this.height / 2;
         let eTop = entity.y - entity.collider.height / 2;
 
@@ -328,6 +329,57 @@ export class CowboyEnemy extends Actor {
           this.x = eRight + this.width / 2;
           this.velocity.x = 0;
         }
+      }
+    }
+  }
+
+  newHandleCollisions() {
+    // **Check the tiles at different points**
+    let bottomTile = window.TILEMAP.getTileAt(this.x, this.y + this.height / 2); // Bottom center
+    let leftTile = window.TILEMAP.getTileAt(this.x - this.width / 2, this.y); // Left side
+    let rightTile = window.TILEMAP.getTileAt(this.x + this.width / 2, this.y); // Right side
+
+    let tile = bottomTile || leftTile || rightTile; // Pick the most relevant tile
+    if (!tile) return;
+
+    if (this.colliding(tile)) {
+      let thisBottom = this.y + this.height / 2;
+      let eTop = tile.y - tile.collider.height / 2;
+
+      let thisLeft = this.x - this.width / 2;
+      let thisRight = this.x + this.width / 2;
+      let eLeft = tile.x - tile.collider.width / 2;
+      let eRight = tile.x + tile.collider.width / 2;
+
+      // **Bottom Collision (Ground)**
+      let collideBottom =
+        thisBottom > eTop &&
+        this.y < eTop &&
+        thisRight > eLeft &&
+        thisLeft < eRight;
+
+      if (collideBottom) {
+        this.y = eTop - this.height / 2;
+        this.velocity.y = 0;
+        this.onGround = true;
+      }
+
+      // **Side Collision (Left or Right)**
+      let collideLeft =
+        thisRight > eLeft &&
+        thisLeft < eLeft &&
+        this.y + this.height / 2 > eTop;
+      let collideRight =
+        thisLeft < eRight &&
+        thisRight > eRight &&
+        this.y + this.height / 2 > eTop;
+
+      if (collideLeft) {
+        this.x = eLeft - this.width / 2;
+        this.velocity.x = 0;
+      } else if (collideRight) {
+        this.x = eRight + this.width / 2;
+        this.velocity.x = 0;
       }
     }
   }
@@ -381,6 +433,12 @@ export class CowboyBullet extends Actor {
       // **Only call `colliding()` if player is near**
       if (this.colliding(player)) {
         player.queueAttack({ damage: this.damage });
+        this.removeFromWorld = true;
+      }
+    }
+
+    for (let entity of window.SOLID_TILES) {
+      if (entity.collider && this.colliding(entity)) {
         this.removeFromWorld = true;
       }
     }

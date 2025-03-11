@@ -59,16 +59,44 @@ export class Thorn extends Entity {
     this.travelled = Util.getDistance(this, this.start);
 
     // check if colliding with player --> if yes, remove, deal damage
-    for (let entity of GAME_ENGINE.entities) {
-      if (entity.collider && this.colliding(entity)) {
-        if (entity instanceof Player) {
-          entity.queueAttack({ damage: 20 });
-          this.removeFromWorld = true;
-        } else if (entity instanceof Tile) {
-          this.removeFromWorld = true;
-        }
+
+    const player = window.PLAYER;
+
+    if (player) {
+      if (this.colliding(player)) {
+        player.queueAttack({ damage: 20 });
+        this.removeFromWorld = true;
       }
     }
+    // if (Util.isCollidingWithTile(this)) {
+    //   console.log("hit ground");
+    //   this.removeFromWorld = true;
+    // }
+
+    // for (let entity of GAME_ENGINE.entities) {
+    //   if (entity.collider && this.colliding(entity)) {
+    //     if (entity instanceof Tile) {
+    //       this.removeFromWorld = true;
+    //     }
+    //   }
+    // }
+
+    for (let entity of window.SOLID_TILES) {
+      if (entity.collider && this.colliding(entity)) {
+        this.removeFromWorld = true;
+      }
+    }
+
+    // for (let entity of GAME_ENGINE.entities) {
+    //   if (entity.collider && this.colliding(entity)) {
+    //     if (entity instanceof Player) {
+    //       entity.queueAttack({ damage: 20 });
+    //       this.removeFromWorld = true;
+    //     } else if (entity.isGround) {
+    //       this.removeFromWorld = true;
+    //     }
+    //   }
+    // }
   }
 }
 
@@ -109,7 +137,6 @@ export class Jaw extends Entity {
       damage: 20,
       x: this.x,
       y: this.y,
-      launchMagnitude: 100,
     });
 
     window.ASSET_MANAGER.playAsset("./assets/sfx/spider_attack.wav", 1);

@@ -40,6 +40,7 @@ export class Map extends GameMap {
     this.enemySpawnData = { 1: [], 2: [], 3: [], 4: [], 5: [] };
     this.spiderwebList = [];
     this.spiderwebListIndex = 0;
+    window.ENEMY_LIST = [];
 
     return MAP;
   }
@@ -58,7 +59,7 @@ export class Map extends GameMap {
     //playerSpawn = { x: 21000, y: 3000 };
 
     // spider pit start
-    //playerSpawn = { x: 23532, y: 4760 };
+    // playerSpawn = { x: 23532, y: 4760 };
 
     // GAME_ENGINE.addEntity(new Spider(23532, 4760));
     // GAME_ENGINE.addEntity(new Spider(23542, 4760));
@@ -81,8 +82,6 @@ export class Map extends GameMap {
     // boss arena spawn
     //playerSpawn = { x: 29000, y: 3015 };
 
-    //GAME_ENGINE.addEntity(new Crow(26423, 2557));
-
     // Add colliders for death zones
     GAME_ENGINE.addEntity(new DeathCollider(2233, 2233, 5000, 50));
     GAME_ENGINE.addEntity(new DeathCollider(12870, 4338, 8000, 50));
@@ -91,10 +90,13 @@ export class Map extends GameMap {
     // Add player
     const player = new Player(playerSpawn.x, playerSpawn.y);
     GAME_ENGINE.addEntity(player);
+    for (let i = 0; i < 100; i++) {
+      GAME_ENGINE.addEntity(new Cactus(1600 + i * 5, 2000));
+    }
 
     // Add background
     const background = new Background(player);
-    GAME_ENGINE.addEntity(background);
+    GAME_ENGINE.addTile(background);
 
     window.PLAYER = player;
 
@@ -140,10 +142,9 @@ export class Map extends GameMap {
   }
 
   spawnEntities(gameMap, removeEntities = true) {
-
     if (removeEntities) {
       for (let e of GAME_ENGINE.entities) {
-        if ((e.isEnemy || e.isObject || e.isAttack)) {
+        if (e.isEnemy || e.isObject || e.isAttack) {
           e.removeFromWorld = true;
         }
       }
@@ -221,7 +222,6 @@ export class Map extends GameMap {
     }
     GAME_ENGINE.addEntity(new Wizard(31437, 2698));
 
-
     // Spawn enemies
     for (const key in enemyTypes) {
       const { method, entity, offsetY = 0 } = enemyTypes[key];
@@ -284,6 +284,11 @@ export class Map extends GameMap {
       this.spiderwebList[2].stageCleared();
     }
 
+    console.log(
+      "Game Engine entity list length " + GAME_ENGINE.entities.length
+    );
+    console.log("Game Engine entity tiles length " + GAME_ENGINE.tiles.length);
+
     //this.spawnNextStageEnemies();
   }
 
@@ -335,7 +340,6 @@ export class Map extends GameMap {
       this.onStageCleared(this.currentStage);
     }
   }
-
 
   onStageCleared(stage) {
     console.log(`Stage ${stage} cleared.`);

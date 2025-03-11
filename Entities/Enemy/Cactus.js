@@ -158,10 +158,11 @@ export class Cactus extends Actor {
     const player = window.PLAYER;
     if (player) {
       if (
+        this.attackTime > this.fireRate &&
         Util.canSee(this, player) &&
-        this.attackTime > this.fireRate
-        //Util.canAttack(new Thorn(this.x, this.y, player), player)
-      ) {
+        Util.canAttack(new Thorn(this.x, this.y, player, this.thornMaxRange), player)
+      )
+       {
         this.attackTime = 0;
         GAME_ENGINE.addEntity(
           new Thorn(this.x, this.y, player, this.thornMaxRange)

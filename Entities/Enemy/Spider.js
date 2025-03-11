@@ -100,7 +100,7 @@ export class Spider extends Actor {
 
       // moves to target, deals with platform collision
       if (this.currentAnimation !== SPIDER_SPRITESHEET.IDLE.NAME) {
-        this.movement();
+        this.newmovement();
 
         // flip image according to velocity
         if (this.velocity.x < 0) {
@@ -245,10 +245,7 @@ export class Spider extends Actor {
     let hitHead = false;
 
     for (let entity of GAME_ENGINE.entities) {
-      if (
-        (entity instanceof SpiderWebObstacle || entity instanceof Tile) &&
-        this.colliding(entity)
-      ) {
+      if (entity instanceof Tile && this.colliding(entity)) {
         if (this.velocity.y < 0) {
           //console.log(this.target);
           this.y = entity.y + entity.collider.height / 2 + this.height / 2;
@@ -266,7 +263,7 @@ export class Spider extends Actor {
 
     for (let entity of GAME_ENGINE.entities) {
       if (
-        (entity instanceof SpiderWebObstacle || entity instanceof Tile) &&
+        entity.isGround &&
         this.colliding(entity)
       ) {
         let isSimilarY =
@@ -296,10 +293,77 @@ export class Spider extends Actor {
 
       for (let entity of GAME_ENGINE.entities) {
         if (
-          (entity instanceof SpiderWebObstacle || entity instanceof Tile) &&
+          (entity.isGround) &&
           this.colliding(entity)
         ) {
           this.y = entity.y - entity.collider.height / 2 - this.height / 2;
+          this.target.y = this.y;
+        }
+      }
+    }
+  }
+
+  newmovement() {
+    let distance = Util.getDistance(this, this.target);
+    this.velocity = {
+      x: distance ? ((this.target.x - this.x) / distance) * this.speed : 0,
+      y: distance ? ((this.target.y - this.y) / distance) * this.speed : 0,
+    };
+
+    this.y += this.velocity.y * GAME_ENGINE.clockTick;
+
+    this.onGround = false;
+    this.onWall = false;
+
+    let hitHead = false;
+
+    //console.log(window.SOLID_TILES);
+
+    // **Iterate only through relevant solid tiles**
+    for (let tile of window.SOLID_TILES) {
+      if (this.colliding(tile)) {
+        if (this.velocity.y < 0) {
+          this.y = tile.y + tile.collider.height / 2 + this.height / 2;
+          hitHead = true;
+        }
+        if (this.velocity.y > 0) {
+          this.y = tile.y - tile.collider.height / 2 - this.height / 2;
+          this.onGround = true;
+        }
+      }
+    }
+
+    this.x += this.velocity.x * GAME_ENGINE.clockTick;
+
+    for (let tile of window.SOLID_TILES) {
+      if (this.colliding(tile)) {
+        let isSimilarY =
+          this.y > tile.y - tile.collider.height &&
+          this.y < tile.y + tile.collider.height;
+        this.onWall = true;
+
+        if (isSimilarY) {
+          if (this.velocity.x < 0) {
+            this.x = tile.x + tile.collider.width / 2 + this.width / 2;
+          } else if (this.velocity.x > 0) {
+            this.x = tile.x - tile.collider.width / 2 - this.width / 2;
+          }
+
+          if (!hitHead) {
+            this.target.y -= 100;
+          } else {
+            this.target.x = this.x * 2 - this.target.x;
+          }
+        }
+      }
+    }
+
+    if (!this.onGround && !this.onWall) {
+      this.y += this.gravity * GAME_ENGINE.clockTick;
+
+      for (let tile of window.SOLID_TILES) {
+        if (this.colliding(tile)) {
+          this.y = tile.y - tile.collider.height / 2 - this.height / 2;
           this.target.y = this.y;
         }
       }

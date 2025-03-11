@@ -13,6 +13,7 @@ export class GameEngine {
 
     this.ctx = null;
     this.entities = [];
+    this.tiles = [];
     this.options = options || { debugging: false };
     this.width = 2600;
     this.height = 1300;
@@ -218,6 +219,22 @@ export class GameEngine {
     // );
   }
 
+  addTile(tile) {
+    if (
+      !tile ||
+      typeof tile.update !== "function" ||
+      typeof tile.draw !== "function"
+    ) {
+      console.warn("Invalid tile added:", tile);
+      return;
+    }
+
+    const tileOrder = tile.entityOrder || 0;
+    let i = 0;
+    while (i < this.tiles.length && this.tiles[i].entityOrder < tileOrder) i++;
+    this.tiles.splice(i, 0, tile);
+  }
+
   draw() {
     this.ctx.imageSmoothingEnabled = false;
     this.ctx.clearRect(
@@ -227,6 +244,10 @@ export class GameEngine {
       this.height
     );
 
+    for (let i = 0; i < this.tiles.length; i++) {
+      this.tiles[i].draw(this.ctx);
+    }
+
     for (let i = 0; i < this.entities.length; i++) {
       this.entities[i].draw(this.ctx);
     }
@@ -234,7 +255,7 @@ export class GameEngine {
     if (this.debug_colliders) {
       this.ctx.lineWidth = 5;
       this.ctx.strokeStyle = "limegreen";
-      for (let e of this.entities) {
+      for (let e of [...this.tiles, ...this.entities]) {
         if (e.collider) {
           let drawX = e.x - this.camera.x;
           let drawY = e.y - this.camera.y;
@@ -275,13 +296,16 @@ export class GameEngine {
 
     let currentTime = performance.now();
     let deltaTime = currentTime - this.lastTime;
+    this.lastTime = currentTime;
 
-    if (deltaTime >= 1000) {
-      // Every second
-      this.fps = this.frameCounter;
-      this.frameCounter = 0;
-      this.lastTime = currentTime;
-    }
+    // if (deltaTime >= 1000) {
+    //   // Every second
+    //   this.fps = this.frameCounter;
+    //   this.frameCounter = 0;
+    //   this.lastTime = currentTime;
+    // }
+
+    this.fps = Math.round(1000 / deltaTime);
 
     if (this.GAME_CONTROLLER && this.GAME_CONTROLLER.isPaused) {
       for (let entity of this.entities) {
@@ -290,6 +314,12 @@ export class GameEngine {
         }
       }
       return;
+    }
+
+    for (let tile of this.tiles) {
+      if (tile && typeof tile.update === "function" && !tile.removeFromWorld) {
+        tile.update();
+      }
     }
 
     for (let entity of this.entities) {
@@ -318,5 +348,3 @@ export class GameEngine {
     this.draw();
   }
 }
-
-// KV Le was here :)
