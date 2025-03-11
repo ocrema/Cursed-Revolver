@@ -100,19 +100,18 @@ export const canSee = (A, B) => {
 };
 
 // checks if o1 can see o2
-export const canAttack = (o1, o2) => {
+export const canAttack = (o1, o2, velocity = null) => {
   
   // if o1 is colliding with o2
   if(o1.collider && o1.collider.colliding(o1.x, o1.y, o2.collider, o2.x, o2.y)) {
     return true;
   } else {
-    // calculate velocity --> move based on collider size
-    var distance = getDistance(o2, o1);
-    let velocity = {x: (o2.x - o1.x) / distance * (o1.collider.width + 64), y: (o2.y - o1.y) / distance * (o1.collider.height + 64)};
+    if (!velocity) {
+      // calculate velocity --> move based on collider size
+      var distance = getDistance(o2, o1);
+      velocity = {x: (o2.x - o1.x) / distance * (o1.collider.width + 64), y: (o2.y - o1.y) / distance * (o1.collider.height + 64)};
+    }
     
-    // update velocity if too small
-    velocity.x = Math.sign(velocity.x) * Math.max(5, Math.abs(velocity.x));
-    velocity.y = Math.sign(velocity.y) * Math.max(5, Math.abs(velocity.y));
     
     // create moved object version of first object
     let tempObject = {
@@ -131,7 +130,7 @@ export const canAttack = (o1, o2) => {
     }
 
     // recursion 
-    return canAttack(tempObject, o2);
+    return canAttack(tempObject, o2, velocity);
   }
 }
 
