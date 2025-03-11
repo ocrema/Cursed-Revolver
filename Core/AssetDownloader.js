@@ -187,12 +187,12 @@ export class AssetDownloader {
   }
 
   downloadSpellAssets() {
-    this.assetManager.queueDownload("./assets/spells/Fireball.png");
-    this.assetManager.queueDownload("./assets/spells/WaterWave.png");
-    this.assetManager.queueDownload("./assets/spells/Icicle.png");
-    this.assetManager.queueDownload("./assets/spells/Icicle_Explosion.png");
-    this.assetManager.queueDownload("./assets/spells/Void_Orb.png");
-    this.assetManager.queueDownload("./assets/spells/Vine.png");
+    this.assetManager.queueDownload("./assets/spells/fireball.png");
+    this.assetManager.queueDownload("./assets/spells/water.png");
+    this.assetManager.queueDownload("./assets/spells/icicle.png");
+    this.assetManager.queueDownload("./assets/spells/lightning.png");
+    this.assetManager.queueDownload("./assets/spells/void.png");
+    //this.assetManager.queueDownload("./assets/spells/Vine.png");
   }
 
   // Objects

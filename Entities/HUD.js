@@ -67,43 +67,20 @@ export class HUD extends Entity {
     this.healthFlashTimer = 0; // Timer for flashing effect on hit
     this.healthFlashDuration = 0.5; // Flash duration in seconds
     this.lastHealth = 0; // Stores the previous health value
-
-    // Spells and cylinder setup
     this.spells = [
-      {
-        name: "Fireball",
-        altName: "fireball",
-        icon: "./assets/ui/spells/fireball.png",
-      },
-      {
-        name: "Vine Grapple",
-        altName: "vine",
-        icon: "./assets/ui/spells/vine.png",
-      },
-      {
-        name: "Icicle",
-        altName: "icicle",
-        icon: "./assets/ui/spells/icicle.png",
-      },
-      {
-        name: "Water Wave",
-        altName: "water",
-        icon: "./assets/ui/spells/water.png",
-      },
-      {
-        name: "Chain Lightning",
-        altName: "lightning",
-        icon: "./assets/ui/spells/lightning.png",
-      },
-      {
-        name: "Void Orb",
-        altName: "void",
-        icon: "./assets/ui/spells/void.png",
-      },
+      { name: "Fireball", altName: "fireball", icon: "./assets/ui/spells/fireball.png" },
+      { name: "Vine Grapple", altName: "vine", icon: "./assets/ui/spells/vine.png" },
+      { name: "Icicle", altName: "icicle", icon: "./assets/ui/spells/icicle.png" },
+      { name: "Water Wave", altName: "water", icon: "./assets/ui/spells/water.png" },
+      { name: "Chain Lightning", altName: "lightning", icon: "./assets/ui/spells/lightning.png" },
+      { name: "Void Orb", altName: "void", icon: "./assets/ui/spells/void.png" },
     ];
-
+    
+    // Active spell index and tracking
     this.activeSpellIndex = 0;
     this.previousSpellIndex = 0;
+
+
 
     // Cylinder animation setup
     this.cylinderImages = [];
@@ -126,6 +103,35 @@ export class HUD extends Entity {
 
     this.playerCurrentStage = 1;
     this.totalRemainingEnemies = 0;
+
+    // Define spell combos
+    this.spellCombos = {
+      fireball: [
+        { spell: "icicle", effect: "Temp Shock" },
+        { spell: "void", effect: "Explosion" },
+        { spell: "water", effect: "Extinguish" },
+      ],
+      icicle: [
+        { spell: "fireball", effect: "Temp Shock" },
+        { spell: "water", effect: "Longer Freeze" },
+      ],
+      water: [
+        { spell: "icicle", effect: "Longer Freeze" },
+        { spell: "lightning", effect: "Electrocute" },
+        { spell: "fire", effect: "Extinguish" },
+      ],
+      lightning: [
+        { spell: "water", effect: "Electrocute" },
+        { spell: "void", effect: "Explosion" },
+      ],
+      void: [
+        { spell: "fireball", effect: "Explosion" },
+        { spell: "lightning", effect: "Explosion" },
+      ],
+    };
+
+    this.availableCombos = [];
+
   }
 
   colliding() {
@@ -174,34 +180,6 @@ export class HUD extends Entity {
       this.healthFlashTimer -= GAME_ENGINE.clockTick;
     }
 
-    // // Detect Spell Switching
-    // if (player.selectedSpell !== this.previousSpellIndex) {
-    //   this.isSpellSwitching = true;
-    //   this.spellAnimationTimer = 0; // Reset timer for smooth transition
-    //   this.spellAnimationFrame = 1; // Ensure it starts at 1
-    //   this.previousSpellIndex = player.selectedSpell; // Update previous spell index
-    // }
-
-    // // Ensure spell icon animation runs continuously
-    // this.spellAnimationTimer += GAME_ENGINE.clockTick;
-
-    // if (this.spellAnimationTimer >= 0.05) { // Adjust 0.05s per frame (change for speed)
-    //     this.spellAnimationTimer = 0; // Reset timer
-    //     this.spellAnimationFrame++; // Advance the frame
-
-    //     // Fix the delay when looping back to frame 1
-    //     if (this.spellAnimationFrame >= 29) {
-    //         this.spellAnimationFrame = 1; // Instantly reset to first frame
-    //         this.spellAnimationTimer = -0.01; // Preload a slight offset to eliminate delay
-    //     }
-    // }
-
-    // // Ensure spellAnimationFrame is always valid
-    // if (isNaN(this.spellAnimationFrame) || this.spellAnimationFrame < 1 || this.spellAnimationFrame > 30) {
-    //     console.error("spellAnimationFrame is out of range, resetting...");
-    //     this.spellAnimationFrame = 1;
-    // }
-
     // Detect Spell Switching
     if (player.selectedSpell !== this.previousSpellIndex) {
       //console.log(`Spell switched! Previous: ${this.previousSpellIndex}, New: ${player.selectedSpell}`);
@@ -239,9 +217,6 @@ export class HUD extends Entity {
       );
       this.spellAnimationFrame = 1;
     }
-
-    // Debug log to monitor values
-    //console.log(`Frame: ${this.spellAnimationFrame}, Timer: ${this.spellAnimationTimer}, isSpellSwitching: ${this.isSpellSwitching}`);
 
     // Detect Attack (Left Mouse Button / 'm1')
     if (GAME_ENGINE.keys["m1"] && !this.isAttacking) {
@@ -292,6 +267,25 @@ export class HUD extends Entity {
       this.activeSpellIndex = player.selectedSpell;
       this.rotateCylinder(this.activeSpellIndex, 0.5);
     }
+
+    // Ensure activeSpellIndex is valid
+    if (!this.spells || !Array.isArray(this.spells) || this.spells.length === 0) {
+      console.error("HUD: Spells array is undefined or empty.");
+      return; // Exit early to avoid crashing
+    }
+    
+    // Ensure activeSpellIndex is within bounds
+    if (this.activeSpellIndex < 0 || this.activeSpellIndex >= this.spells.length) {
+      console.warn(`Invalid activeSpellIndex: ${this.activeSpellIndex}`);
+      this.activeSpellIndex = 0;
+    }
+    
+    // Get the current spell
+    const currentSpell = this.spells[this.activeSpellIndex].altName;
+
+    // Get available combos
+    this.availableCombos = this.spellCombos[currentSpell] || [];
+
 
     // Toggle debug mode
     if (GAME_ENGINE.keys["b"]) {
@@ -520,8 +514,11 @@ export class HUD extends Entity {
       const cylinderSize = 160 * scaleFactor;
       const cylinderX = canvasWidth - cylinderSize - 25 * scaleFactor;
       const cylinderY = canvasHeight - cylinderSize - 25 * scaleFactor;
-      const spellTextX = cylinderX - 180 * scaleFactor;
-      const spellTextY = cylinderY + cylinderSize / 1.05;
+      //const spellTextX = cylinderX - 180 * scaleFactor;
+      const spellTextX = cylinderX - 300 * scaleFactor;
+      //const spellTextY = cylinderY + cylinderSize / 1.05;
+      const spellTextY = (cylinderY-20)*1.05 ;
+
 
       // === Draw Spell Name & Icon ===
       ctx.fillStyle = "white";
@@ -547,7 +544,7 @@ export class HUD extends Entity {
           spellIconSize
         );
       } else {
-        //console.warn(`Spell icon missing: ${animatedIconPath}`);
+        
       }
 
       // === Draw Revolver Cylinder (Rotating & Glowing) ===
@@ -611,17 +608,55 @@ export class HUD extends Entity {
         ctx.shadowBlur = 0;
         ctx.globalAlpha = 1;
         ctx.restore();
-
-        // draw crosshair
-        /*
-      ctx.save();
-      ctx.shadowBlur = 0;
-      const crosshairSize = 128;
-      ctx.drawImage(ASSET_MANAGER.getAsset('./assets/ui/aim.png'),
-      -crosshairSize/2 + GAME_ENGINE.mouse.x, -crosshairSize/2 + GAME_ENGINE.mouse.y, crosshairSize, crosshairSize);
-      ctx.restore();
-      */
       }
+
+      // === Display Combo Hints (Properly Scaled & Positioned) ===
+      const comboFontSize = canvasHeight * 0.022; // Slightly smaller text for better spacing
+      ctx.fillStyle = "white";
+      ctx.textAlign = "left"; // Align text properly
+
+      // Positioning
+      const comboStartX = spellTextX; // Align "+" properly with title
+      //const comboStartY = spellTextY + 40 * scaleFactor; // Slightly below spell name
+      //const comboStartY = startY + 15 + healthBarHeight + (spellTextY - startY - healthBarHeight - 50) / 2;
+      const comboStartY = spellTextY + 33 ;
+
+      // Display Title
+      ctx.fillText("Possible Combos:", comboStartX, comboStartY);
+
+      // Define icon size & spacing
+      const iconSize = 30 * scaleFactor;  // Slightly smaller spell icons
+      const lineSpacing = 35 * scaleFactor;  // Reduced spacing for compact display
+
+      // Draw each combo with animation
+      this.availableCombos.forEach((combo, index) => {
+          if (combo.spell && combo.effect) { 
+              const spellData = this.spells.find(spell => spell.altName === combo.spell);
+
+              if (spellData) {
+                  // Use the animated spell icon
+                  const animatedIconPath = `./assets/ui/spells/${spellData.altName}/${spellData.altName}${this.spellAnimationFrame + 1}.png`;
+                  const animatedSpellIcon = ASSET_MANAGER.getAsset(animatedIconPath);
+                  
+                  if (animatedSpellIcon) {
+                      // Draw "+" aligned with title
+                      ctx.fillText("+", comboStartX, comboStartY + (index + 1) * lineSpacing);
+
+                      // Draw spell icon next to "+"
+                      ctx.drawImage(
+                          animatedSpellIcon, 
+                          comboStartX + 15 * scaleFactor, 
+                          comboStartY + (index + 1) * lineSpacing - iconSize / 2 - (15 * scaleFactor), 
+                          iconSize, 
+                          iconSize
+                      );
+
+                      // Draw "-> Effect" aligned with icon
+                      ctx.fillText(`-> ${combo.effect}`, comboStartX + 55 * scaleFactor, comboStartY + (index + 1) * lineSpacing);
+                  }
+              }
+          }
+      });
 
       // === Game Win Screen ===
 
