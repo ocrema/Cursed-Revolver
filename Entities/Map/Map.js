@@ -143,7 +143,7 @@ export class Map extends GameMap {
 
     if (removeEntities) {
       for (let e of GAME_ENGINE.entities) {
-        if (e.isEnemy || e.isObject || e.isAttack) {
+        if ((e.isEnemy || e.isObject || e.isAttack)) {
           e.removeFromWorld = true;
         }
       }
@@ -218,8 +218,8 @@ export class Map extends GameMap {
       for (let i = 0; i < points.length; i++) {
         this.wizardTeleportPoints.push(points[i]);
       }
-      GAME_ENGINE.addEntity(new Wizard(31437, 2698));
     }
+    GAME_ENGINE.addEntity(new Wizard(31437, 2698));
 
 
     // Spawn enemies
@@ -269,7 +269,7 @@ export class Map extends GameMap {
     }
 
     this.spiderwebList.sort((a, b) => a.x - b.x);
-    console.log(this.boulderList[0]);
+    //console.log(this.boulderList[0]);
 
     if (this.currentStage > 1) {
       this.boulderList[0].stageCleared();
