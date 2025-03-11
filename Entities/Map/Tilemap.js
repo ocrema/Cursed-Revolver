@@ -209,6 +209,7 @@ export class Tilemap {
           }
           this.tileGrid[y][x] = tile;
 
+          // excludes interior tile, water tiles, and any spawnpoint tiles
           if (
             tile.tileID != 6 &&
             tile.tileID != 75 &&
@@ -222,15 +223,12 @@ export class Tilemap {
             tile.tileID == 6 ||
             tile.tileID == 75 ||
             tile.tileID == 76 ||
-            (tile.tileID >= 101 && tile.tileID <= 121)
+            (tile.tileID >= 101 && tile.tileID <= 123)
           ) {
             GAME_ENGINE.addTile(tile);
           } else {
             GAME_ENGINE.addEntity(tile);
           }
-          // console.log("entity length " + GAME_ENGINE.entities.length);
-          // console.log("tiles length " + GAME_ENGINE.tiles.length);
-          //GAME_ENGINE.addEntity(tile);
         }
       }
     }

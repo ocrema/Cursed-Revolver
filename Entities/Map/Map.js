@@ -48,7 +48,7 @@ export class Map extends GameMap {
   async load() {
     let playerSpawn;
     // saloon start
-    playerSpawn = { x: 763, y: 1500 };
+    //playerSpawn = { x: 763, y: 1500 };
 
     //second campfire on stage 1
     //playerSpawn = { x: 8001, y: 1104 };
@@ -80,9 +80,7 @@ export class Map extends GameMap {
     // ascend start
     //playerSpawn = { x: 25918, y: 5100 };
     // boss arena spawn
-    //playerSpawn = { x: 29000, y: 3015 };
-
-    //GAME_ENGINE.addEntity(new Crow(26423, 2557));
+    playerSpawn = { x: 29000, y: 3015 };
 
     // Add colliders for death zones
     GAME_ENGINE.addEntity(new DeathCollider(2233, 2233, 5000, 50));
@@ -283,8 +281,10 @@ export class Map extends GameMap {
       this.spiderwebList[2].stageCleared();
     }
 
-    console.log(GAME_ENGINE.entities.length);
-    console.log(GAME_ENGINE.tiles.length);
+    console.log(
+      "Game Engine entity list length " + GAME_ENGINE.entities.length
+    );
+    console.log("Game Engine entity tiles length " + GAME_ENGINE.tiles.length);
 
     //this.spawnNextStageEnemies();
   }
