@@ -3,6 +3,8 @@ import { Map } from "../Entities/Map/Map.js";
 import { HUD } from "../Entities/HUD.js";
 import { PauseMenu } from "../Entities/PauseMenu.js";
 import { Wizard } from "../Entities/Enemy/Wizard.js";
+import { GAME_ENGINE } from "../main.js";
+import { Tilemap } from "../Entities/Map/Tilemap.js";
 
 export class GameLogicController extends Entity {
   constructor() {
@@ -49,6 +51,8 @@ export class GameLogicController extends Entity {
         entity.respawn();
       }
     }
+    
+    window.MAP.spawnEntities(window.MAP.gamemap);
 
     this.isGameOver = false;
     this.isPaused = false;

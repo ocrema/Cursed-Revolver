@@ -39,6 +39,7 @@ export class Barrel extends Actor {
     );
 
     this.health = 1;
+    this.isObject = true;
   }
 
   update() {

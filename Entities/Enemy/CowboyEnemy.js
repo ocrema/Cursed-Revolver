@@ -145,7 +145,7 @@ export class CowboyEnemy extends Actor {
       if (this.health <= 0) {
         this.setAnimation("death", false);
         this.dead = true;
-        this.onDeath();
+        //this.onDeath();
         return;
       }
 
@@ -193,6 +193,8 @@ export class CowboyEnemy extends Actor {
 
       this.x += this.velocity.x * GAME_ENGINE.clockTick;
       this.y += this.velocity.y * GAME_ENGINE.clockTick;
+    } else {
+      this.setAnimation("death", false);
     }
 
     this.updateAnimation(GAME_ENGINE.clockTick);
