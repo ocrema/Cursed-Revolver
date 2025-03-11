@@ -287,7 +287,7 @@ export class CowboyEnemy extends Actor {
 
   handleCollisions() {
     for (let entity of GAME_ENGINE.entities) {
-      if (entity instanceof Tile && this.colliding(entity)) {
+      if (entity.isGround && this.colliding(entity)) {
         let thisBottom = this.y + this.height / 2;
         let eTop = entity.y - entity.collider.height / 2;
 

@@ -246,7 +246,7 @@ export class Spider extends Actor {
 
     for (let entity of GAME_ENGINE.entities) {
       if (
-        (entity instanceof SpiderWebObstacle || entity instanceof Tile) &&
+        entity.isGround &&
         this.colliding(entity)
       ) {
         if (this.velocity.y < 0) {
@@ -266,7 +266,7 @@ export class Spider extends Actor {
 
     for (let entity of GAME_ENGINE.entities) {
       if (
-        (entity instanceof SpiderWebObstacle || entity instanceof Tile) &&
+        entity.isGround &&
         this.colliding(entity)
       ) {
         let isSimilarY =
@@ -296,7 +296,7 @@ export class Spider extends Actor {
 
       for (let entity of GAME_ENGINE.entities) {
         if (
-          (entity instanceof SpiderWebObstacle || entity instanceof Tile) &&
+          (entity.isGround) &&
           this.colliding(entity)
         ) {
           this.y = entity.y - entity.collider.height / 2 - this.height / 2;
