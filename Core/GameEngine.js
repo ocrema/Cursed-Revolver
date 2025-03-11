@@ -296,13 +296,16 @@ export class GameEngine {
 
     let currentTime = performance.now();
     let deltaTime = currentTime - this.lastTime;
+    this.lastTime = currentTime;
 
-    if (deltaTime >= 1000) {
-      // Every second
-      this.fps = this.frameCounter;
-      this.frameCounter = 0;
-      this.lastTime = currentTime;
-    }
+    // if (deltaTime >= 1000) {
+    //   // Every second
+    //   this.fps = this.frameCounter;
+    //   this.frameCounter = 0;
+    //   this.lastTime = currentTime;
+    // }
+
+    this.fps = Math.round(1000 / deltaTime);
 
     if (this.GAME_CONTROLLER && this.GAME_CONTROLLER.isPaused) {
       for (let entity of this.entities) {
