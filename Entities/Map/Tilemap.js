@@ -16,6 +16,7 @@ export class Tilemap {
     solidTileIDs = [],
     scale = 4
   ) {
+    window.TILEMAP = this;
     this.mapPath = mapPath;
     this.tilesetImages = tilesetImages; // Store all tileset images
     this.tileSize = tileSize;
@@ -40,6 +41,7 @@ export class Tilemap {
     this.spiderwebObstacleSpawnPoints = [];
     this.movingCowboySpawnPoints = [];
     this.wizardTeleportPoints = [];
+    this.tileGrid = [];
   }
 
   async load() {
@@ -63,14 +65,19 @@ export class Tilemap {
     this.mapWidth = tileLayer.width;
     this.mapHeight = tileLayer.height;
 
+    // Initialize tileGrid
+    this.tileGrid = Array.from({ length: this.mapHeight }, () =>
+      new Array(this.mapWidth).fill(null)
+    );
+
     // Store tilesets with their firstGID
     this.tilesets = data.tilesets.map((tileset, index) => ({
       firstGID: tileset.firstgid,
       image: this.tilesetImages[index], // Map to corresponding image
     }));
 
-    console.log(this.tilesetImages);
-    console.log(this.tilesets);
+    // console.log(this.tilesetImages);
+    // console.log(this.tilesets);
 
     this.generateTiles();
   }
@@ -197,10 +204,27 @@ export class Tilemap {
           if (hideEnemySpawnPoints) {
             tile.entityOrder = -10000;
           }
+          this.tileGrid[y][x] = tile;
+
           GAME_ENGINE.addEntity(tile);
         }
       }
     }
+  }
+
+  getTileAt(x, y) {
+    let gridX = Math.floor(x / (this.tileSize * this.scale));
+    let gridY = Math.floor(y / (this.tileSize * this.scale));
+
+    if (
+      gridX < 0 ||
+      gridX >= this.mapWidth ||
+      gridY < 0 ||
+      gridY >= this.mapHeight
+    ) {
+      return null;
+    }
+    return this.tileGrid[gridY][gridX];
   }
 
   getCactusSpawnPoints() {

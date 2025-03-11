@@ -219,7 +219,6 @@ export class Map extends GameMap {
         const enemy = new entity(spawn.x, spawn.y + offsetY);
         enemy.stage = stage;
         enemy.onDeath = () => this.onEnemyDeath(enemy);
-
         this.stageEnemyGroups[stage].add(enemy);
         this.stageEnemyCounts[stage]++;
 
