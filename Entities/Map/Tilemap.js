@@ -18,6 +18,7 @@ export class Tilemap {
     scale = 4
   ) {
     window.TILEMAP = this;
+    window.ENEMY_LIST = [];
     window.SOLID_TILES = [];
     this.mapPath = mapPath;
     this.tilesetImages = tilesetImages; // Store all tileset images
@@ -211,9 +212,8 @@ export class Tilemap {
           if (
             tile.tileID != 6 &&
             tile.tileID != 75 &&
-            tile.tileID != 76 &&
-            tile.tileID > 101 &&
-            tile.tileID < 121
+            tile.tileID != 76
+            // (tile.tileID > 101 || tile.tileID < 121)
           ) {
             window.SOLID_TILES.push(tile);
           }

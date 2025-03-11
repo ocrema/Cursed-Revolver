@@ -40,6 +40,7 @@ export class Map extends GameMap {
     this.enemySpawnData = { 1: [], 2: [], 3: [], 4: [], 5: [] };
     this.spiderwebList = [];
     this.spiderwebListIndex = 0;
+    window.ENEMY_LIST = [];
 
     return MAP;
   }
@@ -221,6 +222,8 @@ export class Map extends GameMap {
         enemy.onDeath = () => this.onEnemyDeath(enemy);
         this.stageEnemyGroups[stage].add(enemy);
         this.stageEnemyCounts[stage]++;
+
+        window.ENEMY_LIST.push(enemy);
 
         if (stage === 1) {
           this.totalEnemies++;
