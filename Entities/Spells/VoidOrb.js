@@ -41,8 +41,8 @@ export class VoidOrb extends Entity {
     this.x += Math.cos(this.dir) * this.speed * GAME_ENGINE.clockTick;
     this.y += Math.sin(this.dir) * this.speed * GAME_ENGINE.clockTick;
 
-    for (let e of window.ENEMY_LIST) {
-      if (this.colliding(e)) {
+    for (let e of GAME_ENGINE.entities) {
+      if (e.isEnemy && this.colliding(e)) {
         e.queueAttack({ void: 4 });
       }
     }
