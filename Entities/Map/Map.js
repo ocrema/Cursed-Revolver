@@ -91,7 +91,7 @@ export class Map extends GameMap {
     // Add player
     const player = new Player(playerSpawn.x, playerSpawn.y);
     GAME_ENGINE.addEntity(player);
-    for (let i = 0; i < 30; i++) {
+    for (let i = 0; i < 100; i++) {
       GAME_ENGINE.addEntity(new Cactus(1600 + i * 5, 2000));
     }
 

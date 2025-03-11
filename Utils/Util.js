@@ -108,7 +108,7 @@ export const canAttack = (o1, o2) => {
   } else {
     // calculate velocity --> move based on collider size
     var distance = getDistance(o2, o1);
-    let velocity = {x: (o2.x - o1.x) / distance * o1.collider.width, y: (o2.y - o1.y) / distance * o1.collider.height}
+    let velocity = {x: (o2.x - o1.x) / distance * (o1.collider.width + 64), y: (o2.y - o1.y) / distance * (o1.collider.height + 64)};
     
     // update velocity if too small
     velocity.x = Math.sign(velocity.x) * Math.max(5, Math.abs(velocity.x));
@@ -118,7 +118,7 @@ export const canAttack = (o1, o2) => {
     let tempObject = {
       x: o1.x + velocity.x,
       y: o1.y + velocity.y,
-      collider: new Collider(o1.collider.width, o1.collider.height) /* o1.collider */,
+      collider: o1.collider,
     };
 
     // if colliding with ANY platform
