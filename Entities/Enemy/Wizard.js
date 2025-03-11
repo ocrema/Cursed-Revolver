@@ -26,6 +26,7 @@ export class Wizard extends Actor {
     this.health = 500;
     this.maxHealth = 500;
     this.isEnemy = true;
+    this.isWizard = true;
     this.flip = false; // False = facing right, True = facing left
     this.scale = 2.2;
     this.spell = 2;
@@ -42,6 +43,19 @@ export class Wizard extends Actor {
     for (let i = 0; i < mapPoints.length; i++) {
       this.locations.push(mapPoints[i]);
     }
+    this.locations.sort((a, b) => a.x - b.x);
+    let i;
+    if (this.locations.length % 2 === 0) {
+      if (this.locations[Math.floor(this.locations.length/2)-1].y > this.locations[Math.floor(this.locations.length/2)].y) 
+        i = Math.floor(this.locations.length/2);
+      else 
+        i = Math.floor(this.locations.length/2)-1;
+    } else {
+      i = Math.floor(this.locations.length/2);
+    }
+    let temp = this.locations[i];
+    this.locations[i] = this.locations[0];
+    this.locations[0] = temp;
     //console.log("locations" + this.locations);
     this.locationIndex = -1;
     this.spritesheets = {
@@ -95,7 +109,7 @@ export class Wizard extends Actor {
 
     // spawn in
     if (this.locationIndex === -1) {
-      if (Util.getDistance(this.locations[0], this.player) > 1000) return;
+      if (Util.getDistance(this.locations[0], this.player) > 1000 || window.MAP.totalEnemies > 0) return;
 
       this.locationIndex = 0;
       this.x = this.locations[this.locationIndex].x;

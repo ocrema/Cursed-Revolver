@@ -140,6 +140,7 @@ export class HUD extends Entity {
   update() {
     if (this.mapReference) {
       this.playerCurrentStage = this.mapReference.currentStage;
+      /*
       if (this.playerCurrentStage === 1) {
         this.totalRemainingEnemies = this.mapReference.stageEnemyCounts[1];
       } else if (this.playerCurrentStage === 2) {
@@ -150,7 +151,9 @@ export class HUD extends Entity {
         this.totalRemainingEnemies = this.mapReference.stageEnemyCounts[4];
       } else {
         this.totalRemainingEnemies = this.mapReference.stageEnemyCounts[5];
-      }
+      }*/
+
+      this.totalRemainingEnemies = this.mapReference.totalEnemies;
     }
 
     //check that player exists

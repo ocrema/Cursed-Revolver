@@ -304,6 +304,7 @@ export class GameEngine {
 
     for (let i = this.entities.length - 1; i >= 0; --i) {
       if (this.entities[i] && this.entities[i].removeFromWorld) {
+        //console.log("Entity removed:", this.entities[i]);
         this.entities.splice(i, 1);
         //this.GAME_CONTROLLER.hud.checkWin();
       }

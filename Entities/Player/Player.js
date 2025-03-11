@@ -131,6 +131,8 @@ export class Player extends Actor {
     this.gun_spin = null;
     this.x_velocity = 0;
     this.y_velocity = 0;
+    GAME_ENGINE.camera.x = this.x;
+    GAME_ENGINE.camera.y = this.y;
     //this.setSpawnPoint(this.x, this.y);
   }
 
@@ -203,6 +205,9 @@ export class Player extends Actor {
 
     this.recieveAttacks();
     this.recieveEffects();
+    if (GAME_ENGINE.keys["]"]) {
+      this.health = 0;
+    }
 
     if (this.health <= 0) {
       this.isDead = true;

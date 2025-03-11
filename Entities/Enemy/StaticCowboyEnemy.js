@@ -92,7 +92,6 @@ export class StaticCowboyEnemy extends Actor {
         //console.log("Static Cowboy has died!");
         this.dead = true;
         this.setAnimation("death", false);
-        this.onDeath();
         return;
       }
 
@@ -135,6 +134,8 @@ export class StaticCowboyEnemy extends Actor {
       if (!playerDetected && !this.isShooting) {
         this.setAnimation("idle");
       }
+    } else {
+      this.setAnimation("death", false);
     }
 
     this.updateAnimation(GAME_ENGINE.clockTick);
