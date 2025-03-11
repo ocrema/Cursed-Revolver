@@ -115,7 +115,7 @@ export class Wizard extends Actor {
       this.x = this.locations[this.locationIndex].x;
       this.y = this.locations[this.locationIndex].y;
       for (let e of GAME_ENGINE.entities) {
-        if (e instanceof Tile && e.colliding(this)) {
+        if (e.isGround && e.colliding(this)) {
           this.moveAgainstY(e);
         }
       }
@@ -205,7 +205,7 @@ export class Wizard extends Actor {
     this.x = this.locations[this.locationIndex].x;
     this.y = this.locations[this.locationIndex].y;
     for (let e of GAME_ENGINE.entities) {
-      if (e instanceof Tile && e.colliding(this)) {
+      if (e.isGround && e.colliding(this)) {
         this.moveAgainstY(e);
       }
     }

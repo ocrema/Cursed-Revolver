@@ -100,7 +100,8 @@ export const canSee = (A, B) => {
 };
 
 // checks if o1 can see o2
-export const canAttack = (o1, o2) => {
+export const canAttack = (o1, o2, velocity = null) => {
+  
   // if o1 is colliding with o2
   if (
     o1.collider &&
@@ -108,22 +109,18 @@ export const canAttack = (o1, o2) => {
   ) {
     return true;
   } else {
-    // calculate velocity --> move based on collider size
-    var distance = getDistance(o2, o1);
-    let velocity = {
-      x: ((o2.x - o1.x) / distance) * o1.collider.width,
-      y: ((o2.y - o1.y) / distance) * o1.collider.height,
-    };
-
-    // update velocity if too small
-    velocity.x = Math.sign(velocity.x) * Math.max(5, Math.abs(velocity.x));
-    velocity.y = Math.sign(velocity.y) * Math.max(5, Math.abs(velocity.y));
-
+    if (!velocity) {
+      // calculate velocity --> move based on collider size
+      var distance = getDistance(o2, o1);
+      velocity = {x: (o2.x - o1.x) / distance * (o1.collider.width + 64), y: (o2.y - o1.y) / distance * (o1.collider.height + 64)};
+    }
+    
+    
     // create moved object version of first object
     let tempObject = {
       x: o1.x + velocity.x,
       y: o1.y + velocity.y,
-      collider: new Collider(o1.collider.width, o1.collider.height),
+      collider: o1.collider,
     };
 
     // if colliding with ANY platform
@@ -133,8 +130,8 @@ export const canAttack = (o1, o2) => {
       }
     }
 
-    // recursion
-    return canAttack(tempObject, o2);
+    // recursion 
+    return canAttack(tempObject, o2, velocity);
   }
 };
 

@@ -198,7 +198,7 @@ export class EarthGolem extends Actor {
     this.x += this.velocity.x * GAME_ENGINE.clockTick;
 
     for (let entity of GAME_ENGINE.entities) {
-      if (entity instanceof Tile && this.colliding(entity)) {
+      if (entity.isGround && this.colliding(entity)) {
         this.moveAgainstX(entity);
       }
     }
@@ -206,7 +206,7 @@ export class EarthGolem extends Actor {
     this.y += this.velocity.y * GAME_ENGINE.clockTick;
 
     for (let entity of GAME_ENGINE.entities) {
-      if (entity instanceof Tile && this.colliding(entity)) {
+      if (entity.isGround && this.colliding(entity)) {
         this.moveAgainstY(entity);
       }
     }

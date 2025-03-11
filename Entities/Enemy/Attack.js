@@ -86,6 +86,17 @@ export class Thorn extends Entity {
         this.removeFromWorld = true;
       }
     }
+
+    // for (let entity of GAME_ENGINE.entities) {
+    //   if (entity.collider && this.colliding(entity)) {
+    //     if (entity instanceof Player) {
+    //       entity.queueAttack({ damage: 20 });
+    //       this.removeFromWorld = true;
+    //     } else if (entity.isGround) {
+    //       this.removeFromWorld = true;
+    //     }
+    //   }
+    // }
   }
 }
 
@@ -126,7 +137,6 @@ export class Jaw extends Entity {
       damage: 20,
       x: this.x,
       y: this.y,
-      launchMagnitude: 100,
     });
 
     window.ASSET_MANAGER.playAsset("./assets/sfx/spider_attack.wav", 1);
