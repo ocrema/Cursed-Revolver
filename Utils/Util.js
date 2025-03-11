@@ -118,7 +118,7 @@ export const canAttack = (o1, o2) => {
     let tempObject = {
       x: o1.x + velocity.x,
       y: o1.y + velocity.y,
-      collider: new Collider(o1.collider.width, o1.collider.height),
+      collider: new Collider(o1.collider.width, o1.collider.height) /* o1.collider */,
     };
 
     // if colliding with ANY platform
