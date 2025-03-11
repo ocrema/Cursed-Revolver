@@ -213,12 +213,17 @@ export class Tilemap {
             tile.tileID != 6 &&
             tile.tileID != 75 &&
             tile.tileID != 76 &&
-            (tile.tileID > 101 || tile.tileID < 121)
+            tile.tileID < 101
           ) {
             window.SOLID_TILES.push(tile);
           }
 
-          if (tile.tileID == 6) {
+          if (
+            tile.tileID == 6 ||
+            tile.tileID == 75 ||
+            tile.tileID == 76 ||
+            (tile.tileID >= 101 && tile.tileID <= 121)
+          ) {
             GAME_ENGINE.addTile(tile);
           } else {
             GAME_ENGINE.addEntity(tile);

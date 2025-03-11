@@ -95,7 +95,7 @@ export class Map extends GameMap {
 
     // Add background
     const background = new Background(player);
-    GAME_ENGINE.addEntity(background);
+    GAME_ENGINE.addTile(background);
 
     window.PLAYER = player;
 
@@ -141,10 +141,9 @@ export class Map extends GameMap {
   }
 
   spawnEntities(gameMap, removeEntities = true) {
-
     if (removeEntities) {
       for (let e of GAME_ENGINE.entities) {
-        if ((e.isEnemy || e.isObject || e.isAttack)) {
+        if (e.isEnemy || e.isObject || e.isAttack) {
           e.removeFromWorld = true;
         }
       }
@@ -222,7 +221,6 @@ export class Map extends GameMap {
     }
     GAME_ENGINE.addEntity(new Wizard(31437, 2698));
 
-
     // Spawn enemies
     for (const key in enemyTypes) {
       const { method, entity, offsetY = 0 } = enemyTypes[key];
@@ -285,6 +283,9 @@ export class Map extends GameMap {
       this.spiderwebList[2].stageCleared();
     }
 
+    console.log(GAME_ENGINE.entities.length);
+    console.log(GAME_ENGINE.tiles.length);
+
     //this.spawnNextStageEnemies();
   }
 
@@ -336,7 +337,6 @@ export class Map extends GameMap {
       this.onStageCleared(this.currentStage);
     }
   }
-
 
   onStageCleared(stage) {
     console.log(`Stage ${stage} cleared.`);

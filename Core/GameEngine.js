@@ -244,12 +244,12 @@ export class GameEngine {
       this.height
     );
 
-    for (let i = 0; i < this.entities.length; i++) {
-      this.entities[i].draw(this.ctx);
-    }
-
     for (let i = 0; i < this.tiles.length; i++) {
       this.tiles[i].draw(this.ctx);
+    }
+
+    for (let i = 0; i < this.entities.length; i++) {
+      this.entities[i].draw(this.ctx);
     }
 
     if (this.debug_colliders) {
