@@ -212,3 +212,26 @@ export const handleTileCollisions = (entity) => {
     }
   }
 };
+
+export const isCollidingWithTile = (entity) => {
+  // Check the tiles at different points
+  let bottomTile = window.TILEMAP.getTileAt(
+    entity.x,
+    entity.y + entity.height / 2
+  ); // Bottom center
+  let leftTile = window.TILEMAP.getTileAt(
+    entity.x - entity.width / 2,
+    entity.y
+  ); // Left side
+  let rightTile = window.TILEMAP.getTileAt(
+    entity.x + entity.width / 2,
+    entity.y
+  ); // Right side
+
+  // Check if the entity is colliding with any of these tiles
+  return (
+    (bottomTile && entity.colliding(bottomTile)) ||
+    (leftTile && entity.colliding(leftTile)) ||
+    (rightTile && entity.colliding(rightTile))
+  );
+};
