@@ -134,7 +134,11 @@ export class HUD extends Entity {
   }
 
   displayFPS(ctx) {
+    if (!this.settings || !this.settings.showFPS) return; // Ensure settings exist
+    const customFont = ASSET_MANAGER.getAsset("./assets/fonts/texas.ttf");
     ctx.fillStyle = "white";
+    ctx.font = `20px ${customFont || "Arial"}`;
+    //ctx.font = "20px Arial";
     ctx.fillText(`FPS: ${GAME_ENGINE.fps}`, 100, 50);
   }
 
