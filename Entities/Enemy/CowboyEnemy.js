@@ -93,7 +93,7 @@ export class CowboyEnemy extends Actor {
     this.height = 110;
     this.scale = 3.25;
     this.speed = 200;
-    this.health = 80;
+    this.health = 100;
     this.maxHealth = this.health;
     this.fireRate = 2.5;
     this.attackCooldown = 0;

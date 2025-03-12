@@ -100,6 +100,8 @@ export class Crow extends Actor {
           this.isHurt = false;
           this.setAnimation(CROW_SPRITESHEET.FLY.NAME);
         }
+      } else {
+        //this.setAnimation(CROW_SPRITESHEET.DEATH.NAME, false);
       }
 
       this.attackCooldown -= GAME_ENGINE.clockTick;

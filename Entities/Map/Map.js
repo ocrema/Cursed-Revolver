@@ -220,7 +220,7 @@ export class Map extends GameMap {
         this.wizardTeleportPoints.push(points[i]);
       }
     }
-    GAME_ENGINE.addEntity(new Wizard(31437, 2698));
+    if (GAME_ENGINE.entities.filter(e => e.isWizard).length === 0) GAME_ENGINE.addEntity(new Wizard(31437, 2698));
 
     // Spawn enemies
     for (const key in enemyTypes) {
@@ -236,7 +236,7 @@ export class Map extends GameMap {
         enemy.stage = stage;
         enemy.onDeath = () => this.onEnemyDeath(enemy);
 
-        this.stageEnemyGroups[stage].add(enemy);
+        //this.stageEnemyGroups[stage].add(enemy);
         this.stageEnemyCounts[stage]++;
 
         //if (stage === 1) {
