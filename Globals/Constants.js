@@ -127,7 +127,7 @@ export const CROW_SPRITESHEET = {
     FRAME_WIDTH: 40,
     FRAME_HEIGHT: 40,
     FRAME_COUNT: 5,
-    FRAME_DURATION: 0.2,
+    FRAME_DURATION: 0.125,
   },
   ATTACK: {
     NAME: "CROWATTACK",
@@ -135,7 +135,7 @@ export const CROW_SPRITESHEET = {
     FRAME_WIDTH: 40,
     FRAME_HEIGHT: 40,
     FRAME_COUNT: 5,
-    FRAME_DURATION: 0.15,
+    FRAME_DURATION: 0.1,
   },
   HURT: {
     NAME: "CROWHURT",
@@ -453,4 +453,14 @@ export const UI_SPRITESHEET = {
     FRAME_COUNT: 20,
     FRAME_DURATION: 0.15,
   },
+};
+
+// Sign Text
+
+export const SIGN_TEXT = {
+  0: "I think he went this way...",
+  1: "I need to make sure the desert enemies are dead...",
+  2: "Only way forward is down...",
+  3: "Glad to see sunlight again...",
+  4: "I'm feenin for that drink bruh",
 };

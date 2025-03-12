@@ -40,7 +40,7 @@ export class WaterWave extends Entity {
     this.y += Math.sin(this.dir) * this.speed * GAME_ENGINE.clockTick;
 
     for (let e of GAME_ENGINE.entities) {
-      //if (e.isPlayer || e.isAttack) continue;
+      if (e.isPlayer || e.isAttack) continue;
 
       if (this.colliding(e) && !this.thingsHit.includes(e)) {
         if (e.isActor) {

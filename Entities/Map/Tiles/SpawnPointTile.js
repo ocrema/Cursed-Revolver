@@ -36,7 +36,7 @@ export class SpawnPointTile extends Tile {
 
     this.collider = new Collider(
       this.tileSize * this.scale * 4,
-      this.tileSize * this.scale * 3
+      this.tileSize * this.scale * 20
     );
 
     this.map = window.MAP;
@@ -50,7 +50,12 @@ export class SpawnPointTile extends Tile {
     const player = window.PLAYER;
 
     if (player) {
-      if (this.colliding(player) && !this.hasTriggered && GAME_ENGINE.entities.filter(e => e.isEnemy && e.x < this.x).length === 0) {
+      if (
+        this.colliding(player) &&
+        !this.hasTriggered &&
+        GAME_ENGINE.entities.filter((e) => e.isEnemy && e.x < this.x).length ===
+          0
+      ) {
         this.hasTriggered = true;
         console.log("Player hit checkpoint at " + this.x + " " + this.y);
         player.setSpawnPoint(this.x, this.y - player.collider.height / 2 - 1);

@@ -1,5 +1,6 @@
 import { Entity } from "../Entities/Entities.js";
 import { GAME_ENGINE } from "../main.js";
+import { Wizard } from "./Enemy/Wizard.js";
 
 export class HUD extends Entity {
   constructor(map) {
@@ -761,7 +762,7 @@ export class HUD extends Entity {
     let enemiesDead = true;
     for (let entity of GAME_ENGINE.entities) {
       // if an entity is an enemy and has more than 0 health
-      if (entity.isEnemy && entity.health > 0) {
+      if (entity.isWizard && entity.health > 0) {
         enemiesDead = false;
       }
     }

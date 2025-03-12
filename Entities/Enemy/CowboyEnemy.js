@@ -392,7 +392,7 @@ export class CowboyBullet extends Actor {
 
     this.isAttack = true;
     this.speed = 1000;
-    this.damage = 5;
+    this.damage = 30;
     this.removeFromWorld = false;
     this.assetManager = window.ASSET_MANAGER;
 

@@ -52,7 +52,7 @@ export class Player extends Actor {
 
     this.selectedSpell = 0;
     this.spellCooldowns = [0, 0, 0, 0, 0, 0];
-    this.maxSpellCooldown = 1;
+    this.maxSpellCooldown = 3.5;
     this.spellColors = [
       "orange",
       "limegreen",
@@ -74,7 +74,6 @@ export class Player extends Actor {
     this.wallGrabState = 0;
 
     this.jumpCooldown = 0;
-
     this.isGroundSlamming = false;
     this.groundSlamSpeed = 3000;
 
@@ -360,7 +359,7 @@ export class Player extends Actor {
           e.isWater
         )
           continue;
-
+        //if (e.isEnemy) console.log("NO ENEMIES" + e);
         if (this.colliding(e)) {
           hitSomething = true;
           this.moveAgainstX(e);

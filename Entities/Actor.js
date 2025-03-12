@@ -119,7 +119,7 @@ export class Actor extends Entity {
     }
     if (this.validEffects.shock && this.effects.shock > 0) {
       this.health -=
-        3 * GAME_ENGINE.clockTick * (this.effects.soaked > 0 ? 4 : 1);
+        3 * GAME_ENGINE.clockTick * (this.effects.soaked > 0 ? 5 : 1);
       this.effects.shock -= GAME_ENGINE.clockTick;
     }
     if (this.validEffects.soaked && this.effects.soaked > 0) {
@@ -135,7 +135,7 @@ export class Actor extends Entity {
       this.effects.stun -= GAME_ENGINE.clockTick;
     }
     if (this.validEffects.void && this.effects.void > 0) {
-      this.health -= 5 * GAME_ENGINE.clockTick;
+      this.health -= 3.5 * GAME_ENGINE.clockTick;
       this.effects.void -= GAME_ENGINE.clockTick;
     }
     if (this.validEffects.void_delay && this.effects.void_delay > 0) {

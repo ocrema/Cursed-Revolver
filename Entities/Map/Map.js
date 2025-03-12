@@ -67,9 +67,9 @@ export class Map extends GameMap {
     // GAME_ENGINE.addEntity(new Spider(23700, 4770));
     // GAME_ENGINE.addEntity(new Spider(23800, 4785));
     // GAME_ENGINE.addEntity(new Cactus(28025, 5153));
-    // GAME_ENGINE.addEntity(new Spider(23532, 4760));
-    // GAME_ENGINE.addEntity(new Spider(23542, 4760));
-    // GAME_ENGINE.addEntity(new Spider(23600, 4765));
+    // GAME_ENGINE.addEntity(new Spider(23532, 4160));
+    // GAME_ENGINE.addEntity(new Spider(23542, 4160));
+    // GAME_ENGINE.addEntity(new Spider(23600, 4165));
     // GAME_ENGINE.addEntity(new Spider(23700, 4770));
     // GAME_ENGINE.addEntity(new Spider(23800, 4785));
     // GAME_ENGINE.addEntity(new Cactus(28025, 5153));
@@ -90,9 +90,9 @@ export class Map extends GameMap {
     // Add player
     const player = new Player(playerSpawn.x, playerSpawn.y);
     GAME_ENGINE.addEntity(player);
-    for (let i = 0; i < 100; i++) {
-      GAME_ENGINE.addEntity(new Cactus(1600 + i * 5, 2000));
-    }
+    // for (let i = 0; i < 100; i++) {
+    //   GAME_ENGINE.addEntity(new Cactus(1600 + i * 5, 2000));
+    // }
 
     // Add background
     const background = new Background(player);
@@ -145,7 +145,7 @@ export class Map extends GameMap {
     if (removeEntities) {
       for (let e of GAME_ENGINE.entities) {
         if (e.isEnemy || e.isObject || e.isAttack) {
-          e.removeFromWorld = true;
+          //e.removeFromWorld = true;
         }
       }
     }
@@ -236,7 +236,7 @@ export class Map extends GameMap {
         enemy.stage = stage;
         enemy.onDeath = () => this.onEnemyDeath(enemy);
 
-        //this.stageEnemyGroups[stage].add(enemy);
+        this.stageEnemyGroups[stage].add(enemy);
         this.stageEnemyCounts[stage]++;
 
         //if (stage === 1) {
@@ -261,6 +261,7 @@ export class Map extends GameMap {
             this.boulderList.push(obj);
           } else if (obj instanceof SpiderWebObstacle) {
             this.spiderwebList.push(obj);
+            window.SOLID_TILES.push(obj);
           }
 
           GAME_ENGINE.addEntity(obj);

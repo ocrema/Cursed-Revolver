@@ -7,6 +7,8 @@ import { BackgroundTriggerTile } from "./Tiles/BackgroundTriggerTile.js";
 import { SpiderwebTile } from "./Tiles/SpiderwebTile.js";
 import { DeadTreeTile } from "./Tiles/DeadTreeTile.js";
 import { SpiderWebObstacle } from "../Objects/SpiderWebObstacle.js";
+import { SignTile } from "./Tiles/SignTile.js";
+import { SIGN_TEXT } from "../../Globals/Constants.js";
 
 export class Tilemap {
   constructor(
@@ -29,6 +31,7 @@ export class Tilemap {
     this.mapHeight = 0;
     this.tilesets = [];
     this.solidTiles = new Set(solidTileIDs);
+    this.signTextIndex = 0;
     this.scale = scale;
     this.cactusSpawnPoints = [];
     this.cowboySpawnPoints = [];
@@ -98,6 +101,7 @@ export class Tilemap {
   }
 
   generateTiles() {
+    let signTiles = [];
     for (let y = 0; y < this.mapHeight; y++) {
       for (let x = 0; x < this.mapWidth; x++) {
         let tileID = this.tiles[y * this.mapWidth + x];
@@ -123,7 +127,9 @@ export class Tilemap {
             case 102:
               tileClass = SaloonTile;
               break;
-
+            case 103:
+              tileClass = SignTile;
+              break;
             case 104:
               tileClass = TreeTile;
               break;
@@ -204,6 +210,11 @@ export class Tilemap {
             this.solidTiles,
             this.scale
           );
+
+          if (tile.tileID === 103) {
+            signTiles.push({ x: worldX, y: worldY, tile: tile });
+          }
+
           if (hideEnemySpawnPoints) {
             tile.entityOrder = -10000;
           }
@@ -220,10 +231,10 @@ export class Tilemap {
           }
 
           if (
-            tile.tileID == 6 ||
-            tile.tileID == 75 ||
-            tile.tileID == 76 ||
-            (tile.tileID >= 101 && tile.tileID <= 123)
+            tile.tileID == 6 || // interior 
+            tile.tileID == 75 || // water 
+            tile.tileID == 76 || // water 
+            (tile.tileID >= 101 && tile.tileID <= 123) // all spawnpoints/props/etc
           ) {
             GAME_ENGINE.addTile(tile);
           } else {
@@ -231,6 +242,12 @@ export class Tilemap {
           }
         }
       }
+      signTiles.sort((a, b) => a.x - b.x);
+
+      // Step 3: Assign sign texts sequentially
+      signTiles.forEach((signObj, index) => {
+        signObj.tile.signText = SIGN_TEXT[index] || "NOT WORK";
+      });
     }
   }
 
