@@ -32,10 +32,13 @@ export class VineGrapple extends Entity {
 
   update() {
     this.experationTimer -= GAME_ENGINE.clockTick;
-    if (this.experationTimer <= 0) this.removeFromWorld = true;
+    if (this.experationTimer <= 0) {
+      if (!this.isHit) this.shooter.spellCooldowns[1] = 0;
+      this.removeFromWorld = true;
+    }
     if (this.isHit) {
       this.shooter.queueAttack({
-        launchMagnitude: -10000 * GAME_ENGINE.clockTick,
+        launchMagnitude: -12000 * GAME_ENGINE.clockTick,
         x: this.x,
         y: this.y,
       });
@@ -52,6 +55,7 @@ export class VineGrapple extends Entity {
         this.experationTimer = 0.2;
         this.shooter.x_velocity = 0;
         this.shooter.y_velocity = 0;
+        //this.shooter.spellCooldowns[1] = this.shooter.maxSpellCooldown;
         break;
       }
     }

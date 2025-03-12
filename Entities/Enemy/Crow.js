@@ -82,6 +82,12 @@ export class Crow extends Actor {
 
     if (!this.isDead) {
       this.applyDamageLogic();
+
+      if (this.health <= 0) {
+        this.die();
+        return;
+      }
+
       if (this.effects.frozen > 0 || this.effects.stun > 0) return;
 
       if (this.directionX > 0) {
@@ -218,10 +224,7 @@ export class Crow extends Actor {
       this.setAnimation(CROW_SPRITESHEET.HURT.NAME);
       this.isHurt = true;
       this.hurtTimer = this.hurtDuration;
-    } else if (this.health <= 0) {
-      this.die();
-      return;
-    }
+    } 
     this.recieved_attacks = [];
   }
 
