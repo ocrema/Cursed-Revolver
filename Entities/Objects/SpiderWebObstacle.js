@@ -24,6 +24,7 @@ export class SpiderWebObstacle extends Actor {
     this.maxHealth = 50;
 
     this.scale = 14;
+    this.isGround = true;
 
     // Collider
     this.collider = new Collider(
