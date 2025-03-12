@@ -73,8 +73,8 @@ export class MainMenu extends Entity {
 
     //ctx.fillStyle = "gray";
     ctx.font = `165px title `;
-    
-    ctx.fillText(`CURSED REVOLVER`, -350, -100);
+    ctx.textAlign = "center";
+    ctx.fillText(`CURSED REVOLVER`, centerX, centerY-100);
 
     const buttonWidth = 280;
     const buttonHeight = 90;
