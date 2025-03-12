@@ -13,6 +13,7 @@ import {
   EFFECTS_SPRITESHEET,
   SPELLS_SPRITESHEET,
 } from "../../Globals/Constants.js";
+import { HUD } from "../HUD.js";
 
 export class Wizard extends Actor {
   constructor(x, y) {
@@ -93,6 +94,15 @@ export class Wizard extends Actor {
       this.animation = "death";
       this.currentFrame = 0;
       this.dead = true;
+      setTimeout(() => {
+        console.log('ending game')
+        for (let e of GAME_ENGINE.entities) {
+          if (e instanceof HUD) {
+            e.gamewon = true;
+            break;
+          }
+        }
+      }, 3000);
       return;
     }
 
