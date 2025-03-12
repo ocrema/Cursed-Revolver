@@ -35,7 +35,9 @@ export class SpiderWebObstacle extends Actor {
   }
 
   stageCleared() {
-    console.log("stage cleared, removing web obstacle at x: " + this.x + " y: " + this.y);
+    console.log(
+      "stage cleared, removing web obstacle at x: " + this.x + " y: " + this.y
+    );
     this.removeFromWorld = true;
   }
 

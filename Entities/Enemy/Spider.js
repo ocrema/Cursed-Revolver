@@ -244,7 +244,7 @@ export class Spider extends Actor {
 
     for (let entity of GAME_ENGINE.entities) {
       //if (entity instanceof SpiderWebObstacle) console.log("asudghausguih");
-      if (entity instanceof Tile && entity.isGround && this.colliding(entity)) {
+      if (entity.isGround && this.colliding(entity)) {
         if (this.velocity.y < 0) {
           //console.log(this.target);
           this.y = entity.y + entity.collider.height / 2 + this.height / 2;
@@ -261,7 +261,7 @@ export class Spider extends Actor {
     this.x += this.velocity.x * GAME_ENGINE.clockTick;
 
     for (let entity of GAME_ENGINE.entities) {
-      if (entity instanceof Tile && entity.isGround && this.colliding(entity)) {
+      if (entity.isGround && this.colliding(entity)) {
         let isSimilarY =
           this.y > entity.y - entity.collider.height &&
           this.y < entity.y + entity.collider.height;
@@ -289,11 +289,7 @@ export class Spider extends Actor {
       this.y += this.gravity * GAME_ENGINE.clockTick;
 
       for (let entity of GAME_ENGINE.entities) {
-        if (
-          entity instanceof Tile &&
-          entity.isGround &&
-          this.colliding(entity)
-        ) {
+        if (entity.isGround && this.colliding(entity)) {
           this.y = entity.y - entity.collider.height / 2 - this.height / 2;
           this.target.y = this.y;
         }

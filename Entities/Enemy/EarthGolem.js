@@ -20,7 +20,7 @@ export class EarthGolem extends Actor {
       128,
       90,
       5,
-      0.4
+      0.1
     );
 
     this.addAnimation(
@@ -29,7 +29,7 @@ export class EarthGolem extends Actor {
       384,
       90,
       8,
-      0.2
+      0.1
     );
 
     this.addAnimation(
@@ -55,7 +55,7 @@ export class EarthGolem extends Actor {
     this.attackRadius = 100; // Distance for attack
     this.attackCooldown = 0;
     this.attackRate = 4; // Time between attacks
-    this.walkTriggerDistance = 1000; // Distance to switch to walk
+    this.walkTriggerDistance = 3000; // Distance to switch to walk
     this.stompRadius = 100; // Distance to trigger stomp attack
 
     // **Movement**
@@ -63,7 +63,7 @@ export class EarthGolem extends Actor {
     this.aggroSpeed = 140;
     this.speed = 0; // Starts stationary
     this.gravity = 1000;
-    this.visualRadius = 1000;
+    this.visualRadius = 3000;
     this.target = { x: this.x, y: this.y };
 
     let distance = Util.getDistance(this, this.target);
