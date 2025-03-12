@@ -52,7 +52,7 @@ export class Player extends Actor {
 
     this.selectedSpell = 0;
     this.spellCooldowns = [0, 0, 0, 0, 0, 0];
-    this.maxSpellCooldown = 3;
+    this.maxSpellCooldown = 1.5;
     this.spellColors = [
       "orange",
       "limegreen",
