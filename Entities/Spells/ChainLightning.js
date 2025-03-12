@@ -27,7 +27,7 @@ export class ChainLightning extends Entity {
 
     if (this.debug) {
       this.chains = 8;
-      this.damage = 100;
+      this.damage = 200;
     }
     if (this.struck) {
       this.experationTimer -= GAME_ENGINE.clockTick;

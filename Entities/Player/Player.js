@@ -140,6 +140,7 @@ export class Player extends Actor {
       this.health = 1000000;
       this.jumpForce = -2100;
       this.speed = 2000;
+      this.maxSpellCooldown = 1;
     } else {
       this.speed = 600;
       this.jumpForce = -1500;

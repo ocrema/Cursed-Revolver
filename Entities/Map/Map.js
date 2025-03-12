@@ -48,12 +48,12 @@ export class Map extends GameMap {
   async load() {
     let playerSpawn;
     // saloon start
-    //playerSpawn = { x: 763, y: 1500 };
+    playerSpawn = { x: 763, y: 1500 };
 
     //second campfire on stage 1
     //playerSpawn = { x: 8001, y: 1104 };
     // underground start
-    playerSpawn = { x: 12400, y: 4000 };
+    //playerSpawn = { x: 12400, y: 4000 };
 
     // right before underground campfire at the end
     //playerSpawn = { x: 21000, y: 3000 };
@@ -145,7 +145,7 @@ export class Map extends GameMap {
     if (removeEntities) {
       for (let e of GAME_ENGINE.entities) {
         if (e.isEnemy || e.isObject || e.isAttack) {
-          //e.removeFromWorld = true;
+          e.removeFromWorld = true;
         }
       }
     }
