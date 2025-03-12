@@ -28,7 +28,7 @@ export class Spider extends Actor {
     this.scale = 0.35;
 
     // Health / Attack
-    this.health = 30;
+    this.health = 60;
     this.maxHealth = this.health;
     this.jaw = null;
     this.attackRadius = 200;
@@ -41,10 +41,10 @@ export class Spider extends Actor {
     this.randomRoamLength = [600, 800, 900, 1000, 1200, 1300];
     this.randomRunLength = [200, 550, 600, 700, 750];
 
-    this.walkSpeed = 350;
-    this.runSpeed = 900;
-    this.aggroSpeed = 700;
-    this.attackSpeed = 800;
+    this.walkSpeed = 450;
+    this.runSpeed = 1000;
+    this.aggroSpeed = 800;
+    this.attackSpeed = 900;
     this.speed = this.walkSpeed;
     this.gravity = 1300;
     this.turnTimer = 0;

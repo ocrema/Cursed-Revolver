@@ -44,9 +44,9 @@ export class EarthGolem extends Actor {
     this.setAnimation("idle");
 
     // **Golem Properties**
-    this.width = 140;
+    this.width = 240;
     this.height = 220;
-    this.scale = 2.5;
+    this.scale = 4.5;
     this.collider = new Collider(this.width, this.height);
 
     // **Health & Combat**
@@ -59,8 +59,8 @@ export class EarthGolem extends Actor {
     this.stompRadius = 100; // Distance to trigger stomp attack
 
     // **Movement**
-    this.walkSpeed = 80;
-    this.aggroSpeed = 120;
+    this.walkSpeed = 140;
+    this.aggroSpeed = 140;
     this.speed = 0; // Starts stationary
     this.gravity = 1000;
     this.visualRadius = 1000;
@@ -172,11 +172,11 @@ export class EarthGolem extends Actor {
             xDistance < this.stompRadius * 1.5 &&
             yDistance < this.height / 2
           ) {
-            entity.queueAttack({ damage: Math.min(80, entity.health) });
+            entity.queueAttack({ damage: Math.min(50, entity.health) });
           }
         }
       }
-    }, 600);
+    }, 400);
 
     setTimeout(() => {
       this.isStomping = false;
@@ -219,22 +219,42 @@ export class EarthGolem extends Actor {
   }
 
   draw(ctx) {
-    super.draw(ctx);
+    // super.draw(ctx);
 
-    // ctx.font = "bold 20px Arial";
-    // ctx.fillStyle = "white";
-    // ctx.textAlign = "center";
+    if (!this.currentAnimation) return;
 
-    // if (!this.isStomping) {
-    //   let stateText = this.seesPlayer ? "GRRRR" : "Zzz...";
-    //   ctx.fillText(stateText, this.x - GAME_ENGINE.camera.x + this.width / 2, this.y - GAME_ENGINE.camera.y - 10);
-    // }
+    const animation = this.animations[this.currentAnimation];
+    const { spritesheet, frameWidth, frameHeight } = animation;
 
-    // if (this.isStomping) {
-    //   ctx.font = "bold 30px Arial";
-    //   ctx.fillStyle = "red";
-    //   ctx.fillText("STOMP!", this.x - GAME_ENGINE.camera.x + this.width / 2, this.y - GAME_ENGINE.camera.y - 30);
-    // }
+    if (!spritesheet) return;
+
+    ctx.save(); // Save the current transformation state
+    ctx.translate(-GAME_ENGINE.camera.x, -GAME_ENGINE.camera.y);
+    // Apply horizontal flipping and scaling
+    if (this.flip) {
+      ctx.scale(-1, 1);
+      ctx.translate(-this.x * 2, 0);
+    }
+
+    ctx.translate(this.x, this.y - 32); // Move to the entity's position
+    ctx.scale(this.scale, this.scale); // Apply scaling factor
+
+    // Draw the current frame of the active animation
+    ctx.drawImage(
+      spritesheet,
+      this.currentFrame * frameWidth, // Source X
+      0, // Source Y (single row)
+      frameWidth, // Source Width
+      frameHeight, // Source Height
+      -frameWidth / 2, // Destination X (centered)
+      -frameHeight / 2, // Destination Y (centered)
+      frameWidth, // Destination Width
+      frameHeight // Destination Height
+    );
+
+    ctx.restore(); // Restore the transformation state
+    this.drawHealthBar(ctx);
+    this.drawEffects(ctx, 2);
   }
 
   die() {

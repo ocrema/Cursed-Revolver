@@ -59,7 +59,7 @@ export class Map extends GameMap {
     //playerSpawn = { x: 21000, y: 3000 };
 
     // spider pit start
-    //playerSpawn = { x: 23532, y: 4760 };
+    // playerSpawn = { x: 23532, y: 4760 };
 
     // GAME_ENGINE.addEntity(new Spider(23532, 4760));
     // GAME_ENGINE.addEntity(new Spider(23542, 4760));
