@@ -98,7 +98,7 @@ export class Wizard extends Actor {
         console.log('ending game')
         for (let e of GAME_ENGINE.entities) {
           if (e instanceof HUD) {
-            e.gamewon = true;
+            e.gameWon = true;
             break;
           }
         }
