@@ -5,7 +5,7 @@ export class MainMenu extends Entity {
     super();
     this.entityOrder = 99999999;
     this.isVisible = true;
-    this.menuOptions = ["Start Game", "Quit"];
+    this.menuOptions = ["Start Game", "Help", "Quit"];
     this.selectedOption = 0;
   }
 
@@ -25,7 +25,7 @@ export class MainMenu extends Entity {
     if (!this.isVisible) return;
 
     if (this.showHelp) {
-      if (GAME_ENGINE.keys["Escape"]) {
+      if (GAME_ENGINE.keys["Escape"] || GAME_ENGINE.keys["x"] ) {
         this.showHelp = false;
         GAME_ENGINE.keys["Escape"] = false;
       }
@@ -33,14 +33,15 @@ export class MainMenu extends Entity {
     }
 
     if (GAME_ENGINE.keys["ArrowUp"]) {
-      this.selectedOption = (this.selectedOption - 1 + 3) % 3;
+      this.selectedOption = (this.selectedOption - 1 + this.menuOptions.length) % this.menuOptions.length;
       GAME_ENGINE.keys["ArrowUp"] = false;
     }
-
+    
     if (GAME_ENGINE.keys["ArrowDown"]) {
-      this.selectedOption = (this.selectedOption + 1) % 3;
+      this.selectedOption = (this.selectedOption + 1) % this.menuOptions.length;
       GAME_ENGINE.keys["ArrowDown"] = false;
     }
+    
 
     if (GAME_ENGINE.keys["Enter"]) {
       this.executeSelectedOption();
@@ -72,15 +73,8 @@ export class MainMenu extends Entity {
 
     //ctx.fillStyle = "gray";
     ctx.font = `165px title `;
+    
     ctx.fillText(`CURSED REVOLVER`, -350, -100);
-
-    // const backgroundImage = ASSET_MANAGER.getAsset(
-    //   "./assets/ui/menu/background_start2.png"
-    // );
-
-    // if (backgroundImage) {
-    //   ctx.drawImage(backgroundImage, menuX, menuY, menuWidth, menuHeight);
-    // }
 
     const buttonWidth = 280;
     const buttonHeight = 90;
@@ -95,7 +89,7 @@ export class MainMenu extends Entity {
     const helpY = menuY + 340;
 
     if (this.showHelp) {
-      this.drawSettings(ctx, centerX, centerY);
+      this.drawHelp(ctx, centerX, centerY);
       return;
     }
 
@@ -116,11 +110,29 @@ export class MainMenu extends Entity {
       ctx.drawImage(startButton, startX, startY, buttonWidth, buttonHeight);
     }
 
+        // **Help Button**
+        const helpButton = ASSET_MANAGER.getAsset(
+          "./assets/ui/menu/buttonHelp.png"
+        );
+        if (helpButton) {
+          if (this.selectedOption === 1) {
+            ctx.strokeStyle = "yellow";
+            ctx.lineWidth = 5;
+            ctx.strokeRect(
+              helpX - 5,
+              helpY - 5,
+              buttonWidth + 10,
+              buttonHeight + 10
+            );
+          }
+          ctx.drawImage(helpButton, helpX, helpY, buttonWidth, buttonHeight);
+        }
+
     const quitButton = ASSET_MANAGER.getAsset(
       "./assets/ui/menu/buttonQuit.png"
     );
     if (quitButton) {
-      if (this.selectedOption === 1) {
+      if (this.selectedOption === 2) {
         ctx.strokeStyle = "yellow";
         ctx.lineWidth = 5;
         ctx.strokeRect(
@@ -133,26 +145,9 @@ export class MainMenu extends Entity {
       ctx.drawImage(quitButton, quitX, quitY, buttonWidth, buttonHeight);
     }
 
-    // **Help Button**
-    const helpButton = ASSET_MANAGER.getAsset(
-      "./assets/ui/menu/buttonHelp.png"
-    );
-    if (helpButton) {
-      if (this.selectedOption === 2) {
-        ctx.strokeStyle = "yellow";
-        ctx.lineWidth = 5;
-        ctx.strokeRect(
-          helpX - 5,
-          helpY - 5,
-          buttonWidth + 10,
-          buttonHeight + 10
-        );
-      }
-      ctx.drawImage(helpButton, helpX, helpY, buttonWidth, buttonHeight);
-    }
-
     ctx.restore();
   }
+
 
   handleClick(mouseX, mouseY) {
     if (!this.isVisible) return;
@@ -163,84 +158,186 @@ export class MainMenu extends Entity {
     const centerX = this.x / 2;
     const centerY = this.y / 2;
 
+    // Corrected menuY to match draw()
+    const menuHeight = 600;
+    const menuY = centerY - menuHeight / 2; // Same as draw()
+
+    // Use same Y positions as draw()
     const startX = centerX - buttonWidth / 2;
-    const startY = centerY + 230;
+    const startY = menuY + 230;
+
+    const helpX = centerX - buttonWidth / 2;
+    const helpY = menuY + 340;
 
     const quitX = centerX - buttonWidth / 2;
-    const quitY = centerY + 340;
+    const quitY = menuY + 450;
 
-    // Update selection if clicking on a button
+    // Check if "Start Game" is clicked
     if (
-      mouseX >= startX &&
-      mouseX <= startX + buttonWidth &&
-      mouseY >= startY &&
-      mouseY <= startY + buttonHeight
+        mouseX >= startX &&
+        mouseX <= startX + buttonWidth &&
+        mouseY >= startY &&
+        mouseY <= startY + buttonHeight
     ) {
-      this.selectedOption = 0; // "Start Game" is selected
+        this.selectedOption = 0;
+        this.executeSelectedOption();
     }
 
+    // Check if "Help" is clicked
     if (
-      mouseX >= quitX &&
-      mouseX <= quitX + buttonWidth &&
-      mouseY >= quitY &&
-      mouseY <= quitY + buttonHeight
+        mouseX >= helpX &&
+        mouseX <= helpX + buttonWidth &&
+        mouseY >= helpY &&
+        mouseY <= helpY + buttonHeight
     ) {
-      this.selectedOption = 1; // "Quit" is selected
+        this.selectedOption = 1;
+        this.executeSelectedOption();
     }
 
-    // Simulate pressing "Enter" after selecting
-    this.executeSelectedOption();
-  }
+    // Check if "Quit" is clicked
+    if (
+        mouseX >= quitX &&
+        mouseX <= quitX + buttonWidth &&
+        mouseY >= quitY &&
+        mouseY <= quitY + buttonHeight
+    ) {
+        this.selectedOption = 2;
+        this.executeSelectedOption();
+    }
+}
+
 
   executeSelectedOption() {
-    const selectedOption = this.selectedOption;
+    const selectedOption = this.menuOptions[this.selectedOption];
 
-    if (selectedOption === 0) {
-      this.hide();
-      document.getElementById("gameWorld").style.backgroundImage = "none";
-      GAME_ENGINE.startGame();
-    } else if (selectedOption === 1) {
-      window.location.reload();
-    } else if (selectedOption === 2) {
-      // Help option
-      this.showHelp = true;
+    if (selectedOption === "Start Game") {
+        this.hide();
+        document.getElementById("gameWorld").style.backgroundImage = "none";
+        GAME_ENGINE.startGame();
+    } else if (selectedOption === "Help") {
+        this.showHelp = true;
+    }  else if (selectedOption === "Quit") {
+       window.location.reload();
     }
   }
 
-  drawSettings(ctx, centerX, centerY) {
-    ctx.fillStyle = "rgba(0, 0, 0, 0.8)";
-    ctx.fillRect(centerX - 350, centerY - 200, 700, 400);
 
-    ctx.fillStyle = "white";
-    ctx.font = "30px Arial";
+  drawHelp(ctx, centerX, centerY) {
+    const canvasWidth = ctx.canvas.width;
+    const canvasHeight = ctx.canvas.height;
+
+    const menuWidth = 1000;
+    const menuHeight = 650;
+    const menuX = centerX - menuWidth / 2;
+    const menuY = centerY - menuHeight / 2;
+
+    // === Draw Full-Screen Purple Background ===
+    ctx.fillStyle = "rgba(131, 40, 153, 0.8)"; // Deep purple, semi-transparent
+    ctx.fillRect(-ctx.canvas.width*5, -ctx.canvas.width*5, ctx.canvas.width*1000, ctx.canvas.height*1000);
+
+    const customFont = ASSET_MANAGER.getAsset("./assets/fonts/texas.ttf");
+
+    // === Draw Help Menu Box ===
+    ctx.fillStyle = "rgba(131, 40, 153, 0.8)"; // Darker purple for contrast
+    ctx.fillRect(menuX, menuY, menuWidth, menuHeight);
+
+    ctx.strokeStyle = "#FFD700"; // Gold Border
+    //ctx.strokeStyle = "grey";
+    ctx.lineWidth = 4;
+    ctx.strokeRect(menuX, menuY, menuWidth, menuHeight);
+
+    // === Draw "HOW TO PLAY" Header ===
+    ctx.fillStyle = "#F1EDB3"; // Light gold text
+    ctx.font = `55px ${customFont || "Arial"}`; // Custom font or fallback
     ctx.textAlign = "center";
-    ctx.fillText("How to Play", centerX, centerY - 150);
+    ctx.fillText("HOW TO PLAY", centerX, menuY + 60);
 
-    ctx.font = "24px Arial";
+    // === Instructions (Two Equal Columns) ===
+    
+    ctx.font = `32px ${customFont || "Arial"}`;
+    ctx.fillStyle = "#F1EDB3";
     ctx.textAlign = "left";
 
     const tutorialText = [
-      "NOTE: Everything is unbalanced right now for development purposes",
-      "A  - Move Left",
-      "D  - Move Right",
-      "Space - Jump",
-      "Shift - Dash",
-      "Num Keys (1-6) - Switch Spells",
-      "Scroll wheel to switch spells",
-      "Click - Shoot",
-      "Cowboy Enemies drop health potions when killed",
-      "Tumbleweeds can be set on fire using fireball",
-      "Fireball detonates barrels",
-      "Water wave can grow trees",
-      "Campfires act as checkpoints - press H to respawn",
+        ["A / D", "Move Left / Right"],
+        ["Space", "Jump"],
+        ["Shift", "Dash"],
+        ["1 - 6", "Switch Spells"],
+        ["Scroll Wheel", "Switch Spells"],
+        ["Click", "Shoot"],
+        ["H", "Respawn at Campfire"],
+        ["Tumbleweeds", "Can be set on fire"],
+        ["Fireball", "Detonates barrels"],
+        ["Water Wave", "Grows trees"],
     ];
 
-    tutorialText.forEach((text, index) => {
-      ctx.fillText(text, centerX - 300, centerY - 100 + index * 35);
+    const columnWidth = menuWidth / 2 - 50; // Ensures equal column spacing
+    let leftX = menuX + 50;
+    let rightX = menuX + columnWidth + 70;
+    let textY = menuY + 120;
+    const rowSpacing = 40;
+    const keySpacing = 170; // Space between key and description
+    
+    tutorialText.forEach(([key, action], index) => {
+        const xPos = index < tutorialText.length / 2 ? leftX : rightX;
+        const yPos = textY + (index % (tutorialText.length / 2)) * rowSpacing;
+    
+        ctx.fillStyle = "#F1EDB3"; // SAME COLOR AS "HOW TO PLAY"
+        ctx.fillText(key, xPos, yPos);
+        ctx.fillText(action, xPos + keySpacing, yPos);
     });
 
-    ctx.font = "20px Arial";
-    ctx.fillStyle = "yellow";
-    ctx.fillText("Press ESC to return", centerX - 80, centerY + 240);
+    // === Draw "Spell Combos" Section Below Instructions ===
+    const spellComboY = menuY + 350; // Position spell combos below tutorial text
+    ctx.fillStyle = "#F1EDB3"; // Same color as title
+    ctx.font = `55px ${customFont || "Arial"}`;
+    ctx.textAlign = "center";
+    ctx.fillText("SPELL COMBOS", centerX, spellComboY);
+
+    ctx.font = `32px ${customFont || "Arial"}`;
+    ctx.textAlign = "left";
+
+    const spellCombos = {
+        fireball: [
+            { spell: "icicle", effect: "Temp Shock" },
+            { spell: "void", effect: "Explosion" },
+            { spell: "water", effect: "Extinguish" },
+        ],
+        icicle: [
+            { spell: "fireball", effect: "Temp Shock" },
+            { spell: "water", effect: "Longer Freeze" },
+        ],
+        water: [
+            { spell: "icicle", effect: "Longer Freeze" },
+            { spell: "lightning", effect: "Electrocute" },
+            { spell: "fire", effect: "Extinguish" },
+        ],
+        lightning: [
+            { spell: "water", effect: "Electrocute" },
+            { spell: "void", effect: "Explosion" },
+        ],
+        void: [
+            { spell: "fireball", effect: "Explosion" },
+            { spell: "lightning", effect: "Explosion" },
+        ],
+    };
+
+    let comboTextY = spellComboY + 50; // Start below the "SPELL COMBOS" title
+    Object.entries(spellCombos).forEach(([baseSpell, combos]) => {
+        let comboText = `${baseSpell.charAt(0).toUpperCase() + baseSpell.slice(1)}: `;
+        combos.forEach((combo, i) => {
+            comboText += `${combo.spell.charAt(0).toUpperCase() + combo.spell.slice(1)} → ${combo.effect}`;
+            if (i < combos.length - 1) comboText += ", ";
+        });
+
+        ctx.fillText(comboText, menuX + 50, comboTextY);
+        comboTextY += 35;
+    });    
+
+    // === Draw "ESC to exit" Below Instructions ===
+    ctx.font = `32px ${customFont || "Arial"}`;
+    ctx.fillStyle = "#F1EDB3";
+    ctx.textAlign = "center";
+    ctx.fillText("Press 'X' to close or 'ESC' to exit menu", centerX, menuY + menuHeight - 30);
   }
 }
