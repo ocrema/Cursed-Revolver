@@ -48,7 +48,7 @@ export class Map extends GameMap {
   async load() {
     let playerSpawn;
     // saloon start
-    //playerSpawn = { x: 763, y: 1500 };
+    playerSpawn = { x: 763, y: 1500 };
 
     //second campfire on stage 1
     //playerSpawn = { x: 8001, y: 1104 };
@@ -80,7 +80,7 @@ export class Map extends GameMap {
     // ascend start
     //playerSpawn = { x: 25918, y: 5100 };
     // boss arena spawn
-    playerSpawn = { x: 29000, y: 3015 };
+    //playerSpawn = { x: 29000, y: 3015 };
 
     // Add colliders for death zones
     GAME_ENGINE.addEntity(new DeathCollider(5000, 2233, 5700, 50));
