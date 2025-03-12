@@ -46,17 +46,17 @@ export class StaticCowboyEnemy extends Actor {
     this.width = 50;
     this.height = 110;
     this.scale = 3.25;
-    this.health = 80;
+    this.health = 200;
     this.maxHealth = this.health;
-    this.fireRate = 2.5;
+    this.fireRate = 1.25;
     this.attackCooldown = 0;
     this.isEnemy = true;
     this.flip = false; // False = facing right, True = facing left
 
     this.collider = new Collider(this.width, this.height - 20);
 
-    this.visualRadius = 700; // Detection range
-    this.attackRadius = 700; // Attack range (Same as visual range since it only shoots)
+    this.visualRadius = 1000; // Detection range
+    this.attackRadius = 1000; // Attack range (Same as visual range since it only shoots)
     this.seesPlayer = false;
     this.dead = false;
     this.isShooting = false; // Ensure this is initialized
@@ -92,7 +92,6 @@ export class StaticCowboyEnemy extends Actor {
         //console.log("Static Cowboy has died!");
         this.dead = true;
         this.setAnimation("death", false);
-        this.onDeath();
         return;
       }
 
@@ -118,7 +117,11 @@ export class StaticCowboyEnemy extends Actor {
       // }
 
       const player = window.PLAYER;
-      if (player && Util.canSee(this, player)) {
+      if (
+        player &&
+        Util.canSee(this, player)
+        //Util.canAttack(new CowboyBullet(this.x, this.y, player), player)
+      ) {
         this.seesPlayer = true;
         playerDetected = true;
         playerTarget = player;
@@ -135,6 +138,8 @@ export class StaticCowboyEnemy extends Actor {
       if (!playerDetected && !this.isShooting) {
         this.setAnimation("idle");
       }
+    } else {
+      this.setAnimation("death", false);
     }
 
     this.updateAnimation(GAME_ENGINE.clockTick);

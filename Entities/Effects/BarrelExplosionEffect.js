@@ -15,7 +15,7 @@ export class BarrelExplosionEffect extends Entity {
 
     // Explosion settings
     this.scale = scale;
-    this.damage = 15;
+    this.damage = 70;
     this.knockback = 3000;
     this.duration = 0.5;
     this.elapsedTime = 0;

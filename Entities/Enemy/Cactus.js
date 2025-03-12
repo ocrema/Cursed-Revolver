@@ -33,11 +33,11 @@ export class Cactus extends Actor {
     this.maxHealth = 50;
     this.fireRate = 1; // max time before attack
     this.attackTime = 0; // time since attack
-    this.thornMaxRange = 500; // distance thorn travels
+    this.thornMaxRange = 1100; // distance thorn travels
 
     // Movement
     this.collider = new Collider(this.width, this.height);
-    this.visualRadius = 400; // pixels away from center
+    this.visualRadius = 1000; // pixels away from center
 
     // Flags
     this.isEnemy = true;
@@ -160,9 +160,11 @@ export class Cactus extends Actor {
       if (
         this.attackTime > this.fireRate &&
         Util.canSee(this, player) &&
-        Util.canAttack(new Thorn(this.x, this.y, player, this.thornMaxRange), player)
-      )
-       {
+        Util.canAttack(
+          new Thorn(this.x, this.y, player, this.thornMaxRange),
+          player
+        )
+      ) {
         this.attackTime = 0;
         GAME_ENGINE.addEntity(
           new Thorn(this.x, this.y, player, this.thornMaxRange)

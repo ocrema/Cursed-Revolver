@@ -40,6 +40,7 @@ export class Map extends GameMap {
     this.enemySpawnData = { 1: [], 2: [], 3: [], 4: [], 5: [] };
     this.spiderwebList = [];
     this.spiderwebListIndex = 0;
+    window.ENEMY_LIST = [];
 
     return MAP;
   }
@@ -58,7 +59,7 @@ export class Map extends GameMap {
     //playerSpawn = { x: 21000, y: 3000 };
 
     // spider pit start
-    //playerSpawn = { x: 23532, y: 4760 };
+    // playerSpawn = { x: 23532, y: 4760 };
 
     // GAME_ENGINE.addEntity(new Spider(23532, 4760));
     // GAME_ENGINE.addEntity(new Spider(23542, 4760));
@@ -66,9 +67,9 @@ export class Map extends GameMap {
     // GAME_ENGINE.addEntity(new Spider(23700, 4770));
     // GAME_ENGINE.addEntity(new Spider(23800, 4785));
     // GAME_ENGINE.addEntity(new Cactus(28025, 5153));
-    // GAME_ENGINE.addEntity(new Spider(23532, 4760));
-    // GAME_ENGINE.addEntity(new Spider(23542, 4760));
-    // GAME_ENGINE.addEntity(new Spider(23600, 4765));
+    // GAME_ENGINE.addEntity(new Spider(23532, 4160));
+    // GAME_ENGINE.addEntity(new Spider(23542, 4160));
+    // GAME_ENGINE.addEntity(new Spider(23600, 4165));
     // GAME_ENGINE.addEntity(new Spider(23700, 4770));
     // GAME_ENGINE.addEntity(new Spider(23800, 4785));
     // GAME_ENGINE.addEntity(new Cactus(28025, 5153));
@@ -81,23 +82,21 @@ export class Map extends GameMap {
     // boss arena spawn
     //playerSpawn = { x: 29000, y: 3015 };
 
-    //GAME_ENGINE.addEntity(new Crow(26423, 2557));
-
     // Add colliders for death zones
-    GAME_ENGINE.addEntity(new DeathCollider(2233, 2233, 5000, 50));
+    GAME_ENGINE.addEntity(new DeathCollider(5000, 2233, 5700, 50));
     GAME_ENGINE.addEntity(new DeathCollider(12870, 4338, 8000, 50));
     GAME_ENGINE.addEntity(new DeathCollider(25028, 6914, 4000, 50));
 
     // Add player
     const player = new Player(playerSpawn.x, playerSpawn.y);
     GAME_ENGINE.addEntity(player);
-    for (let i = 0; i < 100; i++) {
-      GAME_ENGINE.addEntity(new Cactus(1600 + i * 5, 2000));
-    }
+    // for (let i = 0; i < 100; i++) {
+    //   GAME_ENGINE.addEntity(new Cactus(1600 + i * 5, 2000));
+    // }
 
     // Add background
     const background = new Background(player);
-    GAME_ENGINE.addEntity(background);
+    GAME_ENGINE.addTile(background);
 
     window.PLAYER = player;
 
@@ -137,11 +136,23 @@ export class Map extends GameMap {
     const gameMap = new Tilemap(mapFilePath, TILESET_IMAGES);
     await gameMap.load();
     GAME_ENGINE.addEntity(gameMap);
+    this.gamemap = gameMap;
 
     this.spawnEntities(gameMap);
   }
 
-  spawnEntities(gameMap) {
+  spawnEntities(gameMap, removeEntities = true) {
+    if (removeEntities) {
+      for (let e of GAME_ENGINE.entities) {
+        if (e.isEnemy || e.isObject || e.isAttack) {
+          //e.removeFromWorld = true;
+        }
+      }
+    }
+
+    this.stageEnemyCounts = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+    this.totalEnemies = 0;
+
     const enemyTypes = {
       Cactus: {
         method: gameMap.getCactusSpawnPoints,
@@ -203,11 +214,12 @@ export class Map extends GameMap {
       },
     };
 
-    const points = gameMap.getWizardTeleportPoints();
-    for (let i = 0; i < points.length; i++) {
-      this.wizardTeleportPoints.push(points[i]);
+    if (this.wizardTeleportPoints.length === 0) {
+      const points = gameMap.getWizardTeleportPoints();
+      for (let i = 0; i < points.length; i++) {
+        this.wizardTeleportPoints.push(points[i]);
+      }
     }
-
     GAME_ENGINE.addEntity(new Wizard(31437, 2698));
 
     // Spawn enemies
@@ -217,6 +229,7 @@ export class Map extends GameMap {
 
       for (let spawn of spawnPoints) {
         let stage = this.getStageFromPosition(spawn.x, spawn.y);
+        if (stage !== this.currentStage || window.PLAYER.x > spawn.x) continue;
 
         // Store enemy spawn data but only spawn stage 1 initially
         const enemy = new entity(spawn.x, spawn.y + offsetY);
@@ -226,30 +239,58 @@ export class Map extends GameMap {
         this.stageEnemyGroups[stage].add(enemy);
         this.stageEnemyCounts[stage]++;
 
-        if (stage === 1) {
-          this.totalEnemies++;
-          GAME_ENGINE.addEntity(enemy);
-        }
+        //if (stage === 1) {
+        this.totalEnemies++;
+        GAME_ENGINE.addEntity(enemy);
+        //}
       }
     }
 
     // Spawn objects
-    for (const key in objectTypes) {
-      const { method, entity, offsetY = 0, direction } = objectTypes[key];
-      const spawnPoints = method.call(gameMap);
+    if (removeEntities) {
+      this.boulderList = [];
+      this.spiderwebList = [];
+      for (const key in objectTypes) {
+        const { method, entity, offsetY = 0, direction } = objectTypes[key];
+        const spawnPoints = method.call(gameMap);
 
-      for (let spawn of spawnPoints) {
-        const obj = new entity(spawn.x, spawn.y + offsetY, direction);
+        for (let spawn of spawnPoints) {
+          const obj = new entity(spawn.x, spawn.y + offsetY, direction);
 
-        if (obj instanceof SpiderWebObstacle) {
-          this.spiderwebList.push(obj);
+          if (obj instanceof Boulder) {
+            this.boulderList.push(obj);
+          } else if (obj instanceof SpiderWebObstacle) {
+            this.spiderwebList.push(obj);
+            window.SOLID_TILES.push(obj);
+          }
+
+          GAME_ENGINE.addEntity(obj);
         }
-
-        GAME_ENGINE.addEntity(obj);
       }
     }
 
-    this.spawnNextStageEnemies();
+    this.spiderwebList.sort((a, b) => a.x - b.x);
+    //console.log(this.boulderList[0]);
+
+    if (this.currentStage > 1) {
+      this.boulderList[0].stageCleared();
+    }
+    if (this.currentStage > 2) {
+      this.spiderwebList[0].stageCleared();
+    }
+    if (this.currentStage > 3) {
+      this.spiderwebList[1].stageCleared();
+    }
+    if (this.currentStage > 4) {
+      this.spiderwebList[2].stageCleared();
+    }
+
+    console.log(
+      "Game Engine entity list length " + GAME_ENGINE.entities.length
+    );
+    console.log("Game Engine entity tiles length " + GAME_ENGINE.tiles.length);
+
+    //this.spawnNextStageEnemies();
   }
 
   getStageFromPosition(x, y) {
@@ -259,60 +300,71 @@ export class Map extends GameMap {
     if (x > 21095 && x < 24000 && y > 5000) return 4; // After SpiderWeb 2, before SpiderWeb 3
     return 5;
   }
-
-  spawnNextStageEnemies() {
-    let spawnCounter = 0;
-    console.log(`Spawning enemies for stage ${this.currentStage}.`);
-    const enemiesToSpawn = this.stageEnemyGroups[this.currentStage];
-
-    if (!enemiesToSpawn) return;
-
-    for (let enemy of enemiesToSpawn) {
-      spawnCounter++;
-      console.log(`Spawning enemy at ${enemy.x}, ${enemy.y}`);
-      GAME_ENGINE.addEntity(enemy);
-    }
-    console.log(`Total Spawned Enemy for stage: ${spawnCounter}`);
-  }
+  /*
+    spawnNextStageEnemies() {
+      let spawnCounter = 0;
+      console.log(`Spawning enemies for stage ${this.currentStage}.`);
+      const enemiesToSpawn = this.stageEnemyGroups[this.currentStage];
+  
+      if (!enemiesToSpawn) return;
+  
+      for (let enemy of enemiesToSpawn) {
+        spawnCounter++;
+        console.log(`Spawning enemy at ${enemy.x}, ${enemy.y}`);
+        GAME_ENGINE.addEntity(enemy);
+      }
+      console.log(`Total Spawned Enemy for stage: ${spawnCounter}`);
+    }*/
 
   onEnemyDeath(enemy) {
+    /*
     if (!enemy.stage) return;
 
-    const stageGroup = this.stageEnemyGroups[enemy.stage];
-    if (stageGroup.has(enemy)) {
-      stageGroup.delete(enemy);
-      this.stageEnemyCounts[enemy.stage]--; // Always sync with Set size
-      this.totalEnemies--;
+    //const stageGroup = this.stageEnemyGroups[enemy.stage];
+    //if (stageGroup.has(enemy)) {
+    //stageGroup.delete(enemy);
+    this.stageEnemyCounts[enemy.stage]--; // Always sync with Set size
+    this.totalEnemies--;
 
-      console.log(
-        `Enemy from stage ${enemy.stage} eliminated. Remaining: ${stageGroup.size}`
-      );
+    //console.log(
+    //  `Enemy from stage ${enemy.stage} eliminated. Remaining: ${stageGroup.size}`
+    //);
 
-      if (stageGroup.size === 0) {
-        this.onStageCleared(enemy.stage);
-      }
+    if (this.stageEnemyCounts[enemy.stage] === 0) {
+      this.onStageCleared(enemy.stage);
+    }*/
+
+    console.log("enemy killed: ", enemy);
+
+    this.totalEnemies--;
+    if (this.totalEnemies === 0) {
+      this.onStageCleared(this.currentStage);
     }
   }
 
   onStageCleared(stage) {
     console.log(`Stage ${stage} cleared.`);
 
+    /*
     if (stage === 1) {
       const boulder = GAME_ENGINE.entities.find((e) => e instanceof Boulder);
       if (boulder) {
         console.log("Stage 1 cleared, activating boulder.");
         boulder.stageCleared();
       }
-    } else {
-      console.log(this.spiderwebList[this.spiderwebListIndex]);
-      this.spiderwebList[this.spiderwebListIndex].stageCleared();
-      this.spiderwebListIndex++;
-    }
+    } else if (stage === 2) {
+      this.spiderwebList[0].stageCleared();
+      console.log('hai!!!')
+    } else if (stage === 3) {
+      this.spiderwebList[1].stageCleared();
+    } else if (stage === 4) {
+      this.spiderwebList[2].stageCleared();
+    }*/
 
     this.currentStage++;
 
     if (this.stageEnemyGroups[this.currentStage]) {
-      this.spawnNextStageEnemies();
+      this.spawnEntities(this.gamemap, false);
     } else {
       console.log("All stages cleared!");
     }

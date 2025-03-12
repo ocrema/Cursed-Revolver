@@ -23,9 +23,10 @@ export class Wizard extends Actor {
     this.width = 150;
     this.height = 200;
     this.scale = 3;
-    this.health = 500;
-    this.maxHealth = 500;
+    this.health = 300;
+    this.maxHealth = 300;
     this.isEnemy = true;
+    this.isWizard = true;
     this.flip = false; // False = facing right, True = facing left
     this.scale = 2.2;
     this.spell = 2;
@@ -42,6 +43,21 @@ export class Wizard extends Actor {
     for (let i = 0; i < mapPoints.length; i++) {
       this.locations.push(mapPoints[i]);
     }
+    this.locations.sort((a, b) => a.x - b.x);
+    let i;
+    if (this.locations.length % 2 === 0) {
+      if (
+        this.locations[Math.floor(this.locations.length / 2) - 1].y >
+        this.locations[Math.floor(this.locations.length / 2)].y
+      )
+        i = Math.floor(this.locations.length / 2);
+      else i = Math.floor(this.locations.length / 2) - 1;
+    } else {
+      i = Math.floor(this.locations.length / 2);
+    }
+    let temp = this.locations[i];
+    this.locations[i] = this.locations[0];
+    this.locations[0] = temp;
     //console.log("locations" + this.locations);
     this.locationIndex = -1;
     this.spritesheets = {
@@ -57,7 +73,7 @@ export class Wizard extends Actor {
     this.maxTeleportTime = 8;
 
     this.timeSinceAttack = 0;
-    this.maxAttackDelay = 3;
+    this.maxAttackDelay = 2.5;
   }
 
   update() {
@@ -95,7 +111,11 @@ export class Wizard extends Actor {
 
     // spawn in
     if (this.locationIndex === -1) {
-      if (Util.getDistance(this.locations[0], this.player) > 1000) return;
+      if (
+        Util.getDistance(this.locations[0], this.player) > 1000 ||
+        window.MAP.totalEnemies > 0
+      )
+        return;
 
       this.locationIndex = 0;
       this.x = this.locations[this.locationIndex].x;
@@ -321,7 +341,7 @@ class EvilFireballShower extends Entity {
     this.timeBetweenFireballs = 0.15;
     this.time = 0;
     this.speed = 1200;
-    this.numFireballs = 5;
+    this.numFireballs = 10;
     this.entityOrder = 2;
   }
   update() {

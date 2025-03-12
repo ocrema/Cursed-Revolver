@@ -80,8 +80,8 @@ export function getDirection(source, target, speed) {
   const distance = Math.sqrt(dx * dx + dy * dy);
 
   return {
-      x: (dx / distance) * speed,
-      y: (dy / distance) * speed
+    x: (dx / distance) * speed,
+    y: (dy / distance) * speed,
   };
 }
 
@@ -103,7 +103,10 @@ export const canSee = (A, B) => {
 export const canAttack = (o1, o2, velocity = null) => {
   
   // if o1 is colliding with o2
-  if(o1.collider && o1.collider.colliding(o1.x, o1.y, o2.collider, o2.x, o2.y)) {
+  if (
+    o1.collider &&
+    o1.collider.colliding(o1.x, o1.y, o2.collider, o2.x, o2.y)
+  ) {
     return true;
   } else {
     if (!velocity) {
@@ -122,9 +125,7 @@ export const canAttack = (o1, o2, velocity = null) => {
 
     // if colliding with ANY platform
     for (let entity of GAME_ENGINE.entities) {
-      if (entity.isGround &&
-        entity.colliding(tempObject)   
-      ) {
+      if (entity.isGround && entity.colliding(tempObject)) {
         return false;
       }
     }
@@ -132,12 +133,40 @@ export const canAttack = (o1, o2, velocity = null) => {
     // recursion 
     return canAttack(tempObject, o2, velocity);
   }
-}
+};
+
+export const isCollidingWithTile = (entity) => {
+  if (!window.TILEMAP || typeof window.TILEMAP.getTileAt !== "function") {
+    console.error("TILEMAP is not initialized or getTileAt() is undefined.");
+    return false;
+  }
+  // Check the tiles at different points
+  //console.log(window.TILEMAP);
+  let bottomTile = window.TILEMAP.getTileAt(
+    entity.x,
+    entity.y + entity.height / 2
+  ); // Bottom center
+  let leftTile = window.TILEMAP.getTileAt(
+    entity.x - entity.width / 2,
+    entity.y
+  ); // Left side
+  let rightTile = window.TILEMAP.getTileAt(
+    entity.x + entity.width / 2,
+    entity.y
+  ); // Right side
+
+  // Check if the entity is colliding with any of these tiles
+  return (
+    (bottomTile && entity.colliding(bottomTile)) ||
+    (leftTile && entity.colliding(leftTile)) ||
+    (rightTile && entity.colliding(rightTile))
+  );
+};
 
 /**
  * Distance From Camera Volume Multiplier
  * returns a value between 0 and 1 that represents how loud a sound should be based on distance from camera
- * use like this: 
+ * use like this:
  * window.ASSET_MANAGER.playAsset("./assets/sfx/lightning.wav", yourVolumeMult * Util.DFCVM(yourEntity));
  */
 export const DFCVM = (e) => {
@@ -148,4 +177,63 @@ export const DFCVM = (e) => {
   if (distance < maxVolumeDis) return 1;
   if (distance > minVolumeDis) return 0;
   return 1 - (distance - maxVolumeDis) / (minVolumeDis - maxVolumeDis);
-}
+};
+
+export const handleTileCollisions = (entity) => {
+  // **Check the tiles at different points**
+  let bottomTile = window.TILEMAP.getTileAt(
+    entity.x,
+    entity.y + entity.height / 2
+  ); // Bottom center
+  let leftTile = window.TILEMAP.getTileAt(
+    entity.x - entity.width / 2,
+    entity.y
+  ); // Left side
+  let rightTile = window.TILEMAP.getTileAt(
+    entity.x + entity.width / 2,
+    entity.y
+  ); // Right side
+
+  let tile = bottomTile || leftTile || rightTile; // Pick the most relevant tile
+  if (!tile) return;
+
+  if (entity.colliding(tile)) {
+    let entityBottom = entity.y + entity.height / 2;
+    let tileTop = tile.y - tile.collider.height / 2;
+
+    let entityLeft = entity.x - entity.width / 2;
+    let entityRight = entity.x + entity.width / 2;
+    let tileLeft = tile.x - tile.collider.width / 2;
+    let tileRight = tile.x + tile.collider.width / 2;
+
+    // **Bottom Collision (Ground)**
+    let collideBottom =
+      entityBottom > tileTop &&
+      entity.y < tileTop &&
+      entityRight > tileLeft &&
+      entityLeft < tileRight;
+
+    if (collideBottom) {
+      entity.y = tileTop - entity.height / 2;
+      entity.velocity.y = 0;
+    }
+
+    // **Side Collision (Left or Right)**
+    let collideLeft =
+      entityRight > tileLeft &&
+      entityLeft < tileLeft &&
+      entity.y + entity.height / 2 > tileTop;
+    let collideRight =
+      entityLeft < tileRight &&
+      entityRight > tileRight &&
+      entity.y + entity.height / 2 > tileTop;
+
+    if (collideLeft) {
+      entity.x = tileLeft - entity.width / 2;
+      entity.velocity.x = 0;
+    } else if (collideRight) {
+      entity.x = tileRight + entity.width / 2;
+      entity.velocity.x = 0;
+    }
+  }
+};

@@ -18,6 +18,7 @@ export class GrowingTree extends Entity {
     this.finalWidth = 50 * this.scale;
     this.finalHeight = 80 * this.scale;
     this.collider = new Collider(this.initWidth, this.initHeight * 2);
+    this.isObject = true;
   }
   update() {
     if (this.growing) {

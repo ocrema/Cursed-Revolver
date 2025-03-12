@@ -3,7 +3,7 @@ import { Collider } from "../Collider.js";
 import { GAME_ENGINE } from "../../main.js";
 import { CROW_SPRITESHEET } from "../../Globals/Constants.js";
 import * as Util from "../../Utils/Util.js";
-import { Jaw } from "./Attack.js";
+import { BirdJaw, Jaw } from "./Attack.js";
 import { AnimationLoader } from "../../Core/AnimationLoader.js";
 
 export class Crow extends Actor {
@@ -21,14 +21,14 @@ export class Crow extends Actor {
     this.width = 60;
     this.height = 40;
     this.scale = 7;
-    this.health = 60;
-    this.maxHealth = 60;
+    this.health = 80;
+    this.maxHealth = 80;
 
     // Movement
-    this.patrolSpeed = 150;
-    this.attackSpeed = 400;
-    this.retreatSpeed = 500;
-    this.patrolRange = 300;
+    this.patrolSpeed = 400;
+    this.attackSpeed = 800;
+    this.retreatSpeed = 800;
+    this.patrolRange = 600;
     this.startX = x;
     this.startY = y;
     this.direction = 1;
@@ -39,7 +39,7 @@ export class Crow extends Actor {
 
     // Attack Handling
     this.attackCooldown = 0;
-    this.attackRate = 3;
+    this.attackRate = 0.5;
     this.isAttacking = false;
     this.retreating = false;
     this.target = { x: this.x, y: this.y };
@@ -68,7 +68,10 @@ export class Crow extends Actor {
     this.deathTimer = 0;
 
     // Collider
-    this.collider = new Collider(this.width, this.height);
+    this.collider = new Collider(
+      (this.width * this.scale - 50) / 2,
+      (this.height * this.scale - 50) / 2
+    );
 
     // Flags
     this.isEnemy = true;
@@ -114,11 +117,7 @@ export class Crow extends Actor {
     if (this.state === this.states.PATROL) {
       this.patrol();
 
-      if (
-        this.attackCooldown <= 0 &&
-        Util.canSee(this, player) &&
-        Util.canAttack(this, player)
-      ) {
+      if (this.attackCooldown <= 0 && Util.canSee(this, player)) {
         console.log("Crow spotted the player! Preparing to attack!");
         this.startAttack(player);
       }
@@ -147,7 +146,7 @@ export class Crow extends Actor {
     this.target = { x: player.x, y: player.y + 50 };
 
     if (!this.jaw || this.jaw.removeFromWorld) {
-      this.jaw = new Jaw(this);
+      this.jaw = new BirdJaw(this);
       GAME_ENGINE.addEntity(this.jaw);
     }
 

@@ -1,5 +1,6 @@
 import { Entity } from "../Entities/Entities.js";
 import { GAME_ENGINE } from "../main.js";
+import { Wizard } from "./Enemy/Wizard.js";
 
 export class HUD extends Entity {
   constructor(map) {
@@ -140,6 +141,7 @@ export class HUD extends Entity {
   update() {
     if (this.mapReference) {
       this.playerCurrentStage = this.mapReference.currentStage;
+      /*
       if (this.playerCurrentStage === 1) {
         this.totalRemainingEnemies = this.mapReference.stageEnemyCounts[1];
       } else if (this.playerCurrentStage === 2) {
@@ -150,7 +152,9 @@ export class HUD extends Entity {
         this.totalRemainingEnemies = this.mapReference.stageEnemyCounts[4];
       } else {
         this.totalRemainingEnemies = this.mapReference.stageEnemyCounts[5];
-      }
+      }*/
+
+      this.totalRemainingEnemies = this.mapReference.totalEnemies;
     }
 
     //check that player exists
@@ -758,7 +762,7 @@ export class HUD extends Entity {
     let enemiesDead = true;
     for (let entity of GAME_ENGINE.entities) {
       // if an entity is an enemy and has more than 0 health
-      if (entity.isEnemy && entity.health > 0) {
+      if (entity.isWizard && entity.health > 0) {
         enemiesDead = false;
       }
     }

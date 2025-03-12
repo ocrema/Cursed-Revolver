@@ -36,7 +36,7 @@ export class Fireball extends Entity {
     );
 
     // TODO make this automatically scale with fireball sprite etc since it doesnt match up right now
-    this.collider = new Collider(35, 35);
+    this.collider = new Collider(55, 55);
 
     this.setAnimation(SPELLS_SPRITESHEET.FIREBALL.NAME, true);
   }
@@ -53,7 +53,8 @@ export class Fireball extends Entity {
     this.y += Math.sin(this.dir) * this.speed * GAME_ENGINE.clockTick;
 
     for (let e of GAME_ENGINE.entities) {
-      if (e.isPlayer || e.isAttack || e.isSpawnPoint || e.isBackgroundTrigger) continue;
+      if (e.isPlayer || e.isAttack || e.isSpawnPoint || e.isBackgroundTrigger)
+        continue;
 
       if (this.colliding(e)) {
         // ares moved explosion logic into this method
@@ -81,10 +82,10 @@ export class Fireball extends Entity {
     // Apply Damage / Effects
     for (let e2 of GAME_ENGINE.entities) {
       if (!e2.isActor) continue;
-      
+
       if (this.colliding(e2)) {
         e2.queueAttack({
-          damage: 10,
+          damage: 25,
           x: this.x,
           y: this.y,
           burn: 5,

@@ -52,7 +52,7 @@ export class Player extends Actor {
 
     this.selectedSpell = 0;
     this.spellCooldowns = [0, 0, 0, 0, 0, 0];
-    this.maxSpellCooldown = 1;
+    this.maxSpellCooldown = 3.5;
     this.spellColors = [
       "orange",
       "limegreen",
@@ -74,7 +74,6 @@ export class Player extends Actor {
     this.wallGrabState = 0;
 
     this.jumpCooldown = 0;
-
     this.isGroundSlamming = false;
     this.groundSlamSpeed = 3000;
 
@@ -131,6 +130,8 @@ export class Player extends Actor {
     this.gun_spin = null;
     this.x_velocity = 0;
     this.y_velocity = 0;
+    GAME_ENGINE.camera.x = this.x;
+    GAME_ENGINE.camera.y = this.y;
     //this.setSpawnPoint(this.x, this.y);
   }
 
@@ -203,6 +204,9 @@ export class Player extends Actor {
 
     this.recieveAttacks();
     this.recieveEffects();
+    if (GAME_ENGINE.keys["]"]) {
+      this.health = 0;
+    }
 
     if (this.health <= 0) {
       this.isDead = true;
@@ -355,7 +359,7 @@ export class Player extends Actor {
           e.isWater
         )
           continue;
-
+        //if (e.isEnemy) console.log("NO ENEMIES" + e);
         if (this.colliding(e)) {
           hitSomething = true;
           this.moveAgainstX(e);

@@ -28,7 +28,7 @@ export class Spider extends Actor {
     this.scale = 0.35;
 
     // Health / Attack
-    this.health = 30;
+    this.health = 60;
     this.maxHealth = this.health;
     this.jaw = null;
     this.attackRadius = 200;
@@ -41,10 +41,10 @@ export class Spider extends Actor {
     this.randomRoamLength = [600, 800, 900, 1000, 1200, 1300];
     this.randomRunLength = [200, 550, 600, 700, 750];
 
-    this.walkSpeed = 350;
-    this.runSpeed = 900;
-    this.aggroSpeed = 700;
-    this.attackSpeed = 800;
+    this.walkSpeed = 450;
+    this.runSpeed = 1000;
+    this.aggroSpeed = 800;
+    this.attackSpeed = 900;
     this.speed = this.walkSpeed;
     this.gravity = 1300;
     this.turnTimer = 0;
@@ -245,10 +245,8 @@ export class Spider extends Actor {
     let hitHead = false;
 
     for (let entity of GAME_ENGINE.entities) {
-      if (
-        entity.isGround &&
-        this.colliding(entity)
-      ) {
+      //if (entity instanceof SpiderWebObstacle) console.log("asudghausguih");
+      if (entity instanceof Tile && entity.isGround && this.colliding(entity)) {
         if (this.velocity.y < 0) {
           //console.log(this.target);
           this.y = entity.y + entity.collider.height / 2 + this.height / 2;
@@ -265,10 +263,7 @@ export class Spider extends Actor {
     this.x += this.velocity.x * GAME_ENGINE.clockTick;
 
     for (let entity of GAME_ENGINE.entities) {
-      if (
-        entity.isGround &&
-        this.colliding(entity)
-      ) {
+      if (entity instanceof Tile && entity.isGround && this.colliding(entity)) {
         let isSimilarY =
           this.y > entity.y - entity.collider.height &&
           this.y < entity.y + entity.collider.height;
@@ -296,10 +291,78 @@ export class Spider extends Actor {
 
       for (let entity of GAME_ENGINE.entities) {
         if (
-          (entity.isGround) &&
+          entity instanceof Tile &&
+          entity.isGround &&
           this.colliding(entity)
         ) {
           this.y = entity.y - entity.collider.height / 2 - this.height / 2;
+          this.target.y = this.y;
+        }
+      }
+    }
+  }
+
+  newmovement() {
+    let distance = Util.getDistance(this, this.target);
+    this.velocity = {
+      x: distance ? ((this.target.x - this.x) / distance) * this.speed : 0,
+      y: distance ? ((this.target.y - this.y) / distance) * this.speed : 0,
+    };
+
+    this.y += this.velocity.y * GAME_ENGINE.clockTick;
+
+    this.onGround = false;
+    this.onWall = false;
+
+    let hitHead = false;
+
+    //console.log(window.SOLID_TILES);
+
+    // **Iterate only through relevant solid tiles**
+    for (let tile of GAME_ENGINE.entities) {
+      if (this.colliding(tile) && tile.isGround) {
+        if (this.velocity.y < 0) {
+          this.y = tile.y + tile.collider.height / 2 + this.height / 2;
+          hitHead = true;
+        }
+        if (this.velocity.y > 0) {
+          this.y = tile.y - tile.collider.height / 2 - this.height / 2;
+          this.onGround = true;
+        }
+      }
+    }
+
+    this.x += this.velocity.x * GAME_ENGINE.clockTick;
+
+    for (let tile of GAME_ENGINE.entities) {
+      if (this.colliding(tile) && tile.isGround) {
+        let isSimilarY =
+          this.y > tile.y - tile.collider.height &&
+          this.y < tile.y + tile.collider.height;
+        this.onWall = true;
+
+        if (isSimilarY) {
+          if (this.velocity.x < 0) {
+            this.x = tile.x + tile.collider.width / 2 + this.width / 2;
+          } else if (this.velocity.x > 0) {
+            this.x = tile.x - tile.collider.width / 2 - this.width / 2;
+          }
+
+          if (!hitHead) {
+            this.target.y -= 100;
+          } else {
+            this.target.x = this.x * 2 - this.target.x;
+          }
+        }
+      }
+    }
+
+    if (!this.onGround && !this.onWall) {
+      this.y += this.gravity * GAME_ENGINE.clockTick;
+
+      for (let tile of GAME_ENGINE.entities) {
+        if (this.colliding(tile) && tile.isGround) {
+          this.y = tile.y - tile.collider.height / 2 - this.height / 2;
           this.target.y = this.y;
         }
       }

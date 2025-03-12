@@ -53,6 +53,7 @@ export class Tumbleweed extends Entity {
         this.scale *
         this.colliderScale
     );
+    this.isObject = true;
   }
 
   update() {
