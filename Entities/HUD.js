@@ -259,7 +259,7 @@ export class HUD extends Entity {
       const flashFrameIndex = Math.floor(
         ((this.spellAnimationTimer + this.attackAnimationTimer) /
           this.spellAnimationDuration) *
-        6
+          6
       );
       this.currentCowboyImage = `./assets/ui/cowboy_flash${Math.min(
         flashFrameIndex + 1,
@@ -419,11 +419,7 @@ export class HUD extends Entity {
             50
           );
         } else {
-          ctx.fillText(
-            `Break the Curse`,
-            canvasWidth - 20,
-            50
-          );
+          ctx.fillText(`Break the Curse`, canvasWidth - 20, 50);
         }
       }
 
@@ -544,8 +540,9 @@ export class HUD extends Entity {
       );
 
       const currentSpell = this.spells[this.activeSpellIndex];
-      const animatedIconPath = `./assets/ui/spells/${currentSpell.altName}/${currentSpell.altName
-        }${this.spellAnimationFrame + 1}.png`;
+      const animatedIconPath = `./assets/ui/spells/${currentSpell.altName}/${
+        currentSpell.altName
+      }${this.spellAnimationFrame + 1}.png`;
       const animatedSpellIcon = ASSET_MANAGER.getAsset(animatedIconPath);
 
       if (animatedSpellIcon) {
@@ -642,9 +639,9 @@ export class HUD extends Entity {
 
         this.updateGameOverScreen(ctx);
 
-        ctx.fillStyle = "rgb(22, 129, 0)";
+        ctx.fillStyle = "rgb(42, 214, 8)";
         ctx.font = `${canvasHeight * 0.12}px Texas, Arial`;
-        ctx.fillText("GAME WON", canvasWidth / 2, canvasHeight / 2);
+        ctx.fillText("DRINK ACQUIRED", canvasWidth / 2, canvasHeight / 2);
 
         ctx.font = `${canvasHeight * 0.04}px Texas, Arial`;
         ctx.fillText("Press R to Restart", canvasWidth / 2, canvasHeight / 1.5);

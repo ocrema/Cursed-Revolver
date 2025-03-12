@@ -24,6 +24,7 @@ export class Tile extends Entity {
     this.firstGID = firstGID;
     this.scale = scale; // Scale factor
     this.isGround = true;
+    //this.isBackground = false;
 
     // 6 is the like internal block
     // 74 is where the like grass blocks start
@@ -41,28 +42,30 @@ export class Tile extends Entity {
   }
 
   draw(ctx) {
-    if (
-      Math.abs(this.x - GAME_ENGINE.camera.x) > 1400 ||
-      Math.abs(this.y - GAME_ENGINE.camera.y) > 800
-    )
-      return;
-    if (!this.tilesetImage || this.tileID < this.firstGID) return;
+    if (!this.isBackgroundTrigger) {
+      if (
+        Math.abs(this.x - GAME_ENGINE.camera.x) > 1400 ||
+        Math.abs(this.y - GAME_ENGINE.camera.y) > 800
+      )
+        return;
+      if (!this.tilesetImage || this.tileID < this.firstGID) return;
 
-    let tileIndex = this.tileID - this.firstGID;
-    let tilesetX = (tileIndex % this.tilesPerRow) * this.tileSize;
-    let tilesetY = Math.floor(tileIndex / this.tilesPerRow) * this.tileSize;
+      let tileIndex = this.tileID - this.firstGID;
+      let tilesetX = (tileIndex % this.tilesPerRow) * this.tileSize;
+      let tilesetY = Math.floor(tileIndex / this.tilesPerRow) * this.tileSize;
 
-    // DO NOT TOUCH THESE VALUES - ARES
-    ctx.drawImage(
-      this.tilesetImage,
-      tilesetX,
-      tilesetY,
-      16,
-      16, // Source tile size (16x16)
-      this.x - GAME_ENGINE.camera.x - (this.scale * this.tileSize) / 2,
-      this.y - GAME_ENGINE.camera.y - (this.scale * this.tileSize) / 2,
-      this.tileSize * this.scale + 1,
-      this.tileSize * this.scale + 1 // Apply scaling
-    );
+      // DO NOT TOUCH THESE VALUES - ARES
+      ctx.drawImage(
+        this.tilesetImage,
+        tilesetX,
+        tilesetY,
+        16,
+        16, // Source tile size (16x16)
+        this.x - GAME_ENGINE.camera.x - (this.scale * this.tileSize) / 2,
+        this.y - GAME_ENGINE.camera.y - (this.scale * this.tileSize) / 2,
+        this.tileSize * this.scale + 1,
+        this.tileSize * this.scale + 1 // Apply scaling
+      );
+    }
   }
 }

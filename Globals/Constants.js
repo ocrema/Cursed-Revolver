@@ -462,5 +462,5 @@ export const SIGN_TEXT = {
   1: "I need to make sure the desert enemies are dead...",
   2: "Only way forward is down...",
   3: "Glad to see sunlight again...",
-  4: "I'm feenin for that drink bruh",
+  4: "Time to get my drink back...",
 };
