@@ -55,10 +55,14 @@ export class Actor extends Entity {
         } else if (k === "heal") {
           this.health += v;
         } else if (k === "launchMagnitude" && this.isLaunchable) {
-          const angle = Util.getAngle({ x: a.x, y: a.y }, this);
+          let angle;
+          if (a.dir) 
+            angle = a.dir;
+          else
+            angle = Util.getAngle({ x: a.x, y: a.y }, this);
           this.x_velocity += v * Math.cos(angle);
           this.y_velocity += v * Math.sin(angle);
-        } else if (k === "x" || k === "y") {
+        } else if (k === "x" || k === "y" || k === 'dir') {
         } else if (this.validEffects[k]) {
           this.effects[k] = Math.max(this.effects[k] || 0, v);
           if (k === "frozen")
