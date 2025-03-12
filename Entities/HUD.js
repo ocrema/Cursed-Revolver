@@ -153,8 +153,10 @@ export class HUD extends Entity {
 
   displayFPS(ctx) {
     if (!this.settings || !this.settings.showFPS) return; // Ensure settings exist
+    const customFont = ASSET_MANAGER.getAsset("./assets/fonts/texas.ttf");
     ctx.fillStyle = "white";
-    ctx.font = "20px Arial";
+    ctx.font = `20px ${customFont || "Arial"}`;
+    //ctx.font = "20px Arial";
     ctx.fillText(`FPS: ${GAME_ENGINE.fps}`, 100, 50);
   }
 
@@ -448,46 +450,46 @@ export class HUD extends Entity {
       ctx.textAlign = "center";
 
 
-// === Health Bar Setup ===
-const maxHealth = player.maxHealth;
-const currentHealth = Math.max(0, player.health);
-const healthRatio = currentHealth / maxHealth;
+      // === Health Bar Setup ===
+      const maxHealth = player.maxHealth;
+      const currentHealth = Math.max(0, player.health);
+      const healthRatio = currentHealth / maxHealth;
 
-// Determine health bar sprite index (0-48)
-const healthBarIndex = Math.min(62, Math.max(0, Math.floor(healthRatio * 62)));
+      // Determine health bar sprite index (0-48)
+      const healthBarIndex = Math.min(62, Math.max(0, Math.floor(healthRatio * 62)));
 
-// Get the correct health bar sprite
-const healthBarSprite = this.assetManager.getAsset(`./assets/ui/hbar${healthBarIndex}.png`);
+      // Get the correct health bar sprite
+      const healthBarSprite = this.assetManager.getAsset(`./assets/ui/hbar${healthBarIndex}.png`);
 
-// Define Health Bar Dimensions
-const healthBarHeight = canvasHeight * 0.3; // Adjust height based on screen
-const healthBarWidth = healthBarHeight * (500 / 1075); // Keep original aspect ratio
+      // Define Health Bar Dimensions
+      const healthBarHeight = canvasHeight * 0.3; // Adjust height based on screen
+      const healthBarWidth = healthBarHeight * (500 / 1075); // Keep original aspect ratio
 
-// Positioning the Health Bar (Right of Cowboy)
-const cowboySize = healthBarWidth * 4.7; // Cowboy should be smaller than health bar
-const cowboyX = canvasWidth * 0.02; // Cowboy stays at left
-const cowboyY = canvasHeight - cowboySize/2.0 ; // Keep cowboy near bottom
+      // Positioning the Health Bar (Right of Cowboy)
+      const cowboySize = healthBarWidth * 4.4; // Cowboy should be smaller than health bar
+      const cowboyX = canvasWidth * 0.02; // Cowboy stays at left
+      const cowboyY = canvasHeight - cowboySize/2.0 ; // Keep cowboy near bottom
 
-      // const cowboyX = canvasWidth * 0.02; // Move cowboy to the right
-      // const cowboyY = canvasHeight - cowboySize / 2.0; // Move cowboy lower
+            // const cowboyX = canvasWidth * 0.02; // Move cowboy to the right
+            // const cowboyY = canvasHeight - cowboySize / 2.0; // Move cowboy lower
 
-const healthBarX = cowboyX + cowboySize*0.5 ; // Place to the right of cowboy
-const healthBarY = cowboyY + cowboySize / 10 - healthBarHeight / 8; // Center it vertically
+      const healthBarX = cowboyX + cowboySize*0.5 ; // Place to the right of cowboy
+      const healthBarY = cowboyY + cowboySize / 10 - healthBarHeight / 5; // Center it vertically
 
-// === Draw "Health" Label Above the Bar ===
-ctx.fillStyle = this.healthFlashTimer > 0 ? "red" : "white";
-ctx.font = `${canvasHeight * 0.03}px Texas, Arial`;
-ctx.textAlign = "center";
-ctx.fillText(
-    `HP: ${Math.round(currentHealth)} / ${maxHealth}`,
-    healthBarX + healthBarWidth / 2,
-    healthBarY  // Move above the bar
-);
+      // === Draw "Health" Label Above the Bar ===
+      ctx.fillStyle = this.healthFlashTimer > 0 ? "red" : "white";
+      ctx.font = `${canvasHeight * 0.03}px Texas, Arial`;
+      ctx.textAlign = "center";
+      ctx.fillText(
+          `HP: ${Math.round(currentHealth)} / ${maxHealth}`,
+          healthBarX + healthBarWidth / 2,
+          healthBarY  // Move above the bar
+      );
 
-// === Draw Vertical Health Bar ===
-if (healthBarSprite) {
-    ctx.drawImage(healthBarSprite, healthBarX, healthBarY, healthBarWidth, healthBarHeight);
-}
+      // === Draw Vertical Health Bar ===
+      if (healthBarSprite) {
+          ctx.drawImage(healthBarSprite, healthBarX, healthBarY, healthBarWidth, healthBarHeight);
+      }
 
       // === Draw Cowboy Icon ===
       const cowboyImg = ASSET_MANAGER.getAsset(this.currentCowboyImage);
@@ -507,7 +509,7 @@ if (healthBarSprite) {
       const cylinderX = canvasWidth - cylinderSize - 25 * scaleFactor;
       const cylinderY = canvasHeight - cylinderSize - 25 * scaleFactor;
       //const spellTextX = cylinderX - 180 * scaleFactor;
-      const spellTextX = cylinderX - 300 * scaleFactor;
+      const spellTextX = cylinderX - 250 * scaleFactor;
       //const spellTextY = cylinderY + cylinderSize / 1.05;
       const spellTextY = (cylinderY-20)*1.05 ;
 
@@ -516,7 +518,7 @@ if (healthBarSprite) {
       ctx.fillStyle = "white";
       ctx.fillText(
         `Spell: ${this.spells[this.activeSpellIndex].name}`,
-        spellTextX,
+        spellTextX+50,
         spellTextY
       );
 
@@ -530,7 +532,7 @@ if (healthBarSprite) {
         const spellIconSize = 60 * scaleFactor;
         ctx.drawImage(
           animatedSpellIcon,
-          spellTextX + 90 * scaleFactor,
+          spellTextX+50 + 90 * scaleFactor,
           spellTextY - 50 * scaleFactor,
           spellIconSize,
           spellIconSize

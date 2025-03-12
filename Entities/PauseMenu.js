@@ -42,15 +42,30 @@ export class PauseMenu extends Entity {
       this.handleKeyState("ArrowDown", () => this.navigateSettings(1), now);
       this.handleKeyState("Enter", () => this.toggleSetting(), now);
       this.handleKeyState("Escape", () => (this.showSettingsMenu = false), now);
-      this.handleKeyState("x", () => (this.showSettingsMenu = false), now);
+      if (GAME_ENGINE.keys["x"] ) {
+        this.showSettingsMenu = false;
+        this.showHelpMenu = false;
+        this.pauseMenu = false;
+        GAME_ENGINE.keys["Escape"] = false;
+      }
+      //this.handleKeyState("x", () => (this.showSettingsMenu = false), now);
       return;
     }
 
+    // if (this.showHelpMenu) {
+    //   this.handleKeyState("Escape", () => (this.showHelpMenu = false), now);
+    //   this.handleKeyState("x", () => (this.showHelpMenu = false), now);
+    //   return;
+    // }
+
     if (this.showHelpMenu) {
-      this.handleKeyState("Escape", () => (this.showHelpMenu = false), now);
-      this.handleKeyState("x", () => (this.showHelpMenu = false), now);
+      if (GAME_ENGINE.keys["Escape"] || GAME_ENGINE.keys["x"] ) {
+        this.showHelpMenu = false;
+        GAME_ENGINE.keys["Escape"] = false;
+      }
       return;
     }
+
 
     this.handleKeyState("Escape", () => this.toggleVisibility(), now);
     this.handleKeyState("ArrowUp", () => this.navigateMenu(-1), now);
@@ -75,55 +90,7 @@ export class PauseMenu extends Entity {
     this.selectedSettingsOption = (this.selectedSettingsOption + direction + this.settingsOptions.length) % this.settingsOptions.length;
   }
   
-  // toggleSetting() {
-  //   const setting = this.settingsOptions[this.selectedSettingsOption];
-
-  //   if (setting === "Mute Music") {
-  //       this.gameController.settings.musicOn = !this.gameController.settings.musicOn;
-  //       ASSET_MANAGER.toggleMusicMute(!this.gameController.settings.musicOn);
-  //   } else if (setting === "Mute Sound Effects") {
-  //       this.gameController.settings.sfxOn = !this.gameController.settings.sfxOn;
-  //       ASSET_MANAGER.toggleMute(!this.gameController.settings.sfxOn);
-  //   } else if (setting === "Debug Mode") {
-  //       this.gameController.settings.debugMode = !this.gameController.settings.debugMode;
-  //   } 
-
-  //   this.gameController.applySettings();
-  // }
-
-//   toggleSetting() {
-//     const setting = this.settingsOptions[this.selectedSettingsOption];
-
-//     if (setting === "Mute Music") {
-//         this.gameController.settings.musicOn = !this.gameController.settings.musicOn;
-//         ASSET_MANAGER.toggleMusicMute(!this.gameController.settings.musicOn);
-//     } else if (setting === "Mute Sound Effects") {
-//         this.gameController.settings.sfxOn = !this.gameController.settings.sfxOn;
-//         ASSET_MANAGER.toggleMute(!this.gameController.settings.sfxOn);
-//     } else if (setting === "Debug Mode") {
-//         this.gameController.settings.debugMode = !this.gameController.settings.debugMode;
-//     } else if (setting === "FPS Display") { 
-//         this.gameController.settings.showFPS = !this.gameController.settings.showFPS;
-//     } 
-
-//     this.gameController.applySettings();
-// }
-
-// toggleSetting() {
-//   if (!this.gameController.settings) return;
-
-//   const setting = this.settingsOptions[this.selectedSettingsOption];
-
-//   if (setting === "Music") {
-//       this.gameController.toggleMusic();
-//   } else if (setting === "All Sounds") {
-//       this.gameController.toggleSFX();
-//   } else if (setting === "Debug Mode") {
-//       this.gameController.toggleDebug();
-//   } else if (setting === "FPS Display") {
-//       this.gameController.toggleFPS();
-//   }
-// }
+  
 
 toggleSetting() {
   if (!this.gameController.settings) return;
@@ -172,7 +139,7 @@ toggleSetting() {
 
     // === Draw Full-Screen Purple Background ===
     ctx.fillStyle = "rgba(131, 40, 153, 0.8)"; // Deep purple, semi-transparent
-    ctx.fillRect(-ctx.canvas.width*2, -ctx.canvas.width*2, ctx.canvas.width*1000, ctx.canvas.height*1000);
+    ctx.fillRect(-ctx.canvas.width*5, -ctx.canvas.width*5, ctx.canvas.width*1000, ctx.canvas.height*1000);
 
     const customFont = ASSET_MANAGER.getAsset("./assets/fonts/texas.ttf");
     // Draw "Pause Menu" header
@@ -225,7 +192,7 @@ toggleSetting() {
 
     // === Draw Full-Screen Purple Background ===
     ctx.fillStyle = "rgba(131, 40, 153, 0.8)"; // Deep purple, semi-transparent
-    ctx.fillRect(-ctx.canvas.width*2, -ctx.canvas.width*2, ctx.canvas.width*1000, ctx.canvas.height*1000);
+    ctx.fillRect(-ctx.canvas.width*5, -ctx.canvas.width*5, ctx.canvas.width*1000, ctx.canvas.height*1000);
 
     const customFont = ASSET_MANAGER.getAsset("./assets/fonts/texas.ttf");
 
