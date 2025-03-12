@@ -459,7 +459,7 @@ export const UI_SPRITESHEET = {
 
 export const SIGN_TEXT = {
   0: "I think he went this way...",
-  1: "I need to make sure the desert enemies are dead...",
+  1: "I wonder if I could grow this tree somehow...",
   2: "Only way forward is down...",
   3: "Glad to see sunlight again...",
   4: "Time to get my drink back...",

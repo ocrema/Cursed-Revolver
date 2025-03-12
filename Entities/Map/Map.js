@@ -56,7 +56,7 @@ export class Map extends GameMap {
     //playerSpawn = { x: 12400, y: 4000 };
 
     // right before underground campfire at the end
-    //playerSpawn = { x: 21000, y: 3000 };
+    //playerSpawn = { x: 19000, y: 3000 };
 
     // spider pit start
     //playerSpawn = { x: 23532, y: 4760 };
@@ -220,7 +220,8 @@ export class Map extends GameMap {
         this.wizardTeleportPoints.push(points[i]);
       }
     }
-    if (GAME_ENGINE.entities.filter(e => e.isWizard).length === 0) GAME_ENGINE.addEntity(new Wizard(31437, 2698));
+    if (GAME_ENGINE.entities.filter((e) => e.isWizard).length === 0)
+      GAME_ENGINE.addEntity(new Wizard(31437, 2698));
 
     // Spawn enemies
     for (const key in enemyTypes) {
