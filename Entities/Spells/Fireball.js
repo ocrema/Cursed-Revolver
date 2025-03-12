@@ -84,13 +84,23 @@ export class Fireball extends Entity {
       if (!e2.isActor) continue;
 
       if (this.colliding(e2)) {
-        e2.queueAttack({
-          damage: 25,
-          x: this.x,
-          y: this.y,
-          burn: 5,
-          launchMagnitude: 2500,
-        });
+        if (e2.isPlayer) {
+          e2.queueAttack({
+            damage: 5,
+            x: this.x,
+            y: this.y,
+            burn: 0,
+            launchMagnitude: 2500,
+          });
+        } else {
+          e2.queueAttack({
+            damage: 25,
+            x: this.x,
+            y: this.y,
+            burn: 5,
+            launchMagnitude: 2500,
+          });
+        }
       }
     }
 
