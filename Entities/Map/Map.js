@@ -145,7 +145,7 @@ export class Map extends GameMap {
     if (removeEntities) {
       for (let e of GAME_ENGINE.entities) {
         if (e.isEnemy || e.isObject || e.isAttack) {
-          e.removeFromWorld = true;
+          //e.removeFromWorld = true;
         }
       }
     }

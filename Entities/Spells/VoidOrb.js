@@ -18,7 +18,6 @@ export class VoidOrb extends Entity {
     this.isAttack = true;
     this.experationTimer = 5;
     this.spriteScale = 7;
-    this.dps = 10;
 
     window.ASSET_MANAGER.playAsset("./assets/sfx/void.wav", 1.5);
 
@@ -31,7 +30,7 @@ export class VoidOrb extends Entity {
       SPELLS_SPRITESHEET.VOIDORB.FRAME_DURATION
     );
     this.setAnimation(SPELLS_SPRITESHEET.VOIDORB.NAME, true);
-    this.collider = new Collider(400, 400);
+    this.collider = new Collider(315, 315);
 
     this.x += Math.cos(this.dir) * 100;
     this.y += Math.sin(this.dir) * 100;

@@ -151,3 +151,55 @@ export class Jaw extends Entity {
     this.removeFromWorld = true;
   }
 }
+
+export class BirdJaw extends Entity {
+  constructor(spider) {
+    super();
+    Object.assign(this, { spider });
+
+    this.x = this.spider.x;
+    this.y = this.spider.y;
+    this.collider = new Collider(115, 105);
+    this.elapsedTime = 0;
+    this.isAttack = true;
+  }
+
+  update() {
+    this.elapsedTime += GAME_ENGINE.clockTick;
+
+    if (this.spider.removeFromWorld) {
+      this.removeFromWorld = true;
+    }
+
+    // Update position relative to spider
+    this.x =
+      this.spider.x +
+      (this.spider.flip === 0 ? -this.spider.width / 2 : this.spider.width / 2);
+    this.y = this.spider.y;
+
+    const player = window.PLAYER;
+    if (player && this.colliding(player)) {
+      this.hitPlayer(player);
+    }
+  }
+
+  hitPlayer(player) {
+    // If jaw attack collides with player
+    player.queueAttack({
+      damage: 30,
+      x: this.x,
+      y: this.y,
+    });
+
+    window.ASSET_MANAGER.playAsset("./assets/sfx/spider_attack.wav", 1);
+
+    // Reset attack state and remove jaw
+    this.spider.attackCooldown = 0;
+    this.spider.jaw = null;
+    this.delete();
+  }
+
+  delete() {
+    this.removeFromWorld = true;
+  }
+}

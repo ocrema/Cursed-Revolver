@@ -36,7 +36,7 @@ export class Fireball extends Entity {
     );
 
     // TODO make this automatically scale with fireball sprite etc since it doesnt match up right now
-    this.collider = new Collider(35, 35);
+    this.collider = new Collider(55, 55);
 
     this.setAnimation(SPELLS_SPRITESHEET.FIREBALL.NAME, true);
   }
@@ -85,7 +85,7 @@ export class Fireball extends Entity {
 
       if (this.colliding(e2)) {
         e2.queueAttack({
-          damage: 20,
+          damage: 25,
           x: this.x,
           y: this.y,
           burn: 5,
