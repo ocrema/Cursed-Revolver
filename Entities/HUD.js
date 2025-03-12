@@ -259,7 +259,7 @@ export class HUD extends Entity {
       const flashFrameIndex = Math.floor(
         ((this.spellAnimationTimer + this.attackAnimationTimer) /
           this.spellAnimationDuration) *
-          6
+        6
       );
       this.currentCowboyImage = `./assets/ui/cowboy_flash${Math.min(
         flashFrameIndex + 1,
@@ -412,11 +412,19 @@ export class HUD extends Entity {
           50
         );
       } else {
-        ctx.fillText(
-          `Ascend Enemies Left: ${this.totalRemainingEnemies}`,
-          canvasWidth - 20,
-          50
-        );
+        if (this.totalRemainingEnemies !== 0) {
+          ctx.fillText(
+            `Ascend Enemies Left: ${this.totalRemainingEnemies}`,
+            canvasWidth - 20,
+            50
+          );
+        } else {
+          ctx.fillText(
+            `Break the Curse`,
+            canvasWidth - 20,
+            50
+          );
+        }
       }
 
       this.displayFPS(ctx);
@@ -536,9 +544,8 @@ export class HUD extends Entity {
       );
 
       const currentSpell = this.spells[this.activeSpellIndex];
-      const animatedIconPath = `./assets/ui/spells/${currentSpell.altName}/${
-        currentSpell.altName
-      }${this.spellAnimationFrame + 1}.png`;
+      const animatedIconPath = `./assets/ui/spells/${currentSpell.altName}/${currentSpell.altName
+        }${this.spellAnimationFrame + 1}.png`;
       const animatedSpellIcon = ASSET_MANAGER.getAsset(animatedIconPath);
 
       if (animatedSpellIcon) {
