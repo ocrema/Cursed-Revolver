@@ -24,6 +24,7 @@ export class SpiderWebObstacle extends Actor {
     this.maxHealth = 50;
 
     this.scale = 14;
+    this.isGround = true;
 
     // Collider
     this.collider = new Collider(
@@ -34,7 +35,9 @@ export class SpiderWebObstacle extends Actor {
   }
 
   stageCleared() {
-    console.log("stage cleared, removing web obstacle at x: " + this.x + " y: " + this.y);
+    console.log(
+      "stage cleared, removing web obstacle at x: " + this.x + " y: " + this.y
+    );
     this.removeFromWorld = true;
   }
 

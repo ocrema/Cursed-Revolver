@@ -48,18 +48,18 @@ export class Map extends GameMap {
   async load() {
     let playerSpawn;
     // saloon start
-    playerSpawn = { x: 763, y: 1500 };
+    //playerSpawn = { x: 763, y: 1500 };
 
     //second campfire on stage 1
     //playerSpawn = { x: 8001, y: 1104 };
     // underground start
-    //playerSpawn = { x: 12400, y: 4000 };
+    playerSpawn = { x: 12400, y: 4000 };
 
     // right before underground campfire at the end
     //playerSpawn = { x: 21000, y: 3000 };
 
     // spider pit start
-    // playerSpawn = { x: 23532, y: 4760 };
+    //playerSpawn = { x: 23532, y: 4760 };
 
     // GAME_ENGINE.addEntity(new Spider(23532, 4760));
     // GAME_ENGINE.addEntity(new Spider(23542, 4760));
@@ -78,14 +78,14 @@ export class Map extends GameMap {
     //playerSpawn = { x: 23532, y: 6000 };
 
     // ascend start
-    //playerSpawn = { x: 25918, y: 5100 };
+    playerSpawn = { x: 25918, y: 5100 };
     // boss arena spawn
     //playerSpawn = { x: 29000, y: 3015 };
 
     // Add colliders for death zones
     GAME_ENGINE.addEntity(new DeathCollider(5000, 2233, 5700, 50));
-    GAME_ENGINE.addEntity(new DeathCollider(12870, 4338, 8000, 50));
-    GAME_ENGINE.addEntity(new DeathCollider(25028, 6914, 4000, 50));
+    GAME_ENGINE.addEntity(new DeathCollider(12870, 4338, 14000, 50));
+    GAME_ENGINE.addEntity(new DeathCollider(27028, 6914, 4000, 50));
 
     // Add player
     const player = new Player(playerSpawn.x, playerSpawn.y);
@@ -261,7 +261,6 @@ export class Map extends GameMap {
             this.boulderList.push(obj);
           } else if (obj instanceof SpiderWebObstacle) {
             this.spiderwebList.push(obj);
-            window.SOLID_TILES.push(obj);
           }
 
           GAME_ENGINE.addEntity(obj);
