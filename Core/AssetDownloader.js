@@ -44,8 +44,8 @@ export class AssetDownloader {
     this.assetManager.queueDownload("./assets/player/Attack.png");
     this.assetManager.queueDownload("./assets/player/gun.png");
     this.assetManager.queueDownload("./assets/ui/aim.png");
-    this.assetManager.queueDownload("./assets/ui/healthbar.png");
-    for (let i = 0; i <= 48; i++) {
+    //this.assetManager.queueDownload("./assets/ui/healthbar.png");
+    for (let i = 0; i <= 62; i++) {
       this.assetManager.queueDownload(`./assets/ui/hbar${i}.png`);
     }
   }

@@ -5,13 +5,25 @@ export class HUD extends Entity {
   constructor(map, settings) {
     super();
     this.entityOrder = 9999;
-    this.healthBarWidthRatio = 0.31;
-    this.healthBarHeightRatio = 0.09;
-    this.healthBarWidthRatio = 0.2;
-    this.healthBarHeightRatio = 0.09;
+    this.healthBarWidthRatio = 0.01;
+    this.healthBarHeightRatio = 10;
     this.healthBarMarginRatio = 0.02;
     this.enemyHealthBarWidthRatio = 0.1; // smaller than player's
     this.enemyHealthBarHeightRatio = 0.02; // scaled height
+   
+   
+    // this.healthBarWidthRatio = 500 / 1075;  // Keep aspect ratio of health bar sprite
+    // this.healthBarHeightRatio = 0.25;       // Health bar height should be a significant fraction of screen
+    // this.healthBarMarginRatio = 0.02;       // Small margin between cowboy and health bar
+
+    // // Enemy Health Bar
+    // this.enemyHealthBarWidthRatio = 0.1;    // Smaller for enemies
+    // this.enemyHealthBarHeightRatio = 0.02;  // Scaled properly
+
+    this.debugMode = false;
+    this.assetManager = window.ASSET_MANAGER;
+
+
     this.debugMode = false;
     this.assetManager = window.ASSET_MANAGER;
 
@@ -435,54 +447,47 @@ export class HUD extends Entity {
         : `${canvasHeight * 0.03}px ${customFont || "Arial"}`;
       ctx.textAlign = "center";
 
-      // // === Health Bar Setup ===
-      //const healthBarSprite = this.assetManager.getAsset("./assets/ui/healthbar.png");
-      const maxHealth = player.maxHealth;
-      const currentHealth = Math.max(0, player.health);
-       const healthRatio = currentHealth / maxHealth;
-      // Determine health bar sprite index (0-13)
-      const healthBarIndex = Math.min(48, Math.max(0, Math.floor(healthRatio * 48)));
 
-      // Get the correct health bar sprite
-      const healthBarSprite = this.assetManager.getAsset(`./assets/ui/hbar${healthBarIndex}.png`);
+// === Health Bar Setup ===
+const maxHealth = player.maxHealth;
+const currentHealth = Math.max(0, player.health);
+const healthRatio = currentHealth / maxHealth;
 
-      const healthBarWidth = canvasWidth * this.healthBarWidthRatio;
-      const healthBarHeight = canvasHeight * this.healthBarHeightRatio;
-      const healthBarMargin = canvasHeight * this.healthBarMarginRatio;
-      const cowboySize = healthBarHeight * 5;
-      //const cowboySize = 200 ;
+// Determine health bar sprite index (0-48)
+const healthBarIndex = Math.min(62, Math.max(0, Math.floor(healthRatio * 62)));
 
-      const cowboyX = canvasWidth * 0.02; // Move cowboy to the right
-      const cowboyY = canvasHeight - cowboySize / 2.0; // Move cowboy lower
+// Get the correct health bar sprite
+const healthBarSprite = this.assetManager.getAsset(`./assets/ui/hbar${healthBarIndex}.png`);
 
-      const startX = cowboyX + cowboySize / 1.8; // Adjust horizontally
-      const startY = canvasHeight - healthBarHeight - healthBarMargin / 1.5; // Adjust vertically
+// Define Health Bar Dimensions
+const healthBarHeight = canvasHeight * 0.3; // Adjust height based on screen
+const healthBarWidth = healthBarHeight * (500 / 1075); // Keep original aspect ratio
 
-      // === Draw "Health" Label ===
-      ctx.fillStyle = this.healthFlashTimer > 0 ? "red" : "white";
-      ctx.font = `${canvasHeight * 0.03}px Texas, Arial`;
-      ctx.fillText(
-        `HP: ${Math.round(currentHealth)} / ${maxHealth}`,
-        startX + healthBarWidth/2,
-        startY - 2
-      );
-// === Draw Rotated Health Bar (90° Counterclockwise) ===
+// Positioning the Health Bar (Right of Cowboy)
+const cowboySize = healthBarWidth * 4.7; // Cowboy should be smaller than health bar
+const cowboyX = canvasWidth * 0.02; // Cowboy stays at left
+const cowboyY = canvasHeight - cowboySize/2.0 ; // Keep cowboy near bottom
+
+      // const cowboyX = canvasWidth * 0.02; // Move cowboy to the right
+      // const cowboyY = canvasHeight - cowboySize / 2.0; // Move cowboy lower
+
+const healthBarX = cowboyX + cowboySize*0.5 ; // Place to the right of cowboy
+const healthBarY = cowboyY + cowboySize / 10 - healthBarHeight / 8; // Center it vertically
+
+// === Draw "Health" Label Above the Bar ===
+ctx.fillStyle = this.healthFlashTimer > 0 ? "red" : "white";
+ctx.font = `${canvasHeight * 0.03}px Texas, Arial`;
+ctx.textAlign = "center";
+ctx.fillText(
+    `HP: ${Math.round(currentHealth)} / ${maxHealth}`,
+    healthBarX + healthBarWidth / 2,
+    healthBarY  // Move above the bar
+);
+
+// === Draw Vertical Health Bar ===
 if (healthBarSprite) {
-  ctx.save(); // Save current state
-
-  // Move the canvas origin to the correct position before rotation
-  ctx.translate(startX, startY + healthBarWidth/4); 
-
-  // Rotate the canvas by -90 degrees (counterclockwise)
-  ctx.rotate(-Math.PI / 2);
-
-  // Draw the health bar with proper scaling
-  ctx.drawImage(healthBarSprite, 0, 0, healthBarWidth, healthBarHeight);
-
-  ctx.restore(); // Restore original state
+    ctx.drawImage(healthBarSprite, healthBarX, healthBarY, healthBarWidth, healthBarHeight);
 }
-
-
 
       // === Draw Cowboy Icon ===
       const cowboyImg = ASSET_MANAGER.getAsset(this.currentCowboyImage);
