@@ -78,7 +78,7 @@ export class Map extends GameMap {
     //playerSpawn = { x: 23532, y: 6000 };
 
     // ascend start
-    playerSpawn = { x: 25918, y: 5100 };
+    //playerSpawn = { x: 25918, y: 5100 };
     // boss arena spawn
     //playerSpawn = { x: 29000, y: 3015 };
 
