@@ -1,5 +1,4 @@
 import { Actor } from "../Actor.js";
-//import { Platform } from "../Map/Platform.js";
 import { Player } from "../Player/Player.js";
 import { Jaw } from "./Attack.js";
 import * as Util from "../../Utils/Util.js";
@@ -49,6 +48,8 @@ export class Spider extends Actor {
     this.gravity = 1300;
     this.turnTimer = 0;
     this.turnBuffer = 1;
+    this.climbTimer = 0;
+    this.maxClimb = 1;
 
     this.visualRadius = 700;
     this.target = { x: this.x - 2000, y: this.y - 200 }; // target location of spider
@@ -66,6 +67,7 @@ export class Spider extends Actor {
   }
 
   update() {
+    let oldTarget = this.target;
     if (!this.dead) {
       // apply attack damage
       this.recieveAttacks();
@@ -75,14 +77,10 @@ export class Spider extends Actor {
 
       this.attackCooldown += GAME_ENGINE.clockTick;
 
-      this.onGround = false;
-      this.onWall = false;
-
-      // ares optimized here by not looping thru entities every time
       const player = window.PLAYER;
       if (
-        Util.canSee(this, window.PLAYER)
-        //Util.canAttack(this, window.PLAYER)
+        Util.canSee(this, window.PLAYER) &&
+        !this.onWall 
       ) {
         this.seesPlayer = true;
         if (
@@ -100,7 +98,7 @@ export class Spider extends Actor {
 
       // moves to target, deals with platform collision
       if (this.currentAnimation !== SPIDER_SPRITESHEET.IDLE.NAME) {
-        this.movement();
+        this.newmovement();
 
         // flip image according to velocity
         if (this.velocity.x < 0) {
@@ -268,6 +266,7 @@ export class Spider extends Actor {
           this.y > entity.y - entity.collider.height &&
           this.y < entity.y + entity.collider.height;
         this.onWall = true;
+
         if (isSimilarY) {
           if (this.velocity.x < 0 && isSimilarY) {
             this.x = entity.x + entity.collider.width / 2 + this.width / 2;
@@ -309,12 +308,8 @@ export class Spider extends Actor {
 
     this.onGround = false;
     this.onWall = false;
-
     let hitHead = false;
 
-    //console.log(window.SOLID_TILES);
-
-    // **Iterate only through relevant solid tiles**
     for (let tile of GAME_ENGINE.entities) {
       if (this.colliding(tile) && tile.isGround) {
         if (this.velocity.y < 0) {
