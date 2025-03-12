@@ -152,13 +152,40 @@ export class AssetManager {
     console.log('Playing track ' + this.musicTracks[i]);
   }
 
+  // toggleMusicMute(muted) {
+  //   this.musicMuted = muted;
+  //   if (this.musicMuted) {
+  //     this.cache[this.musicTracks[this.activeTrack]].pause();
+  //   } else {
+  //     this.cache[this.musicTracks[this.activeTrack]].play();
+  //   }
+  // }
+
   toggleMusicMute(muted) {
     this.musicMuted = muted;
-    if (this.musicMuted) {
-      this.cache[this.musicTracks[this.activeTrack]].pause();
-    } else {
-      this.cache[this.musicTracks[this.activeTrack]].play();
+    
+    const currentTrack = this.cache[this.musicTracks[this.activeTrack]];
+    
+    if (!currentTrack) {
+        console.warn("No music track loaded.");
+        return;
     }
+
+    if (this.musicMuted) {
+        currentTrack.pause(); // Stop music when muted
+    } else {
+        // Ensure the track is loaded before trying to play it
+        if (currentTrack.readyState >= 2) { // READY_STATE 2 = Can play
+            currentTrack.play().catch(error => console.warn("Music playback failed:", error));
+        } else {
+            currentTrack.addEventListener("canplaythrough", () => {
+                currentTrack.play().catch(error => console.warn("Music playback failed:", error));
+            }, { once: true }); // Run only once
+            console.warn("Music track not ready to play. Waiting...");
+        }
+    }
+
+    console.log(`Music Muted: ${this.musicMuted}`);
   }
 
 

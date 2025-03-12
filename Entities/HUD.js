@@ -2,12 +2,14 @@ import { Entity } from "../Entities/Entities.js";
 import { GAME_ENGINE } from "../main.js";
 
 export class HUD extends Entity {
-  constructor(map) {
+  constructor(map, settings) {
     super();
     this.entityOrder = 9999;
-    this.healthBarWidthRatio = 0.3;
-    this.healthBarHeightRatio = 0.03;
-    this.healthBarMarginRatio = 0.03;
+    this.healthBarWidthRatio = 0.31;
+    this.healthBarHeightRatio = 0.09;
+    this.healthBarWidthRatio = 0.2;
+    this.healthBarHeightRatio = 0.09;
+    this.healthBarMarginRatio = 0.02;
     this.enemyHealthBarWidthRatio = 0.1; // smaller than player's
     this.enemyHealthBarHeightRatio = 0.02; // scaled height
     this.debugMode = false;
@@ -131,7 +133,6 @@ export class HUD extends Entity {
     };
 
     this.availableCombos = [];
-
   }
 
   colliding() {
@@ -139,9 +140,12 @@ export class HUD extends Entity {
   }
 
   displayFPS(ctx) {
+    if (!this.settings || !this.settings.showFPS) return; // Ensure settings exist
     ctx.fillStyle = "white";
+    ctx.font = "20px Arial";
     ctx.fillText(`FPS: ${GAME_ENGINE.fps}`, 100, 50);
   }
+
 
   update() {
     if (this.mapReference) {
@@ -431,71 +435,54 @@ export class HUD extends Entity {
         : `${canvasHeight * 0.03}px ${customFont || "Arial"}`;
       ctx.textAlign = "center";
 
-      // === Health Bar Setup ===
+      // // === Health Bar Setup ===
+      //const healthBarSprite = this.assetManager.getAsset("./assets/ui/healthbar.png");
       const maxHealth = player.maxHealth;
       const currentHealth = Math.max(0, player.health);
+       const healthRatio = currentHealth / maxHealth;
+      // Determine health bar sprite index (0-13)
+      const healthBarIndex = Math.min(48, Math.max(0, Math.floor(healthRatio * 48)));
+
+      // Get the correct health bar sprite
+      const healthBarSprite = this.assetManager.getAsset(`./assets/ui/hbar${healthBarIndex}.png`);
+
       const healthBarWidth = canvasWidth * this.healthBarWidthRatio;
       const healthBarHeight = canvasHeight * this.healthBarHeightRatio;
       const healthBarMargin = canvasHeight * this.healthBarMarginRatio;
-      const cowboySize = healthBarHeight * 20;
+      const cowboySize = healthBarHeight * 5;
+      //const cowboySize = 200 ;
 
       const cowboyX = canvasWidth * 0.02; // Move cowboy to the right
       const cowboyY = canvasHeight - cowboySize / 2.0; // Move cowboy lower
 
-      const startX = cowboyX + cowboySize / 1.8; // Move health bar closer horizontally
-      const startY = canvasHeight - healthBarHeight - healthBarMargin / 1.5; // Move health bar closer vertically
+      const startX = cowboyX + cowboySize / 1.8; // Adjust horizontally
+      const startY = canvasHeight - healthBarHeight - healthBarMargin / 1.5; // Adjust vertically
 
-      // Health Ratio and Fill
-      const healthRatio = currentHealth / maxHealth;
-      const filledWidth = healthBarWidth * healthRatio;
-      let healthColor =
-        healthRatio > 0.5 ? "limegreen" : healthRatio > 0.2 ? "red" : "red";
-
-      // === Flash Effect When Hit ===
-      if (player.health < this.lastHealth) {
-        this.healthFlashTimer = this.healthFlashDuration;
-      }
-      this.lastHealth = player.health;
-
-      // === Create Gradient for HUD Background ===
-      const hudGradient = ctx.createLinearGradient(
-        0,
-        canvasHeight - 120,
-        0,
-        canvasHeight
-      );
-      hudGradient.addColorStop(0, "rgba(0, 0, 0, 0.01)"); // More transparent at top
-      hudGradient.addColorStop(1, "rgba(0, 0, 0, 0.8)"); // Darker at bottom
-
-      // === Draw Gradient HUD Background ===
-      ctx.fillStyle = hudGradient;
-      ctx.fillRect(0, canvasHeight - 120, canvasWidth, 120); // Covers bottom HUD area
-
-      // === Draw Purple Frame Around Health Bar ===
-      const framePadding = 4; // Thickness of frame
-      ctx.fillStyle = "rgba(179, 16, 179, 0.8)"; // Purple frame
-      ctx.fillRect(
-        startX - framePadding,
-        startY - framePadding,
-        healthBarWidth + framePadding * 2,
-        healthBarHeight + framePadding * 2
-      );
-
-      // === Draw Health Bar ===
-      ctx.fillStyle = "rgba(50, 50, 50, 0.8)"; // Background
-      ctx.fillRect(startX, startY, healthBarWidth, healthBarHeight);
-
-      ctx.fillStyle =
-        this.healthFlashTimer > 0 ? "rgba(255, 0, 0, 0.6)" : healthColor;
-      ctx.fillRect(startX, startY, filledWidth, healthBarHeight);
-
+      // === Draw "Health" Label ===
       ctx.fillStyle = this.healthFlashTimer > 0 ? "red" : "white";
       ctx.font = `${canvasHeight * 0.03}px Texas, Arial`;
       ctx.fillText(
         `HP: ${Math.round(currentHealth)} / ${maxHealth}`,
-        startX + healthBarWidth / 2,
-        startY - 5
+        startX + healthBarWidth/2,
+        startY - 2
       );
+// === Draw Rotated Health Bar (90° Counterclockwise) ===
+if (healthBarSprite) {
+  ctx.save(); // Save current state
+
+  // Move the canvas origin to the correct position before rotation
+  ctx.translate(startX, startY + healthBarWidth/4); 
+
+  // Rotate the canvas by -90 degrees (counterclockwise)
+  ctx.rotate(-Math.PI / 2);
+
+  // Draw the health bar with proper scaling
+  ctx.drawImage(healthBarSprite, 0, 0, healthBarWidth, healthBarHeight);
+
+  ctx.restore(); // Restore original state
+}
+
+
 
       // === Draw Cowboy Icon ===
       const cowboyImg = ASSET_MANAGER.getAsset(this.currentCowboyImage);
@@ -611,52 +598,54 @@ export class HUD extends Entity {
       }
 
       // === Display Combo Hints (Properly Scaled & Positioned) ===
-      const comboFontSize = canvasHeight * 0.022; // Slightly smaller text for better spacing
-      ctx.fillStyle = "white";
-      ctx.textAlign = "left"; // Align text properly
+      if(this.spells[this.activeSpellIndex].name != "Vine Grapple" ){
+        const comboFontSize = canvasHeight * 0.022; // Slightly smaller text for better spacing
+        ctx.fillStyle = "white";
+        ctx.textAlign = "left"; // Align text properly
 
-      // Positioning
-      const comboStartX = spellTextX; // Align "+" properly with title
-      //const comboStartY = spellTextY + 40 * scaleFactor; // Slightly below spell name
-      //const comboStartY = startY + 15 + healthBarHeight + (spellTextY - startY - healthBarHeight - 50) / 2;
-      const comboStartY = spellTextY + 33 ;
+        // Positioning
+        const comboStartX = spellTextX; // Align "+" properly with title
+        //const comboStartY = spellTextY + 40 * scaleFactor; // Slightly below spell name
+        //const comboStartY = startY + 15 + healthBarHeight + (spellTextY - startY - healthBarHeight - 50) / 2;
+        const comboStartY = spellTextY + 33 ;
 
-      // Display Title
-      ctx.fillText("Possible Combos:", comboStartX, comboStartY);
+        // Display Title
+        ctx.fillText("Possible Combos:", comboStartX, comboStartY);
 
-      // Define icon size & spacing
-      const iconSize = 30 * scaleFactor;  // Slightly smaller spell icons
-      const lineSpacing = 35 * scaleFactor;  // Reduced spacing for compact display
+        // Define icon size & spacing
+        const iconSize = 30 * scaleFactor;  // Slightly smaller spell icons
+        const lineSpacing = 35 * scaleFactor;  // Reduced spacing for compact display
 
-      // Draw each combo with animation
-      this.availableCombos.forEach((combo, index) => {
-          if (combo.spell && combo.effect) { 
-              const spellData = this.spells.find(spell => spell.altName === combo.spell);
+        // Draw each combo with animation
+        this.availableCombos.forEach((combo, index) => {
+            if (combo.spell && combo.effect) { 
+                const spellData = this.spells.find(spell => spell.altName === combo.spell);
 
-              if (spellData) {
-                  // Use the animated spell icon
-                  const animatedIconPath = `./assets/ui/spells/${spellData.altName}/${spellData.altName}${this.spellAnimationFrame + 1}.png`;
-                  const animatedSpellIcon = ASSET_MANAGER.getAsset(animatedIconPath);
-                  
-                  if (animatedSpellIcon) {
-                      // Draw "+" aligned with title
-                      ctx.fillText("+", comboStartX, comboStartY + (index + 1) * lineSpacing);
+                if (spellData) {
+                    // Use the animated spell icon
+                    const animatedIconPath = `./assets/ui/spells/${spellData.altName}/${spellData.altName}${this.spellAnimationFrame + 1}.png`;
+                    const animatedSpellIcon = ASSET_MANAGER.getAsset(animatedIconPath);
+                    
+                    if (animatedSpellIcon) {
+                        // Draw "+" aligned with title
+                        ctx.fillText("+", comboStartX, comboStartY + (index + 1) * lineSpacing);
 
-                      // Draw spell icon next to "+"
-                      ctx.drawImage(
-                          animatedSpellIcon, 
-                          comboStartX + 15 * scaleFactor, 
-                          comboStartY + (index + 1) * lineSpacing - iconSize / 2 - (15 * scaleFactor), 
-                          iconSize, 
-                          iconSize
-                      );
+                        // Draw spell icon next to "+"
+                        ctx.drawImage(
+                            animatedSpellIcon, 
+                            comboStartX + 15 * scaleFactor, 
+                            comboStartY + (index + 1) * lineSpacing - iconSize / 2 - (15 * scaleFactor), 
+                            iconSize, 
+                            iconSize
+                        );
 
-                      // Draw "-> Effect" aligned with icon
-                      ctx.fillText(`-> ${combo.effect}`, comboStartX + 55 * scaleFactor, comboStartY + (index + 1) * lineSpacing);
-                  }
-              }
-          }
-      });
+                        // Draw "-> Effect" aligned with icon
+                        ctx.fillText(`-> ${combo.effect}`, comboStartX + 55 * scaleFactor, comboStartY + (index + 1) * lineSpacing);
+                    }
+                }
+            }
+        });
+    }
 
       // === Game Win Screen ===
 

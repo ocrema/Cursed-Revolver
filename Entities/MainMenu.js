@@ -72,6 +72,7 @@ export class MainMenu extends Entity {
 
     //ctx.fillStyle = "gray";
     ctx.font = `165px title `;
+    
     ctx.fillText(`CURSED REVOLVER`, -350, -100);
 
     // const backgroundImage = ASSET_MANAGER.getAsset(
