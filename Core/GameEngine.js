@@ -244,6 +244,8 @@ export class GameEngine {
       this.height
     );
 
+    
+
     for (let i = 0; i < this.tiles.length; i++) {
       this.tiles[i].draw(this.ctx);
     }

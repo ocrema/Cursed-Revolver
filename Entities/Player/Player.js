@@ -359,7 +359,7 @@ export class Player extends Actor {
           e.isWater
         )
           continue;
-
+        //if (e.isEnemy) console.log("NO ENEMIES" + e);
         if (this.colliding(e)) {
           hitSomething = true;
           this.moveAgainstX(e);

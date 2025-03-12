@@ -29,7 +29,7 @@ export class SignTile extends Tile {
     this.showText = false;
     this.textAlpha = 0; // For fade-in effect
     this.player = null;
-    this.customFont = ASSET_MANAGER.getAsset("./assets/fonts/texas.ttf");
+    this.signText = "PLACEHOLDER";
 
     this.collider = new Collider(
       this.tileSize * this.scale * 4,
@@ -71,7 +71,7 @@ export class SignTile extends Tile {
       63 * this.scale // Apply scaling
     );
 
-    if (this.showText) this.drawText(ctx, "I think he went this way...");
+    if (this.showText) this.drawText(ctx, this.signText);
   }
 
   drawText(ctx, message, player) {
@@ -97,7 +97,7 @@ export class SignTile extends Tile {
     let textX = playerCenterX - textWidth / 2;
 
     // Draw background box with slight transparency
-    ctx.fillStyle = `rgba(0, 0, 0, ${this.textAlpha * 0.2})`; // Less dark background
+    ctx.fillStyle = `rgba(0, 0, 0, 0)`; // Less dark background
     ctx.fillRect(textX - padding, textY - textHeight, textWidth, textHeight);
 
     // Draw text outline for readability
