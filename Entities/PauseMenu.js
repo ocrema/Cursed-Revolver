@@ -149,7 +149,7 @@ export class PauseMenu extends Entity {
     ctx.fillStyle = "#F1EDB3";
     ctx.font = `69px ${customFont || "Arial"}`; // Use custom font
     ctx.textAlign = "center";
-    ctx.fillText("Pause Menu", centerX, menuY + 50);
+    ctx.fillText("Paused", centerX, menuY + 50);
 
     // Define button positions dynamically
     this.buttonPositions = this.menuOptions.reduce((positions, label, index) => {
