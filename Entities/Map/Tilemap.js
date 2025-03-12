@@ -7,6 +7,7 @@ import { BackgroundTriggerTile } from "./Tiles/BackgroundTriggerTile.js";
 import { SpiderwebTile } from "./Tiles/SpiderwebTile.js";
 import { DeadTreeTile } from "./Tiles/DeadTreeTile.js";
 import { SpiderWebObstacle } from "../Objects/SpiderWebObstacle.js";
+import { SignTile } from "./Tiles/SignTile.js";
 
 export class Tilemap {
   constructor(
@@ -123,7 +124,9 @@ export class Tilemap {
             case 102:
               tileClass = SaloonTile;
               break;
-
+            case 103:
+              tileClass = SignTile;
+              break;
             case 104:
               tileClass = TreeTile;
               break;

@@ -74,7 +74,6 @@ export class Player extends Actor {
     this.wallGrabState = 0;
 
     this.jumpCooldown = 0;
-
     this.isGroundSlamming = false;
     this.groundSlamSpeed = 3000;
 
