@@ -7,7 +7,7 @@ export class PauseMenu extends Entity {
     this.entityOrder = 99999999;
     this.isVisible = false;
     this.menuOptions = ["Resume", "Settings", "Help", "Quit"];
-    this.settingsOptions = ["Music", "Mute ALL", "Debug Mode", "FPS Display"];
+    this.settingsOptions = ["Music", "All Sounds", "Debug Mode", "FPS Display"];
     this.selectedOption = 0;
     this.selectedSettingsOption = 0;
     this.showSettingsMenu = false;
@@ -48,8 +48,15 @@ export class PauseMenu extends Entity {
         this.pauseMenu = false;
         GAME_ENGINE.keys["Escape"] = false;
       }
+      //this.handleKeyState("x", () => (this.showSettingsMenu = false), now);
       return;
     }
+
+    // if (this.showHelpMenu) {
+    //   this.handleKeyState("Escape", () => (this.showHelpMenu = false), now);
+    //   this.handleKeyState("x", () => (this.showHelpMenu = false), now);
+    //   return;
+    // }
 
     if (this.showHelpMenu) {
       if (GAME_ENGINE.keys["Escape"] || GAME_ENGINE.keys["x"] ) {
@@ -84,32 +91,22 @@ export class PauseMenu extends Entity {
   }
   
   
-  toggleSetting() {
-    if (!this.gameController.settings) return;
-  
-    const setting = this.settingsOptions[this.selectedSettingsOption];
-  
-    if (setting === "Music") {
-      if (!this.gameController.settings.muteAll && !this.gameController.hud.debugMode) {
-        this.gameController.toggleMusic(!this.gameController.settings.musicOn);
-      }
-    } else if (setting === "Mute ALL") {
-      if (!this.gameController.hud.debugMode) {
-        this.gameController.toggleMuteAll(!this.gameController.settings.muteAll);
-      }
-    } else if (setting === "Debug Mode") {
-      this.gameController.toggleDebug(!this.gameController.hud.debugMode);
-  
-      if (this.gameController.hud.debugMode) {
-        // Disable Music and Mute All when Debug is ON
-        this.gameController.toggleMuteAll(true);
-      }
-    } else if (setting === "FPS Display") {
-      this.gameController.toggleFPS(!this.gameController.settings.showFPS);
-    }
-  
-    localStorage.setItem("gameSettings", JSON.stringify(this.gameController.settings));
+
+toggleSetting() {
+  if (!this.gameController.settings) return;
+
+  const setting = this.settingsOptions[this.selectedSettingsOption];
+
+  if (setting === "Music") {
+      this.gameController.toggleMusic();
+  } else if (setting === "All Sounds") {
+      this.gameController.toggleSFX();
+  } else if (setting === "Debug Mode") {
+      this.gameController.toggleDebug();
+  } else if (setting === "FPS Display") {
+      this.gameController.toggleFPS();
   }
+}
 
 
 
@@ -304,8 +301,11 @@ export class PauseMenu extends Entity {
   }
 
   drawSettingsMenu(ctx, centerX, centerY) {
-    const menuWidth = 600;
-    const menuHeight = 350;
+    const canvasWidth = ctx.canvas.width;
+    const canvasHeight = ctx.canvas.height;
+
+    const menuWidth = 800;
+    const menuHeight = 400;
     const menuX = centerX - menuWidth / 2;
     const menuY = centerY - menuHeight / 2;
 
@@ -313,205 +313,132 @@ export class PauseMenu extends Entity {
     ctx.fillStyle = "rgba(131, 40, 153, 0.8)"; // Deep purple, semi-transparent
     ctx.fillRect(-ctx.canvas.width*2, -ctx.canvas.width*2, ctx.canvas.width*1000, ctx.canvas.height*1000);
 
-    
     const customFont = ASSET_MANAGER.getAsset("./assets/fonts/texas.ttf");
 
-
-    // === Draw Settings Menu Box ===
+    // === Draw Help Menu Box ===
     ctx.fillStyle = "rgba(131, 40, 153, 0.8)"; // Darker purple for contrast
     ctx.fillRect(menuX, menuY, menuWidth, menuHeight);
-    
 
     ctx.strokeStyle = "#FFD700"; // Gold Border
     ctx.lineWidth = 4;
     ctx.strokeRect(menuX, menuY, menuWidth, menuHeight);
-    
 
-    // === Draw Settings Title ===
-    ctx.fillStyle = "#F1EDB3";
-    ctx.font = `40px ${customFont}`;
+    // === Draw "SETTINGS" Header ===
+    ctx.fillStyle = "#F1EDB3"; // Light gold text
+    ctx.font = `55px ${customFont || "Arial"}`;
     ctx.textAlign = "center";
-    ctx.fillText("SETTINGS", centerX, menuY + 50);
+    ctx.fillText("SETTINGS", centerX, menuY + 60);
 
-    ctx.font = `28px ${customFont}`;
-    ctx.textAlign = "left";
+     // === Settings Options ===
+     ctx.font = `32px ${customFont || "Arial"}`;
+     ctx.textAlign = "left";
 
-    const settingsX = menuX + 50;
-    let textY = menuY + 100;
-    const settingSpacing = 50;
+    const settingsX = menuX + 100;
+    let textY = menuY + 120;
+    const settingSpacing = 60;
+    const boxWidth = 500;
+    const boxHeight = 50;
+
+    // Toggle switch dimensions
+    const toggleWidth = 80;
+    const toggleHeight = 30;
+    const togglePadding = 10;
+    const toggleX = settingsX + 300;
+    const toggleRadius = toggleHeight / 2;
 
     this.settingsOptions.forEach((setting, index) => {
-        let isOn = this.gameController.settings[setting.toLowerCase().replace(/ /g, "")] || false;
+      let isOn = false;
+  
+      if (setting === "Music") {
+          isOn = this.gameController.settings.musicOn && this.gameController.settings.sfxOn; // Music only ON if sounds are ON
+      }
+      if (setting === "All Sounds") {
+          isOn = this.gameController.settings.sfxOn;
+      }
+      if (setting === "Debug Mode") {
+          isOn = this.gameController.settings.debugMode;
+      }
+      if (setting === "FPS Display") {
+          isOn = this.gameController.settings.showFPS;
+      }
+  
+      // Draw Highlight Box if Selected
+      if (this.selectedSettingsOption === index) {
+          ctx.fillStyle = "rgba(255, 215, 0, 0.2)"; // Highlight selection
+          ctx.fillRect(settingsX - 20, textY - 35, boxWidth, boxHeight);
+      }
+  
+      // Draw Setting Name
+      ctx.fillStyle = "#F1EDB3";
+      ctx.fillText(setting, settingsX, textY);
+  
+      // Draw Toggle Background
+      ctx.fillStyle = isOn ? "#00FF00" : "#FF0000"; // Green for ON, Red for OFF
+      ctx.fillRect(toggleX, textY - toggleHeight / 2, toggleWidth, toggleHeight);
+  
+      // Draw Toggle Circle
+      ctx.fillStyle = "#FFFFFF"; 
+      ctx.beginPath();
+      ctx.arc(
+          toggleX + (isOn ? toggleWidth - toggleRadius - togglePadding : toggleRadius + togglePadding),
+          textY,
+          toggleRadius - 3,
+          0,
+          Math.PI * 2
+      );
+      ctx.fill();
+  
+      textY += settingSpacing;
+  });
+  
 
-        const isDebugMode = this.gameController.settings.debugMode;
-        const isMuteAllOn = this.gameController.settings.muteAll;
-        
-        // FIX: Allow toggling back when Debug Mode is OFF
-        const isDisabled = (isDebugMode && (setting === "Music" || setting === "Mute ALL"));
+    // this.settingsOptions.forEach((setting, index) => {
+    //     let isOn = false;
 
-        // Highlight selected option
-        if (this.selectedSettingsOption === index) {
-            ctx.fillStyle = isDisabled ? "rgba(150, 150, 150, 0.4)" : "rgba(255, 215, 0, 0.2)";
-            ctx.fillRect(settingsX - 20, textY - 30, 500, 40);
-        }
+    //     if (setting === "Music") isOn = this.gameController.settings.musicOn;
+    //     if (setting === "All Sounds") isOn = this.gameController.settings.sfxOn;
+    //     if (setting === "Debug Mode") isOn = this.gameController.settings.debugMode;
+    //     if (setting === "FPS Display") isOn = this.gameController.settings.showFPS;
 
-        // Display setting text
-        ctx.fillStyle = isDisabled ? "gray" : "#F1EDB3";
-        ctx.fillText(setting, settingsX, textY);
+    //     // === Draw Highlight Box if Selected ===
+    //     if (this.selectedSettingsOption === index) {
+    //         ctx.fillStyle = "rgba(255, 215, 0, 0.2)"; // Slight gold transparent fill
+    //         ctx.fillRect(settingsX - 20, textY - 35, boxWidth, boxHeight);
 
-        // Show ON/OFF state
-        ctx.fillStyle = isOn ? "#00FF00" : "#FF0000";
-        ctx.fillText(isOn ? "ON" : "OFF", settingsX + 300, textY);
+    //         //ctx.strokeStyle = "#FFD700"; // Gold border
+    //         //ctx.lineWidth = 4;
+    //         //ctx.strokeRect(settingsX - 20, textY - 35, boxWidth, boxHeight);
+    //     }
 
-        textY += settingSpacing;
-    });
+    //     // === Draw Setting Name ===
+    //     ctx.fillStyle = "#F1EDB3"; // Default color for text
+    //     ctx.fillText(setting, settingsX, textY);
+
+    //     // === Draw Toggle Background ===
+    //     ctx.fillStyle = isOn ? "#00FF00" : "#FF0000"; // Green for ON, Red for OFF
+    //     ctx.fillRect(toggleX, textY - toggleHeight / 2, toggleWidth, toggleHeight);
+
+    //     // === Draw Toggle Circle ===
+    //     ctx.fillStyle = "#FFFFFF"; // White for the toggle button
+    //     ctx.beginPath();
+    //     ctx.arc(
+    //         toggleX + (isOn ? toggleWidth - toggleRadius - togglePadding : toggleRadius + togglePadding),
+    //         textY,
+    //         toggleRadius - 3,
+    //         0,
+    //         Math.PI * 2
+    //     );
+    //     ctx.fill();
+
+    //     textY += settingSpacing;
+    // });
 
     // === Draw "ESC to exit" Below Everything ===
-    ctx.font = `28px ${customFont}`;
+    ctx.font = `32px ${customFont || "Arial"}`;
     ctx.fillStyle = "#F1EDB3";
     ctx.textAlign = "center";
     ctx.fillText("Press 'X' to close or 'ESC' to exit menu", centerX, menuY + menuHeight - 30);
-}
-
-
-//   drawSettingsMenu(ctx, centerX, centerY) {
-//     const menuWidth = 600;
-//     const menuHeight = 350;
-//     const menuX = centerX - menuWidth / 2;
-//     const menuY = centerY - menuHeight / 2;
-
-//     // // === Draw Full-Screen Purple Background ===
-//     // ctx.fillStyle = "rgba(131, 40, 153, 0.8)"; // Deep purple, semi-transparent
-//     // ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-
-//       // === Draw Full-Screen Purple Background ===
-//       ctx.fillStyle = "rgba(131, 40, 153, 0.8)"; // Deep purple, semi-transparent
-//       ctx.fillRect(-ctx.canvas.width*2, -ctx.canvas.width*2, ctx.canvas.width*1000, ctx.canvas.height*1000);
-  
-  
-
-//     // === Draw Settings Menu Box ===
-//     ctx.fillStyle = "rgba(131, 40, 153, 0.8)"; // Dark purple for contrast
-//     ctx.fillRect(menuX, menuY, menuWidth, menuHeight);
-
-//     ctx.strokeStyle = "#FFD700"; // Gold Border
-//     ctx.lineWidth = 4;
-//     ctx.strokeRect(menuX, menuY, menuWidth, menuHeight);
-
-//     const customFont = ASSET_MANAGER.getAsset("./assets/fonts/texas.ttf");
-
-//     // === Draw Settings Title ===
-//     ctx.fillStyle = "#F1EDB3";
-//     ctx.font = `40px ${customFont}`;
-//     ctx.textAlign = "center";
-//     ctx.fillText("SETTINGS", centerX, menuY + 50);
-
-//     ctx.font = `28px ${customFont}`;
-//     ctx.textAlign = "left";
-
-//     const settingsX = menuX + 50;
-//     let textY = menuY + 100;
-//     const settingSpacing = 50;
-
-//     this.settingsOptions.forEach((setting, index) => {
-//       let isOn = this.gameController.settings[setting.toLowerCase().replace(/ /g, "")] || false;
-
-//       const isDebugMode = this.gameController.settings.debugMode;
-//       const isMuteAllOn = this.gameController.settings.muteAll;
-      
-//       // FIX: Allow toggling back when Debug Mode is OFF
-//       const isDisabled = (isDebugMode && (setting === "Music" || setting === "Mute ALL"));
-
-//       // Highlight selected option
-//       if (this.selectedSettingsOption === index) {
-//           ctx.fillStyle = isDisabled ? "rgba(150, 150, 150, 0.4)" : "rgba(255, 215, 0, 0.2)";
-//           ctx.fillRect(settingsX - 20, textY - 30, 500, 40);
-//       }
-
-//       // Display setting text
-//       ctx.fillStyle = isDisabled ? "gray" : "#F1EDB3";
-//       ctx.fillText(setting, settingsX, textY);
-
-//       // Show ON/OFF state
-//       ctx.fillStyle = isOn ? "#00FF00" : "#FF0000";
-//       ctx.fillText(isOn ? "ON" : "OFF", settingsX + 300, textY);
-
-//       textY += settingSpacing;
-//   });
-
-//     // === Draw "ESC to exit" Below Everything ===
-//     ctx.font = `28px ${customFont}`;
-//     ctx.fillStyle = "#F1EDB3";
-//     ctx.textAlign = "center";
-//     ctx.fillText("Press 'X' to close or 'ESC' to exit menu", centerX, menuY + menuHeight - 30);
-// }
-
-
-  // drawSettingsMenu(ctx, centerX, centerY) {
-  //   const canvasWidth = ctx.canvas.width;
-  //   const canvasHeight = ctx.canvas.height;
-
-  //   const menuWidth = 600;
-  //   const menuHeight = 350;
-  //   const menuX = centerX - menuWidth / 2;
-  //   const menuY = centerY - menuHeight / 2;
-
-  //   // === Draw Full-Screen Purple Background ===
-  //   ctx.fillStyle = "rgba(131, 40, 153, 0.8)"; // Deep purple, semi-transparent
-  //   ctx.fillRect(-ctx.canvas.width*2, -ctx.canvas.width*2, ctx.canvas.width*1000, ctx.canvas.height*1000);
-
-  //   const customFont = ASSET_MANAGER.getAsset("./assets/fonts/texas.ttf");
-
-  //   // === Draw Help Menu Box ===
-  //   ctx.fillStyle = "rgba(131, 40, 153, 0.8)"; // Darker purple for contrast
-  //   ctx.fillRect(menuX, menuY, menuWidth, menuHeight);
-
-  //   ctx.strokeStyle = "#FFD700"; // Gold Border
-  //   ctx.lineWidth = 4;
-  //   ctx.strokeRect(menuX, menuY, menuWidth, menuHeight);
-
-
-
-  //   ctx.fillStyle = "#F1EDB3";
-  //   ctx.font = "40px Arial";
-  //   ctx.textAlign = "center";
-  //   ctx.fillText("SETTINGS", centerX, menuY + 50);
-
-  //   ctx.font = "28px Arial";
-  //   ctx.textAlign = "left";
-
-  //   const settingsX = menuX + 50;
-  //   let textY = menuY + 100;
-  //   const settingSpacing = 50;
-
-  //   this.settingsOptions.forEach((setting, index) => {
-  //     let isOn = this.gameController.settings[setting.toLowerCase().replace(/ /g, "")] || false;
-
-  //     const isDebugMode = this.gameController.settings.debugMode;
-  //     const isMuteAllOn = this.gameController.settings.muteAll;
-  //     const isDisabled = isDebugMode && (setting === "Music" || setting === "Mute ALL") || (isMuteAllOn && setting === "Music");
-
-  //     if (this.selectedSettingsOption === index) {
-  //       ctx.fillStyle = isDisabled ? "rgba(100, 100, 100, 0.5)" : "rgba(255, 215, 0, 0.2)";
-  //       ctx.fillRect(settingsX - 20, textY - 30, 500, 40);
-  //     }
-
-  //     ctx.fillStyle = isDisabled ? "gray" : "#F1EDB3";
-  //     ctx.fillText(setting, settingsX, textY);
-
-  //     ctx.fillStyle = isOn ? "#00FF00" : "#FF0000";
-  //     ctx.fillText(isOn ? "ON" : "OFF", settingsX + 300, textY);
-
-  //     textY += settingSpacing;
-  //   });
-  
-
-  //   // === Draw "ESC to exit" Below Everything ===
-  //   ctx.font = `32px ${customFont || "Arial"}`;
-  //   ctx.fillStyle = "#F1EDB3";
-  //   ctx.textAlign = "center";
-  //   ctx.fillText("Press 'X' to close or 'ESC' to exit menu", centerX, menuY + menuHeight - 30);
-  // }
+  }
 
 
   drawSlider(ctx, x, y, value) {
@@ -535,33 +462,8 @@ export class PauseMenu extends Entity {
 
 
   handleClick(mouseX, mouseY) {
-    if (!this.isVisible) return;
-  
-    if (this.showSettingsMenu) {
-      const settingsX = this.x / 2 - 250;
-      let textY = this.y / 2 - 120;
-      const settingSpacing = 50;
-  
-      this.settingsOptions.forEach((setting, index) => {
-        if (
-          mouseX >= settingsX &&
-          mouseX <= settingsX + 400 &&
-          mouseY >= textY - 20 &&
-          mouseY <= textY + 20
-        ) {
-          this.selectedSettingsOption = index;
-          this.toggleSetting(); // Apply the setting when clicked
-        }
-        textY += settingSpacing;
-      });
-      return;
-    }
-  
-    if (this.showHelpMenu) {
-      this.showHelpMenu = false;
-      return;
-    }
-  
+    if (!this.isVisible || this.showHelpMenu) return;
+
     Object.entries(this.buttonPositions).forEach(([label, pos], index) => {
       if (mouseX >= pos.x && mouseX <= pos.x + 250 && mouseY >= pos.y && mouseY <= pos.y + 60) {
         this.selectedOption = index;
@@ -569,7 +471,6 @@ export class PauseMenu extends Entity {
       }
     });
   }
-  
 
   executeSelectedOption() {
     switch (this.menuOptions[this.selectedOption]) {
@@ -587,6 +488,27 @@ export class PauseMenu extends Entity {
         window.location.reload();
         break;
     }
+  }
+
+  handleClick(mouseX, mouseY) {
+    if (!this.isVisible) return;
+
+    if (this.showSettingsMenu) {
+        this.toggleSetting(); // Toggle setting on click
+        return;
+    }
+
+    if (this.showHelpMenu) {
+        this.showHelpMenu = false; // Close help menu on click
+        return;
+    }
+
+    Object.entries(this.buttonPositions).forEach(([label, pos], index) => {
+        if (mouseX >= pos.x && mouseX <= pos.x + 250 && mouseY >= pos.y && mouseY <= pos.y + 60) {
+            this.selectedOption = index;
+            this.executeSelectedOption();
+        }
+    });
   }
 
 }

@@ -8,6 +8,7 @@ export class GameLogicController extends Entity {
   constructor() {
     super();
     this.GAME_ENGINE = window.GameEngine;
+   // this.hud = new HUD(map, this.settings); // Pass settings to HUD
     this.GAME_ENGINE.addEntity(this.hud);
 
     this.entityOrder = -1; // Ensure it updates early in the loop
@@ -19,7 +20,6 @@ export class GameLogicController extends Entity {
     this.settings = {
       musicOn: true,
       sfxOn: true,
-      muteAll: false,
       debugMode: false,
       showFPS: false,  // Ensure FPS Display setting exists
     };
@@ -106,68 +106,52 @@ export class GameLogicController extends Entity {
     // Add additional game logic here
   }
 
-  toggleMusic(state) {
-    if (this.settings.musicOn === state) return; // Prevent redundant toggling
-    this.settings.musicOn = state;
-    ASSET_MANAGER.toggleMusicMute(!state);
-    this.saveSettings();
-    console.log(`Music: ${state ? "ON" : "OFF"}`);
-  }
+  // applySettings() {
+  //   if (!this.settings) return;
 
-  toggleSFX(state) {
-    if (this.settings.sfxOn === state) return;
-    this.settings.sfxOn = state;
-    ASSET_MANAGER.toggleMute(!state);
-    this.saveSettings();
-    console.log(`Sound Effects: ${state ? "ON" : "OFF"}`);
-  }
+  //   ASSET_MANAGER.toggleMusicMute(!this.settings.musicOn);
+  //   ASSET_MANAGER.toggleMute(!this.settings.sfxOn);
 
-  // toggleDebug(state) {
-  //   if (this.settings.debugMode === state) return;
-  //   this.settings.debugMode = state;
-  //   GAME_ENGINE.debug_colliders = state;
+  //   GAME_ENGINE.debug_colliders = this.settings.debugMode;
+  //   console.log(`Debug Mode: ${this.settings.debugMode ? "ON" : "OFF"}`);
 
-  //   // Disable music and mute all when debug mode is ON
-  //   if (state) {
-  //     this.toggleMuteAll(true);
-  //     this. toggleMusic(true);
-  //     //this.toggleSFX(true);
+  //   // Ensure HUD updates when FPS setting changes
+  //   if (this.hud) {
+  //       this.hud.settings = this.settings; // Update HUD settings
   //   }
 
-  //   this.saveSettings();
-  //   console.log(`Debug Mode: ${state ? "ON" : "OFF"}`);
+  //   localStorage.setItem("gameSettings", JSON.stringify(this.settings)); // Save settings
   // }
 
-  toggleDebug(state) {
-    if (this.hud && this.hud.debugMode !== state) {
-        this.hud.debugMode = state;
-        this.toggleMuteAll(state);
-        GAME_ENGINE.debug_colliders = state; // Enable/Disable collider visuals
-        console.log(`Debug Mode: ${state ? "ON" : "OFF"}`);
-    }
-}
-
-
-  toggleFPS(state) {
-    if (this.settings.showFPS === state) return;
-    this.settings.showFPS = state;
-    if (this.hud) this.hud.settings = this.settings;
-    this.saveSettings();
-    console.log(`FPS Display: ${state ? "ON" : "OFF"}`);
-  }
-
-  toggleMuteAll(state) {
-    if (this.settings.muteAll === state) return;
-
-    this.settings.muteAll = state;
-    this.toggleMusic(!state);
-    this.toggleSFX(!state);
-
-    this.saveSettings();
-    console.log(`Mute All: ${state ? "ON" : "OFF"}`);
-  }
-
-  saveSettings() {
+  toggleMusic() {
+    this.settings.musicOn = !this.settings.musicOn;
+    ASSET_MANAGER.toggleMusicMute(!this.settings.musicOn);
     localStorage.setItem("gameSettings", JSON.stringify(this.settings));
+    console.log(`Music: ${this.settings.musicOn ? "ON" : "OFF"}`);
   }
+
+  toggleSFX() {
+      this.settings.sfxOn = !this.settings.sfxOn;
+      ASSET_MANAGER.toggleMute(!this.settings.sfxOn);
+      localStorage.setItem("gameSettings", JSON.stringify(this.settings));
+      console.log(`Sound Effects: ${this.settings.sfxOn ? "ON" : "OFF"}`);
+  }
+
+  toggleDebug() {
+      this.settings.debugMode = !this.settings.debugMode;
+      GAME_ENGINE.debug_colliders = this.settings.debugMode;
+      localStorage.setItem("gameSettings", JSON.stringify(this.settings));
+      console.log(`Debug Mode: ${this.settings.debugMode ? "ON" : "OFF"}`);
+  }
+
+  toggleFPS() {
+      this.settings.showFPS = !this.settings.showFPS;
+      if (this.hud) {
+          this.hud.settings = this.settings; // Update HUD settings
+      }
+      localStorage.setItem("gameSettings", JSON.stringify(this.settings));
+      console.log(`FPS Display: ${this.settings.showFPS ? "ON" : "OFF"}`);
+  }
+
+
 }
