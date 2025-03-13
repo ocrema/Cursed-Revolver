@@ -144,13 +144,22 @@ export class GameLogicController extends Entity {
     }
   }
 
-  toggleFPS(state) {
-    if (this.settings.showFPS === state) return;
-    this.settings.showFPS = state;
-    if (this.hud) this.hud.settings = this.settings;
-    this.saveSettings();
-    console.log(`FPS Display: ${state ? "ON" : "OFF"}`);
-  }
+  // toggleFPS(state) {
+  //   if (this.settings.showFPS === state) return;
+  //   this.settings.showFPS = state;
+  //   if (this.hud) this.hud.settings = this.settings;
+  //   this.saveSettings();
+  //   console.log(`FPS Display: ${state ? "ON" : "OFF"}`);
+  // }
+
+  toggleFPS() {
+    this.settings.showFPS = !this.settings.showFPS;
+    if (this.hud) {
+        this.hud.settings = this.settings; // Update HUD settings
+    }
+    localStorage.setItem("gameSettings", JSON.stringify(this.settings));
+    console.log(`FPS Display: ${this.settings.showFPS ? "ON" : "OFF"}`);
+}
 
   toggleMuteAll(state) {
     if (this.settings.muteAll === state) return;
