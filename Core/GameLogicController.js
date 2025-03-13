@@ -119,37 +119,28 @@ export class GameLogicController extends Entity {
     console.log(`Sound Effects: ${state ? "ON" : "OFF"}`);
   }
 
-  // toggleDebug(state) {
-  //   if (this.settings.debugMode === state) return;
-  //   this.settings.debugMode = state;
-  //   GAME_ENGINE.debug_colliders = state;
-
-  //   // Disable music and mute all when debug mode is ON
-  //   if (state) {
-  //     this.toggleMuteAll(true);
-  //     this. toggleMusic(true);
-  //     //this.toggleSFX(true);
-  //   }
-
-  //   this.saveSettings();
-  //   console.log(`Debug Mode: ${state ? "ON" : "OFF"}`);
-  // }
-
   toggleDebug(state) {
     if (this.hud && this.hud.debugMode !== state) {
       this.hud.debugMode = state;
+      this.settings.debugMode = state; // Ensure settings state updates
       this.toggleMuteAll(state);
       GAME_ENGINE.debug_colliders = state; // Enable/Disable collider visuals
-      console.log(`Debug Mode: ${state ? "ON" : "OFF"}`);
+
+      this.saveSettings();
+
+      // localStorage.setItem("gameSettings", JSON.stringify(this.settings)); //  Save setting like FPS toggle
+      // console.log(`Debug Mode: ${state ? "ON" : "OFF"}`);
     }
   }
 
-  toggleFPS(state) {
-    if (this.settings.showFPS === state) return;
-    this.settings.showFPS = state;
-    if (this.hud) this.hud.settings = this.settings;
+  toggleFPS() {
+    this.settings.showFPS = !this.settings.showFPS;
+    if (this.hud) {
+      this.hud.settings = this.settings; // Update HUD settings
+    }
+    // localStorage.setItem("gameSettings", JSON.stringify(this.settings));
+    // console.log(`FPS Display: ${this.settings.showFPS ? "ON" : "OFF"}`);
     this.saveSettings();
-    console.log(`FPS Display: ${state ? "ON" : "OFF"}`);
   }
 
   toggleMuteAll(state) {
