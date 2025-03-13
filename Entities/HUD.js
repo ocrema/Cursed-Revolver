@@ -181,35 +181,7 @@ export class HUD extends Entity {
     if (this.healthFlashTimer > 0) {
       this.healthFlashTimer -= GAME_ENGINE.clockTick;
     }
-
-    // // Detect Spell Switching
-    // if (player.selectedSpell !== this.previousSpellIndex) {
-    //   this.isSpellSwitching = true;
-    //   this.spellAnimationTimer = 0; // Reset timer for smooth transition
-    //   this.spellAnimationFrame = 1; // Ensure it starts at 1
-    //   this.previousSpellIndex = player.selectedSpell; // Update previous spell index
-    // }
-
-    // // Ensure spell icon animation runs continuously
-    // this.spellAnimationTimer += GAME_ENGINE.clockTick;
-
-    // if (this.spellAnimationTimer >= 0.05) { // Adjust 0.05s per frame (change for speed)
-    //     this.spellAnimationTimer = 0; // Reset timer
-    //     this.spellAnimationFrame++; // Advance the frame
-
-    //     // Fix the delay when looping back to frame 1
-    //     if (this.spellAnimationFrame >= 29) {
-    //         this.spellAnimationFrame = 1; // Instantly reset to first frame
-    //         this.spellAnimationTimer = -0.01; // Preload a slight offset to eliminate delay
-    //     }
-    // }
-
-    // // Ensure spellAnimationFrame is always valid
-    // if (isNaN(this.spellAnimationFrame) || this.spellAnimationFrame < 1 || this.spellAnimationFrame > 30) {
-    //     console.error("spellAnimationFrame is out of range, resetting...");
-    //     this.spellAnimationFrame = 1;
-    // }
-
+    
     // Detect Spell Switching
     if (player.selectedSpell !== this.previousSpellIndex) {
       //console.log(`Spell switched! Previous: ${this.previousSpellIndex}, New: ${player.selectedSpell}`);
