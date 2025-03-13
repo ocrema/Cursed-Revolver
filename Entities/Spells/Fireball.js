@@ -94,7 +94,7 @@ export class Fireball extends Entity {
           });
         } else {
           e2.queueAttack({
-            damage: 25,
+            damage: 35,
             x: this.x,
             y: this.y,
             burn: 5,

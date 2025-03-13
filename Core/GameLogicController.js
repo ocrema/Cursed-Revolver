@@ -21,20 +21,18 @@ export class GameLogicController extends Entity {
       sfxOn: true,
       muteAll: false,
       debugMode: false,
-      showFPS: false,  // Ensure FPS Display setting exists
+      showFPS: false, // Ensure FPS Display setting exists
     };
 
     const savedSettings = localStorage.getItem("gameSettings");
     if (savedSettings) {
-        Object.assign(this.settings, JSON.parse(savedSettings)); // Merge saved settings
+      Object.assign(this.settings, JSON.parse(savedSettings)); // Merge saved settings
     }
-    
-  
 
     // Create and add the pause menu
     this.pauseMenu = new PauseMenu(this); // Pass GameLogicController as an argument
     this.pauseMenu.setVisibility(false); // Use setVisibility() instead of hide()
-    
+
     this.GAME_ENGINE.addEntity(this.pauseMenu);
 
     // Storing hud as an entity to be constructed later
@@ -42,8 +40,6 @@ export class GameLogicController extends Entity {
 
     // Register this as the game controller
     this.GAME_ENGINE.GAME_CONTROLLER = this;
-
-    
   }
 
   togglePause() {
@@ -51,7 +47,6 @@ export class GameLogicController extends Entity {
     this.isPaused = !this.isPaused;
     this.pauseMenu.setVisibility(this.isPaused);
   }
-
 
   setGameOver() {
     this.isGameOver = true;
@@ -71,6 +66,8 @@ export class GameLogicController extends Entity {
         entity.respawn();
       }
     }
+
+    window.MAP.spawnEntities(window.MAP.gamemap);
 
     this.isGameOver = false;
     this.isPaused = false;
@@ -140,13 +137,12 @@ export class GameLogicController extends Entity {
 
   toggleDebug(state) {
     if (this.hud && this.hud.debugMode !== state) {
-        this.hud.debugMode = state;
-        this.toggleMuteAll(state);
-        GAME_ENGINE.debug_colliders = state; // Enable/Disable collider visuals
-        console.log(`Debug Mode: ${state ? "ON" : "OFF"}`);
+      this.hud.debugMode = state;
+      this.toggleMuteAll(state);
+      GAME_ENGINE.debug_colliders = state; // Enable/Disable collider visuals
+      console.log(`Debug Mode: ${state ? "ON" : "OFF"}`);
     }
-}
-
+  }
 
   toggleFPS(state) {
     if (this.settings.showFPS === state) return;

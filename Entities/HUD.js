@@ -455,7 +455,7 @@ export class HUD extends Entity {
       const healthBarWidth = canvasWidth * this.healthBarWidthRatio;
       const healthBarHeight = canvasHeight * this.healthBarHeightRatio;
       const healthBarMargin = canvasHeight * this.healthBarMarginRatio;
-      const cowboySize = healthBarHeight * 20;
+      const cowboySize = healthBarHeight * 17;
 
       const cowboyX = canvasWidth * 0.02; // Move cowboy to the right
       const cowboyY = canvasHeight - cowboySize / 2.0; // Move cowboy lower

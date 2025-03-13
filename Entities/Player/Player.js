@@ -34,10 +34,10 @@ export class Player extends Actor {
     this.playerAnimationLoader = new AnimationLoader(this);
     this.playerAnimationLoader.loadAnimations(PLAYER_SPRITESHEET);
 
-    this.speed = 500; // Movement speed
+    this.speed = 800; // Movement speed
     this.isMoving = false; // Whether the player is moving
-    this.health = 200;
-    this.maxHealth = 200;
+    this.health = 400;
+    this.maxHealth = 400;
     this.isLaunchable = true;
     this.validEffects = {};
 
@@ -48,7 +48,7 @@ export class Player extends Actor {
 
     this.x_velocity = 0;
     this.y_velocity = 0;
-    this.jumpForce = -1500;
+    this.jumpForce = -1700;
     this.isGrounded = 0; // values above 0 indicate that the player is grounded, so the player can still jump for a little bit after falling off a platform
 
     this.selectedSpell = 0;
@@ -117,7 +117,7 @@ export class Player extends Actor {
 
   respawn() {
     this.isDead = false;
-    this.health = 200;
+    this.health = this.maxHealth;
     this.x = this.spawnX;
     this.y = this.spawnY;
     this.setAnimation(PLAYER_SPRITESHEET.IDLE.NAME);
@@ -143,8 +143,8 @@ export class Player extends Actor {
       this.speed = 2000;
       this.maxSpellCooldown = 1;
     } else {
-      this.speed = 600;
-      this.jumpForce = -1500;
+      this.speed = 750;
+      this.jumpForce = -1700;
     }
     this.isMoving = false;
     this.isJumping = false;
@@ -242,13 +242,15 @@ export class Player extends Actor {
     if (this.x_velocity > 0) {
       this.x_velocity = Math.max(
         this.x_velocity -
-          GAME_ENGINE.clockTick * (this.isGrounded == 0.2 || GAME_ENGINE.keys['a'] ? 9000 : 1000),
+          GAME_ENGINE.clockTick *
+            (this.isGrounded == 0.2 || GAME_ENGINE.keys["a"] ? 9000 : 1000),
         0
       );
     } else {
       this.x_velocity = Math.min(
         this.x_velocity +
-          GAME_ENGINE.clockTick * (this.isGrounded == 0.2 || GAME_ENGINE.keys['d'] ? 9000 : 1000),
+          GAME_ENGINE.clockTick *
+            (this.isGrounded == 0.2 || GAME_ENGINE.keys["d"] ? 9000 : 1000),
         0
       );
     }
@@ -299,7 +301,7 @@ export class Player extends Actor {
     ) {
       this.isGrounded = 0;
       //this.jumpCooldown = 0.4;
-      GAME_ENGINE.keys[' '] = false;
+      GAME_ENGINE.keys[" "] = false;
       this.y_velocity = this.jumpForce; // Jumping velocity
       this.setAnimation(PLAYER_SPRITESHEET.JUMP.NAME);
       this.isJumping = true;
@@ -313,7 +315,7 @@ export class Player extends Actor {
     ) {
       //this.jumpCooldown = 0.4;
       this.wallJumps--;
-      GAME_ENGINE.keys[' '] = false;
+      GAME_ENGINE.keys[" "] = false;
       this.y_velocity = this.jumpForce;
       this.x_velocity = -500 * this.wallGrabState;
       this.setAnimation(PLAYER_SPRITESHEET.JUMP.NAME);
@@ -372,7 +374,6 @@ export class Player extends Actor {
         }
       }
       if (hitSomething) {
-        
         if (velFromKeys !== 0 && this.isGrounded !== 0.2) {
           this.wallGrabState = velFromKeys > 0 ? 1 : -1;
           //this.y_velocity = Math.min(this.y_velocity, 100);
@@ -432,7 +433,7 @@ export class Player extends Actor {
       this.y_velocity = 0; // if hit something cancel velocity
     }
 
-    if (this.isGrounded == .2) {
+    if (this.isGrounded == 0.2) {
       this.wallJumps = 1;
     }
   }

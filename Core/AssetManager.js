@@ -115,10 +115,10 @@ export class AssetManager {
     if (audio.currentTime != 0) {
       let bak = audio.cloneNode();
       bak.currentTime = 0;
-      bak.volume = .2 * volumeMult;
+      bak.volume = .1 * volumeMult;
       bak.play();
     } else {
-      audio.volume = .2 * volumeMult;
+      audio.volume = .1 * volumeMult;
       audio.currentTime = 0;
       audio.play();
     }
@@ -147,7 +147,7 @@ export class AssetManager {
     if (!audio) return;
     if (i !== this.activeTrack) audio.currentTime = 0;
     audio.loop = true;
-    audio.volume = 0.3;
+    audio.volume = 0.15;
     if (!this.musicMuted) audio.play();
     console.log('Playing track ' + this.musicTracks[i]);
   }

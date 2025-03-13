@@ -13,7 +13,7 @@ export class ChainLightning extends Entity {
     this.isAttack = true;
     this.experationTimer = 0.35;
     this.chains = 3;
-    this.damage = 3;
+    this.damage = 6;
     this.firstBolt = true;
     this.maxChainLength = 1000;
     this.maxShotAngle = Math.PI / 3;
