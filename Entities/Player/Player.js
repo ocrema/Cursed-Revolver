@@ -34,10 +34,10 @@ export class Player extends Actor {
     this.playerAnimationLoader = new AnimationLoader(this);
     this.playerAnimationLoader.loadAnimations(PLAYER_SPRITESHEET);
 
-    this.speed = 500; // Movement speed
+    this.speed = 600; // Movement speed
     this.isMoving = false; // Whether the player is moving
-    this.health = 200;
-    this.maxHealth = 200;
+    this.health = 400;
+    this.maxHealth = 400;
     this.isLaunchable = true;
     this.validEffects = {};
 

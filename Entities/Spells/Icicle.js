@@ -68,8 +68,8 @@ export class Icicle extends Entity {
 
       if (this.colliding(e)) {
         if (e.isActor) {
-          if (e.effects.soaked) e.queueAttack({ damage: 35, frozen: 5 });
-          else e.queueAttack({ damage: 35, soaked: 5 });
+          if (e.effects.soaked) e.queueAttack({ damage: 40, frozen: 5 });
+          else e.queueAttack({ damage: 40, soaked: 5 });
         }
         this.thingHit = e;
         this.stuckXOffset = this.x - e.x;
