@@ -13,6 +13,7 @@ export class PauseMenu extends Entity {
     this.showSettingsMenu = false;
     this.showHelpMenu = false;
     this.buttonPositions = {};
+    this.settingPositions = {};
     this.keyState = {}; // Track key states to prevent sticky navigation
   }
 
@@ -393,6 +394,14 @@ export class PauseMenu extends Entity {
       ctx.fillStyle = "#F1EDB3";
       ctx.fillText(setting, settingsX, textY);
 
+      this.settingPositions[setting] = {
+        x: settingsX, 
+        y: textY - 20, // Adjust for hitbox alignment
+        width: menuWidth - 200, 
+        height: settingSpacing - 10 
+    };
+      
+
       // === Draw "OFF" and "ON" Labels ===
       ctx.fillStyle = "#F1EDB3";
       ctx.font = `32px ${customFont || "Arial"}`;
@@ -490,29 +499,62 @@ export class PauseMenu extends Entity {
     }
   }
 
+  // handleClick(mouseX, mouseY) {
+  //   if (!this.isVisible) return;
+
+  //   if (this.showSettingsMenu) {
+  //     this.toggleSetting(); // Toggle setting on click
+  //     return;
+  //   }
+
+  //   if (this.showHelpMenu) {
+  //     this.showHelpMenu = false; // Close help menu on click
+  //     return;
+  //   }
+
+  //   Object.entries(this.buttonPositions).forEach(([label, pos], index) => {
+  //     if (
+  //       mouseX >= pos.x &&
+  //       mouseX <= pos.x + 250 &&
+  //       mouseY >= pos.y &&
+  //       mouseY <= pos.y + 60
+  //     ) {
+  //       this.selectedOption = index;
+  //       this.executeSelectedOption();
+  //     }
+  //   });
+  // }
   handleClick(mouseX, mouseY) {
     if (!this.isVisible) return;
 
     if (this.showSettingsMenu) {
-      this.toggleSetting(); // Toggle setting on click
-      return;
+        // Check if user clicked a setting option
+        Object.entries(this.settingPositions).forEach(([label, pos], index) => {
+            if (
+                mouseX >= pos.x && mouseX <= pos.x + pos.width &&
+                mouseY >= pos.y && mouseY <= pos.y + pos.height
+            ) {
+                this.selectedSettingsOption = index; // Set selected option
+                this.toggleSetting(); // Apply setting change
+            }
+        });
+        return;
     }
 
     if (this.showHelpMenu) {
-      this.showHelpMenu = false; // Close help menu on click
-      return;
+        this.showHelpMenu = false;
+        return;
     }
 
     Object.entries(this.buttonPositions).forEach(([label, pos], index) => {
-      if (
-        mouseX >= pos.x &&
-        mouseX <= pos.x + 250 &&
-        mouseY >= pos.y &&
-        mouseY <= pos.y + 60
-      ) {
-        this.selectedOption = index;
-        this.executeSelectedOption();
-      }
+        if (
+            mouseX >= pos.x && mouseX <= pos.x + 250 &&
+            mouseY >= pos.y && mouseY <= pos.y + 60
+        ) {
+            this.selectedOption = index;
+            this.executeSelectedOption();
+        }
     });
-  }
+}
+
 }
