@@ -11,7 +11,11 @@ export class AssetManager {
     this.sfxMuted = false; // flag to control audio muting
     this.musicMuted = false; // flag to control music muting
     this.activeTrack = 0;
-    this.musicTracks = ["./assets/music/track1.mp3", "./assets/music/track2.mp3", "./assets/music/track3.mp3"];
+    this.musicTracks = [
+      "./assets/music/track1.mp3",
+      "./assets/music/track2.mp3",
+      "./assets/music/track3.mp3",
+    ];
     return window.ASSET_MANAGER;
   }
 
@@ -79,25 +83,31 @@ export class AssetManager {
 
           this.cache[path] = aud;
           break;
-          case "ttf":
-          case "otf":
-          case "woff":
-          case "woff2":
-            const fontName = path.substring(path.lastIndexOf('/') + 1, path.lastIndexOf('.'));
-            const font = new FontFace(fontName, `url(${path})`);
+        case "ttf":
+        case "otf":
+        case "woff":
+        case "woff2":
+          const fontName = path.substring(
+            path.lastIndexOf("/") + 1,
+            path.lastIndexOf(".")
+          );
+          const font = new FontFace(fontName, `url(${path})`);
 
-              font.load().then((loadedFont) => {
-                document.fonts.add(loadedFont);
-                console.log("Loaded font: " + fontName);
-                this.successCount++;
-                if (this.isDone()) callback();
-              }).catch((error) => {
-                  console.log("Error loading font: " + fontName, error);
-                  this.errorCount++;
-                  if (this.isDone()) callback();
-              });
+          font
+            .load()
+            .then((loadedFont) => {
+              document.fonts.add(loadedFont);
+              console.log("Loaded font: " + fontName);
+              this.successCount++;
+              if (this.isDone()) callback();
+            })
+            .catch((error) => {
+              console.log("Error loading font: " + fontName, error);
+              this.errorCount++;
+              if (this.isDone()) callback();
+            });
 
-            this.cache[path] = fontName; // Store font name for later use
+          this.cache[path] = fontName; // Store font name for later use
           break;
       }
     }
@@ -115,10 +125,10 @@ export class AssetManager {
     if (audio.currentTime != 0) {
       let bak = audio.cloneNode();
       bak.currentTime = 0;
-      bak.volume = .1 * volumeMult;
+      bak.volume = 0.1 * volumeMult;
       bak.play();
     } else {
-      audio.volume = .1 * volumeMult;
+      audio.volume = 0.1 * volumeMult;
       audio.currentTime = 0;
       audio.play();
     }
@@ -149,35 +159,42 @@ export class AssetManager {
     audio.loop = true;
     audio.volume = 0.15;
     if (!this.musicMuted) audio.play();
-    console.log('Playing track ' + this.musicTracks[i]);
+    console.log("Playing track " + this.musicTracks[i]);
   }
 
   toggleMusicMute(muted) {
     this.musicMuted = muted;
-    
+
     const currentTrack = this.cache[this.musicTracks[this.activeTrack]];
-    
+
     if (!currentTrack) {
-        console.warn("No music track loaded.");
-        return;
+      console.warn("No music track loaded.");
+      return;
     }
 
     if (this.musicMuted) {
-        currentTrack.pause(); // Stop music when muted
+      currentTrack.pause(); // Stop music when muted
     } else {
-        // Ensure the track is loaded before trying to play it
-        if (currentTrack.readyState >= 2) { // READY_STATE 2 = Can play
-            currentTrack.play().catch(error => console.warn("Music playback failed:", error));
-        } else {
-            currentTrack.addEventListener("canplaythrough", () => {
-                currentTrack.play().catch(error => console.warn("Music playback failed:", error));
-            }, { once: true }); // Run only once
-            console.warn("Music track not ready to play. Waiting...");
-        }
+      // Ensure the track is loaded before trying to play it
+      if (currentTrack.readyState >= 2) {
+        // READY_STATE 2 = Can play
+        currentTrack
+          .play()
+          .catch((error) => console.warn("Music playback failed:", error));
+      } else {
+        currentTrack.addEventListener(
+          "canplaythrough",
+          () => {
+            currentTrack
+              .play()
+              .catch((error) => console.warn("Music playback failed:", error));
+          },
+          { once: true }
+        ); // Run only once
+        console.warn("Music track not ready to play. Waiting...");
+      }
     }
 
     console.log(`Music Muted: ${this.musicMuted}`);
   }
-
-
 }

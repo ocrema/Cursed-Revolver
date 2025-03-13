@@ -104,7 +104,7 @@ export class PauseMenu extends Entity {
       this.gameController.toggleMusic(newMusState);
     } else if (setting === "All Sounds") {
       const newMusState = !this.gameController.settings.muteAll;
-      this.gameController.toggleMuteAll(newMusState);  
+      this.gameController.toggleMuteAll(newMusState);
     } else if (setting === "Debug Mode") {
       const newDebugState = !this.gameController.settings.debugMode;
       this.gameController.toggleDebug(newDebugState);
@@ -395,12 +395,11 @@ export class PauseMenu extends Entity {
       ctx.fillText(setting, settingsX, textY);
 
       this.settingPositions[setting] = {
-        x: settingsX, 
+        x: settingsX,
         y: textY - 20, // Adjust for hitbox alignment
-        width: menuWidth - 200, 
-        height: settingSpacing - 10 
-    };
-      
+        width: menuWidth - 200,
+        height: settingSpacing - 10,
+      };
 
       // === Draw "OFF" and "ON" Labels ===
       ctx.fillStyle = "#F1EDB3";
@@ -499,62 +498,40 @@ export class PauseMenu extends Entity {
     }
   }
 
-  // handleClick(mouseX, mouseY) {
-  //   if (!this.isVisible) return;
-
-  //   if (this.showSettingsMenu) {
-  //     this.toggleSetting(); // Toggle setting on click
-  //     return;
-  //   }
-
-  //   if (this.showHelpMenu) {
-  //     this.showHelpMenu = false; // Close help menu on click
-  //     return;
-  //   }
-
-  //   Object.entries(this.buttonPositions).forEach(([label, pos], index) => {
-  //     if (
-  //       mouseX >= pos.x &&
-  //       mouseX <= pos.x + 250 &&
-  //       mouseY >= pos.y &&
-  //       mouseY <= pos.y + 60
-  //     ) {
-  //       this.selectedOption = index;
-  //       this.executeSelectedOption();
-  //     }
-  //   });
-  // }
   handleClick(mouseX, mouseY) {
     if (!this.isVisible) return;
 
     if (this.showSettingsMenu) {
-        // Check if user clicked a setting option
-        Object.entries(this.settingPositions).forEach(([label, pos], index) => {
-            if (
-                mouseX >= pos.x && mouseX <= pos.x + pos.width &&
-                mouseY >= pos.y && mouseY <= pos.y + pos.height
-            ) {
-                this.selectedSettingsOption = index; // Set selected option
-                this.toggleSetting(); // Apply setting change
-            }
-        });
-        return;
+      // Check if user clicked a setting option
+      Object.entries(this.settingPositions).forEach(([label, pos], index) => {
+        if (
+          mouseX >= pos.x &&
+          mouseX <= pos.x + pos.width &&
+          mouseY >= pos.y &&
+          mouseY <= pos.y + pos.height
+        ) {
+          this.selectedSettingsOption = index; // Set selected option
+          this.toggleSetting(); // Apply setting change
+        }
+      });
+      return;
     }
 
     if (this.showHelpMenu) {
-        this.showHelpMenu = false;
-        return;
+      this.showHelpMenu = false;
+      return;
     }
 
     Object.entries(this.buttonPositions).forEach(([label, pos], index) => {
-        if (
-            mouseX >= pos.x && mouseX <= pos.x + 250 &&
-            mouseY >= pos.y && mouseY <= pos.y + 60
-        ) {
-            this.selectedOption = index;
-            this.executeSelectedOption();
-        }
+      if (
+        mouseX >= pos.x &&
+        mouseX <= pos.x + 250 &&
+        mouseY >= pos.y &&
+        mouseY <= pos.y + 60
+      ) {
+        this.selectedOption = index;
+        this.executeSelectedOption();
+      }
     });
-}
-
+  }
 }
