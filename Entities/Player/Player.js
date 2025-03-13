@@ -117,7 +117,7 @@ export class Player extends Actor {
 
   respawn() {
     this.isDead = false;
-    this.health = 200;
+    this.health = this.maxHealth;
     this.x = this.spawnX;
     this.y = this.spawnY;
     this.setAnimation(PLAYER_SPRITESHEET.IDLE.NAME);
