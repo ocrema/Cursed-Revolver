@@ -23,7 +23,7 @@ export class Camera extends Entity {
     this.maxX = 100000;
     this.minY = 0;
     this.maxY = mapHeight - screenHeight;
-    this.bossCoor = { x: 31300, y: 2420 };
+    this.bossCoor = { x: 31300, y: 2450 };
   }
 
   update() {
@@ -60,7 +60,7 @@ export class Camera extends Entity {
       const followSpeed = 5; // Lower values = slower camera movement
       const lerpFactor = Math.min(followSpeed * GAME_ENGINE.clockTick, 1);
 
-      const verticalOffset = 0; // Move the camera 150 pixels upwards
+      const verticalOffset = -40; // Move the camera 150 pixels upwards
 
       // Smoothly interpolate the camera towards the player's position + vertical offset
       if (
