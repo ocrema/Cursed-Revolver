@@ -99,13 +99,20 @@ export class PauseMenu extends Entity {
     const setting = this.settingsOptions[this.selectedSettingsOption];
 
     if (setting === "Music") {
-      this.gameController.toggleMusic();
+      const newMusState = !this.gameController.settings.musicOn;
+      this.gameController.toggleMusic(newMusState);
     } else if (setting === "All Sounds") {
-      this.gameController.toggleSFX();
+      const newMusState = !this.gameController.settings.muteAll;
+      this.gameController.toggleMusic(newMusState);
+      this.gameController.toggleSFX(newMusState);
+      
     } else if (setting === "Debug Mode") {
       const newDebugState = !this.gameController.settings.debugMode;
       this.gameController.toggleDebug(newDebugState);
       this.gameController.settings.debugMode = newDebugState;
+      // if(this.gameController.settings.debugMode === true){
+      //   this.gameController.toggleMusic(true);
+      // }
     } else if (setting === "FPS Display") {
       this.gameController.toggleFPS();
     }
