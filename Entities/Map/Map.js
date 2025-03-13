@@ -83,7 +83,7 @@ export class Map extends GameMap {
     //playerSpawn = { x: 29000, y: 3015 };
 
     // Add colliders for death zones
-    GAME_ENGINE.addEntity(new DeathCollider(5000, 2233, 5700, 50));
+    GAME_ENGINE.addEntity(new DeathCollider(3000, 2233, 2000, 50));
     GAME_ENGINE.addEntity(new DeathCollider(12870, 4338, 14000, 50));
     GAME_ENGINE.addEntity(new DeathCollider(27028, 6914, 4000, 50));
 
