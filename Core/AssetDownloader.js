@@ -263,6 +263,9 @@ export class AssetDownloader {
     this.assetManager.queueDownload("./assets/sfx/checkpoint.ogg");
     this.assetManager.queueDownload("./assets/sfx/wizard_charge.wav");
     this.assetManager.queueDownload("./assets/sfx/explosion.wav");
+    this.assetManager.queueDownload("./assets/sfx/caw.wav");
+    this.assetManager.queueDownload("./assets/sfx/AAAHHH.mp3");
+    this.assetManager.queueDownload("./assets/sfx/drink.mp3");
   }
 
   downloadMusicAssets() {

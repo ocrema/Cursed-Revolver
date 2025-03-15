@@ -75,6 +75,10 @@ export class Crow extends Actor {
 
     // Flags
     this.isEnemy = true;
+
+    this.idleSFXFixedDelay = 2;
+    this.idleSFXRandomDelay = 5;
+    this.idleSFXDelay = Math.random() * this.idleSFXRandomDelay;
   }
 
   update() {
@@ -86,6 +90,12 @@ export class Crow extends Actor {
       if (this.health <= 0) {
         this.die();
         return;
+      }
+
+      this.idleSFXDelay -= GAME_ENGINE.clockTick;
+      if (this.idleSFXDelay <= 0) {
+        this.assetManager.playAsset("./assets/sfx/caw.wav", Util.DFCVM(this) * 3);
+        this.idleSFXDelay = this.idleSFXFixedDelay + Math.random() * this.idleSFXRandomDelay;
       }
 
       if (this.effects.frozen > 0 || this.effects.stun > 0) return;

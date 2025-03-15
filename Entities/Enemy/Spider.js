@@ -64,6 +64,10 @@ export class Spider extends Actor {
     this.isEnemy = true;
     this.seesPlayer = false;
     this.dead = false;
+
+    this.idleSFXFixedDelay = 5;
+    this.idleSFXRandomDelay = 10;
+    this.idleSFXDelay = Math.random() * this.idleSFXRandomDelay;
   }
 
   update() {
@@ -73,6 +77,12 @@ export class Spider extends Actor {
       this.recieveAttacks();
       this.recieveEffects();
 
+      this.idleSFXDelay -= GAME_ENGINE.clockTick;
+      if (this.idleSFXDelay <= 0) {
+        this.assetManager.playAsset("./assets/sfx/spider_idle.wav", Util.DFCVM(this) * .2);
+        this.idleSFXDelay = this.idleSFXFixedDelay + Math.random() * this.idleSFXRandomDelay;
+      }
+
       if (this.effects.frozen > 0 || this.effects.stun > 0) return;
 
       this.attackCooldown += GAME_ENGINE.clockTick;
@@ -80,7 +90,7 @@ export class Spider extends Actor {
       const player = window.PLAYER;
       if (
         Util.canSee(this, window.PLAYER) &&
-        !this.onWall 
+        !this.onWall
       ) {
         this.seesPlayer = true;
         if (
@@ -127,7 +137,7 @@ export class Spider extends Actor {
       this.setAnimation(SPIDER_SPRITESHEET.DEATH.NAME, false);
       window.ASSET_MANAGER.playAsset(
         "./assets/sfx/spider_death.wav",
-        1 * Util.DFCVM(this)
+        .5 * Util.DFCVM(this)
       );
       this.onDeath();
       return;

@@ -171,8 +171,8 @@ export const isCollidingWithTile = (entity) => {
  */
 export const DFCVM = (e) => {
   if (!e || !GAME_ENGINE.camera || !e.x || !e.y) return 0;
-  const maxVolumeDis = 2000;
-  const minVolumeDis = 5000;
+  const maxVolumeDis = 1000;
+  const minVolumeDis = 4000;
   const distance = getDistance(e, GAME_ENGINE.camera);
   if (distance < maxVolumeDis) return 1;
   if (distance > minVolumeDis) return 0;

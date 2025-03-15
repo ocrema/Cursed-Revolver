@@ -43,6 +43,7 @@ export class HealingBottle extends Actor {
 
           if (typeof player.heal === "function") {
             player.heal(this.healingAmount);
+            ASSET_MANAGER.playAsset("./assets/sfx/drink.mp3", 1.0);
           } else {
             //console.error("heal() function missing on Player!");
           }

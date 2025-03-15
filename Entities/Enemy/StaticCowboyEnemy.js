@@ -92,6 +92,8 @@ export class StaticCowboyEnemy extends Actor {
         //console.log("Static Cowboy has died!");
         this.dead = true;
         this.setAnimation("death", false);
+        this.onDeath();
+        ASSET_MANAGER.playAsset("./assets/sfx/AAAHHH.mp3", .5 * Util.DFCVM(this));
         return;
       }
 
@@ -149,7 +151,7 @@ export class StaticCowboyEnemy extends Actor {
     if (this.currentAnimation == "death") {
       this.spawnHealingBottle();
 
-      this.onDeath();
+      //this.onDeath();
       this.removeFromWorld = true;
       this.collider = null;
     }

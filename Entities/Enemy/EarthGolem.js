@@ -79,6 +79,10 @@ export class EarthGolem extends Actor {
     this.isAttacking = false;
     this.isStomping = false;
     this.dead = false;
+
+    this.idleSFXFixedDelay = 5;
+    this.idleSFXRandomDelay = 10;
+    this.idleSFXDelay = Math.random() * this.idleSFXRandomDelay;
   }
 
   update() {
@@ -86,6 +90,12 @@ export class EarthGolem extends Actor {
 
     this.recieveAttacks();
     this.recieveEffects();
+
+    this.idleSFXDelay -= GAME_ENGINE.clockTick;
+    if (this.idleSFXDelay <= 0) {
+      this.assetManager.playAsset("./assets/sfx/golem_idle.wav", Util.DFCVM(this) * .5);
+      this.idleSFXDelay = this.idleSFXFixedDelay + Math.random() * this.idleSFXRandomDelay;
+    }
 
     if (this.effects.frozen > 0 || this.effects.stun > 0) return;
 
