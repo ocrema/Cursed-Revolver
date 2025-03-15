@@ -184,6 +184,7 @@ export class AssetDownloader {
     this.assetManager.queueDownload("./assets/map/Signs.png");
     this.assetManager.queueDownload("./assets/map/Campfire.png");
     this.assetManager.queueDownload("./assets/map/ActivatedCampfire.png");
+    this.assetManager.queueDownload("./assets/map/cow.png");
   }
 
   downloadSpellAssets() {

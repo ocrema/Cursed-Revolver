@@ -18,6 +18,7 @@ import { DeathCollider } from "./DeathCollider.js";
 import { SpiderWebObstacle } from "../Objects/SpiderWebObstacle.js";
 import { Wizard } from "../Enemy/Wizard.js";
 import { Camera } from "../../Core/Camera.js";
+import { Entity } from "../Entities.js";
 
 export class Map extends GameMap {
   constructor() {
@@ -82,10 +83,15 @@ export class Map extends GameMap {
     // boss arena spawn
     //playerSpawn = { x: 29000, y: 3015 };
 
+    //cow
+    //playerSpawn = { x: 12000, y: 100 };
+
     // Add colliders for death zones
     GAME_ENGINE.addEntity(new DeathCollider(3000, 2233, 2000, 50));
     GAME_ENGINE.addEntity(new DeathCollider(12870, 4338, 14000, 50));
     GAME_ENGINE.addEntity(new DeathCollider(27028, 6914, 4000, 50));
+
+    GAME_ENGINE.addEntity(new Cow(12750, 250));
 
     // Add player
     const player = new Player(playerSpawn.x, playerSpawn.y);
@@ -368,5 +374,32 @@ export class Map extends GameMap {
     } else {
       console.log("All stages cleared!");
     }
+  }
+}
+
+class Cow extends Entity {
+  constructor(x, y) {
+    super();
+    this.spritesheet = ASSET_MANAGER.getAsset("./assets/map/cow.png");
+    this.scale = 6;
+    this.x = x;
+    this.y = y;
+    this.frame = 0;
+    this.entityOrder = 1;
+  }
+
+  update() {
+    this.frame += GAME_ENGINE.clockTick * 1.5;
+    this.frame %= 4;
+  }
+
+  draw(ctx) {
+    ctx.save();
+    ctx.translate(this.x - GAME_ENGINE.camera.x, this.y - GAME_ENGINE.camera.y);
+    ctx.scale(this.scale, this.scale);
+    ctx.drawImage(this.spritesheet, 
+      32 * Math.floor(this.frame), 0, 32, 32,
+      -32/2, -32/2, 32, 32);
+    ctx.restore();
   }
 }
