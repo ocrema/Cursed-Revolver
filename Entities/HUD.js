@@ -418,7 +418,7 @@ export class HUD extends Entity {
       } else {
         if (this.totalRemainingEnemies !== 0) {
           ctx.fillText(
-            `Ascend Enemies Left: ${this.totalRemainingEnemies}`,
+            `Climb Enemies Left: ${this.totalRemainingEnemies}`,
             canvasWidth - 20,
             50
           );
