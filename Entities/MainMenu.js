@@ -265,6 +265,7 @@ export class MainMenu extends Entity {
         ["1 - 6", "Switch Spells"],
         ["Scroll Wheel", "Switch Spells"],
         ["Click", "Shoot"],
+        ["C", "Show Spell Combos"],
         ["H", "Respawn at Campfire"],
         ["Tumbleweeds", "Can be set on fire"],
         ["Fireball", "Detonates barrels"],

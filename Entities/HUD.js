@@ -127,6 +127,35 @@ export class HUD extends Entity {
 
     this.playerCurrentStage = 1;
     this.totalRemainingEnemies = 0;
+
+    // Combos
+    this.spellCombos = {
+      fireball: [
+        { spell: "icicle", effect: "Temp Shock" },
+        { spell: "void", effect: "Explosion" },
+        { spell: "water", effect: "Extinguish" },
+      ],
+      icicle: [
+        { spell: "fireball", effect: "Temp Shock" },
+        { spell: "water", effect: "Longer Freeze" },
+      ],
+      water: [
+        { spell: "icicle", effect: "Longer Freeze" },
+        { spell: "lightning", effect: "Electrocute" },
+        { spell: "fireball", effect: "Extinguish" },
+      ],
+      lightning: [
+        { spell: "water", effect: "Electrocute" },
+        { spell: "void", effect: "Explosion" },
+      ],
+      void: [
+        { spell: "fireball", effect: "Explosion" },
+        { spell: "lightning", effect: "Explosion" },
+      ],
+    };
+
+    this.availableCombos = [];
+    this.showCombos = false;
   }
 
   colliding() {
@@ -161,6 +190,12 @@ export class HUD extends Entity {
       this.totalRemainingEnemies = this.mapReference.totalEnemies;
     }
 
+    if (GAME_ENGINE.keys["c"]) {
+      this.showCombos = !this.showCombos;
+      console.log("Toggled showCombos:", this.showCombos);
+      GAME_ENGINE.keys["c"] = false;
+    }
+
     //check that player exists
     const player = window.PLAYER;
     if (!player) return;
@@ -181,34 +216,6 @@ export class HUD extends Entity {
     if (this.healthFlashTimer > 0) {
       this.healthFlashTimer -= GAME_ENGINE.clockTick;
     }
-
-    // // Detect Spell Switching
-    // if (player.selectedSpell !== this.previousSpellIndex) {
-    //   this.isSpellSwitching = true;
-    //   this.spellAnimationTimer = 0; // Reset timer for smooth transition
-    //   this.spellAnimationFrame = 1; // Ensure it starts at 1
-    //   this.previousSpellIndex = player.selectedSpell; // Update previous spell index
-    // }
-
-    // // Ensure spell icon animation runs continuously
-    // this.spellAnimationTimer += GAME_ENGINE.clockTick;
-
-    // if (this.spellAnimationTimer >= 0.05) { // Adjust 0.05s per frame (change for speed)
-    //     this.spellAnimationTimer = 0; // Reset timer
-    //     this.spellAnimationFrame++; // Advance the frame
-
-    //     // Fix the delay when looping back to frame 1
-    //     if (this.spellAnimationFrame >= 29) {
-    //         this.spellAnimationFrame = 1; // Instantly reset to first frame
-    //         this.spellAnimationTimer = -0.01; // Preload a slight offset to eliminate delay
-    //     }
-    // }
-
-    // // Ensure spellAnimationFrame is always valid
-    // if (isNaN(this.spellAnimationFrame) || this.spellAnimationFrame < 1 || this.spellAnimationFrame > 30) {
-    //     console.error("spellAnimationFrame is out of range, resetting...");
-    //     this.spellAnimationFrame = 1;
-    // }
 
     // Detect Spell Switching
     if (player.selectedSpell !== this.previousSpellIndex) {
@@ -349,6 +356,9 @@ export class HUD extends Entity {
         this.cylinderRotation = change;
       }
     }
+
+    const currentSpell = this.spells[this.activeSpellIndex].altName;
+    this.availableCombos = this.spellCombos[currentSpell] || [];
   }
 
   /**
@@ -561,6 +571,51 @@ export class HUD extends Entity {
       } else {
         //console.warn(`Spell icon missing: ${animatedIconPath}`);
       }
+
+      if (this.showCombos) {
+        const comboAreaX = cylinderX - 500 * scaleFactor;
+        const comboAreaY = canvasHeight - cylinderSize + 10 * scaleFactor;
+      
+        const iconSize = 30 * scaleFactor;
+        const lineSpacing = 35 * scaleFactor;
+      
+        const plusX = comboAreaX;
+        const iconX = plusX + 20 * scaleFactor;
+        const effectTextX = iconX + 40 * scaleFactor;
+      
+        ctx.fillStyle = "white";
+       // ctx.font = `${canvasHeight * 0.022}px Texas, Arial`;
+        ctx.textAlign = "left";
+      
+        // Title
+        ctx.fillText("Combos:", plusX, comboAreaY);
+      
+        this.availableCombos.forEach((combo, index) => {
+          const spellData = this.spells.find(spell => spell.altName === combo.spell);
+          if (spellData) {
+            const animatedIconPath = `./assets/ui/spells/${spellData.altName}/${spellData.altName}${this.spellAnimationFrame + 1}.png`;
+            const animatedSpellIcon = ASSET_MANAGER.getAsset(animatedIconPath);
+      
+            if (animatedSpellIcon) {
+              const y = comboAreaY + (index + 1) * lineSpacing;
+      
+              ctx.fillText("+", plusX, y);
+      
+              ctx.drawImage(
+                animatedSpellIcon,
+                iconX,
+                y - iconSize / 2- (15 * scaleFactor),
+                iconSize,
+                iconSize
+              );
+      
+              ctx.fillText(`-> ${combo.effect}`, effectTextX, y);
+            }
+          }
+        });
+      }
+      
+
 
       // === Draw Revolver Cylinder (Rotating & Glowing) ===
       if (cylinderImage) {
